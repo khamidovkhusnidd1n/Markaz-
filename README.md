@@ -1,188 +1,279 @@
-# Badiiy Ta'lim Markazi - Rasmiy Veb-Sayti
+# Django + PostgreSQL Sayt Loyihasi
 
-O'zbekiston Badiiy akademiyasi huzuridagi Badiiy ta'lim sohasida pedagog kadrlarni qayta tayyorlash va ularning malakasini oshirish markazi uchun to'liq funksional veb-sayt.
+Ushbu repo ichida `Backend/` papkada ishlab turadigan Django backend mavjud. U PostgreSQL bilan bog'langan, Django Admin orqali ma'lumot boshqaradi, DRF API beradi va DTL (`templates/site/`) orqali server-render qilingan sahifalarni ko'rsatadi.
 
-## 📋 Loyiha Tuzilmasi
+## Django versiyasi
 
-```
+Loyiha `Django==5.2.2` ga moslandi. Bu Django 5.2 seriyasining rasmiy stable relizlaridan biri. Manba: https://docs.djangoproject.com/en/5.2/releases/5.2.2/
+
+## Loyiha tuzilmasi
+
+```text
 SAYT/
-├── Backend/           # Django REST Framework backend
-│   ├── backend/       # Asosiy sozlamalar
-│   ├── core/          # API va modellar
-│   ├── media/         # Yuklangan fayllar
-│   └── requirements.txt
-│
-└── frontend/          # React + TypeScript frontend
-    ├── api/           # Backend API bilan bog'lanish
-    ├── components/    # React komponentlar
-    ├── context/       # Global state management
-    ├── pages/         # Sahifalar
-    └── package.json
+|-- Backend/
+|   |-- manage.py
+|   |-- requirements.txt
+|   |-- .env.example
+|   |-- markaz_backend/
+|   |   |-- settings.py
+|   |   |-- urls.py
+|   |-- core/
+|   |   |-- admin.py
+|   |   |-- apps.py
+|   |   |-- models.py
+|   |   |-- urls.py
+|   |   |-- site_urls.py
+|   |   |-- views.py
+|   |   |-- site_views.py
+|   |   |-- signals.py
+|   |   |-- management/
+|   |   |   |-- commands/
+|   |   |   |   |-- check_db.py
+|   |   |   |   |-- create_admin_role.py
+|   |   |   |   |-- seed_sample_data.py
+|   |   |-- migrations/
+|   |-- templates/
+|   |   |-- admin/
+|   |   |-- site/
+|   |       |-- base.html
+|   |       |-- home.html
+|   |       |-- news_list.html
+|   |       |-- news_detail.html
+|   |       |-- course_list.html
+|   |       |-- course_detail.html
+|-- frontend/
+|-- deploy/
 ```
 
-## 🛠 Texnologiyalar
+## PostgreSQL sozlamasi
 
-### Backend
-- **Django 4.2** - Python web framework
-- **Django REST Framework** - API
-- **PostgreSQL** - Ma'lumotlar bazasi (ishlab chiqish uchun SQLite)
-- **Pillow** - Rasm ishlash
-- **WhiteNoise** - Statik fayllar
-- **Jazzmin** - Admin panel dizayni
+`Backend/markaz_backend/settings.py` ichida PostgreSQL default bazaga aylantirildi:
 
-### Frontend
-- **React 18** - UI kutubxonasi
-- **TypeScript** - Tiplangan JavaScript
-- **Vite** - Build tool
-- **TailwindCSS** - CSS framework
-- **Recharts** - Grafiklar
-- **Lucide React** - Ikonkalar
-
-## 🚀 O'rnatish va Ishga Tushirish
-
-### 1. Repozitoriyani klonlash
-
-```bash
-git clone <repository-url>
-cd SAYT
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'sayt_db',
+        'USER': 'postgres',
+        'PASSWORD': 'markaz3210',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'CONN_MAX_AGE': 60,
+        'CONN_HEALTH_CHECKS': True,
+        'ATOMIC_REQUESTS': True,
+        'OPTIONS': {
+            'connect_timeout': 5,
+            'application_name': 'markaz_backend',
+        },
+    }
+}
 ```
 
-### 2. Backend O'rnatish
+## Asosiy modellar
 
-```bash
-# Backend papkasiga o'tish
+`core/models.py` ichida quyidagi asosiy modellar ishlatiladi:
+
+- `News` -> `NewsCategory` bilan `ForeignKey`
+- `NewsImage` -> `News` bilan `ForeignKey`
+- `GalleryItem` -> `GalleryImage` bilan `ForeignKey`
+- `Course`
+- `Teacher`
+- `Personnel`
+- `Document`
+- `Listener`
+- `Statistics`
+- `AppContent`
+
+Bu struktura admin panelda kiritilgan ma'lumotni PostgreSQL ga saqlash, API orqali olish va DTL sahifalarda ko'rsatish uchun yetarli darajada kengaytiriladigan qilib tuzilgan.
+
+## Admin panel va role
+
+- Django admin yoqilgan: `/admin/`
+- `post_migrate` signal orqali `Content Administrator` guruhi avtomatik yaratiladi
+- `create_admin_role` komandasi staff foydalanuvchini shu guruhga qo'shadi
+- Admin foydalanuvchi qo'shish, tahrirlash va o'chirish huquqlariga ega bo'ladi
+
+## DTL sahifalar
+
+Quyidagi server-render qilingan sahifalar mavjud:
+
+- `/` -> bosh sahifa
+- `/news/` -> yangiliklar ro'yxati
+- `/news/<id>/` -> yangilik detali
+- `/courses/` -> kurslar ro'yxati
+- `/courses/<id>/` -> kurs detali
+
+Bu sahifalar `core/site_views.py` dagi class-based views orqali `DTL` bilan render qilinadi.
+
+## API
+
+DRF endpointlar `Backend/core/urls.py` ichida:
+
+- `/api/news/`
+- `/api/news-categories/`
+- `/api/gallery/`
+- `/api/listeners/`
+- `/api/teachers/`
+- `/api/personnel/`
+- `/api/courses/`
+- `/api/documents/`
+- `/api/statistics/`
+- `/api/content/`
+- `/api/all-data/`
+
+## O'rnatish qadamlari
+
+1. Backend papkaga kiring:
+
+```powershell
 cd Backend
-
-# Virtual muhit yaratish
-python -m venv venv
-
-# Virtual muhitni faollashtirish
-# Windows:
-.\venv\Scripts\Activate.ps1
-# Linux/Mac:
-source venv/bin/activate
-
-# Kutubxonalarni o'rnatish
-pip install -r requirements.txt
-
-# Migratsiyalarni bajarish
-python manage.py migrate
-
-# Admin foydalanuvchi yaratish
-python manage.py createsuperuser
-
-# Serverni ishga tushirish
-python manage.py runserver 8000
 ```
 
-Backend: `http://localhost:8000`
-Admin Panel: `http://localhost:8000/admin/`
+2. Virtual environment yarating:
 
-### 3. Frontend O'rnatish
+```powershell
+python -m venv .venv
+```
 
-Yangi terminal oching:
+3. Virtual environment ni yoqing:
 
-```bash
-# Frontend papkasiga o'tish
-cd frontend
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
 
-# .env faylini yaratish
-cp .env.example .env
+4. Kutubxonalarni o'rnating:
 
-# Paketlarni o'rnatish
+```powershell
+python -m pip install -r requirements.txt
+```
+
+5. `.env` fayl tayyorlang:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+6. PostgreSQL bazasi mavjud bo'lsa migratsiyani bajaring:
+
+```powershell
+python manage.py migrate
+```
+
+7. Superuser yarating:
+
+```powershell
+python manage.py createsuperuser
+```
+
+8. Full-permission admin role ga biriktiring:
+
+```powershell
+python manage.py create_admin_role <username>
+```
+
+9. Namunaviy ma'lumot yarating:
+
+```powershell
+python manage.py seed_sample_data
+```
+
+10. Development serverni ishga tushiring:
+
+```powershell
+python manage.py runserver
+```
+
+Frontend bo'lsa alohida:
+
+```powershell
+cd ..\frontend
 npm install
-
-# Development serverni ishga tushirish
 npm run dev
 ```
 
-Frontend: `http://localhost:5173`
+## Diagnostika buyruqlari
 
-## ⚙️ Muhit O'zgaruvchilari
+Kutubxonalarni o'rnatish:
 
-### Backend (`Backend/.env`)
-```env
-DEBUG=True
-SECRET_KEY=your-secret-key-here
-DATABASE_URL=sqlite:///db.sqlite3
-ALLOWED_HOSTS=localhost,127.0.0.1
-CORS_ALLOWED_ORIGINS=http://localhost:5173
+```powershell
+python -m pip install -r requirements.txt
 ```
 
-### Frontend (`frontend/.env`)
-```env
-VITE_API_URL=http://localhost:8000/api
+Migratsiya yaratish:
+
+```powershell
+python manage.py makemigrations
 ```
 
-## 📱 Sayt Bo'limlari
+Migratsiya qo'llash:
 
-| Bo'lim | Tavsifi |
-|--------|---------|
-| **Bosh sahifa** | Statistika, yangiliklar, ustozlar, galereya |
-| **Markaz haqida** | Tarix va tuzilma |
-| **Ilmiy jurnal** | Ilmiy maqolalar va jurnallar |
-| **Tinglovchilar uchun** | O'quv materiallari |
-| **Ochiq ma'lumotlar** | Hujjatlar va hisobotlar |
-| **Reestr** | MO/QT hujjatlarni tekshirish |
-
-## 🔐 Admin Panel
-
-Django admin panel orqali boshqarish:
-
-1. `http://localhost:8000/admin/` ga o'ting
-2. Superuser login/parol bilan kiring
-3. Boshqarish mumkin:
-   - **Yangiliklar** - rasmlar bilan
-   - **Galereya** - ko'p rasmli albomlar
-   - **Ustozlar** - pedagoglar ro'yxati
-   - **Kurslar** - malaka oshirish va qayta tayyorlash
-   - **Hujjatlar** - yuklab olinadigan fayllar
-   - **Tinglovchilar (Listener)** - MO/QT reestr
-   - **Statistika** - raqamlar
-
-## 📊 API Endpointlari
-
-```
-GET  /api/news/          - Yangiliklar
-GET  /api/gallery/       - Galereya
-GET  /api/teachers/      - Ustozlar
-GET  /api/courses/       - Kurslar
-GET  /api/documents/     - Hujjatlar
-GET  /api/listeners/     - Tinglovchilar (reestr)
-GET  /api/statistics/    - Statistika
-GET  /api/search/?type=MO&number=123  - Reestr qidirish
+```powershell
+python manage.py migrate
 ```
 
-## 🌐 Production Deploy
+Superuser yaratish:
 
-### Backend (Gunicorn + Nginx)
-```bash
-pip install gunicorn
-gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+```powershell
+python manage.py createsuperuser
 ```
 
-### Frontend (Build)
-```bash
-npm run build
-# dist/ papkasini serverga yuklang
+DB ulanish tekshiruvi:
+
+```powershell
+python manage.py check_db
 ```
 
-### Muhim sozlamalar
-1. `DEBUG=False` qiling
-2. `SECRET_KEY` yangilang
-3. `ALLOWED_HOSTS` to'g'rilang
-4. HTTPS sozlang
-5. Statik fayllarni `collectstatic` bilan yig'ing
+Serverni ishga tushirish:
 
-## 📝 Litsenziya
+```powershell
+python manage.py runserver
+```
 
-Bu loyiha maxsus litsenziya ostida. Ruxsatsiz foydalanish taqiqlanadi.
+## PostgreSQL xatolarini ushlash
 
-## 👥 Muallif
+Loyihada ulanish barqarorligi uchun:
 
-O'zbekiston Badiiy akademiyasi huzuridagi Badiiy ta'lim markazi
+- `CONN_MAX_AGE=60`
+- `CONN_HEALTH_CHECKS=True`
+- `connect_timeout=5`
+- `ATOMIC_REQUESTS=True`
+- `check_db` management command
+- DTL sahifalarda `db_status` ko'rsatiladi
 
----
+## Agar DB ulanmasa debug tavsiyalar
 
-**Eslatma:** Ishlab chiqish uchun har ikkala serverni (backend va frontend) bir vaqtda ishga tushiring.
-=======
+1. PostgreSQL servisi ishga tushganini tekshiring.
+2. `sayt_db` bazasi yaratilganini tekshiring.
+3. `postgres` foydalanuvchi paroli `markaz3210` ekanini tekshiring.
+4. `localhost:5432` port band emasligini tekshiring.
+5. `psycopg2-binary` o'rnatilganini tekshiring.
+6. `python manage.py check_db` ishlatib aniq xabarni ko'ring.
+7. `python manage.py migrate --verbosity 2` bilan batafsil migratsiya logini ko'ring.
+
+## Sample data
+
+`python manage.py seed_sample_data` quyidagilarni yaratadi:
+
+- `NewsCategory`
+- 1 ta `News`
+- 1 ta `Course`
+- `Statistics` singleton
+- `AppContent` singleton
+
+## Ishga tushirish formatlari
+
+Backend mavjud bo'lsa:
+
+```powershell
+python manage.py runserver
+```
+
+Frontend mavjud bo'lsa:
+
+```powershell
+npm run dev
+```
+
+## Eslatma
+
+Repo ichida avvaldan foydalanuvchi tomonidan qilingan boshqa o'zgarishlar ham bor. Ushbu update asosan Django backendni PostgreSQL va DTL talablariga moslab mustahkamladi.

@@ -3,6 +3,7 @@ Django settings for markaz_backend project.
 Production-ready configuration following Django best practices.
 """
 
+import importlib.util
 import os
 from pathlib import Path
 from datetime import timedelta
@@ -10,19 +11,51 @@ from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+def load_env_file(env_path):
+    if not env_path.exists():
+        return
+
+    for raw_line in env_path.read_text(encoding='utf-8').splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith('#') or '=' not in line:
+            continue
+
+        key, value = line.split('=', 1)
+        os.environ.setdefault(key.strip(), value.strip())
+
+
+def env(key, default=None, cast=None):
+    value = os.environ.get(key, default)
+    if cast is bool:
+        return str(value).lower() in {'1', 'true', 'yes', 'on'}
+    return value
+
+
+load_env_file(BASE_DIR / '.env')
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-x7k9m2p5q8r1t4w6y0b3c6f9h2j5l8n1')
+SECRET_KEY = env('DJANGO_SECRET_KEY', 'django-insecure-x7k9m2p5q8r1t4w6y0b3c6f9h2j5l8n1')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG', True, cast=bool)
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'uzbamalaka.uz,www.uzbamalaka.uz,localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [
+    'uzbamalaka.uz',
+    'www.uzbamalaka.uz',
+    'localhost',
+    '127.0.0.1',
+    'testserver',
+]
 
 
 # Application definition
 
-INSTALLED_APPS = [
-    "jazzmin",
+OPTIONAL_APPS = []
+if importlib.util.find_spec("jazzmin"):
+    OPTIONAL_APPS.append("jazzmin")
+
+INSTALLED_APPS = OPTIONAL_APPS + [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -36,13 +69,12 @@ INSTALLED_APPS = [
     'corsheaders',
     
     # Local apps
-    'core',
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -50,6 +82,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if importlib.util.find_spec("whitenoise"):
+    MIDDLEWARE.insert(2, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 ROOT_URLCONF = 'markaz_backend.urls'
 
@@ -77,8 +112,19 @@ WSGI_APPLICATION = 'markaz_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': env('DB_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': env('DB_NAME', 'sayt_db'),
+        'USER': env('DB_USER', 'postgres'),
+        'PASSWORD': env('DB_PASSWORD', 'markaz3210'),
+        'HOST': env('DB_HOST', 'localhost'),
+        'PORT': env('DB_PORT', '5432'),
+        'CONN_MAX_AGE': int(env('DB_CONN_MAX_AGE', 60)),
+        'CONN_HEALTH_CHECKS': True,
+        'ATOMIC_REQUESTS': True,
+        'OPTIONS': {
+            'connect_timeout': int(env('DB_CONNECT_TIMEOUT', 5)),
+            'application_name': env('DB_APPLICATION_NAME', 'markaz_backend'),
+        },
     }
 }
 
@@ -114,12 +160,10 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+if importlib.util.find_spec("whitenoise"):
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Media files (User uploads)
 MEDIA_URL = '/media/'
@@ -131,10 +175,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+SITE_NAME = env('SITE_NAME', "Sayt boshqaruv paneli")
+
 
 # Django REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'core.authentication.StaticAdminAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
@@ -163,7 +210,10 @@ SIMPLE_JWT = {
 # CORS Settings
 CORS_ALLOWED_ORIGINS = os.environ.get(
     'CORS_ALLOWED_ORIGINS',
-    'https://uzbamalaka.uz,https://www.uzbamalaka.uz,http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173'
+    env(
+        'CORS_ALLOWED_ORIGINS',
+        'https://uzbamalaka.uz,https://www.uzbamalaka.uz,http://localhost:3000,http://localhost:5173,http://127.0.0.1:3000,http://127.0.0.1:5173'
+    )
 ).split(',')
 
 CORS_ALLOW_CREDENTIALS = True
@@ -176,3 +226,35 @@ if DEBUG:
 # File Upload Settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'core': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
+}
+
+STATIC_ADMIN_USERNAME = env('STATIC_ADMIN_USERNAME', 'admin')
+STATIC_ADMIN_PASSWORD = env('STATIC_ADMIN_PASSWORD', '1212')
+STATIC_ADMIN_TOKEN = env('STATIC_ADMIN_TOKEN', 'static-admin-token')

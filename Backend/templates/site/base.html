@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Sayt{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #f7f4ec;
+            --surface: #fffdf8;
+            --ink: #1f2937;
+            --accent: #0f766e;
+            --accent-soft: #dff3f1;
+            --border: #d7d2c8;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            color: var(--ink);
+            background: linear-gradient(180deg, #f4efe3 0%, #fbfaf6 100%);
+        }
+        header, main, footer { width: min(1100px, calc(100% - 32px)); margin: 0 auto; }
+        header { padding: 24px 0; display: flex; gap: 16px; justify-content: space-between; align-items: center; }
+        nav a, .btn {
+            color: var(--accent);
+            text-decoration: none;
+            margin-right: 16px;
+            font-weight: 700;
+        }
+        .hero, .card, .status {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        }
+        .hero { padding: 36px; margin-bottom: 24px; }
+        .grid { display: grid; gap: 20px; }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+        .card { padding: 24px; }
+        .status { padding: 14px 18px; margin: 16px 0 24px; }
+        footer { padding: 32px 0 48px; color: #5b6472; }
+        img { max-width: 100%; border-radius: 14px; }
+        .muted { color: #6b7280; }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1 style="margin:0;">Sayt boshqaruvi</h1>
+            <p class="muted" style="margin:6px 0 0;">Django + PostgreSQL + DTL namuna ilovasi</p>
+        </div>
+        <nav>
+            <a href="{% url 'site:home' %}">Bosh sahifa</a>
+            <a href="{% url 'site:news-list' %}">Yangiliklar</a>
+            <a href="{% url 'site:course-list' %}">Kurslar</a>
+            <a href="/admin/">Admin</a>
+            <a href="/api/" class="btn">API</a>
+        </nav>
+    </header>
+    <main>
+        <div class="status">
+            <strong>DB holati:</strong> {{ db_status.message }}
+        </div>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <small>Ma'lumotlar admin panel orqali PostgreSQL bazasida saqlanadi va shu sahifalarda dinamik ko'rsatiladi.</small>
+    </footer>
+</body>
+</html>

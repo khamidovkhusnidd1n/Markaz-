@@ -1,0 +1,50 @@
+{% extends "site/base.html" %}
+
+{% block title %}Bosh sahifa{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h2 style="margin-top:0;">{{ content.site_name|default:"Ta'lim markazi veb ilovasi" }}</h2>
+    <p>{{ content.history|default:"Admin panel orqali kiritilgan asosiy ma'lumotlar shu yerda ko'rsatiladi." }}</p>
+</section>
+
+<section class="grid grid-2">
+    <article class="card">
+        <h3 style="margin-top:0;">Statistika</h3>
+        <p>Pedagoglar: {{ statistics.total_pedagogs }}</p>
+        <p>Professorlar: {{ statistics.professors }}</p>
+        <p>Dotsentlar: {{ statistics.dotsents }}</p>
+        <p>Ilmiy salohiyat: {{ statistics.potential }}%</p>
+    </article>
+    <article class="card">
+        <h3 style="margin-top:0;">Aloqa</h3>
+        <p>{{ content.contact_info|default:"Aloqa ma'lumotlari admin paneldan to'ldiriladi." }}</p>
+        <p><strong>Manzil:</strong> {{ content.address|default:"Toshkent shahri" }}</p>
+    </article>
+</section>
+
+<section class="grid grid-2" style="margin-top:24px;">
+    <article class="card">
+        <h3 style="margin-top:0;">So'nggi yangiliklar</h3>
+        {% for item in featured_news %}
+            <div style="padding:10px 0; border-top:1px solid var(--border);">
+                <a href="{% url 'site:news-detail' item.pk %}">{{ item.title }}</a>
+                <p class="muted">{{ item.created_at|date:"d.m.Y H:i" }}</p>
+            </div>
+        {% empty %}
+            <p>Hozircha yangilik mavjud emas.</p>
+        {% endfor %}
+    </article>
+    <article class="card">
+        <h3 style="margin-top:0;">Faol kurslar</h3>
+        {% for course in featured_courses %}
+            <div style="padding:10px 0; border-top:1px solid var(--border);">
+                <a href="{% url 'site:course-detail' course.pk %}">{{ course.title }}</a>
+                <p class="muted">{{ course.get_course_type_display }} | {{ course.duration }}</p>
+            </div>
+        {% empty %}
+            <p>Hozircha kurslar mavjud emas.</p>
+        {% endfor %}
+    </article>
+</section>
+{% endblock %}

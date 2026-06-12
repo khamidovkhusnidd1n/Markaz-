@@ -7,6 +7,8 @@ import {
 import { ChevronRight, ChevronLeft, Award, Users, GraduationCap, TrendingUp, Zap, Image as ImageIcon, BookOpen, Layers, ShieldCheck, CheckCircle2, XCircle, Globe, Palette, Gavel, X, FileText, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PDPlanRecord, GalleryItem } from '../types';
+import ArtGallerySection from '../components/ArtGallerySection';
+import { BackendAPI } from '../services/backend';
 
 // Animation hook for scroll reveal
 const useScrollReveal = () => {
@@ -31,18 +33,24 @@ const useScrollReveal = () => {
 };
 
 const Home: React.FC = () => {
-  const { news, stats, gallery, teachers, courses, pdPlans } = useApp();
+  const { news, stats, gallery, artGallery, teachers, courses, pdPlans, documents, aboutContent, refreshData } = useApp();
   
   // Reestr state
   const [activeReestrTab, setActiveReestrTab] = useState<'mo' | 'qt'>('mo');
   const [docNumber, setDocNumber] = useState('');
   const [searchResult, setSearchResult] = useState<{status: 'idle' | 'found' | 'not_found', data?: PDPlanRecord}>({status: 'idle'});
   
-  // News pagination
-  const [newsPage, setNewsPage] = useState(1);
-  const newsPerPage = 8;
-  const totalNewsPages = Math.ceil(news.length / newsPerPage);
-  const paginatedNews = news.slice((newsPage - 1) * newsPerPage, newsPage * newsPerPage);
+  // News carousel state
+  const [newsCarouselIndex, setNewsCarouselIndex] = useState(0);
+  const newsCarouselSize = 4; // Large card + 3 small cards
+  
+  // Teachers carousel state
+  const [teachersCarouselIndex, setTeachersCarouselIndex] = useState(0);
+  const teachersCarouselSize = 4;
+  
+  // Gallery carousel state
+  const [galleryCarouselIndex, setGalleryCarouselIndex] = useState(0);
+  const galleryCarouselSize = 4;
   
   // Gallery modal state
   const [selectedGallery, setSelectedGallery] = useState<GalleryItem | null>(null);
@@ -51,8 +59,67 @@ const Home: React.FC = () => {
   
   // Course detail expansion
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
+  
+  // Art gallery carousel state
+  const [artGalleryCarouselIndex, setArtGalleryCarouselIndex] = useState(0);
+  const artGalleryCarouselSize = 4;
+  const [heroIndex, setHeroIndex] = useState(0);
+  const [appealForm, setAppealForm] = useState({
+    full_name: '',
+    appeal_type: 'murojaat' as 'murojaat' | 'shikoyat' | 'taklif',
+    description: '',
+    phone: '',
+    email: '',
+    telegram_link: '',
+  });
+  const [applicationForm, setApplicationForm] = useState({
+    full_name: '',
+    application_type: 'professional_development' as 'professional_development' | 'retraining',
+    workplace: '',
+    direction: '',
+    phone: '',
+    telegram_link: '',
+  });
+  const [submissionMessage, setSubmissionMessage] = useState('');
 
-  // Auto-slide effect for gallery
+  const heroImages = (aboutContent.heroImages || []).filter((item) => item.imageUrl);
+
+  // News carousel effect
+  useEffect(() => {
+    if (news.length <= newsCarouselSize) return;
+    const interval = setInterval(() => {
+      setNewsCarouselIndex((prev) => (prev + 1) % (news.length - newsCarouselSize + 1));
+    }, 32000); // 30-35 seconds
+    return () => clearInterval(interval);
+  }, [news.length]);
+
+  // Teachers carousel effect
+  useEffect(() => {
+    if (teachers.length <= teachersCarouselSize) return;
+    const interval = setInterval(() => {
+      setTeachersCarouselIndex((prev) => (prev + 1) % (teachers.length - teachersCarouselSize + 1));
+    }, 12000); // 10-15 seconds
+    return () => clearInterval(interval);
+  }, [teachers.length]);
+
+  // Gallery carousel effect
+  useEffect(() => {
+    if (gallery.length <= galleryCarouselSize) return;
+    const interval = setInterval(() => {
+      setGalleryCarouselIndex((prev) => (prev + 1) % (gallery.length - galleryCarouselSize + 1));
+    }, 12000); // 10-15 seconds
+    return () => clearInterval(interval);
+  }, [gallery.length]);
+
+  useEffect(() => {
+    if (heroImages.length <= 1) return;
+    const interval = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [heroImages.length]);
+
+  // Auto-slide effect for gallery modal
   useEffect(() => {
     if (!selectedGallery || !isAutoPlaying) return;
     const allImages = [{ imageUrl: selectedGallery.coverImageUrl, id: 'cover' }, ...selectedGallery.images];
@@ -64,6 +131,8 @@ const Home: React.FC = () => {
     
     return () => clearInterval(interval);
   }, [selectedGallery, isAutoPlaying]);
+
+  // Art gallery carousel effect - will need to import from ArtGallerySection or pass as props
 
   const openGalleryModal = useCallback((item: GalleryItem) => {
     setSelectedGallery(item);
@@ -161,6 +230,7 @@ const Home: React.FC = () => {
   const teachersReveal = useScrollReveal();
   const coursesReveal = useScrollReveal();
   const galleryReveal = useScrollReveal();
+  const artGalleryReveal = useScrollReveal();
   const linksReveal = useScrollReveal();
 
   return (
@@ -169,11 +239,21 @@ const Home: React.FC = () => {
       <section className="relative h-[85vh] overflow-hidden flex items-center">
         <div className="absolute inset-0">
           <img 
-            src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=2071&auto=format&fit=crop" 
+            src={heroImages[heroIndex]?.imageUrl || "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=2071&auto=format&fit=crop"} 
             alt="Hero" 
             className="w-full h-full object-cover"
             style={{ filter: 'brightness(0.25)' }}
           />
+          {aboutContent.heroVideoUrl && (
+            <a
+              href={aboutContent.heroVideoUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="absolute right-6 top-6 rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur"
+            >
+              Banner video
+            </a>
+          )}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-slate-50"></div>
         </div>
         
@@ -184,11 +264,11 @@ const Home: React.FC = () => {
               <span className="text-xs font-semibold tracking-wide">Rasmiy veb-sahifa</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-black mb-6 leading-[1.1] tracking-tight">
-              Badiiy ta'limning <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">kelajagi</span> biz bilan
+              San'at orqali tafakkur, <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Ta'lim</span> orqali taraqqiyot!
             </h1>
             <p className="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl font-light">
-              Malaka oshirish va qayta tayyorlash markazida professional pedagoglar tayyorlaymiz
+              Haqiqiy pedagog o‘quvchida ijodkorlikni tarbiyalaydi.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link to="/about" className="group px-8 py-4 bg-white text-slate-900 hover:bg-blue-500 hover:text-white rounded-2xl font-bold transition-all duration-300 shadow-2xl shadow-white/20 flex items-center gap-3">
@@ -217,8 +297,9 @@ const Home: React.FC = () => {
           statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           {[
+            { label: 'Umumiy pedagoglar', value: stats.totalPedagogs, icon: <Users size={24} />, gradient: 'from-slate-700 to-slate-900' },
             { label: 'Professorlar', value: stats.professors, icon: <GraduationCap size={24} />, gradient: 'from-blue-500 to-indigo-600' },
             { label: 'Dotsentlar', value: stats.dotsents, icon: <Users size={24} />, gradient: 'from-emerald-500 to-teal-600' },
             { label: 'Akademiklar', value: stats.academics, icon: <Award size={24} />, gradient: 'from-amber-500 to-orange-600' },
@@ -457,77 +538,129 @@ const Home: React.FC = () => {
         </div>
       </section>
       
-      {/* News Section - 2 per row, with pagination */}
+      {/* News Section - Featured + 3 Small */}
       <section 
         ref={newsReveal.ref}
         className={`container mx-auto px-6 py-16 transition-all duration-1000 ${
           newsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className="flex justify-between items-end mb-12">
-          <div>
-            <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">Yangiliklar</span>
-            <h2 className="text-4xl font-black text-slate-900 mt-2">So'nggi yangiliklar</h2>
-          </div>
-          {totalNewsPages > 1 && (
-            <div className="flex items-center gap-2">
-              <button 
-                onClick={() => setNewsPage(p => Math.max(1, p - 1))}
-                disabled={newsPage === 1}
-                className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <span className="px-4 py-2 text-sm font-bold text-slate-600">
-                {newsPage} / {totalNewsPages}
-              </span>
-              <button 
-                onClick={() => setNewsPage(p => Math.min(totalNewsPages, p + 1))}
-                disabled={newsPage === totalNewsPages}
-                className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-all"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          )}
+        <div className="mb-12">
+          <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">Yangiliklar</span>
+          <h2 className="text-4xl font-black text-slate-900 mt-2">So'nggi yangiliklar</h2>
         </div>
         
-        {paginatedNews.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {paginatedNews.map((item, idx) => (
-              <Link 
-                to={`/news/${item.id}`} 
-                key={item.id} 
-                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100"
-                style={{ animationDelay: `${idx * 100}ms` }}
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img 
-                    src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'} 
-                    alt={item.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                  {item.isImportant && (
-                    <div className="absolute top-4 left-4 px-3 py-1.5 bg-red-500 text-white text-xs font-bold uppercase rounded-full flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
-                      Muhim
+        {news.length > 0 ? (
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Large Featured Card - Left Side */}
+            <div className="lg:col-span-2 space-y-6">
+              {(() => {
+                const mainItem = news[newsCarouselIndex];
+                return (
+                  <Link 
+                    to={`/news/${mainItem.id}`} 
+                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 h-full"
+                  >
+                    <div className="relative h-96 overflow-hidden">
+                      <img 
+                        src={mainItem.images?.[0]?.imageUrl || mainItem.image || '/placeholder.jpg'} 
+                        alt={mainItem.title} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                      {mainItem.isImportant && (
+                        <div className="absolute top-6 left-6 px-4 py-2 bg-red-500 text-white text-xs font-bold uppercase rounded-full flex items-center gap-2">
+                          <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                          Muhim
+                        </div>
+                      )}
                     </div>
-                  )}
+                    <div className="p-8">
+                      <span className="text-sm font-medium text-slate-400">{mainItem.date}</span>
+                      <h3 className="text-3xl font-black text-slate-900 mt-3 mb-4 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        {mainItem.title}
+                      </h3>
+                      <p className="text-slate-600 line-clamp-3 text-base mb-6">{mainItem.content}</p>
+                      <div className="flex items-center gap-2 text-blue-600 font-bold group-hover:gap-3 transition-all">
+                        Batafsil <ChevronRight size={20} />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })()}
 
-                </div>
-                <div className="p-6">
-                  <span className="text-sm font-medium text-slate-400">{item.date}</span>
-                  <h3 className="text-xl font-black text-slate-900 mt-2 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-slate-500 line-clamp-2 text-sm">{item.content}</p>
-                  <div className="flex items-center gap-2 mt-4 text-blue-600 font-bold text-sm group-hover:gap-3 transition-all">
-                    Batafsil <ChevronRight size={16} />
-                  </div>
-                </div>
+              {news.length > 1 && (() => {
+                const secondaryItem = news[(newsCarouselIndex + 1) % news.length];
+                return (
+                  <Link
+                    to={`/news/${secondaryItem.id}`}
+                    className="group grid overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-md transition-all duration-500 hover:shadow-xl md:grid-cols-[280px_1fr]"
+                  >
+                    <div className="h-56 overflow-hidden bg-slate-200 md:h-full">
+                      <img
+                        src={secondaryItem.images?.[0]?.imageUrl || secondaryItem.image || '/placeholder.jpg'}
+                        alt={secondaryItem.title}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <span className="text-sm font-medium text-slate-400">{secondaryItem.date}</span>
+                      <h3 className="mt-3 text-2xl font-black text-slate-900 transition-colors group-hover:text-blue-600">
+                        {secondaryItem.title}
+                      </h3>
+                      <p className="mt-3 line-clamp-3 text-slate-600">{secondaryItem.content}</p>
+                      <div className="mt-5 flex items-center gap-2 font-bold text-blue-600">
+                        Batafsil <ChevronRight size={18} />
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })()}
+            </div>
+
+            {/* Small Cards - Right Side */}
+            <div className="flex flex-col gap-6">
+              {(() => {
+                const smallCards = [
+                  news[(newsCarouselIndex + 2) % news.length],
+                  news[(newsCarouselIndex + 3) % news.length],
+                  news[(newsCarouselIndex + 4) % news.length]
+                ].filter((item, index, array) => array.findIndex((entry) => entry.id === item.id) === index);
+                return smallCards.map((item, idx) => (
+                  <Link 
+                    to={`/news/${item.id}`} 
+                    key={item.id}
+                    className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-slate-100"
+                  >
+                    <div className="relative h-40 overflow-hidden">
+                      <img 
+                        src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'} 
+                        alt={item.title} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                    </div>
+                    <div className="p-4">
+                      <span className="text-xs font-medium text-slate-400">{item.date}</span>
+                      <h4 className="text-base font-black text-slate-900 mt-1 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                        {item.title}
+                      </h4>
+                      <p className="text-slate-500 line-clamp-1 text-xs">{item.content}</p>
+                    </div>
+                  </Link>
+                ));
+              })()}
+            </div>
+          </div>
+            <div className="flex justify-center">
+              <Link
+                to="/news"
+                className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-6 py-3 font-bold text-blue-700 shadow-sm transition-all hover:border-blue-300 hover:bg-blue-50"
+              >
+                Ko'proq <ChevronRight size={18} />
               </Link>
-            ))}
+            </div>
           </div>
         ) : (
           <div className="py-20 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
@@ -553,11 +686,10 @@ const Home: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {teachers.length > 0 ? teachers.map((teacher, idx) => (
+            {teachers.length > 0 ? teachers.slice(teachersCarouselIndex, teachersCarouselIndex + teachersCarouselSize).map((teacher, idx) => (
               <div 
                 key={teacher.id} 
-                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
-                style={{ animationDelay: `${idx * 100}ms` }}
+                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in"
               >
                 {/* Square Image */}
                 <div className="relative aspect-square overflow-hidden">
@@ -572,11 +704,14 @@ const Home: React.FC = () => {
                 {/* Info */}
                 <div className="p-5 text-center">
                   <h3 className="text-lg font-black text-slate-900 mb-1 line-clamp-1">{teacher.fullName}</h3>
-                  <p className="text-sm font-bold text-emerald-600 mb-2">{teacher.position}</p>
+                  <p className="text-sm font-bold text-emerald-600 mb-2">{teacher.position || teacher.title || "Ustoz"}</p>
                   <div className="pt-3 border-t border-slate-100">
                     <p className="text-xs text-slate-500 line-clamp-1">{teacher.degree}</p>
                     {teacher.title && (
                       <p className="text-xs text-slate-400 mt-1">{teacher.title}</p>
+                    )}
+                    {teacher.awards && (
+                      <p className="text-xs text-amber-600 mt-1 line-clamp-2">{teacher.awards}</p>
                     )}
                   </div>
                 </div>
@@ -706,12 +841,11 @@ const Home: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {gallery.length > 0 ? gallery.slice(0, 8).map((item, idx) => (
+          {gallery.length > 0 ? gallery.slice(galleryCarouselIndex, galleryCarouselIndex + galleryCarouselSize).map((item, idx) => (
             <div 
               key={item.id} 
               onClick={() => openGalleryModal(item)}
-              className="group relative aspect-square overflow-hidden rounded-2xl bg-slate-200 cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500"
-              style={{ animationDelay: `${idx * 50}ms` }}
+              className="group relative aspect-square overflow-hidden rounded-2xl bg-slate-200 cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 animate-fade-in"
             >
               <img 
                 src={item.coverImageUrl} 
@@ -732,6 +866,124 @@ const Home: React.FC = () => {
           )) : (
             <div className="col-span-full py-20 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
               <p className="text-slate-400">Media fayllar kiritilmagan</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Art Gallery Section */}
+      <section 
+        ref={artGalleryReveal.ref}
+        className={`py-24 bg-gradient-to-b from-white to-slate-50 transition-all duration-1000 ${
+          artGalleryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <ArtGallerySection items={artGallery} />
+      </section>
+
+      <section className="container mx-auto px-6 py-16">
+        <div className="mb-12 text-center">
+          <span className="text-sm font-bold text-rose-600 uppercase tracking-wider">Qabul</span>
+          <h2 className="mt-2 text-4xl font-black text-slate-900">Murojaatlar va arizalar</h2>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className="rounded-[2rem] bg-white p-6 shadow-lg">
+            <h3 className="text-2xl font-black text-slate-900">Virtual qabulxona</h3>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  await BackendAPI.createAppeal(appealForm);
+                  await refreshData();
+                  setSubmissionMessage("Murojaat yuborildi.");
+                  setAppealForm({ full_name: '', appeal_type: 'murojaat', description: '', phone: '', email: '', telegram_link: '' });
+                } catch (error) {
+                  setSubmissionMessage(error instanceof Error ? error.message : "Xatolik yuz berdi");
+                }
+              }}
+              className="mt-6 grid gap-4"
+            >
+              <input className="rounded-xl border px-4 py-3" value={appealForm.full_name} onChange={(e) => setAppealForm((p) => ({ ...p, full_name: e.target.value }))} placeholder="Murojaatchi F.I.SH" />
+              <select className="rounded-xl border px-4 py-3" value={appealForm.appeal_type} onChange={(e) => setAppealForm((p) => ({ ...p, appeal_type: e.target.value as any }))}>
+                <option value="murojaat">Murojaat</option>
+                <option value="shikoyat">Shikoyat</option>
+                <option value="taklif">Taklif</option>
+              </select>
+              <textarea className="min-h-28 rounded-xl border p-3" value={appealForm.description} onChange={(e) => setAppealForm((p) => ({ ...p, description: e.target.value }))} placeholder="Tavsifi" />
+              <input className="rounded-xl border px-4 py-3" value={appealForm.phone} onChange={(e) => setAppealForm((p) => ({ ...p, phone: e.target.value }))} placeholder="Telefon raqami" />
+              <input className="rounded-xl border px-4 py-3" value={appealForm.email} onChange={(e) => setAppealForm((p) => ({ ...p, email: e.target.value }))} placeholder="Elektron pochta" />
+              <input className="rounded-xl border px-4 py-3" value={appealForm.telegram_link} onChange={(e) => setAppealForm((p) => ({ ...p, telegram_link: e.target.value }))} placeholder="Telegram link" />
+              <button className="rounded-xl bg-slate-900 px-4 py-3 font-bold text-white">Yuborish</button>
+            </form>
+          </div>
+          <div className="rounded-[2rem] bg-white p-6 shadow-lg">
+            <h3 className="text-2xl font-black text-slate-900">Ariza yuborish</h3>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  await BackendAPI.createApplication(applicationForm);
+                  await refreshData();
+                  setSubmissionMessage("Ariza yuborildi.");
+                  setApplicationForm({ full_name: '', application_type: 'professional_development', workplace: '', direction: '', phone: '', telegram_link: '' });
+                } catch (error) {
+                  setSubmissionMessage(error instanceof Error ? error.message : "Xatolik yuz berdi");
+                }
+              }}
+              className="mt-6 grid gap-4"
+            >
+              <input className="rounded-xl border px-4 py-3" value={applicationForm.full_name} onChange={(e) => setApplicationForm((p) => ({ ...p, full_name: e.target.value }))} placeholder="F.I.SH" />
+              <select className="rounded-xl border px-4 py-3" value={applicationForm.application_type} onChange={(e) => setApplicationForm((p) => ({ ...p, application_type: e.target.value as any }))}>
+                <option value="professional_development">Malaka oshirish</option>
+                <option value="retraining">Qayta tayyorlash</option>
+              </select>
+              <input className="rounded-xl border px-4 py-3" value={applicationForm.workplace} onChange={(e) => setApplicationForm((p) => ({ ...p, workplace: e.target.value }))} placeholder={"Asosiy ish joyi (\"yo'q\" deb yozish mumkin)"} />
+              <input className="rounded-xl border px-4 py-3" value={applicationForm.direction} onChange={(e) => setApplicationForm((p) => ({ ...p, direction: e.target.value }))} placeholder="Yo'nalish" />
+              <input className="rounded-xl border px-4 py-3" value={applicationForm.phone} onChange={(e) => setApplicationForm((p) => ({ ...p, phone: e.target.value }))} placeholder="Telefon raqam" />
+              <input className="rounded-xl border px-4 py-3" value={applicationForm.telegram_link} onChange={(e) => setApplicationForm((p) => ({ ...p, telegram_link: e.target.value }))} placeholder="Telegram link" />
+              <button className="rounded-xl bg-blue-700 px-4 py-3 font-bold text-white">Yuborish</button>
+            </form>
+          </div>
+        </div>
+        {submissionMessage && (
+          <div className="mt-6 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            {submissionMessage}
+          </div>
+        )}
+      </section>
+
+      <section className="container mx-auto px-6 py-16">
+        <div className="mb-12 text-center">
+          <span className="text-sm font-bold text-amber-600 uppercase tracking-wider">Kutubxona</span>
+          <h2 className="mt-2 text-4xl font-black text-slate-900">Adabiyotlar</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+          {documents.filter((item) => item.category === 'library').length > 0 ? (
+            documents
+              .filter((item) => item.category === 'library')
+              .map((item) => (
+                <a
+                  key={item.id}
+                  href={item.fileUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group overflow-hidden rounded-[1.5rem] bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+                >
+                  <div className="aspect-[3/4] bg-slate-100">
+                    {item.coverImageUrl ? (
+                      <img src={item.coverImageUrl} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-sm text-slate-400">Muqova yo'q</div>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <p className="line-clamp-2 text-sm font-bold text-slate-900">{item.title}</p>
+                  </div>
+                </a>
+              ))
+          ) : (
+            <div className="col-span-full rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 py-16 text-center text-slate-400">
+              Hozircha kutubxona materiallari kiritilmagan
             </div>
           )}
         </div>
@@ -851,6 +1103,37 @@ const Home: React.FC = () => {
               <h3 className="text-sm font-black text-slate-900 text-center">{link.name}</h3>
             </a>
           ))}
+        </div>
+      </section>
+
+      <section className="container mx-auto px-6 pb-20">
+        <div className="mb-10">
+          <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Aloqa</span>
+          <h2 className="mt-2 text-4xl font-black text-slate-900">Bizning manzil</h2>
+        </div>
+        <div className="grid gap-6 rounded-[2rem] bg-white p-4 shadow-lg lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 min-h-[320px]">
+            {aboutContent.mapEmbedUrl ? (
+              <iframe
+                src={aboutContent.mapEmbedUrl}
+                title="Google xarita"
+                className="h-full min-h-[320px] w-full"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            ) : (
+              <div className="flex h-full min-h-[320px] items-center justify-center bg-slate-100 text-slate-500">
+                Google xarita havolasi kiritilmagan
+              </div>
+            )}
+          </div>
+          <div className="rounded-[1.5rem] bg-slate-950 p-8 text-white">
+            <p className="text-sm font-bold uppercase tracking-[0.25em] text-blue-300">Manzil ma'lumotlari</p>
+            <p className="mt-6 text-lg leading-8 text-slate-200">{aboutContent.address || "Manzil ma'lumotlari kiritilmagan."}</p>
+            {aboutContent.contactInfo && (
+              <p className="mt-6 text-sm leading-7 text-slate-300">{aboutContent.contactInfo}</p>
+            )}
+          </div>
         </div>
       </section>
 

@@ -10,7 +10,11 @@ from . import views
 
 router = DefaultRouter()
 router.register(r'news', views.NewsViewSet, basename='news')
+router.register(r'news-categories', views.NewsCategoryViewSet, basename='news-category')
 router.register(r'gallery', views.GalleryItemViewSet, basename='gallery')
+router.register(r'art-gallery', views.ArtGalleryItemViewSet, basename='art-gallery')
+router.register(r'appeals', views.AppealViewSet, basename='appeals')
+router.register(r'applications', views.ApplicationViewSet, basename='applications')
 router.register(r'listeners', views.ListenerViewSet, basename='listeners')
 router.register(r'teachers', views.TeacherViewSet, basename='teachers')
 router.register(r'personnel', views.PersonnelViewSet, basename='personnel')
@@ -21,6 +25,10 @@ router.register(r'statistics', views.StatisticsViewSet, basename='statistics')
 router.register(r'yearly-statistics', views.YearlyStatisticsViewSet, basename='yearly-statistics')
 router.register(r'content', views.AppContentViewSet, basename='content')
 router.register(r'journal-settings', views.JournalSettingsViewSet, basename='journal-settings')
+router.register(r'international-settings', views.InternationalSettingsViewSet, basename='international-settings')
+router.register(r'international-partners', views.InternationalPartnerViewSet, basename='international-partners')
+router.register(r'international-projects', views.InternationalProjectViewSet, basename='international-projects')
+router.register(r'international-media', views.InternationalMediaViewSet, basename='international-media')
 
 urlpatterns = [
     # Router URLs

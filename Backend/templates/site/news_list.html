@@ -1,0 +1,22 @@
+{% extends "site/base.html" %}
+
+{% block title %}Yangiliklar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h2 style="margin-top:0;">Yangiliklar</h2>
+    <p>Admin panelda yaratilgan barcha faol yangiliklar ro'yxati.</p>
+</section>
+
+<section class="grid">
+    {% for item in news_list %}
+        <article class="card">
+            <h3 style="margin-top:0;"><a href="{% url 'site:news-detail' item.pk %}">{{ item.title }}</a></h3>
+            <p class="muted">{{ item.created_at|date:"d.m.Y H:i" }} {% if item.category %}| {{ item.category.name }}{% endif %}</p>
+            <p>{{ item.content|truncatechars:220 }}</p>
+        </article>
+    {% empty %}
+        <article class="card"><p>Yangilik topilmadi.</p></article>
+    {% endfor %}
+</section>
+{% endblock %}

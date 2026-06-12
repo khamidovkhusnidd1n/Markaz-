@@ -95,12 +95,27 @@ const About: React.FC = () => {
                   <p className="text-slate-600 text-base leading-relaxed px-6 max-w-xs mx-auto">
                     {person.position}
                   </p>
+                  {person.duties && (
+                    <p className="mt-4 text-sm leading-6 text-slate-500 px-6">
+                      {person.duties}
+                    </p>
+                  )}
+                  {activeTab === 'leadership' && person.biography && (
+                    <p className="mt-3 text-sm leading-6 text-slate-500 px-6">
+                      {person.biography}
+                    </p>
+                  )}
                   
                   {/* Optional contact info in subtle style */}
                   <div className="mt-6 flex flex-col gap-2 opacity-50 hover:opacity-100 transition-opacity">
                     <span className="text-xs font-bold text-slate-400 flex items-center justify-center gap-2">
                       <Phone size={12} /> {person.phone || 'Noma`lum'}
                     </span>
+                    {person.email && (
+                      <span className="text-xs font-bold text-slate-400 flex items-center justify-center gap-2">
+                        <Mail size={12} /> {person.email}
+                      </span>
+                    )}
                     <span className="text-xs font-bold text-slate-400 flex items-center justify-center gap-2">
                       <Clock size={12} /> {person.receptionHours || 'Noma`lum'}
                     </span>

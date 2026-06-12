@@ -28,6 +28,14 @@ class BaseModel(models.Model):
 class News(BaseModel):
     """Yangiliklar modeli"""
     title = models.CharField(max_length=500, verbose_name="Sarlavha")
+    category = models.ForeignKey(
+        'NewsCategory',
+        on_delete=models.SET_NULL,
+        related_name='news_items',
+        blank=True,
+        null=True,
+        verbose_name="Kategoriya"
+    )
     content = models.TextField(verbose_name="Matn")
     is_important = models.BooleanField(default=False, verbose_name="Muhim")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
@@ -54,6 +62,22 @@ class NewsImage(BaseModel):
 
     def __str__(self):
         return f"Rasm #{self.order} - {self.news.title[:30]}"
+
+
+class NewsCategory(BaseModel):
+    """Yangilik kategoriyalari."""
+    name = models.CharField(max_length=150, unique=True, verbose_name="Kategoriya nomi")
+    slug = models.SlugField(max_length=180, unique=True, verbose_name="Slug")
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "Yangilik kategoriyasi"
+        verbose_name_plural = "Yangilik kategoriyalari"
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
 
 
 class GalleryItem(BaseModel):
@@ -85,6 +109,71 @@ class GalleryImage(BaseModel):
 
     def __str__(self):
         return f"Rasm #{self.order} - {self.gallery}"
+
+
+class ArtGalleryItem(BaseModel):
+    """Art galereya asarlari."""
+    title = models.CharField(max_length=250, verbose_name="Asar nomi")
+    author = models.CharField(max_length=250, verbose_name="Muallif")
+    image = models.ImageField(upload_to=generate_unique_filename, verbose_name="Foto")
+    description = models.TextField(blank=True, verbose_name="Tavsif")
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "Art galereya asari"
+        verbose_name_plural = "Art galereya"
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return f"{self.title} - {self.author}"
+
+
+class Appeal(BaseModel):
+    """Virtual qabulxona murojaatlari."""
+    TYPE_CHOICES = [
+        ('murojaat', 'Murojaat'),
+        ('shikoyat', 'Shikoyat'),
+        ('taklif', 'Taklif'),
+    ]
+
+    full_name = models.CharField(max_length=300, verbose_name="Murojaatchi F.I.SH")
+    appeal_type = models.CharField(max_length=20, choices=TYPE_CHOICES, verbose_name="Murojaat turi")
+    description = models.TextField(verbose_name="Tavsif")
+    phone = models.CharField(max_length=50, verbose_name="Telefon raqami")
+    email = models.EmailField(blank=True, verbose_name="Elektron pochta")
+    telegram_link = models.URLField(blank=True, verbose_name="Telegram link")
+
+    class Meta:
+        verbose_name = "Murojaat"
+        verbose_name_plural = "Murojaatlar"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.full_name} - {self.appeal_type}"
+
+
+class Application(BaseModel):
+    """Ariza yuborish yozuvlari."""
+    TYPE_CHOICES = [
+        ('professional_development', 'Malaka oshirish'),
+        ('retraining', 'Qayta tayyorlash'),
+    ]
+
+    full_name = models.CharField(max_length=300, verbose_name="F.I.SH")
+    application_type = models.CharField(max_length=40, choices=TYPE_CHOICES, verbose_name="Ariza turi")
+    workplace = models.CharField(max_length=500, verbose_name="Asosiy ish joyi")
+    direction = models.CharField(max_length=300, verbose_name="Yo'nalish")
+    phone = models.CharField(max_length=50, verbose_name="Telefon raqami")
+    telegram_link = models.URLField(blank=True, verbose_name="Telegram link")
+
+    class Meta:
+        verbose_name = "Ariza"
+        verbose_name_plural = "Arizalar"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.full_name} - {self.application_type}"
 
 
 class Listener(BaseModel):
@@ -136,6 +225,7 @@ class Teacher(BaseModel):
     position = models.CharField(max_length=200, verbose_name="Lavozimi")
     degree = models.CharField(max_length=200, blank=True, verbose_name="Ilmiy darajasi")
     title = models.CharField(max_length=200, blank=True, verbose_name="Unvoni")
+    awards = models.CharField(max_length=300, blank=True, verbose_name="Davlat mukofotlari")
     photo = models.ImageField(
         upload_to=generate_unique_filename,
         blank=True,
@@ -164,6 +254,7 @@ class Personnel(BaseModel):
     full_name = models.CharField(max_length=300, verbose_name="F.I.SH")
     position = models.CharField(max_length=200, verbose_name="Lavozimi")
     phone = models.CharField(max_length=50, blank=True, verbose_name="Telefon")
+    email = models.EmailField(blank=True, verbose_name="Elektron pochta")
     reception_hours = models.CharField(max_length=200, blank=True, verbose_name="Qabul soatlari")
     photo = models.ImageField(
         upload_to=generate_unique_filename,
@@ -177,6 +268,8 @@ class Personnel(BaseModel):
         default='staff',
         verbose_name="Kategoriya"
     )
+    duties = models.TextField(blank=True, verbose_name="Vazifalari")
+    biography = models.TextField(blank=True, verbose_name="Biografiyasi")
     order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
@@ -194,6 +287,8 @@ class Course(BaseModel):
     TYPE_CHOICES = [
         ('professional_development', 'Malaka oshirish'),
         ('retraining', 'Qayta tayyorlash'),
+        ('short_professional_development', 'Qisqa malaka oshirish'),
+        ('profession_learning', "Kasb o'rganish"),
     ]
 
     title = models.CharField(max_length=500, verbose_name="Kurs nomi")
@@ -205,6 +300,15 @@ class Course(BaseModel):
     )
     duration = models.CharField(max_length=100, blank=True, verbose_name="Davomiyligi")
     description = models.TextField(blank=True, verbose_name="Tavsif")
+    phone_numbers = models.CharField(max_length=500, blank=True, verbose_name="Telefon raqamlari")
+    email = models.EmailField(blank=True, verbose_name="Elektron pochta")
+    telegram_link = models.URLField(blank=True, verbose_name="Telegram havola")
+    photo = models.ImageField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Kurs rasmi"
+    )
     is_active = models.BooleanField(default=True, verbose_name="Faol")
     order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
 
@@ -248,6 +352,7 @@ class Document(BaseModel):
         ('regulatory', "Me'yoriy hujjatlar"),
         ('plan', 'Ish rejalari'),
         ('open_data', "Ochiq ma'lumotlar"),
+        ('library', 'Kutubxona'),
     ]
 
     title = models.CharField(max_length=500, verbose_name="Hujjat nomi")
@@ -260,6 +365,12 @@ class Document(BaseModel):
     file = models.FileField(
         upload_to=generate_unique_filename,
         verbose_name="Fayl"
+    )
+    cover_image = models.ImageField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Hujjat muqova rasmi"
     )
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
@@ -274,6 +385,7 @@ class Document(BaseModel):
 
 class Statistics(BaseModel):
     """Statistika modeli (faqat bitta yozuv bo'ladi)"""
+    total_pedagogs = models.PositiveIntegerField(default=0, verbose_name="Umumiy pedagoglar soni")
     professors = models.PositiveIntegerField(default=0, verbose_name="Professorlar soni")
     dotsents = models.PositiveIntegerField(default=0, verbose_name="Dotsentlar soni")
     academics = models.PositiveIntegerField(default=0, verbose_name="Akademiklar soni")
@@ -337,6 +449,21 @@ class AppContent(BaseModel):
     # Aloqa ma'lumotlari
     contact_info = models.TextField(blank=True, verbose_name="Aloqa ma'lumotlari")
     address = models.TextField(blank=True, verbose_name="Manzil")
+    map_embed_url = models.URLField(blank=True, verbose_name="Google xarita havolasi")
+    site_name = models.CharField(max_length=300, blank=True, verbose_name="Sayt nomi")
+    header_logo = models.ImageField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Yuqori navbar logotipi"
+    )
+    footer_logo = models.ImageField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Pastki navbar logotipi"
+    )
+    hero_video_url = models.URLField(blank=True, verbose_name="Hero banner video havolasi")
 
     class Meta:
         verbose_name = "Markaz haqida"
@@ -364,6 +491,13 @@ class JournalSettings(BaseModel):
     
     # Jurnal haqida
     about_journal = models.TextField(blank=True, verbose_name="Jurnal haqida")
+    phone = models.CharField(max_length=100, blank=True, verbose_name="Telefon")
+    editorial_address = models.TextField(blank=True, verbose_name="Tahririyat manzili")
+    email = models.EmailField(blank=True, verbose_name="Email")
+    telegram_primary = models.URLField(blank=True, verbose_name="Telegram havola 1")
+    telegram_secondary = models.URLField(blank=True, verbose_name="Telegram havola 2")
+    instagram = models.URLField(blank=True, verbose_name="Instagram havola")
+    facebook = models.URLField(blank=True, verbose_name="Facebook havola")
 
     class Meta:
         verbose_name = "Jurnal sozlamalari"
@@ -376,3 +510,145 @@ class JournalSettings(BaseModel):
     def get_instance(cls):
         instance, created = cls.objects.get_or_create(pk=1)
         return instance
+
+
+class AppHeroImage(BaseModel):
+    """Bosh sahifa hero slider rasmlari."""
+    content = models.ForeignKey(AppContent, on_delete=models.CASCADE, related_name='hero_images', verbose_name="Kontent")
+    image = models.ImageField(upload_to=generate_unique_filename, verbose_name="Hero banner rasmi")
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
+
+    class Meta:
+        verbose_name = "Hero banner rasmi"
+        verbose_name_plural = "Hero banner rasmlari"
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return f"Hero rasm #{self.order}"
+
+
+class InternationalSettings(BaseModel):
+    """Xalqaro aloqalar sahifasi uchun umumiy sozlamalar."""
+    hero_title = models.CharField(max_length=300, blank=True, verbose_name="Hero sarlavha")
+    hero_description = models.TextField(blank=True, verbose_name="Hero tavsif")
+    about_text = models.TextField(blank=True, verbose_name="Bo'lim matni")
+
+    class Meta:
+        verbose_name = "Xalqaro aloqalar sozlamasi"
+        verbose_name_plural = "Xalqaro aloqalar sozlamalari"
+
+    def __str__(self):
+        return "Xalqaro aloqalar sozlamalari"
+
+    @classmethod
+    def get_instance(cls):
+        instance, created = cls.objects.get_or_create(pk=1)
+        return instance
+
+
+class InternationalPartner(BaseModel):
+    """Xalqaro hamkor tashkilotlar."""
+    name = models.CharField(max_length=250, verbose_name="Hamkor nomi")
+    country = models.CharField(max_length=120, blank=True, verbose_name="Davlat")
+    description = models.TextField(blank=True, verbose_name="Tavsif")
+    photo = models.ImageField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Hamkor fotosi"
+    )
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "Xalqaro hamkor"
+        verbose_name_plural = "Xalqaro hamkorlar"
+        ordering = ['order', 'name']
+
+    def __str__(self):
+        return self.name
+
+
+class InternationalProject(BaseModel):
+    """Xalqaro loyihalar."""
+    STATUS_CHOICES = [
+        ('planned', 'Rejalashtirilgan'),
+        ('ongoing', 'Davom etmoqda'),
+        ('completed', 'Yakunlangan'),
+    ]
+
+    title = models.CharField(max_length=300, verbose_name="Loyiha nomi")
+    description = models.TextField(blank=True, verbose_name="Tavsif")
+    partners_text = models.CharField(max_length=500, blank=True, verbose_name="Hamkorlar")
+    start_date = models.DateField(verbose_name="Boshlanish sanasi")
+    end_date = models.DateField(blank=True, null=True, verbose_name="Tugash sanasi")
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='ongoing',
+        verbose_name="Holati"
+    )
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "Xalqaro loyiha"
+        verbose_name_plural = "Xalqaro loyihalar"
+        ordering = ['order', '-start_date']
+
+    def __str__(self):
+        return self.title
+
+
+class InternationalProjectImage(BaseModel):
+    """Xalqaro loyiha rasmlari."""
+    project = models.ForeignKey(
+        InternationalProject,
+        on_delete=models.CASCADE,
+        related_name='images',
+        verbose_name="Loyiha"
+    )
+    image = models.ImageField(upload_to=generate_unique_filename, verbose_name="Rasm")
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
+
+    class Meta:
+        verbose_name = "Loyiha rasmi"
+        verbose_name_plural = "Loyiha rasmlari"
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return f"{self.project.title} - {self.order}"
+
+
+class InternationalMedia(BaseModel):
+    """Xalqaro sahifa media modullari."""
+    MEDIA_TYPE_CHOICES = [
+        ('photo', 'Foto'),
+        ('video', 'Video'),
+    ]
+
+    title = models.CharField(max_length=300, verbose_name="Sarlavha")
+    description = models.TextField(blank=True, verbose_name="Tavsif")
+    media_type = models.CharField(
+        max_length=20,
+        choices=MEDIA_TYPE_CHOICES,
+        default='photo',
+        verbose_name="Media turi"
+    )
+    image = models.ImageField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Rasm"
+    )
+    youtube_url = models.URLField(blank=True, verbose_name="YouTube havola")
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "Xalqaro media"
+        verbose_name_plural = "Xalqaro media"
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return f"{self.get_media_type_display()}: {self.title}"

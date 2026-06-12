@@ -2,8 +2,12 @@
 DRF Views for the Educational Center Management System.
 Cleaned up version with simplified models and improved functionality.
 """
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:  # pragma: no cover - optional in lightweight setups
+    pd = None
 from io import BytesIO
+import logging
 from django.db import transaction
 from django.http import JsonResponse
 from rest_framework import viewsets, status, permissions
@@ -13,30 +17,43 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import (
-    News, NewsImage, GalleryItem, Listener, Teacher, Personnel,
+    News, NewsImage, NewsCategory, GalleryItem, GalleryImage, ArtGalleryItem, Appeal, Application, Listener, Teacher, Personnel,
     Course, JournalIssue, Document, Statistics, YearlyStatistics,
-    AppContent, JournalSettings
+    AppContent, AppHeroImage, JournalSettings, InternationalSettings, InternationalPartner,
+    InternationalProject, InternationalProjectImage, InternationalMedia
 )
 from .serializers import (
-    NewsSerializer, NewsCreateSerializer, NewsImageSerializer,
-    GalleryItemSerializer, ListenerSerializer, ListenerBulkImportSerializer,
+    NewsSerializer, NewsCreateSerializer, NewsImageSerializer, NewsCategorySerializer,
+    GalleryItemSerializer, ArtGalleryItemSerializer, AppealSerializer, ApplicationSerializer, ListenerSerializer, ListenerBulkImportSerializer,
     TeacherSerializer, PersonnelSerializer, CourseSerializer,
     JournalIssueSerializer, DocumentSerializer, StatisticsSerializer,
-    YearlyStatisticsSerializer, AppContentSerializer, JournalSettingsSerializer
+    YearlyStatisticsSerializer, AppContentSerializer, JournalSettingsSerializer,
+    InternationalSettingsSerializer, InternationalPartnerSerializer,
+    InternationalProjectSerializer, InternationalProjectImageSerializer, InternationalMediaSerializer
 )
+
+logger = logging.getLogger('core')
+
+
+def is_static_admin_request(request):
+    from django.conf import settings
+    auth_header = request.headers.get('Authorization', '')
+    expected = f"Bearer {settings.STATIC_ADMIN_TOKEN}"
+    return auth_header == expected
+
+
+def has_admin_access(request):
+    user = getattr(request, 'user', None)
+    return bool(is_static_admin_request(request) or (user and user.is_staff))
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
-    """Custom permission: read-only for everyone, write only for admins.
-    In DEBUG mode, allows all write operations for easier development."""
+    """Custom permission: read-only for everyone, write only for admins."""
 
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
-        from django.conf import settings
-        if settings.DEBUG:
-            return True
-        return request.user and request.user.is_staff
+        return has_admin_access(request)
 
 
 class NewsViewSet(viewsets.ModelViewSet):
@@ -47,8 +64,7 @@ class NewsViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_queryset(self):
-        from django.conf import settings
-        if self.request.user.is_staff or settings.DEBUG:
+        if has_admin_access(self.request):
             queryset = News.objects.all().order_by('-created_at')
         else:
             queryset = News.objects.filter(is_active=True).order_by('-created_at')
@@ -58,7 +74,7 @@ class NewsViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(is_important=True)
 
         show_all = self.request.query_params.get('all', None)
-        if show_all != 'true' and not (self.request.user.is_staff or settings.DEBUG):
+        if show_all != 'true' and not has_admin_access(self.request):
             queryset = queryset.filter(is_active=True)
         
         return queryset
@@ -79,12 +95,30 @@ class NewsViewSet(viewsets.ModelViewSet):
 
         # Handle multiple image upload
         images = request.FILES.getlist('images')
+        raw_orders = request.data.getlist('image_orders')
+        parsed_orders = []
+        for idx, value in enumerate(raw_orders):
+            try:
+                parsed_orders.append(int(value))
+            except (TypeError, ValueError):
+                parsed_orders.append(idx)
+
         for idx, img in enumerate(images):
-            NewsImage.objects.create(news=news, image=img, order=idx)
+            image_order = parsed_orders[idx] if idx < len(parsed_orders) else idx
+            NewsImage.objects.create(news=news, image=img, order=image_order)
 
         # Return full serialized response
         response_serializer = NewsSerializer(news, context={'request': request})
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+
+
+class NewsCategoryViewSet(viewsets.ModelViewSet):
+    queryset = NewsCategory.objects.all().order_by('order', 'name')
+    serializer_class = NewsCategorySerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
 
     @action(detail=True, methods=['post'], parser_classes=[MultiPartParser])
     def add_images(self, request, pk=None):
@@ -125,6 +159,50 @@ class GalleryItemViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
+    def get_queryset(self):
+        queryset = GalleryItem.objects.all().order_by('order', '-created_at')
+        if has_admin_access(self.request):
+            return queryset
+        return queryset.filter(is_active=True)
+
+    def create(self, request, *args, **kwargs):
+        title = request.data.get('title', '')
+        order = request.data.get('order', 0)
+        cover_image = request.FILES.get('cover_image')
+        images = request.FILES.getlist('images')
+
+        if not cover_image and images:
+            cover_image = images[0]
+
+        if not cover_image:
+            return Response({'detail': 'Muqova rasmi yoki kamida bitta rasm kerak.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        item = GalleryItem.objects.create(
+            title=title,
+            cover_image=cover_image,
+            order=order or 0,
+            is_active=True,
+        )
+
+        raw_orders = request.data.getlist('image_orders')
+        parsed_orders = []
+        for idx, value in enumerate(raw_orders):
+            try:
+                parsed_orders.append(int(value))
+            except (TypeError, ValueError):
+                parsed_orders.append(idx)
+
+        upload_images = images if images else [cover_image]
+        for idx, image in enumerate(upload_images):
+            GalleryImage.objects.create(
+                gallery=item,
+                image=image,
+                order=parsed_orders[idx] if idx < len(parsed_orders) else idx,
+            )
+
+        serializer = GalleryItemSerializer(item, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
     @action(detail=False, methods=['post'], parser_classes=[MultiPartParser])
     def bulk_upload(self, request):
         """Upload multiple images at once."""
@@ -162,11 +240,25 @@ class ListenerViewSet(viewsets.ModelViewSet):
             from django.db.models import Q
             queryset = queryset.filter(
                 Q(full_name__icontains=search) |
+                Q(record_type__icontains=search) |
                 Q(number__icontains=search) |
                 Q(workplace__icontains=search) |
-                Q(series__icontains=search)
+                Q(series__icontains=search) |
+                Q(course_type__icontains=search) |
+                Q(duration__icontains=search)
             )
         return queryset
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data.copy()
+        record_type = (payload.get('record_type') or 'MO').upper()
+        payload['record_type'] = record_type
+        payload['series'] = payload.get('series') or record_type
+        serializer = self.get_serializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @action(detail=False, methods=['get'])
     def search(self, request):
@@ -227,6 +319,12 @@ class ListenerViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'], parser_classes=[MultiPartParser])
     def bulk_import(self, request):
         """Bulk import listeners from Excel file."""
+        if pd is None:
+            return Response(
+                {'error': "Excel import uchun pandas o'rnatilmagan."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
         serializer = ListenerBulkImportSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -333,6 +431,15 @@ class TeacherViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
+    def get_queryset(self):
+        queryset = Teacher.objects.all().order_by('order', 'full_name')
+        if has_admin_access(self.request):
+            return queryset
+        return queryset.filter(is_active=True)
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
+
 
 class PersonnelViewSet(viewsets.ModelViewSet):
     """ViewSet for Personnel CRUD operations."""
@@ -342,11 +449,16 @@ class PersonnelViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_queryset(self):
-        queryset = Personnel.objects.filter(is_active=True)
+        queryset = Personnel.objects.all()
+        if not has_admin_access(self.request):
+            queryset = queryset.filter(is_active=True)
         category = self.request.query_params.get('category', None)
         if category in ['leadership', 'staff']:
             queryset = queryset.filter(category=category)
         return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
 
 
 class CourseViewSet(viewsets.ModelViewSet):
@@ -357,11 +469,21 @@ class CourseViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_queryset(self):
-        queryset = Course.objects.filter(is_active=True)
+        queryset = Course.objects.all()
+        if not has_admin_access(self.request):
+            queryset = queryset.filter(is_active=True)
         course_type = self.request.query_params.get('type', None)
-        if course_type in ['professional_development', 'retraining']:
+        if course_type in [
+            'professional_development',
+            'retraining',
+            'short_professional_development',
+            'profession_learning',
+        ]:
             queryset = queryset.filter(course_type=course_type)
         return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
 
 
 class JournalIssueViewSet(viewsets.ModelViewSet):
@@ -370,6 +492,15 @@ class JournalIssueViewSet(viewsets.ModelViewSet):
     serializer_class = JournalIssueSerializer
     permission_classes = [IsAdminOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_queryset(self):
+        queryset = JournalIssue.objects.all().order_by('-year', '-created_at')
+        if has_admin_access(self.request):
+            return queryset
+        return queryset.filter(is_active=True)
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
 
 
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -380,11 +511,16 @@ class DocumentViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_queryset(self):
-        queryset = Document.objects.filter(is_active=True)
+        queryset = Document.objects.all()
+        if not has_admin_access(self.request):
+            queryset = queryset.filter(is_active=True)
         category = self.request.query_params.get('category', None)
-        if category in ['regulatory', 'plan', 'open_data']:
+        if category in ['regulatory', 'plan', 'open_data', 'library']:
             queryset = queryset.filter(category=category)
         return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
 
 
 class StatisticsViewSet(viewsets.ViewSet):
@@ -427,6 +563,25 @@ class AppContentViewSet(viewsets.ViewSet):
         serializer = AppContentSerializer(content, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+
+            hero_images = request.FILES.getlist('hero_images')
+            raw_orders = request.data.getlist('hero_image_orders')
+            if hero_images:
+                content.hero_images.all().delete()
+                parsed_orders = []
+                for idx, value in enumerate(raw_orders):
+                    try:
+                        parsed_orders.append(int(value))
+                    except (TypeError, ValueError):
+                        parsed_orders.append(idx)
+                for idx, image in enumerate(hero_images):
+                    AppHeroImage.objects.create(
+                        content=content,
+                        image=image,
+                        order=parsed_orders[idx] if idx < len(parsed_orders) else idx,
+                    )
+
+            serializer = AppContentSerializer(content, context={'request': request})
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -450,6 +605,139 @@ class JournalSettingsViewSet(viewsets.ViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class InternationalSettingsViewSet(viewsets.ViewSet):
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def list(self, request):
+        settings = InternationalSettings.get_instance()
+        serializer = InternationalSettingsSerializer(settings, context={'request': request})
+        return Response(serializer.data)
+
+    def create(self, request):
+        settings = InternationalSettings.get_instance()
+        serializer = InternationalSettingsSerializer(settings, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class InternationalPartnerViewSet(viewsets.ModelViewSet):
+    queryset = InternationalPartner.objects.all().order_by('order', 'name')
+    serializer_class = InternationalPartnerSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_queryset(self):
+        queryset = InternationalPartner.objects.all().order_by('order', 'name')
+        if has_admin_access(self.request):
+            return queryset
+        return queryset.filter(is_active=True)
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
+
+
+class InternationalProjectViewSet(viewsets.ModelViewSet):
+    queryset = InternationalProject.objects.all().order_by('order', '-start_date')
+    serializer_class = InternationalProjectSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_queryset(self):
+        queryset = InternationalProject.objects.all().order_by('order', '-start_date')
+        if has_admin_access(self.request):
+            return queryset
+        return queryset.filter(is_active=True)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        project = serializer.save(is_active=True)
+
+        images = request.FILES.getlist('images')
+        raw_orders = request.data.getlist('image_orders') if hasattr(request.data, 'getlist') else request.data.get('image_orders', [])
+        if not isinstance(raw_orders, list):
+            raw_orders = [raw_orders] if raw_orders not in [None, ''] else []
+        parsed_orders = []
+        for idx, value in enumerate(raw_orders):
+            try:
+                parsed_orders.append(int(value))
+            except (TypeError, ValueError):
+                parsed_orders.append(idx)
+
+        for idx, image in enumerate(images):
+            image_order = parsed_orders[idx] if idx < len(parsed_orders) else idx
+            InternationalProjectImage.objects.create(
+                project=project,
+                image=image,
+                order=image_order,
+            )
+
+        return Response(
+            InternationalProjectSerializer(project, context={'request': request}).data,
+            status=status.HTTP_201_CREATED
+        )
+
+
+class InternationalMediaViewSet(viewsets.ModelViewSet):
+    queryset = InternationalMedia.objects.all().order_by('order', '-created_at')
+    serializer_class = InternationalMediaSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_queryset(self):
+        queryset = InternationalMedia.objects.all().order_by('order', '-created_at')
+        if has_admin_access(self.request):
+            return queryset
+        media_type = self.request.query_params.get('media_type')
+        if media_type in ['photo', 'video']:
+            queryset = queryset.filter(media_type=media_type)
+        return queryset.filter(is_active=True)
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
+
+
+class ArtGalleryItemViewSet(viewsets.ModelViewSet):
+    queryset = ArtGalleryItem.objects.all().order_by('order', '-created_at')
+    serializer_class = ArtGalleryItemSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_queryset(self):
+        queryset = ArtGalleryItem.objects.all().order_by('order', '-created_at')
+        if has_admin_access(self.request):
+            return queryset
+        return queryset.filter(is_active=True)
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
+
+
+class AppealViewSet(viewsets.ModelViewSet):
+    queryset = Appeal.objects.all().order_by('-created_at')
+    serializer_class = AppealSerializer
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            return [permissions.AllowAny()]
+        return [IsAdminOrReadOnly()]
+
+
+class ApplicationViewSet(viewsets.ModelViewSet):
+    queryset = Application.objects.all().order_by('-created_at')
+    serializer_class = ApplicationSerializer
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_permissions(self):
+        if self.action in ['create']:
+            return [permissions.AllowAny()]
+        return [IsAdminOrReadOnly()]
+
+
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def get_all_data(request):
@@ -457,61 +745,103 @@ def get_all_data(request):
     Get all data for initial frontend load.
     Returns all active content in a single request.
     """
-    data = {
-        'news': NewsSerializer(
-            News.objects.filter(is_active=True).order_by('-created_at'),
-            many=True,
-            context={'request': request}
-        ).data,
-        'gallery': GalleryItemSerializer(
-            GalleryItem.objects.filter(is_active=True).order_by('order', '-created_at'),
-            many=True,
-            context={'request': request}
-        ).data,
-        'teachers': TeacherSerializer(
-            Teacher.objects.filter(is_active=True).order_by('order', 'full_name'),
-            many=True,
-            context={'request': request}
-        ).data,
-        'courses': CourseSerializer(
-            Course.objects.filter(is_active=True).order_by('order', 'title'),
-            many=True,
-            context={'request': request}
-        ).data,
-        'personnel': PersonnelSerializer(
-            Personnel.objects.filter(is_active=True).order_by('order', 'full_name'),
-            many=True,
-            context={'request': request}
-        ).data,
-        'stats': StatisticsSerializer(
-            Statistics.get_instance(),
-            context={'request': request}
-        ).data,
-        'documents': DocumentSerializer(
-            Document.objects.filter(is_active=True).order_by('-created_at'),
-            many=True,
-            context={'request': request}
-        ).data,
-        'listeners': ListenerSerializer(
-            Listener.objects.all().order_by('-created_at'),
-            many=True,
-            context={'request': request}
-        ).data,
-        'journalIssues': JournalIssueSerializer(
-            JournalIssue.objects.filter(is_active=True).order_by('-year', '-created_at'),
-            many=True,
-            context={'request': request}
-        ).data,
-        'about': AppContentSerializer(
-            AppContent.get_instance(),
-            context={'request': request}
-        ).data,
-        'journalSettings': JournalSettingsSerializer(
-            JournalSettings.get_instance(),
-            context={'request': request}
-        ).data,
-    }
-    return Response(data)
+    logger.info("All data requested from %s", request.META.get('REMOTE_ADDR'))
+    try:
+        data = {
+            'news': NewsSerializer(
+                News.objects.filter(is_active=True).order_by('-created_at'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'gallery': GalleryItemSerializer(
+                GalleryItem.objects.filter(is_active=True).order_by('order', '-created_at'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'artGallery': ArtGalleryItemSerializer(
+                ArtGalleryItem.objects.filter(is_active=True).order_by('order', '-created_at'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'appeals': AppealSerializer(
+                Appeal.objects.all().order_by('-created_at'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'applications': ApplicationSerializer(
+                Application.objects.all().order_by('-created_at'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'teachers': TeacherSerializer(
+                Teacher.objects.filter(is_active=True).order_by('order', 'full_name'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'courses': CourseSerializer(
+                Course.objects.filter(is_active=True).order_by('order', 'title'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'personnel': PersonnelSerializer(
+                Personnel.objects.filter(is_active=True).order_by('order', 'full_name'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'stats': StatisticsSerializer(
+                Statistics.get_instance(),
+                context={'request': request}
+            ).data,
+            'documents': DocumentSerializer(
+                Document.objects.filter(is_active=True).order_by('-created_at'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'listeners': ListenerSerializer(
+                Listener.objects.all().order_by('-created_at'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'journalIssues': JournalIssueSerializer(
+                JournalIssue.objects.filter(is_active=True).order_by('-year', '-created_at'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'about': AppContentSerializer(
+                AppContent.get_instance(),
+                context={'request': request}
+            ).data,
+            'journalSettings': JournalSettingsSerializer(
+                JournalSettings.get_instance(),
+                context={'request': request}
+            ).data,
+            'internationalSettings': InternationalSettingsSerializer(
+                InternationalSettings.get_instance(),
+                context={'request': request}
+            ).data,
+            'internationalPartners': InternationalPartnerSerializer(
+                InternationalPartner.objects.filter(is_active=True).order_by('order', 'name'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'internationalProjects': InternationalProjectSerializer(
+                InternationalProject.objects.filter(is_active=True).order_by('order', '-start_date'),
+                many=True,
+                context={'request': request}
+            ).data,
+            'internationalMedia': InternationalMediaSerializer(
+                InternationalMedia.objects.filter(is_active=True).order_by('order', '-created_at'),
+                many=True,
+                context={'request': request}
+            ).data,
+        }
+        return Response(data)
+    except Exception:
+        logger.exception("All data endpoint failed")
+        return Response(
+            {'detail': "Ma'lumotlarni yuklashda xatolik yuz berdi."},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @api_view(['POST'])
@@ -523,17 +853,32 @@ def custom_login(request):
     username = request.data.get('username')
     password = request.data.get('password')
 
+    logger.info("Login attempt for username=%s from ip=%s", username, request.META.get('REMOTE_ADDR'))
+
+    from django.conf import settings
+
+    if username == settings.STATIC_ADMIN_USERNAME and password == settings.STATIC_ADMIN_PASSWORD:
+        logger.info("Static admin login succeeded for username=%s", username)
+        return Response({
+            'success': True,
+            'token': settings.STATIC_ADMIN_TOKEN,
+            'refresh': '',
+        })
+
     from django.contrib.auth import authenticate
     user = authenticate(username=username, password=password)
 
     if user is not None and user.is_staff:
         from rest_framework_simplejwt.tokens import RefreshToken
         refresh = RefreshToken.for_user(user)
+        logger.info("Django admin login succeeded for username=%s", username)
         return Response({
             'success': True,
             'token': str(refresh.access_token),
             'refresh': str(refresh),
         })
+
+    logger.warning("Login failed for username=%s", username)
 
     return Response(
         {'success': False, 'message': "Login yoki parol noto'g'ri!"},

@@ -1,0 +1,21 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ news.title }}{% endblock %}
+
+{% block content %}
+<article class="hero">
+    <p class="muted">{{ news.created_at|date:"d.m.Y H:i" }} {% if news.category %}| {{ news.category.name }}{% endif %}</p>
+    <h2>{{ news.title }}</h2>
+    <div>{{ news.content|linebreaks }}</div>
+</article>
+
+{% if news.images.all %}
+<section class="grid grid-2">
+    {% for image in news.images.all %}
+        <article class="card">
+            <img src="{{ image.image.url }}" alt="{{ news.title }}">
+        </article>
+    {% endfor %}
+</section>
+{% endif %}
+{% endblock %}

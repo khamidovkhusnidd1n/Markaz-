@@ -4,10 +4,18 @@ Cleaned up version without unnecessary URL fields.
 """
 from rest_framework import serializers
 from .models import (
-    News, NewsImage, GalleryItem, GalleryImage, Listener, Teacher, Personnel,
+    News, NewsImage, NewsCategory, GalleryItem, GalleryImage, ArtGalleryItem, Appeal, Application, Listener, Teacher, Personnel,
     Course, JournalIssue, Document, Statistics, YearlyStatistics,
-    AppContent, JournalSettings
+    AppContent, AppHeroImage, JournalSettings, InternationalSettings, InternationalPartner,
+    InternationalProject, InternationalProjectImage, InternationalMedia
 )
+
+
+class NewsCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NewsCategory
+        fields = ['id', 'name', 'slug', 'order', 'is_active', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class NewsImageSerializer(serializers.ModelSerializer):
@@ -32,11 +40,13 @@ class NewsSerializer(serializers.ModelSerializer):
     """Serializer for News model with inline images."""
     images = NewsImageSerializer(many=True, read_only=True)
     image_url = serializers.SerializerMethodField()
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    category_id = serializers.IntegerField(source='category.id', read_only=True)
 
     class Meta:
         model = News
         fields = [
-            'id', 'title', 'content', 'images', 'image_url',
+            'id', 'title', 'category', 'category_id', 'category_name', 'content', 'images', 'image_url',
             'is_important', 'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -57,7 +67,7 @@ class NewsCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = News
-        fields = ['id', 'title', 'content', 'is_important', 'is_active']
+        fields = ['id', 'title', 'category', 'content', 'is_important', 'is_active']
         read_only_fields = ['id']
 
 
@@ -116,6 +126,9 @@ class ListenerSerializer(serializers.ModelSerializer):
             'is_verified', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'series': {'required': False, 'allow_blank': True},
+        }
 
 
 class ListenerBulkImportSerializer(serializers.Serializer):
@@ -134,7 +147,7 @@ class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
         fields = [
-            'id', 'full_name', 'position', 'degree', 'title',
+            'id', 'full_name', 'position', 'degree', 'title', 'awards',
             'photo', 'photo_url', 'order', 'is_active',
             'created_at', 'updated_at'
         ]
@@ -160,8 +173,9 @@ class PersonnelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Personnel
         fields = [
-            'id', 'full_name', 'position', 'phone', 'reception_hours',
+            'id', 'full_name', 'position', 'phone', 'email', 'reception_hours',
             'photo', 'photo_url', 'category', 'category_display',
+            'duties', 'biography',
             'order', 'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -181,15 +195,25 @@ class CourseSerializer(serializers.ModelSerializer):
         source='get_course_type_display',
         read_only=True
     )
+    photo_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
         fields = [
             'id', 'title', 'course_type', 'course_type_display',
-            'duration', 'description', 'is_active', 'order',
+            'duration', 'description', 'phone_numbers', 'email',
+            'telegram_link', 'photo', 'photo_url', 'is_active', 'order',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_photo_url(self, obj):
+        request = self.context.get('request')
+        if obj.photo:
+            if request:
+                return request.build_absolute_uri(obj.photo.url)
+            return obj.photo.url
+        return None
 
 
 class JournalIssueSerializer(serializers.ModelSerializer):
@@ -230,12 +254,14 @@ class DocumentSerializer(serializers.ModelSerializer):
         read_only=True
     )
     file_url = serializers.SerializerMethodField()
+    cover_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
         fields = [
             'id', 'title', 'category', 'category_display',
-            'file', 'file_url', 'is_active', 'created_at', 'updated_at'
+            'file', 'file_url', 'cover_image', 'cover_image_url',
+            'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
@@ -245,6 +271,60 @@ class DocumentSerializer(serializers.ModelSerializer):
             if request:
                 return request.build_absolute_uri(obj.file.url)
             return obj.file.url
+        return None
+
+
+class ArtGalleryItemSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ArtGalleryItem
+        fields = [
+            'id', 'title', 'author', 'image', 'image_url',
+            'description', 'order', 'is_active', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
+
+
+class AppealSerializer(serializers.ModelSerializer):
+    appeal_type_display = serializers.CharField(source='get_appeal_type_display', read_only=True)
+
+    class Meta:
+        model = Appeal
+        fields = [
+            'id', 'full_name', 'appeal_type', 'appeal_type_display',
+            'description', 'phone', 'email', 'telegram_link',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class ApplicationSerializer(serializers.ModelSerializer):
+    application_type_display = serializers.CharField(source='get_application_type_display', read_only=True)
+
+    class Meta:
+        model = Application
+        fields = [
+            'id', 'full_name', 'application_type', 'application_type_display',
+            'workplace', 'direction', 'phone', 'telegram_link',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_cover_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.cover_image:
+            if request:
+                return request.build_absolute_uri(obj.cover_image.url)
+            return obj.cover_image.url
         return None
 
 
@@ -267,7 +347,7 @@ class StatisticsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Statistics
         fields = [
-            'id', 'professors', 'dotsents', 'academics', 'potential',
+            'id', 'total_pedagogs', 'professors', 'dotsents', 'academics', 'potential',
             'yearly_data', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -290,15 +370,39 @@ class AllDataSerializer(serializers.Serializer):
     statistics = StatisticsSerializer(read_only=True)
 
 
+class AppHeroImageSerializer(serializers.ModelSerializer):
+    """Serializer for AppHeroImage model."""
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AppHeroImage
+        fields = ['id', 'image', 'image_url', 'order']
+        read_only_fields = ['id']
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
+
+
 class AppContentSerializer(serializers.ModelSerializer):
     """Serializer for AppContent singleton model."""
     structure_image_url = serializers.SerializerMethodField()
+    header_logo_url = serializers.SerializerMethodField()
+    footer_logo_url = serializers.SerializerMethodField()
+    hero_images = serializers.SerializerMethodField()
 
     class Meta:
         model = AppContent
         fields = [
             'id', 'history', 'structure', 'structure_image', 'structure_image_url',
-            'student_notes', 'contact_info', 'address', 'created_at', 'updated_at'
+            'student_notes', 'contact_info', 'address', 'map_embed_url',
+            'site_name', 'header_logo', 'header_logo_url',
+            'footer_logo', 'footer_logo_url', 'hero_video_url', 'hero_images',
+            'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
@@ -310,6 +414,34 @@ class AppContentSerializer(serializers.ModelSerializer):
             return obj.structure_image.url
         return None
 
+    def get_header_logo_url(self, obj):
+        request = self.context.get('request')
+        if obj.header_logo:
+            if request:
+                return request.build_absolute_uri(obj.header_logo.url)
+            return obj.header_logo.url
+        return None
+
+    def get_footer_logo_url(self, obj):
+        request = self.context.get('request')
+        if obj.footer_logo:
+            if request:
+                return request.build_absolute_uri(obj.footer_logo.url)
+            return obj.footer_logo.url
+        return None
+
+    def get_hero_images(self, obj):
+        request = self.context.get('request')
+        items = []
+        for image in obj.hero_images.all().order_by('order', '-created_at'):
+            image_url = request.build_absolute_uri(image.image.url) if request and image.image else (image.image.url if image.image else None)
+            items.append({
+                'id': image.id,
+                'image_url': image_url,
+                'order': image.order,
+            })
+        return items
+
 
 class JournalSettingsSerializer(serializers.ModelSerializer):
     """Serializer for JournalSettings singleton model."""
@@ -319,7 +451,9 @@ class JournalSettingsSerializer(serializers.ModelSerializer):
         model = JournalSettings
         fields = [
             'id', 'article_rules_text', 'article_rules_pdf', 'article_rules_pdf_url',
-            'about_journal', 'created_at', 'updated_at'
+            'about_journal', 'phone', 'editorial_address', 'email',
+            'telegram_primary', 'telegram_secondary', 'instagram', 'facebook',
+            'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
@@ -329,4 +463,92 @@ class JournalSettingsSerializer(serializers.ModelSerializer):
             if request:
                 return request.build_absolute_uri(obj.article_rules_pdf.url)
             return obj.article_rules_pdf.url
+        return None
+
+
+class InternationalSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InternationalSettings
+        fields = [
+            'id', 'hero_title', 'hero_description', 'about_text',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class InternationalPartnerSerializer(serializers.ModelSerializer):
+    photo_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = InternationalPartner
+        fields = [
+            'id', 'name', 'country', 'description',
+            'photo', 'photo_url', 'order', 'is_active',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_photo_url(self, obj):
+        request = self.context.get('request')
+        if obj.photo:
+            if request:
+                return request.build_absolute_uri(obj.photo.url)
+            return obj.photo.url
+        return None
+
+
+class InternationalProjectImageSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = InternationalProjectImage
+        fields = ['id', 'image', 'image_url', 'order']
+        read_only_fields = ['id']
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
+
+
+class InternationalProjectSerializer(serializers.ModelSerializer):
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    partners = serializers.SerializerMethodField()
+    images = InternationalProjectImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = InternationalProject
+        fields = [
+            'id', 'title', 'description', 'partners_text', 'partners',
+            'start_date', 'end_date', 'status', 'status_display',
+            'images', 'order', 'is_active', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_partners(self, obj):
+        return [item.strip() for item in obj.partners_text.split(',') if item.strip()]
+
+
+class InternationalMediaSerializer(serializers.ModelSerializer):
+    media_type_display = serializers.CharField(source='get_media_type_display', read_only=True)
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = InternationalMedia
+        fields = [
+            'id', 'title', 'description', 'media_type', 'media_type_display',
+            'image', 'image_url', 'youtube_url', 'order', 'is_active',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
         return None

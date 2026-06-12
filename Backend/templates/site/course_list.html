@@ -1,0 +1,23 @@
+{% extends "site/base.html" %}
+
+{% block title %}Kurslar{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h2 style="margin-top:0;">Kurslar</h2>
+    <p>Ma'lumotlar `Course` modelidan olinadi va DTL orqali render qilinadi.</p>
+</section>
+
+<section class="grid grid-2">
+    {% for course in courses %}
+        <article class="card">
+            <h3 style="margin-top:0;"><a href="{% url 'site:course-detail' course.pk %}">{{ course.title }}</a></h3>
+            <p>{{ course.get_course_type_display }}</p>
+            <p class="muted">{{ course.duration }}</p>
+            <p>{{ course.description|truncatechars:180 }}</p>
+        </article>
+    {% empty %}
+        <article class="card"><p>Kurslar topilmadi.</p></article>
+    {% endfor %}
+</section>
+{% endblock %}

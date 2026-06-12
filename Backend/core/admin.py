@@ -2,7 +2,10 @@
 Django Admin Configuration for the Educational Center Management System.
 Cleaned up version with improved Excel import.
 """
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:  # pragma: no cover - optional in lightweight setups
+    pd = None
 from io import BytesIO
 
 from django import forms
@@ -97,7 +100,7 @@ class GalleryImageInline(admin.TabularInline):
 class GalleryItemAdmin(admin.ModelAdmin):
     """Admin configuration for GalleryItem model - album with multiple images."""
     list_display = ['__str__', 'title', 'order', 'is_active', 'image_count', 'created_at']
-    list_filter = ['is_active']
+    list_filter = ['is_active'] 
     list_editable = ['order', 'is_active']
     ordering = ['order', '-created_at']
     inlines = [GalleryImageInline]

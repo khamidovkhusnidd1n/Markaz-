@@ -14,9 +14,9 @@ const OpenData: React.FC = () => {
   };
 
   const categories = [
-    { key: 'open_data', label: "Ochiq ma'lumotlar", icon: <FolderOpen className="text-blue-600" />, color: 'blue' },
-    { key: 'plan', label: 'Ish rejalari', icon: <Briefcase className="text-green-600" />, color: 'green' },
-    { key: 'regulatory', label: "Me'yoriy hujjatlar", icon: <TrendingUp className="text-amber-600" />, color: 'amber' },
+    { key: 'open_data', label: "Ochiq ma'lumotlar", icon: <FolderOpen className="text-blue-600" />, headerClass: 'bg-blue-50' },
+    { key: 'plan', label: 'Ish rejalari', icon: <Briefcase className="text-green-600" />, headerClass: 'bg-green-50' },
+    { key: 'regulatory', label: "Me'yoriy hujjatlar", icon: <TrendingUp className="text-amber-600" />, headerClass: 'bg-amber-50' },
   ];
 
   // Group documents by category
@@ -56,7 +56,7 @@ const OpenData: React.FC = () => {
           
           return (
             <div key={cat.key} className="bg-white rounded-2xl shadow-sm border overflow-hidden mb-8">
-              <div className={`p-6 border-b bg-${cat.color}-50 flex justify-between items-center`}>
+              <div className={`flex items-center justify-between border-b p-6 ${cat.headerClass}`}>
                 <div className="flex items-center gap-3">
                   {cat.icon}
                   <h2 className="text-xl font-bold text-gray-900">{cat.label}</h2>
@@ -67,9 +67,13 @@ const OpenData: React.FC = () => {
                 {catDocs.map(doc => (
                   <div key={doc.id} className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-blue-50 transition-colors">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
-                        <FileText size={24} />
-                      </div>
+                      {doc.coverImageUrl ? (
+                        <img src={doc.coverImageUrl} alt={doc.title} className="h-16 w-12 rounded-xl object-cover shrink-0" />
+                      ) : (
+                        <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                          <FileText size={24} />
+                        </div>
+                      )}
                       <div>
                         <h4 className="font-bold text-gray-900">{doc.title}</h4>
                         <p className="text-xs text-gray-500 mt-1">

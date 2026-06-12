@@ -1,0 +1,14 @@
+{% extends "site/base.html" %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block content %}
+<article class="hero">
+    <h2>{{ course.title }}</h2>
+    <p><strong>Turi:</strong> {{ course.get_course_type_display }}</p>
+    <p><strong>Davomiyligi:</strong> {{ course.duration|default:"Ko'rsatilmagan" }}</p>
+    <p><strong>Telefonlar:</strong> {{ course.phone_numbers|default:"Ko'rsatilmagan" }}</p>
+    <p><strong>Email:</strong> {{ course.email|default:"Ko'rsatilmagan" }}</p>
+    <div>{{ course.description|linebreaks }}</div>
+</article>
+{% endblock %}
