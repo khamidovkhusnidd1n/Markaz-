@@ -24,7 +24,14 @@ class E2ETestSuite(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.source_text_path = r"C:\Users\Salohiddin Markaz\Desktop\eskisayttexts.txt"
+        from pathlib import Path
+        fallback_source_path = r"C:\Users\Salohiddin Markaz\Desktop\eskisayttexts.txt"
+        dynamic_source_path = Path(settings.BASE_DIR).parent.parent.parent / "eskisayttexts.txt"
+        if dynamic_source_path.exists():
+            cls.source_text_path = str(dynamic_source_path)
+        else:
+            cls.source_text_path = fallback_source_path
+
         if os.path.exists(cls.source_text_path):
             with open(cls.source_text_path, 'r', encoding='utf-8') as f:
                 cls.source_text = f.read()
@@ -171,3 +178,27 @@ class E2ETestSuite(APITestCase):
             
         self.assertNotIn("Tez kunda", students_content, "Placeholder 'Tez kunda' found in Students.tsx")
         self.assertNotIn("Tez kunda", portfolio_content, "Placeholder 'Tez kunda' found in Portfolio.tsx")
+
+    def test_translation_fallback_and_context(self):
+        """Verify that translation fallbacks are clean (no bracketed suffixes) and lang context is passed to AppContent."""
+        # Test AppContent view with lang=ru
+        response_ru = self.client.get('/api/content/?lang=ru')
+        self.assertEqual(response_ru.status_code, status.HTTP_200_OK)
+        # Verify that the site_name_translated does not contain '(RU)'
+        self.assertNotIn('(RU)', response_ru.data.get('site_name_translated', ''))
+        self.assertNotIn('(EN)', response_ru.data.get('site_name_translated', ''))
+        # It should cleanly fall back to the original text
+        self.assertEqual(
+            response_ru.data.get('site_name_translated'),
+            response_ru.data.get('site_name')
+        )
+
+        # Test Course view with lang=ru to verify dictionary translation works
+        response_courses = self.client.get('/api/courses/?lang=ru')
+        self.assertEqual(response_courses.status_code, status.HTTP_200_OK)
+        results = response_courses.data.get('results', response_courses.data)
+        
+        # Find the course 'Badiiy kashtachilik usta-rassomi'
+        target_course = next((c for c in results if c['title'] == 'Badiiy kashtachilik usta-rassomi'), None)
+        self.assertIsNotNone(target_course, "Target course not found in courses API")
+        self.assertEqual(target_course.get('title_translated'), 'Мастер-художник по художественной вышивке')

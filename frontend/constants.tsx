@@ -75,7 +75,7 @@ export const MENU_ITEMS: MenuItemType[] = [
       { label: "E'lonlar", path: '/news' },
       { label: 'Fotogalereya', path: '/photo-gallery' },
       { label: 'Art Galereya', path: '/art-gallery' },
-      { label: "Bog'lanish uchun", path: '/about#contact' }
+      { label: "Bog'lanish uchun", path: '/#contact' }
     ]
   },
   {

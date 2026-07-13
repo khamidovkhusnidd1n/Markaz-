@@ -585,12 +585,12 @@ class AppContentViewSet(viewsets.ViewSet):
 
     def list(self, request):
         content = AppContent.get_instance()
-        serializer = AppContentSerializer(content, context={'request': request})
+        serializer = AppContentSerializer(content, context={'request': request, 'lang': request.query_params.get('lang', 'uz')})
         return Response(serializer.data)
 
     def create(self, request):
         content = AppContent.get_instance()
-        serializer = AppContentSerializer(content, data=request.data, partial=True)
+        serializer = AppContentSerializer(content, data=request.data, partial=True, context={'request': request, 'lang': request.query_params.get('lang', 'uz')})
         if serializer.is_valid():
             serializer.save()
 
@@ -611,7 +611,7 @@ class AppContentViewSet(viewsets.ViewSet):
                         order=parsed_orders[idx] if idx < len(parsed_orders) else idx,
                     )
 
-            serializer = AppContentSerializer(content, context={'request': request})
+            serializer = AppContentSerializer(content, context={'request': request, 'lang': request.query_params.get('lang', 'uz')})
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

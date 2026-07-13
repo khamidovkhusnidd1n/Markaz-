@@ -8,10 +8,10 @@ Testing Translation Support across endpoints
 [UZ] Description Translated: Badiiy kashtachilik usta-rassomi tayyorlash kursi....
 [RU] Title: Badiiy kashtachilik usta-rassomi
 [RU] Title Translated: Мастер-художник по художественной вышивке
-[RU] Description Translated: Badiiy kashtachilik usta-rassomi tayyorlash kursi. (RU)...
+[RU] Description Translated: Badiiy kashtachilik usta-rassomi tayyorlash kursi....
 [EN] Title: Badiiy kashtachilik usta-rassomi
 [EN] Title Translated: Master artist of artistic embroidery
-[EN] Description Translated: Badiiy kashtachilik usta-rassomi tayyorlash kursi. (EN)...
+[EN] Description Translated: Badiiy kashtachilik usta-rassomi tayyorlash kursi....
 
 --- Testing /api/personnel/ ---
 [UZ] Full Name: Shukurov Davronbek Shukurovich
@@ -51,9 +51,9 @@ Testing Translation Support across endpoints
 [UZ] All-Data International Project: “Rangtasvir” yo‘nalishi bo‘yicha malaka oshirish kurslari
 [RU] Course: Мастер-художник по художественной вышивке
 [RU] Person Position: Директор Центра при Художественной академии Узбекистана
-[RU] About Site Name: O‘zbekiston Badiiy akademiyasi huzuridagi Badiiy ta’lim yo‘nalishlarida pedagog va mutaxassis kadrlarni qayta tayyorlash va malaka oshirish markazi (RU)
-[RU] All-Data International Project: “Rangtasvir” yo‘nalishi bo‘yicha malaka oshirish kurslari (RU)
+[RU] About Site Name: O‘zbekiston Badiiy akademiyasi huzuridagi Badiiy ta’lim yo‘nalishlarida pedagog va mutaxassis kadrlarni qayta tayyorlash va malaka oshirish markazi
+[RU] All-Data International Project: “Rangtasvir” yo‘nalishi bo‘yicha malaka oshirish kurslari
 [EN] Course: Master artist of artistic embroidery
 [EN] Person Position: Director of the Center under the Academy of Arts of Uzbekistan
-[EN] About Site Name: O‘zbekiston Badiiy akademiyasi huzuridagi Badiiy ta’lim yo‘nalishlarida pedagog va mutaxassis kadrlarni qayta tayyorlash va malaka oshirish markazi (EN)
-[EN] All-Data International Project: “Rangtasvir” yo‘nalishi bo‘yicha malaka oshirish kurslari (EN)
+[EN] About Site Name: O‘zbekiston Badiiy akademiyasi huzuridagi Badiiy ta’lim yo‘nalishlarida pedagog va mutaxassis kadrlarni qayta tayyorlash va malaka oshirish markazi
+[EN] All-Data International Project: “Rangtasvir” yo‘nalishi bo‘yicha malaka oshirish kurslari

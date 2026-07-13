@@ -169,9 +169,8 @@ def translate_text(text, target_lang='ru'):
                     return res[0].upper() + res[1:]
                 return res
 
-    # Simple suffix offline translator
-    suffix = f" ({target_lang.upper()})"
-    return f"{cleaned_text}{suffix}"
+    # Simple fallback: return original string cleanly
+    return cleaned_text
 
 def auto_translate_instance(obj, fields):
     """Automatically translate specific fields of an instance to RU and EN."""
@@ -185,7 +184,7 @@ def auto_translate_instance(obj, fields):
         tf_ru = f'{field}_ru'
         if hasattr(obj, tf_ru):
             current_val = getattr(obj, tf_ru, '')
-            if not current_val or current_val.endswith('(RU)'):
+            if not current_val or current_val.endswith('(RU)') or current_val == val:
                 translated = translate_text(val, 'ru')
                 setattr(obj, tf_ru, translated)
                 changed = True
@@ -194,7 +193,7 @@ def auto_translate_instance(obj, fields):
         tf_en = f'{field}_en'
         if hasattr(obj, tf_en):
             current_val = getattr(obj, tf_en, '')
-            if not current_val or current_val.endswith('(EN)'):
+            if not current_val or current_val.endswith('(EN)') or current_val == val:
                 translated = translate_text(val, 'en')
                 setattr(obj, tf_en, translated)
                 changed = True

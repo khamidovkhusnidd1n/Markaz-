@@ -4,8 +4,8 @@ import {
   PieChart, Pie, Cell, 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { ChevronRight, Award, Users, GraduationCap, TrendingUp, Zap, ShieldCheck, CheckCircle2, XCircle, Globe, Palette, Gavel, FileText, Briefcase } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ChevronRight, Award, Users, GraduationCap, TrendingUp, Zap, ShieldCheck, CheckCircle2, XCircle, Globe, Palette, Gavel, FileText, Briefcase, Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import { PDPlanRecord } from '../types';
 
 // Animation hook for scroll reveal
@@ -32,6 +32,18 @@ const useScrollReveal = () => {
 
 const Home: React.FC = () => {
   const { news, stats, pdPlans, aboutContent } = useApp();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === '#contact') {
+      const element = document.getElementById('contact');
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [location.hash]);
   
   // Reestr state
   const [activeReestrTab, setActiveReestrTab] = useState<'mo' | 'qt'>('mo');
@@ -600,33 +612,88 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      <section className="container mx-auto px-6 pb-20">
+      <section id="contact" className="container mx-auto px-6 pb-20">
         <div className="mb-10">
           <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Aloqa</span>
           <h2 className="mt-2 text-4xl font-black text-slate-900">Bizning manzil</h2>
         </div>
         <div className="grid gap-6 rounded-[2rem] bg-white p-4 shadow-lg lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 min-h-[320px]">
-            {aboutContent.mapEmbedUrl ? (
-              <iframe
-                src={aboutContent.mapEmbedUrl}
-                title="Google xarita"
-                className="h-full min-h-[320px] w-full"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            ) : (
-              <div className="flex h-full min-h-[320px] items-center justify-center bg-slate-100 text-slate-500">
-                Google xarita havolasi kiritilmagan
-              </div>
-            )}
+          <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 min-h-[400px]">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000.2224424363363!2d69.18002367657989!3d41.279141071286395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae895563fd58cd%3A0x2cf0b7618d787b0f!2sO&#39;zBA%20huzuridagi%20Markaz!5e0!3m2!1suz!2s!4v1711200000000!5m2!1suz!2s"
+              title="Google xarita"
+              className="h-full min-h-[400px] w-full border-0"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
           </div>
-          <div className="rounded-[1.5rem] bg-slate-950 p-8 text-white">
-            <p className="text-sm font-bold uppercase tracking-[0.25em] text-blue-300">Manzil ma'lumotlari</p>
-            <p className="mt-6 text-lg leading-8 text-slate-200">{aboutContent.address || "Manzil ma'lumotlari kiritilmagan."}</p>
-            {aboutContent.contactInfo && (
-              <p className="mt-6 text-sm leading-7 text-slate-300">{aboutContent.contactInfo}</p>
-            )}
+          <div className="rounded-[1.5rem] bg-slate-950 p-8 text-white flex flex-col justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-blue-400 mb-6">Aloqa va Manzil Ma'lumotlari</p>
+              
+              <div className="space-y-5">
+                <div className="flex gap-4 items-start">
+                  <div className="p-3 bg-slate-900 rounded-xl text-blue-400 shrink-0">
+                    <MapPin size={18} />
+                  </div>
+                  <div>
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Bizning manzil</h4>
+                    <p className="mt-1 text-sm text-slate-200 leading-relaxed">
+                      {aboutContent.address || "Toshkent shahri, Uchtepa tumani, Chilonzor 26-daha, Shirin ko'cha, 1A"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="p-3 bg-slate-900 rounded-xl text-blue-400 shrink-0">
+                    <Phone size={18} />
+                  </div>
+                  <div>
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Telefon raqamlar</h4>
+                    <p className="mt-1 text-sm text-slate-200">
+                      <a href="tel:+998773633836" className="hover:text-blue-450 transition-colors hover:text-blue-400 mr-4 font-semibold">(+998 77) 363-38-36</a>
+                      <a href="tel:+998931073719" className="hover:text-blue-450 transition-colors hover:text-blue-400 font-semibold">(+998 93) 107-37-19</a>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="p-3 bg-slate-900 rounded-xl text-blue-400 shrink-0">
+                    <Mail size={18} />
+                  </div>
+                  <div>
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Elektron pochta</h4>
+                    <p className="mt-1 text-sm text-slate-200 flex flex-col gap-0.5">
+                      <a href="mailto:uzbahuzuridagimarkaz@gmail.com" className="hover:text-blue-450 transition-colors hover:text-blue-400">uzbahuzuridagimarkaz@gmail.com</a>
+                      <a href="mailto:thecentreaauzglobal@gmail.com" className="hover:text-blue-450 transition-colors hover:text-blue-400">thecentreaauzglobal@gmail.com</a>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="p-3 bg-slate-900 rounded-xl text-blue-400 shrink-0">
+                    <Send size={18} />
+                  </div>
+                  <div>
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Telegram kanallar</h4>
+                    <p className="mt-1 text-sm text-slate-200 flex flex-wrap gap-x-4 gap-y-1">
+                      <a href="https://t.me/Uzbamarkaz_jurnali" target="_blank" rel="noopener noreferrer" className="hover:text-blue-450 transition-colors hover:text-blue-400">@Uzbamarkaz_jurnali</a>
+                      <a href="https://t.me/badiiytalimvapedagogika" target="_blank" rel="noopener noreferrer" className="hover:text-blue-450 transition-colors hover:text-blue-400">@badiiytalimvapedagogika</a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-4 items-start border-t border-slate-800 pt-5 mt-5">
+              <div className="p-3 bg-slate-900 rounded-xl text-blue-400 shrink-0">
+                <Clock size={18} />
+              </div>
+              <div>
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Ish tartibi</h4>
+                <p className="mt-1 text-sm text-slate-200 font-semibold">Dushanba - Juma: 09:00 - 18:00</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
