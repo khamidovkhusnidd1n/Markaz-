@@ -157,6 +157,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               {MENU_ITEMS.map((item, idx) => (
                 <DesktopMenuItem key={idx} item={item} />
               ))}
+              
+              <div className="flex items-center gap-1 ml-3 border-l pl-3 border-gray-200">
+                <button className="px-2 py-1 text-[11px] font-bold rounded bg-blue-600 text-white">UZB</button>
+                <button className="px-2 py-1 text-[11px] font-bold rounded text-gray-600 hover:text-blue-600 hover:bg-blue-50">RUS</button>
+                <button className="px-2 py-1 text-[11px] font-bold rounded text-gray-600 hover:text-blue-600 hover:bg-blue-50">ENG</button>
+              </div>
             </div>
           </nav>
 
@@ -170,6 +176,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             {MENU_ITEMS.map((item, idx) => (
               <MobileMenuItem key={idx} item={item} closeMenu={() => setIsMenuOpen(false)} />
             ))}
+            
+            <div className="flex items-center gap-2 border-t pt-4 mt-2">
+              <button className="px-3 py-1.5 text-xs font-bold rounded bg-blue-600 text-white">UZB</button>
+              <button className="px-3 py-1.5 text-xs font-bold rounded text-gray-600 bg-gray-50">RUS</button>
+              <button className="px-3 py-1.5 text-xs font-bold rounded text-gray-600 bg-gray-50">ENG</button>
+            </div>
           </div>
         )}
       </header>
