@@ -1,14 +1,12 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { 
   PieChart, Pie, Cell, 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { ChevronRight, ChevronLeft, Award, Users, GraduationCap, TrendingUp, Zap, Image as ImageIcon, BookOpen, Layers, ShieldCheck, CheckCircle2, XCircle, Globe, Palette, Gavel, X, FileText, Briefcase } from 'lucide-react';
+import { ChevronRight, Award, Users, GraduationCap, TrendingUp, Zap, ShieldCheck, CheckCircle2, XCircle, Globe, Palette, Gavel, FileText, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { PDPlanRecord, GalleryItem } from '../types';
-import ArtGallerySection from '../components/ArtGallerySection';
-import { BackendAPI } from '../services/backend';
+import { PDPlanRecord } from '../types';
 
 // Animation hook for scroll reveal
 const useScrollReveal = () => {
@@ -33,7 +31,7 @@ const useScrollReveal = () => {
 };
 
 const Home: React.FC = () => {
-  const { news, stats, gallery, artGallery, teachers, courses, pdPlans, documents, aboutContent, refreshData } = useApp();
+  const { news, stats, pdPlans, aboutContent } = useApp();
   
   // Reestr state
   const [activeReestrTab, setActiveReestrTab] = useState<'mo' | 'qt'>('mo');
@@ -44,43 +42,9 @@ const Home: React.FC = () => {
   const [newsCarouselIndex, setNewsCarouselIndex] = useState(0);
   const newsCarouselSize = 4; // Large card + 3 small cards
   
-  // Teachers carousel state
-  const [teachersCarouselIndex, setTeachersCarouselIndex] = useState(0);
-  const teachersCarouselSize = 4;
-  
-  // Gallery carousel state
-  const [galleryCarouselIndex, setGalleryCarouselIndex] = useState(0);
-  const galleryCarouselSize = 4;
-  
-  // Gallery modal state
-  const [selectedGallery, setSelectedGallery] = useState<GalleryItem | null>(null);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  
-  // Course detail expansion
-  const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
-  
-  // Art gallery carousel state
-  const [artGalleryCarouselIndex, setArtGalleryCarouselIndex] = useState(0);
-  const artGalleryCarouselSize = 4;
+
   const [heroIndex, setHeroIndex] = useState(0);
-  const [appealForm, setAppealForm] = useState({
-    full_name: '',
-    appeal_type: 'murojaat' as 'murojaat' | 'shikoyat' | 'taklif',
-    description: '',
-    phone: '',
-    email: '',
-    telegram_link: '',
-  });
-  const [applicationForm, setApplicationForm] = useState({
-    full_name: '',
-    application_type: 'professional_development' as 'professional_development' | 'retraining',
-    workplace: '',
-    direction: '',
-    phone: '',
-    telegram_link: '',
-  });
-  const [submissionMessage, setSubmissionMessage] = useState('');
+
 
   const heroImages = (aboutContent.heroImages || []).filter((item) => item.imageUrl);
 
@@ -93,24 +57,6 @@ const Home: React.FC = () => {
     return () => clearInterval(interval);
   }, [news.length]);
 
-  // Teachers carousel effect
-  useEffect(() => {
-    if (teachers.length <= teachersCarouselSize) return;
-    const interval = setInterval(() => {
-      setTeachersCarouselIndex((prev) => (prev + 1) % (teachers.length - teachersCarouselSize + 1));
-    }, 12000); // 10-15 seconds
-    return () => clearInterval(interval);
-  }, [teachers.length]);
-
-  // Gallery carousel effect
-  useEffect(() => {
-    if (gallery.length <= galleryCarouselSize) return;
-    const interval = setInterval(() => {
-      setGalleryCarouselIndex((prev) => (prev + 1) % (gallery.length - galleryCarouselSize + 1));
-    }, 12000); // 10-15 seconds
-    return () => clearInterval(interval);
-  }, [gallery.length]);
-
   useEffect(() => {
     if (heroImages.length <= 1) return;
     const interval = setInterval(() => {
@@ -118,46 +64,6 @@ const Home: React.FC = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, [heroImages.length]);
-
-  // Auto-slide effect for gallery modal
-  useEffect(() => {
-    if (!selectedGallery || !isAutoPlaying) return;
-    const allImages = [{ imageUrl: selectedGallery.coverImageUrl, id: 'cover' }, ...selectedGallery.images];
-    if (allImages.length <= 1) return;
-    
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
-    }, 3000);
-    
-    return () => clearInterval(interval);
-  }, [selectedGallery, isAutoPlaying]);
-
-  // Art gallery carousel effect - will need to import from ArtGallerySection or pass as props
-
-  const openGalleryModal = useCallback((item: GalleryItem) => {
-    setSelectedGallery(item);
-    setCurrentImageIndex(0);
-    setIsAutoPlaying(true);
-  }, []);
-
-  const closeGalleryModal = useCallback(() => {
-    setSelectedGallery(null);
-    setCurrentImageIndex(0);
-  }, []);
-
-  const nextImage = useCallback(() => {
-    if (!selectedGallery) return;
-    const allImages = [{ imageUrl: selectedGallery.coverImageUrl, id: 'cover' }, ...selectedGallery.images];
-    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
-    setIsAutoPlaying(false);
-  }, [selectedGallery]);
-
-  const prevImage = useCallback(() => {
-    if (!selectedGallery) return;
-    const allImages = [{ imageUrl: selectedGallery.coverImageUrl, id: 'cover' }, ...selectedGallery.images];
-    setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
-    setIsAutoPlaying(false);
-  }, [selectedGallery]);
 
   const totalMalaka = stats.studentsCount.reduce((sum, item) => sum + item.count, 0);
   const totalQayta = stats.studentsCount.reduce((sum, item) => sum + item.retraining, 0);
@@ -174,8 +80,6 @@ const Home: React.FC = () => {
     qayta: item.retraining
   }));
 
-  const retrainingCourses = courses.filter(c => c.type === 'retraining');
-  const pdCourses = courses.filter(c => c.type === 'professional_development');
 
   const handleReestrSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -227,10 +131,6 @@ const Home: React.FC = () => {
   const reestrReveal = useScrollReveal();
   const chartsReveal = useScrollReveal();
   const newsReveal = useScrollReveal();
-  const teachersReveal = useScrollReveal();
-  const coursesReveal = useScrollReveal();
-  const galleryReveal = useScrollReveal();
-  const artGalleryReveal = useScrollReveal();
   const linksReveal = useScrollReveal();
 
   return (
@@ -669,414 +569,8 @@ const Home: React.FC = () => {
         )}
       </section>
 
-      {/* Teachers Section - mehrgo.uz style */}
-      <section 
-        ref={teachersReveal.ref}
-        className={`py-24 bg-gradient-to-b from-slate-50 to-white transition-all duration-1000 ${
-          teachersReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <span className="text-sm font-bold text-emerald-600 uppercase tracking-wider">Jamoa</span>
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mt-2 mb-4">Bizning ustozlar</h2>
-            <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-              Yuqori malakali mutaxassislar va tajribali pedagoglar jamoasi
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {teachers.length > 0 ? teachers.slice(teachersCarouselIndex, teachersCarouselIndex + teachersCarouselSize).map((teacher, idx) => (
-              <div 
-                key={teacher.id} 
-                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in"
-              >
-                {/* Square Image */}
-                <div className="relative aspect-square overflow-hidden">
-                  <img 
-                    src={teacher.photoUrl || 'https://via.placeholder.com/400x400?text=Ustoz'} 
-                    alt={teacher.fullName} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                
-                {/* Info */}
-                <div className="p-5 text-center">
-                  <h3 className="text-lg font-black text-slate-900 mb-1 line-clamp-1">{teacher.fullName}</h3>
-                  <p className="text-sm font-bold text-emerald-600 mb-2">{teacher.position || teacher.title || "Ustoz"}</p>
-                  <div className="pt-3 border-t border-slate-100">
-                    <p className="text-xs text-slate-500 line-clamp-1">{teacher.degree}</p>
-                    {teacher.title && (
-                      <p className="text-xs text-slate-400 mt-1">{teacher.title}</p>
-                    )}
-                    {teacher.awards && (
-                      <p className="text-xs text-amber-600 mt-1 line-clamp-2">{teacher.awards}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )) : (
-              <div className="col-span-full py-20 text-center bg-white rounded-3xl border-2 border-dashed border-slate-200">
-                <p className="text-slate-400 font-medium">Ma'lumotlar kiritilmagan</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Courses Section */}
-      <section 
-        ref={coursesReveal.ref}
-        className={`container mx-auto px-6 py-16 transition-all duration-1000 ${
-          coursesReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="text-center mb-12">
-          <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">Ta'lim</span>
-          <h2 className="text-4xl font-black text-slate-900 mt-2">Bizning dasturlar</h2>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Retraining */}
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-2xl font-black">Qayta tayyorlash</h3>
-                  <p className="text-blue-200 text-sm mt-1">Professional qayta tayyorlov kurslari</p>
-                </div>
-                <Layers size={40} className="opacity-50" />
-              </div>
-            </div>
-            <div className="p-6 space-y-3 max-h-[400px] overflow-y-auto">
-              {retrainingCourses.length > 0 ? retrainingCourses.map(course => (
-                <div 
-                  key={course.id} 
-                  className="group p-4 bg-slate-50 hover:bg-blue-50 rounded-2xl transition-all cursor-pointer border border-transparent hover:border-blue-200"
-                  onClick={() => setExpandedCourse(expandedCourse === course.id ? null : course.id)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-blue-600">
-                        <BookOpen size={18} />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-slate-900 group-hover:text-blue-700 transition-colors">{course.title}</h4>
-                        {course.duration && <p className="text-xs text-slate-400 mt-0.5">{course.duration}</p>}
-                      </div>
-                    </div>
-                    <ChevronRight size={18} className={`text-slate-300 transition-transform ${expandedCourse === course.id ? 'rotate-90' : ''}`} />
-                  </div>
-                  {expandedCourse === course.id && course.description && (
-                    <div className="mt-3 pt-3 border-t border-blue-100 animate-fade-in">
-                      <p className="text-sm text-slate-600">{course.description}</p>
-                    </div>
-                  )}
-                </div>
-              )) : (
-                <div className="py-16 text-center">
-                  <p className="text-slate-400">Kurslar kiritilmagan</p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Professional Development */}
-          <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
-            <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-2xl font-black">Malaka oshirish</h3>
-                  <p className="text-emerald-200 text-sm mt-1">Kasbiy mahoratni oshirish kurslari</p>
-                </div>
-                <TrendingUp size={40} className="opacity-50" />
-              </div>
-            </div>
-            <div className="p-6 space-y-3 max-h-[400px] overflow-y-auto">
-              {pdCourses.length > 0 ? pdCourses.map(course => (
-                <div 
-                  key={course.id} 
-                  className="group p-4 bg-slate-50 hover:bg-emerald-50 rounded-2xl transition-all cursor-pointer border border-transparent hover:border-emerald-200"
-                  onClick={() => setExpandedCourse(expandedCourse === course.id ? null : course.id)}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-600">
-                        <GraduationCap size={18} />
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">{course.title}</h4>
-                        {course.duration && <p className="text-xs text-slate-400 mt-0.5">{course.duration}</p>}
-                      </div>
-                    </div>
-                    <ChevronRight size={18} className={`text-slate-300 transition-transform ${expandedCourse === course.id ? 'rotate-90' : ''}`} />
-                  </div>
-                  {expandedCourse === course.id && course.description && (
-                    <div className="mt-3 pt-3 border-t border-emerald-100 animate-fade-in">
-                      <p className="text-sm text-slate-600">{course.description}</p>
-                    </div>
-                  )}
-                </div>
-              )) : (
-                <div className="py-16 text-center">
-                  <p className="text-slate-400">Kurslar kiritilmagan</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery Section */}
-      <section 
-        ref={galleryReveal.ref}
-        className={`container mx-auto px-6 py-16 transition-all duration-1000 ${
-          galleryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="text-center mb-12">
-          <span className="text-sm font-bold text-purple-600 uppercase tracking-wider">Media</span>
-          <h2 className="text-4xl font-black text-slate-900 mt-2">Fotogalereya</h2>
-        </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {gallery.length > 0 ? gallery.slice(galleryCarouselIndex, galleryCarouselIndex + galleryCarouselSize).map((item, idx) => (
-            <div 
-              key={item.id} 
-              onClick={() => openGalleryModal(item)}
-              className="group relative aspect-square overflow-hidden rounded-2xl bg-slate-200 cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 animate-fade-in"
-            >
-              <img 
-                src={item.coverImageUrl} 
-                alt={item.title || "Gallery"} 
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-4 left-4 right-4">
-                  {item.title && <p className="text-white font-bold text-sm truncate">{item.title}</p>}
-                </div>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  <ImageIcon className="text-white" size={24} />
-                </div>
-              </div>
-            </div>
-          )) : (
-            <div className="col-span-full py-20 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-              <p className="text-slate-400">Media fayllar kiritilmagan</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Art Gallery Section */}
-      <section 
-        ref={artGalleryReveal.ref}
-        className={`py-24 bg-gradient-to-b from-white to-slate-50 transition-all duration-1000 ${
-          artGalleryReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <ArtGallerySection items={artGallery} />
-      </section>
-
-      <section className="container mx-auto px-6 py-16">
-        <div className="mb-12 text-center">
-          <span className="text-sm font-bold text-rose-600 uppercase tracking-wider">Qabul</span>
-          <h2 className="mt-2 text-4xl font-black text-slate-900">Murojaatlar va arizalar</h2>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[2rem] bg-white p-6 shadow-lg">
-            <h3 className="text-2xl font-black text-slate-900">Virtual qabulxona</h3>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                try {
-                  await BackendAPI.createAppeal(appealForm);
-                  await refreshData();
-                  setSubmissionMessage("Murojaat yuborildi.");
-                  setAppealForm({ full_name: '', appeal_type: 'murojaat', description: '', phone: '', email: '', telegram_link: '' });
-                } catch (error) {
-                  setSubmissionMessage(error instanceof Error ? error.message : "Xatolik yuz berdi");
-                }
-              }}
-              className="mt-6 grid gap-4"
-            >
-              <input className="rounded-xl border px-4 py-3" value={appealForm.full_name} onChange={(e) => setAppealForm((p) => ({ ...p, full_name: e.target.value }))} placeholder="Murojaatchi F.I.SH" />
-              <select className="rounded-xl border px-4 py-3" value={appealForm.appeal_type} onChange={(e) => setAppealForm((p) => ({ ...p, appeal_type: e.target.value as any }))}>
-                <option value="murojaat">Murojaat</option>
-                <option value="shikoyat">Shikoyat</option>
-                <option value="taklif">Taklif</option>
-              </select>
-              <textarea className="min-h-28 rounded-xl border p-3" value={appealForm.description} onChange={(e) => setAppealForm((p) => ({ ...p, description: e.target.value }))} placeholder="Tavsifi" />
-              <input className="rounded-xl border px-4 py-3" value={appealForm.phone} onChange={(e) => setAppealForm((p) => ({ ...p, phone: e.target.value }))} placeholder="Telefon raqami" />
-              <input className="rounded-xl border px-4 py-3" value={appealForm.email} onChange={(e) => setAppealForm((p) => ({ ...p, email: e.target.value }))} placeholder="Elektron pochta" />
-              <input className="rounded-xl border px-4 py-3" value={appealForm.telegram_link} onChange={(e) => setAppealForm((p) => ({ ...p, telegram_link: e.target.value }))} placeholder="Telegram link" />
-              <button className="rounded-xl bg-slate-900 px-4 py-3 font-bold text-white">Yuborish</button>
-            </form>
-          </div>
-          <div className="rounded-[2rem] bg-white p-6 shadow-lg">
-            <h3 className="text-2xl font-black text-slate-900">Ariza yuborish</h3>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                try {
-                  await BackendAPI.createApplication(applicationForm);
-                  await refreshData();
-                  setSubmissionMessage("Ariza yuborildi.");
-                  setApplicationForm({ full_name: '', application_type: 'professional_development', workplace: '', direction: '', phone: '', telegram_link: '' });
-                } catch (error) {
-                  setSubmissionMessage(error instanceof Error ? error.message : "Xatolik yuz berdi");
-                }
-              }}
-              className="mt-6 grid gap-4"
-            >
-              <input className="rounded-xl border px-4 py-3" value={applicationForm.full_name} onChange={(e) => setApplicationForm((p) => ({ ...p, full_name: e.target.value }))} placeholder="F.I.SH" />
-              <select className="rounded-xl border px-4 py-3" value={applicationForm.application_type} onChange={(e) => setApplicationForm((p) => ({ ...p, application_type: e.target.value as any }))}>
-                <option value="professional_development">Malaka oshirish</option>
-                <option value="retraining">Qayta tayyorlash</option>
-              </select>
-              <input className="rounded-xl border px-4 py-3" value={applicationForm.workplace} onChange={(e) => setApplicationForm((p) => ({ ...p, workplace: e.target.value }))} placeholder={"Asosiy ish joyi (\"yo'q\" deb yozish mumkin)"} />
-              <input className="rounded-xl border px-4 py-3" value={applicationForm.direction} onChange={(e) => setApplicationForm((p) => ({ ...p, direction: e.target.value }))} placeholder="Yo'nalish" />
-              <input className="rounded-xl border px-4 py-3" value={applicationForm.phone} onChange={(e) => setApplicationForm((p) => ({ ...p, phone: e.target.value }))} placeholder="Telefon raqam" />
-              <input className="rounded-xl border px-4 py-3" value={applicationForm.telegram_link} onChange={(e) => setApplicationForm((p) => ({ ...p, telegram_link: e.target.value }))} placeholder="Telegram link" />
-              <button className="rounded-xl bg-blue-700 px-4 py-3 font-bold text-white">Yuborish</button>
-            </form>
-          </div>
-        </div>
-        {submissionMessage && (
-          <div className="mt-6 rounded-2xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-            {submissionMessage}
-          </div>
-        )}
-      </section>
-
-      <section className="container mx-auto px-6 py-16">
-        <div className="mb-12 text-center">
-          <span className="text-sm font-bold text-amber-600 uppercase tracking-wider">Kutubxona</span>
-          <h2 className="mt-2 text-4xl font-black text-slate-900">Adabiyotlar</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
-          {documents.filter((item) => item.category === 'library').length > 0 ? (
-            documents
-              .filter((item) => item.category === 'library')
-              .map((item) => (
-                <a
-                  key={item.id}
-                  href={item.fileUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group overflow-hidden rounded-[1.5rem] bg-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
-                >
-                  <div className="aspect-[3/4] bg-slate-100">
-                    {item.coverImageUrl ? (
-                      <img src={item.coverImageUrl} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-sm text-slate-400">Muqova yo'q</div>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <p className="line-clamp-2 text-sm font-bold text-slate-900">{item.title}</p>
-                  </div>
-                </a>
-              ))
-          ) : (
-            <div className="col-span-full rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 py-16 text-center text-slate-400">
-              Hozircha kutubxona materiallari kiritilmagan
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Gallery Modal */}
-      {selectedGallery && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center animate-fade-in"
-          onClick={closeGalleryModal}
-        >
-          <button 
-            onClick={closeGalleryModal}
-            className="absolute top-4 right-4 z-50 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-          >
-            <X className="text-white" size={28} />
-          </button>
-          
-          {selectedGallery.title && (
-            <div className="absolute top-4 left-4 z-50">
-              <h3 className="text-white text-xl font-bold">{selectedGallery.title}</h3>
-            </div>
-          )}
-
-          {(() => {
-            const allImages = [{ imageUrl: selectedGallery.coverImageUrl, id: 'cover' }, ...selectedGallery.images];
-            return allImages.length > 1 && (
-              <>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-white/10 hover:bg-white/20 rounded-full transition-all hover:scale-110"
-                >
-                  <ChevronLeft className="text-white" size={32} />
-                </button>
-                <button 
-                  onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 z-50 p-4 bg-white/10 hover:bg-white/20 rounded-full transition-all hover:scale-110"
-                >
-                  <ChevronRight className="text-white" size={32} />
-                </button>
-              </>
-            );
-          })()}
-
-          <div 
-            className="relative w-full h-full flex items-center justify-center p-8 md:p-16"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {(() => {
-              const allImages = [{ imageUrl: selectedGallery.coverImageUrl, id: 'cover' }, ...selectedGallery.images];
-              return (
-                <img 
-                  key={allImages[currentImageIndex].id}
-                  src={allImages[currentImageIndex].imageUrl} 
-                  alt={selectedGallery.title || "Gallery image"}
-                  className="max-h-full max-w-full object-contain rounded-lg shadow-2xl animate-scale-in"
-                />
-              );
-            })()}
-          </div>
-
-          {(() => {
-            const allImages = [{ imageUrl: selectedGallery.coverImageUrl, id: 'cover' }, ...selectedGallery.images];
-            return allImages.length > 1 && (
-              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-50">
-                {allImages.map((_, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); setIsAutoPlaying(false); }}
-                    className={`w-2.5 h-2.5 rounded-full transition-all ${
-                      idx === currentImageIndex ? 'bg-white scale-125' : 'bg-white/40 hover:bg-white/60'
-                    }`}
-                  />
-                ))}
-              </div>
-            );
-          })()}
-
-          <div className="absolute bottom-6 right-6 z-50">
-            <button 
-              onClick={(e) => { e.stopPropagation(); setIsAutoPlaying(!isAutoPlaying); }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                isAutoPlaying ? 'bg-green-500/80 text-white' : 'bg-white/10 text-white/70'
-              }`}
-            >
-              {isAutoPlaying ? 'Avto ▶' : 'To\'xtatildi'}
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Useful Links Section */}
-      <section 
+      <section
         ref={linksReveal.ref}
         className={`container mx-auto px-6 py-16 transition-all duration-1000 ${
           linksReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
@@ -1137,59 +631,27 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Custom CSS for animations */}
-      <style>{`
-        @keyframes fade-in-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
+        {/* Custom CSS for animations */}
+        <style>{`
+          @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
+          @keyframes scale-in {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
           }
-        }
-        
-        @keyframes scale-in {
-          from {
-            opacity: 0;
-            transform: scale(0.9);
+          @keyframes scroll-down {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(8px); opacity: 0.5; }
           }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        
-        @keyframes scroll-down {
-          0%, 100% {
-            transform: translateY(0);
-            opacity: 1;
-          }
-          50% {
-            transform: translateY(8px);
-            opacity: 0.5;
-          }
-        }
-        
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s ease-out forwards;
-        }
-        
-        .animate-fade-in {
-          animation: fade-in-up 0.5s ease-out forwards;
-        }
-        
-        .animate-scale-in {
-          animation: scale-in 0.5s ease-out forwards;
-        }
-        
-        .animate-scroll-down {
-          animation: scroll-down 1.5s ease-in-out infinite;
-        }
-      `}</style>
+          .animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
+          .animate-fade-in { animation: fade-in-up 0.5s ease-out forwards; }
+          .animate-scale-in { animation: scale-in 0.5s ease-out forwards; }
+          .animate-scroll-down { animation: scroll-down 1.5s ease-in-out infinite; }
+        `}</style>
     </div>
   );
 };
 
-export default Home;
+export default Home;

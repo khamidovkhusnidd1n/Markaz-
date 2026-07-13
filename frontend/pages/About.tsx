@@ -1,11 +1,21 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Phone, Clock, Calendar, Mail, Image as ImageIcon } from 'lucide-react';
 
 const About: React.FC = () => {
   const { personnel, aboutContent } = useApp();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'info' | 'structure' | 'leadership' | 'staff'>('info');
+
+  useEffect(() => {
+    const hash = location.hash?.replace('#', '');
+    if (hash && ['info', 'structure', 'leadership', 'staff'].includes(hash)) {
+      setActiveTab(hash as any);
+    }
+  }, [location.hash]);
+
 
   const leadership = personnel.filter(p => p.category === 'leadership');
   const staff = personnel.filter(p => p.category === 'staff');

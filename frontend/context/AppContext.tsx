@@ -42,6 +42,8 @@ interface AppState {
   internationalProjects: InternationalProject[];
   internationalMedia: InternationalMedia[];
   loading: boolean;
+  // BUG FIX: expose error state so UI can show a friendly message
+  backendError: string | null;
   refreshData: () => Promise<void>;
 }
 
@@ -76,6 +78,7 @@ const AppContext = createContext<AppState | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [loading, setLoading] = useState(true);
+  const [backendError, setBackendError] = useState<string | null>(null);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
   const [artGallery, setArtGallery] = useState<ArtGalleryItem[]>([]);
@@ -87,6 +90,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [journalIssues, setJournalIssues] = useState<JournalIssue[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [pdPlans, setPdPlans] = useState<PDPlanRecord[]>([]);
+  // BUG FIX: start with INITIAL_STATS so charts always have fallback data
   const [stats, setStats] = useState<Statistics>(INITIAL_STATS);
   const [aboutContent, setAboutContent] = useState<AppContent>(defaultAbout);
   const [journalSettings, setJournalSettings] = useState<JournalSettings>(defaultJournalSettings);
@@ -97,6 +101,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const refreshData = useCallback(async () => {
     setLoading(true);
+    setBackendError(null);
     try {
       const data = await BackendAPI.getAllData();
       setNews(data.news);
@@ -110,7 +115,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setJournalIssues(data.journalIssues);
       setDocuments(data.documents);
       setPdPlans(data.pdPlans);
-      setStats(data.stats);
+      // BUG FIX: only update stats if backend returned real data
+      if (data.stats && (data.stats.totalPedagogs > 0 || data.stats.studentsCount.length > 0)) {
+        setStats(data.stats);
+      }
       setAboutContent(data.about);
       setJournalSettings(data.journalSettings);
       setInternationalSettings(data.internationalSettings);
@@ -118,7 +126,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setInternationalProjects(data.internationalProjects);
       setInternationalMedia(data.internationalMedia);
     } catch (error) {
-      console.error("Ma'lumotlarni yuklashda xatolik:", error);
+      const msg = error instanceof Error ? error.message : "Ma'lumotlarni yuklashda xatolik";
+      console.error("Backend xatosi:", msg);
+      // BUG FIX: store error but don't crash — keep existing/default data visible
+      setBackendError(msg);
     } finally {
       setLoading(false);
     }
@@ -128,7 +139,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     refreshData();
   }, [refreshData]);
 
-  if (loading && news.length === 0 && gallery.length === 0) {
+  // BUG FIX: Don't block render waiting for backend — show skeleton only on very first load
+  // when there's literally nothing to show yet
+  if (loading && news.length === 0 && gallery.length === 0 && !backendError) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
         <div className="text-center">
@@ -161,6 +174,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         internationalProjects,
         internationalMedia,
         loading,
+        backendError,
         refreshData,
       }}
     >

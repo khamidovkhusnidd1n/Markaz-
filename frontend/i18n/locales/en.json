@@ -1,67 +1,71 @@
 {
   "common": {
     "home": "Home",
-    "about": "About Us",
-    "journal": "Scientific Journal",
-    "international": "International Relations",
-    "students": "For Students",
-    "openData": "Open Data",
-    "remoteEducation": "Remote Education",
+    "about": "About the center",
+    "journal": "Scientific journal",
+    "international": "International relations",
+    "students": "For listeners",
+    "openData": "Open data",
+    "remoteEducation": "Distance Learning",
     "details": "Details",
-    "contact": "Contact",
+    "contact": "Connect",
     "search": "Search",
     "loading": "Loading...",
-    "error": "An error occurred",
+    "error": "Error occurred",
     "noData": "No data available"
   },
   "header": {
-    "title": "Center for Teacher Retraining and Professional Development in the Field of Art Education under the Uzbek Academy of Arts",
-    "language": "Language"
+    "title": "Center for retraining and advanced training of teachers and specialists in the areas of artistic education under the Academy of Arts of Uzbekistan",
+    "language": "LANGUAGE"
   },
   "footer": {
-    "about": "About",
-    "aboutText": "Center for teacher retraining and professional development in the field of art education.",
-    "contact": "Contact",
-    "address": "Tashkent, Chilonzor District, 26-Quarter, Shirin Street, 1A",
+    "about": "About the center",
+    "aboutText": "Center for retraining and advanced training of teachers and specialists in the field of art education.",
+    "contact": "Connect",
+    "address": "Tashkent city, Uchtepa district, Chilanzor 26-daha, Shirin street, 1A",
     "phone": "(+99877) 363-38-36",
     "email": "uzbahuzuridagimarkaz@gmail.com",
-    "usefulLinks": "Useful Links",
+    "usefulLinks": "Useful links",
     "copyright": "All rights reserved"
   },
   "home": {
-    "hero": "The Future of Art Education with Us",
-    "heroSubtitle": "We prepare professional educators at our retraining and professional development center",
+    "hero": "The future of art education is with us.",
+    "heroPart1": "Contemplation through art,",
+    "heroPart2": "Education",
+    "heroPart3": "progress through!",
+    "heroSubtitle": "We train professional educators at the Advanced Training and Retraining Center",
+    "heroSubtitleAlt": "A true teacher cultivates creativity in the student.",
     "stats": {
       "professors": "Professors",
-      "dotsents": "Associate Professors",
-      "academics": "Academicians",
-      "potential": "Scientific Potential"
+      "dotsents": "Associate professors",
+      "academics": "Academics",
+      "potential": "Scientific potential"
     },
-    "latestNews": "Latest News",
-    "teachers": "Our Teachers",
-    "courses": "Our Programs",
-    "gallery": "Photo Gallery",
+    "latestNews": "Latest news",
+    "teachers": "Our teachers",
+    "courses": "Our programs",
+    "gallery": "Photo gallery",
     "artGallery": "Art Gallery",
     "usefulLinks": "Useful Links"
   },
   "news": {
     "important": "Important",
-    "noNews": "No news available"
+    "noNews": "No news yet."
   },
   "gallery": {
     "viewMore": "View",
-    "noGallery": "Media files not available"
+    "noGallery": "Media files not included"
   },
   "international": {
-    "title": "International Relations",
-    "about": "About International Relations",
-    "partners": "Partners",
-    "foreignPartners": "Foreign Partners",
+    "title": "International relations",
+    "about": "About international relations",
+    "partners": "PARTNERS",
+    "foreignPartners": "Foreign partners",
     "projects": "Projects",
-    "collaborationProjects": "Collaboration Projects",
+    "collaborationProjects": "Collaborative projects",
     "photos": "Photos",
-    "videos": "Video Library",
-    "ongoing": "Ongoing",
+    "videos": "Video library",
+    "ongoing": "In progress",
     "completed": "Completed"
   }
 }

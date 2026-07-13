@@ -84,6 +84,11 @@ class NewsViewSet(viewsets.ModelViewSet):
             return NewsCreateSerializer
         return NewsSerializer
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['lang'] = self.request.query_params.get('lang', 'uz')
+        return context
+
     def perform_create(self, serializer):
         serializer.save(is_active=True)
 
@@ -211,7 +216,7 @@ class GalleryItemViewSet(viewsets.ModelViewSet):
         created = []
 
         for idx, img in enumerate(images):
-            item = GalleryItem.objects.create(image=img, order=last_order + idx)
+            item = GalleryItem.objects.create(cover_image=img, order=last_order + idx)
             created.append(item)
 
         serializer = GalleryItemSerializer(created, many=True, context={'request': request})
@@ -437,6 +442,11 @@ class TeacherViewSet(viewsets.ModelViewSet):
             return queryset
         return queryset.filter(is_active=True)
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['lang'] = self.request.query_params.get('lang', 'uz')
+        return context
+
     def perform_create(self, serializer):
         serializer.save(is_active=True)
 
@@ -456,6 +466,11 @@ class PersonnelViewSet(viewsets.ModelViewSet):
         if category in ['leadership', 'staff']:
             queryset = queryset.filter(category=category)
         return queryset
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['lang'] = self.request.query_params.get('lang', 'uz')
+        return context
 
     def perform_create(self, serializer):
         serializer.save(is_active=True)
@@ -482,6 +497,11 @@ class CourseViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(course_type=course_type)
         return queryset
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['lang'] = self.request.query_params.get('lang', 'uz')
+        return context
+
     def perform_create(self, serializer):
         serializer.save(is_active=True)
 
@@ -498,6 +518,11 @@ class JournalIssueViewSet(viewsets.ModelViewSet):
         if has_admin_access(self.request):
             return queryset
         return queryset.filter(is_active=True)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['lang'] = self.request.query_params.get('lang', 'uz')
+        return context
 
     def perform_create(self, serializer):
         serializer.save(is_active=True)
@@ -518,6 +543,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
         if category in ['regulatory', 'plan', 'open_data', 'library']:
             queryset = queryset.filter(category=category)
         return queryset
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['lang'] = self.request.query_params.get('lang', 'uz')
+        return context
 
     def perform_create(self, serializer):
         serializer.save(is_active=True)
@@ -746,93 +776,95 @@ def get_all_data(request):
     Returns all active content in a single request.
     """
     logger.info("All data requested from %s", request.META.get('REMOTE_ADDR'))
+    lang = request.query_params.get('lang', 'uz')
+    ctx = {'request': request, 'lang': lang}
     try:
         data = {
             'news': NewsSerializer(
                 News.objects.filter(is_active=True).order_by('-created_at'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'gallery': GalleryItemSerializer(
                 GalleryItem.objects.filter(is_active=True).order_by('order', '-created_at'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'artGallery': ArtGalleryItemSerializer(
                 ArtGalleryItem.objects.filter(is_active=True).order_by('order', '-created_at'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'appeals': AppealSerializer(
-                Appeal.objects.all().order_by('-created_at'),
+                Appeal.objects.all().order_by('-created_at') if has_admin_access(request) else Appeal.objects.none(),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'applications': ApplicationSerializer(
-                Application.objects.all().order_by('-created_at'),
+                Application.objects.all().order_by('-created_at') if has_admin_access(request) else Application.objects.none(),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'teachers': TeacherSerializer(
                 Teacher.objects.filter(is_active=True).order_by('order', 'full_name'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'courses': CourseSerializer(
                 Course.objects.filter(is_active=True).order_by('order', 'title'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'personnel': PersonnelSerializer(
                 Personnel.objects.filter(is_active=True).order_by('order', 'full_name'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'stats': StatisticsSerializer(
                 Statistics.get_instance(),
-                context={'request': request}
+                context=ctx
             ).data,
             'documents': DocumentSerializer(
                 Document.objects.filter(is_active=True).order_by('-created_at'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'listeners': ListenerSerializer(
                 Listener.objects.all().order_by('-created_at'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'journalIssues': JournalIssueSerializer(
                 JournalIssue.objects.filter(is_active=True).order_by('-year', '-created_at'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'about': AppContentSerializer(
                 AppContent.get_instance(),
-                context={'request': request}
+                context=ctx
             ).data,
             'journalSettings': JournalSettingsSerializer(
                 JournalSettings.get_instance(),
-                context={'request': request}
+                context=ctx
             ).data,
             'internationalSettings': InternationalSettingsSerializer(
                 InternationalSettings.get_instance(),
-                context={'request': request}
+                context=ctx
             ).data,
             'internationalPartners': InternationalPartnerSerializer(
                 InternationalPartner.objects.filter(is_active=True).order_by('order', 'name'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'internationalProjects': InternationalProjectSerializer(
                 InternationalProject.objects.filter(is_active=True).order_by('order', '-start_date'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
             'internationalMedia': InternationalMediaSerializer(
                 InternationalMedia.objects.filter(is_active=True).order_by('order', '-created_at'),
                 many=True,
-                context={'request': request}
+                context=ctx
             ).data,
         }
         return Response(data)

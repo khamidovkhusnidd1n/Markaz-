@@ -1,49 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Download, Info, Search } from 'lucide-react';
+import React from 'react';
+import { Download, Info, CheckCircle } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
 const Students: React.FC = () => {
-  const { pdPlans, documents, aboutContent } = useApp();
-  const location = useLocation();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<typeof pdPlans>([]);
-  const [hasSearched, setHasSearched] = useState(false);
-
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const query = params.get('q');
-    if (query) {
-      setSearchTerm(query);
-      const lowered = query.toLowerCase();
-      const results = pdPlans.filter((item) =>
-        item.fullName.toLowerCase().includes(lowered) ||
-        item.workplace.toLowerCase().includes(lowered) ||
-        item.courseType.toLowerCase().includes(lowered) ||
-        item.duration.toLowerCase().includes(lowered)
-      );
-      setSearchResults(results);
-      setHasSearched(true);
-    }
-  }, [location.search, pdPlans]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setHasSearched(true);
-    const lowered = searchTerm.trim().toLowerCase();
-    if (!lowered) {
-      setSearchResults([]);
-      return;
-    }
-    setSearchResults(
-      pdPlans.filter((item) =>
-        item.fullName.toLowerCase().includes(lowered) ||
-        item.workplace.toLowerCase().includes(lowered) ||
-        item.courseType.toLowerCase().includes(lowered) ||
-        item.duration.toLowerCase().includes(lowered)
-      )
-    );
-  };
+  const { documents, aboutContent } = useApp();
 
   const regDocs = documents.filter((doc) => doc.category === 'regulatory');
 
@@ -51,66 +11,25 @@ const Students: React.FC = () => {
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="bg-blue-900 py-20 text-white">
         <div className="container mx-auto px-4">
-          <h1 className="mb-4 text-4xl font-bold">Tinglovchilar uchun</h1>
-          <p className="text-blue-200">Malaka oshirish rejalari, me'yoriy hujjatlar va foydali eslatmalar.</p>
+          <h1 className="mb-4 text-4xl font-bold">Reestr (Sertifikat tekshirish)</h1>
+          <p className="text-blue-200">Tinglovchilar uchun me'yoriy hujjatlar va sertifikatlar reestri.</p>
         </div>
       </div>
 
       <div className="container mx-auto -mt-10 grid grid-cols-1 gap-8 px-4 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
-          <section className="rounded-2xl bg-white p-8 shadow-lg">
+          
+          <section className="rounded-2xl border bg-white p-8 shadow-sm">
             <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-blue-900">
-              <Search className="text-amber-500" /> Malaka oshirish rejasidan qidirish
+              <CheckCircle className="text-blue-600" /> Sertifikat tekshirish (Tez kunda)
             </h2>
-            <form onSubmit={handleSearch} className="mb-8 flex flex-col gap-3 sm:flex-row">
-              <input
-                type="text"
-                placeholder="F.I.SH yoki ish joyini kiriting..."
-                className="flex-grow rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button type="submit" className="rounded-xl bg-blue-700 px-8 py-3 font-bold text-white transition-colors hover:bg-blue-800">
-                Qidirish
-              </button>
-            </form>
-
-            {hasSearched && (
-              <div className="overflow-x-auto">
-                {searchResults.length > 0 ? (
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 uppercase text-gray-500">
-                      <tr>
-                        <th className="border-b px-4 py-3">F.I.SH</th>
-                        <th className="border-b px-4 py-3">Ish joyi</th>
-                        <th className="border-b px-4 py-3">Kurs</th>
-                        <th className="border-b px-4 py-3">Muddat</th>
-                        <th className="border-b px-4 py-3">Sertifikat</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {searchResults.map((item) => (
-                        <tr key={item.id} className="transition-colors hover:bg-blue-50">
-                          <td className="px-4 py-4 font-medium text-gray-900">{item.fullName}</td>
-                          <td className="px-4 py-4 text-gray-600">{item.workplace}</td>
-                          <td className="px-4 py-4 text-gray-600">{item.courseType}</td>
-                          <td className="px-4 py-4 text-gray-600">{item.duration || '-'}</td>
-                          <td className="px-4 py-4">
-                            <span className="rounded bg-green-100 px-2 py-1 text-xs font-bold text-green-700">
-                              {item.series} {item.number}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <div className="rounded-xl bg-gray-50 py-10 text-center text-gray-500">
-                    Kechirasiz, bunday ma'lumot topilmadi.
-                  </div>
-                )}
+            <div className="rounded-xl bg-blue-50 py-12 text-center border border-blue-100">
+              <p className="text-blue-800 mb-4 max-w-md mx-auto">Sertifikatning seriyasi va raqamini kiritish orqali uning haqiqiyligini tekshirish tizimi tez orada ishga tushadi.</p>
+              <div className="flex justify-center gap-3 max-w-sm mx-auto opacity-50 pointer-events-none">
+                <input type="text" placeholder="Seriya va raqam (Masalan, MO 123456)" className="flex-grow rounded-lg border px-4 py-2" />
+                <button className="bg-blue-700 text-white px-4 py-2 rounded-lg">Tekshirish</button>
               </div>
-            )}
+            </div>
           </section>
 
           <section className="rounded-2xl border bg-white p-8 shadow-sm">

@@ -30,7 +30,11 @@
   },
   "home": {
     "hero": "Badiiy ta'limning kelajafi biz bilan",
+    "heroPart1": "San'at orqali tafakkur,",
+    "heroPart2": "Ta'lim",
+    "heroPart3": "orqali taraqqiyot!",
     "heroSubtitle": "Malaka oshirish va qayta tayyorlash markazida professional pedagoglar tayyorlaymiz",
+    "heroSubtitleAlt": "Haqiqiy pedagog o‘quvchida ijodkorlikni tarbiyalaydi.",
     "stats": {
       "professors": "Professorlar",
       "dotsents": "Dotsentlar",

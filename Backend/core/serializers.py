@@ -11,11 +11,25 @@ from .models import (
 )
 
 
+def get_translated(obj, field, lang):
+    """Return translated field value if available, fallback to original."""
+    if lang and lang != 'uz':
+        translated = getattr(obj, f'{field}_{lang}', '') or ''
+        if translated.strip():
+            return translated
+    return getattr(obj, field, '') or ''
+
+
 class NewsCategorySerializer(serializers.ModelSerializer):
+    name_translated = serializers.SerializerMethodField()
+
     class Meta:
         model = NewsCategory
-        fields = ['id', 'name', 'slug', 'order', 'is_active', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'name_translated', 'name_ru', 'name_en', 'slug', 'order', 'is_active', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_name_translated(self, obj):
+        return get_translated(obj, 'name', self.context.get('lang', 'uz'))
 
 
 class NewsImageSerializer(serializers.ModelSerializer):
@@ -42,11 +56,16 @@ class NewsSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
     category_name = serializers.CharField(source='category.name', read_only=True)
     category_id = serializers.IntegerField(source='category.id', read_only=True)
+    title_translated = serializers.SerializerMethodField()
+    content_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = News
         fields = [
-            'id', 'title', 'category', 'category_id', 'category_name', 'content', 'images', 'image_url',
+            'id', 'title', 'title_ru', 'title_en', 'title_translated',
+            'category', 'category_id', 'category_name',
+            'content', 'content_ru', 'content_en', 'content_translated',
+            'images', 'image_url',
             'is_important', 'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -60,6 +79,12 @@ class NewsSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(first_image.image.url)
             return first_image.image.url
         return None
+
+    def get_title_translated(self, obj):
+        return get_translated(obj, 'title', self.context.get('lang', 'uz'))
+
+    def get_content_translated(self, obj):
+        return get_translated(obj, 'content', self.context.get('lang', 'uz'))
 
 
 class NewsCreateSerializer(serializers.ModelSerializer):
@@ -143,11 +168,19 @@ class ListenerBulkImportSerializer(serializers.Serializer):
 class TeacherSerializer(serializers.ModelSerializer):
     """Serializer for Teacher model - simplified."""
     photo_url = serializers.SerializerMethodField()
+    position_translated = serializers.SerializerMethodField()
+    degree_translated = serializers.SerializerMethodField()
+    title_translated = serializers.SerializerMethodField()
+    awards_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = Teacher
         fields = [
-            'id', 'full_name', 'position', 'degree', 'title', 'awards',
+            'id', 'full_name',
+            'position', 'position_ru', 'position_en', 'position_translated',
+            'degree', 'degree_ru', 'degree_en', 'degree_translated',
+            'title', 'title_ru', 'title_en', 'title_translated',
+            'awards', 'awards_ru', 'awards_en', 'awards_translated',
             'photo', 'photo_url', 'order', 'is_active',
             'created_at', 'updated_at'
         ]
@@ -161,6 +194,18 @@ class TeacherSerializer(serializers.ModelSerializer):
             return obj.photo.url
         return None
 
+    def get_position_translated(self, obj):
+        return get_translated(obj, 'position', self.context.get('lang', 'uz'))
+
+    def get_degree_translated(self, obj):
+        return get_translated(obj, 'degree', self.context.get('lang', 'uz'))
+
+    def get_title_translated(self, obj):
+        return get_translated(obj, 'title', self.context.get('lang', 'uz'))
+
+    def get_awards_translated(self, obj):
+        return get_translated(obj, 'awards', self.context.get('lang', 'uz'))
+
 
 class PersonnelSerializer(serializers.ModelSerializer):
     """Serializer for Personnel model."""
@@ -169,13 +214,19 @@ class PersonnelSerializer(serializers.ModelSerializer):
         read_only=True
     )
     photo_url = serializers.SerializerMethodField()
+    position_translated = serializers.SerializerMethodField()
+    duties_translated = serializers.SerializerMethodField()
+    biography_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = Personnel
         fields = [
-            'id', 'full_name', 'position', 'phone', 'email', 'reception_hours',
+            'id', 'full_name',
+            'position', 'position_ru', 'position_en', 'position_translated',
+            'phone', 'email', 'reception_hours',
             'photo', 'photo_url', 'category', 'category_display',
-            'duties', 'biography',
+            'duties', 'duties_ru', 'duties_en', 'duties_translated',
+            'biography', 'biography_ru', 'biography_en', 'biography_translated',
             'order', 'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -188,6 +239,15 @@ class PersonnelSerializer(serializers.ModelSerializer):
             return obj.photo.url
         return None
 
+    def get_position_translated(self, obj):
+        return get_translated(obj, 'position', self.context.get('lang', 'uz'))
+
+    def get_duties_translated(self, obj):
+        return get_translated(obj, 'duties', self.context.get('lang', 'uz'))
+
+    def get_biography_translated(self, obj):
+        return get_translated(obj, 'biography', self.context.get('lang', 'uz'))
+
 
 class CourseSerializer(serializers.ModelSerializer):
     """Serializer for Course model."""
@@ -196,12 +256,18 @@ class CourseSerializer(serializers.ModelSerializer):
         read_only=True
     )
     photo_url = serializers.SerializerMethodField()
+    title_translated = serializers.SerializerMethodField()
+    description_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = Course
         fields = [
-            'id', 'title', 'course_type', 'course_type_display',
-            'duration', 'description', 'phone_numbers', 'email',
+            'id',
+            'title', 'title_ru', 'title_en', 'title_translated',
+            'course_type', 'course_type_display',
+            'duration',
+            'description', 'description_ru', 'description_en', 'description_translated',
+            'phone_numbers', 'email',
             'telegram_link', 'photo', 'photo_url', 'is_active', 'order',
             'created_at', 'updated_at'
         ]
@@ -214,6 +280,12 @@ class CourseSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.photo.url)
             return obj.photo.url
         return None
+
+    def get_title_translated(self, obj):
+        return get_translated(obj, 'title', self.context.get('lang', 'uz'))
+
+    def get_description_translated(self, obj):
+        return get_translated(obj, 'description', self.context.get('lang', 'uz'))
 
 
 class JournalIssueSerializer(serializers.ModelSerializer):
@@ -255,11 +327,13 @@ class DocumentSerializer(serializers.ModelSerializer):
     )
     file_url = serializers.SerializerMethodField()
     cover_image_url = serializers.SerializerMethodField()
+    title_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
         fields = [
-            'id', 'title', 'category', 'category_display',
+            'id', 'title', 'title_ru', 'title_en', 'title_translated',
+            'category', 'category_display',
             'file', 'file_url', 'cover_image', 'cover_image_url',
             'is_active', 'created_at', 'updated_at'
         ]
@@ -273,15 +347,30 @@ class DocumentSerializer(serializers.ModelSerializer):
             return obj.file.url
         return None
 
+    def get_cover_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.cover_image:
+            if request:
+                return request.build_absolute_uri(obj.cover_image.url)
+            return obj.cover_image.url
+        return None
+
+    def get_title_translated(self, obj):
+        return get_translated(obj, 'title', self.context.get('lang', 'uz'))
+
 
 class ArtGalleryItemSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
+    title_translated = serializers.SerializerMethodField()
+    description_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = ArtGalleryItem
         fields = [
-            'id', 'title', 'author', 'image', 'image_url',
-            'description', 'order', 'is_active', 'created_at', 'updated_at'
+            'id', 'title', 'title_ru', 'title_en', 'title_translated',
+            'author', 'image', 'image_url',
+            'description', 'description_ru', 'description_en', 'description_translated',
+            'order', 'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
@@ -292,6 +381,12 @@ class ArtGalleryItemSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.image.url)
             return obj.image.url
         return None
+
+    def get_title_translated(self, obj):
+        return get_translated(obj, 'title', self.context.get('lang', 'uz'))
+
+    def get_description_translated(self, obj):
+        return get_translated(obj, 'description', self.context.get('lang', 'uz'))
 
 
 class AppealSerializer(serializers.ModelSerializer):
@@ -318,14 +413,6 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
-
-    def get_cover_image_url(self, obj):
-        request = self.context.get('request')
-        if obj.cover_image:
-            if request:
-                return request.build_absolute_uri(obj.cover_image.url)
-            return obj.cover_image.url
-        return None
 
 
 class YearlyStatisticsSerializer(serializers.ModelSerializer):
@@ -394,13 +481,22 @@ class AppContentSerializer(serializers.ModelSerializer):
     header_logo_url = serializers.SerializerMethodField()
     footer_logo_url = serializers.SerializerMethodField()
     hero_images = serializers.SerializerMethodField()
+    history_translated = serializers.SerializerMethodField()
+    structure_translated = serializers.SerializerMethodField()
+    student_notes_translated = serializers.SerializerMethodField()
+    site_name_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = AppContent
         fields = [
-            'id', 'history', 'structure', 'structure_image', 'structure_image_url',
-            'student_notes', 'contact_info', 'address', 'map_embed_url',
-            'site_name', 'header_logo', 'header_logo_url',
+            'id',
+            'history', 'history_ru', 'history_en', 'history_translated',
+            'structure', 'structure_ru', 'structure_en', 'structure_translated',
+            'structure_image', 'structure_image_url',
+            'student_notes', 'student_notes_ru', 'student_notes_en', 'student_notes_translated',
+            'contact_info', 'address', 'map_embed_url',
+            'site_name', 'site_name_ru', 'site_name_en', 'site_name_translated',
+            'header_logo', 'header_logo_url',
             'footer_logo', 'footer_logo_url', 'hero_video_url', 'hero_images',
             'created_at', 'updated_at'
         ]
@@ -441,6 +537,18 @@ class AppContentSerializer(serializers.ModelSerializer):
                 'order': image.order,
             })
         return items
+
+    def get_history_translated(self, obj):
+        return get_translated(obj, 'history', self.context.get('lang', 'uz'))
+
+    def get_structure_translated(self, obj):
+        return get_translated(obj, 'structure', self.context.get('lang', 'uz'))
+
+    def get_student_notes_translated(self, obj):
+        return get_translated(obj, 'student_notes', self.context.get('lang', 'uz'))
+
+    def get_site_name_translated(self, obj):
+        return get_translated(obj, 'site_name', self.context.get('lang', 'uz'))
 
 
 class JournalSettingsSerializer(serializers.ModelSerializer):
@@ -518,11 +626,16 @@ class InternationalProjectSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     partners = serializers.SerializerMethodField()
     images = InternationalProjectImageSerializer(many=True, read_only=True)
+    title_translated = serializers.SerializerMethodField()
+    description_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = InternationalProject
         fields = [
-            'id', 'title', 'description', 'partners_text', 'partners',
+            'id',
+            'title', 'title_ru', 'title_en', 'title_translated',
+            'description', 'description_ru', 'description_en', 'description_translated',
+            'partners_text', 'partners',
             'start_date', 'end_date', 'status', 'status_display',
             'images', 'order', 'is_active', 'created_at', 'updated_at'
         ]
@@ -530,6 +643,12 @@ class InternationalProjectSerializer(serializers.ModelSerializer):
 
     def get_partners(self, obj):
         return [item.strip() for item in obj.partners_text.split(',') if item.strip()]
+
+    def get_title_translated(self, obj):
+        return get_translated(obj, 'title', self.context.get('lang', 'uz'))
+
+    def get_description_translated(self, obj):
+        return get_translated(obj, 'description', self.context.get('lang', 'uz'))
 
 
 class InternationalMediaSerializer(serializers.ModelSerializer):

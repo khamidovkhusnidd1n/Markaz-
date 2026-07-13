@@ -1,14 +1,118 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ExternalLink, Phone, Mail, MapPin, ChevronUp, ChevronDown } from 'lucide-react';
-import { MENU_ITEMS } from '../constants';
-import LanguageSwitcher from './LanguageSwitcher';
+import { Menu, X, ExternalLink, Phone, Mail, MapPin, ChevronUp, ChevronDown, ChevronRight } from 'lucide-react';
+import { MENU_ITEMS, MenuItemType } from '../constants';
 import { useApp } from '../context/AppContext';
+
+const DesktopMenuItem = ({ item, level = 0 }: { item: MenuItemType, level?: number }) => {
+  const location = useLocation();
+  const hasChildren = item.children && item.children.length > 0;
+  const isExternal = item.path === 'external';
+  
+  // Recursively check if active
+  const checkActive = (mi: MenuItemType): boolean => {
+    if (mi.path === location.pathname && location.pathname !== '#') return true;
+    if (mi.children) return mi.children.some(checkActive);
+    return false;
+  };
+  const isActive = checkActive(item);
+
+  const linkClasses = `flex items-center justify-between gap-1 text-sm font-medium transition-colors whitespace-nowrap px-2 xl:px-3 py-2 ${
+    level === 0 
+      ? (isActive ? 'text-blue-900 border-b-2 border-amber-500' : 'text-gray-600 hover:text-blue-700')
+      : 'text-gray-700 hover:bg-gray-100 hover:text-blue-700 w-full px-4'
+  }`;
+
+  const content = (
+    <>
+      <span className="flex items-center gap-1">
+        {level === 0 && item.icon} {item.label}
+      </span>
+      {isExternal && <ExternalLink size={14} className="ml-1" />}
+      {hasChildren && level === 0 && <ChevronDown size={14} className="ml-1" />}
+      {hasChildren && level > 0 && <ChevronRight size={14} className="ml-auto" />}
+    </>
+  );
+
+  const AnchorOrLink = isExternal ? (
+    <a href={item.url} target="_blank" rel="noopener noreferrer" className={linkClasses}>
+      {content}
+    </a>
+  ) : (
+    <Link to={item.path || '#'} className={linkClasses}>
+      {content}
+    </Link>
+  );
+
+  if (!hasChildren) {
+    return level === 0 ? AnchorOrLink : <li>{AnchorOrLink}</li>;
+  }
+
+  return (
+    <div className={`group relative ${level > 0 ? 'w-full' : ''}`}>
+      {AnchorOrLink}
+      <ul className={`absolute z-50 hidden group-hover:block bg-white shadow-lg border border-gray-100 py-2 min-w-[260px] rounded-lg ${
+        level === 0 ? 'top-full left-0 mt-0' : 'top-0 left-full -ml-1'
+      }`}>
+        {item.children!.map((child, idx) => (
+          <DesktopMenuItem key={idx} item={child} level={level + 1} />
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+const MobileMenuItem = ({ item, level = 0, closeMenu }: { item: MenuItemType, level?: number, closeMenu: () => void }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const hasChildren = item.children && item.children.length > 0;
+  const isExternal = item.path === 'external';
+
+  const linkClasses = `flex items-center justify-between p-2 rounded transition-colors w-full text-left ${
+    level === 0 ? 'hover:bg-gray-100 font-medium text-slate-800' : 'hover:bg-gray-50 text-sm text-gray-600'
+  }`;
+
+  const handleToggle = (e: React.MouseEvent) => {
+    if (hasChildren) {
+      e.preventDefault();
+      setIsOpen(!isOpen);
+    } else {
+      if (!isExternal) closeMenu();
+    }
+  };
+
+  const content = (
+    <span className="flex items-center gap-2">
+      {level === 0 && item.icon} {item.label}
+    </span>
+  );
+
+  return (
+    <div className={`w-full ${level > 0 ? 'pl-4 border-l-2 border-gray-100 ml-2 mt-1' : ''}`}>
+      {isExternal ? (
+        <a href={item.url} target="_blank" rel="noopener noreferrer" className={linkClasses} onClick={() => closeMenu()}>
+          {content} <ExternalLink size={16} />
+        </a>
+      ) : (
+        <Link to={item.path || '#'} onClick={handleToggle} className={linkClasses}>
+          {content}
+          {hasChildren && (isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />)}
+        </Link>
+      )}
+      
+      {hasChildren && isOpen && (
+        <div className="flex flex-col gap-1 mt-1">
+          {item.children!.map((child, idx) => (
+            <MobileMenuItem key={idx} item={child} level={level + 1} closeMenu={closeMenu} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showScrollButtons, setShowScrollButtons] = useState(false);
-  const location = useLocation();
   const { aboutContent } = useApp();
 
   const siteName = aboutContent.siteName || "O'zbekiston Badiiy akademiyasi huzuridagi Badiiy ta'lim yo'nalishlarida pedagog va mutaxassis kadrlarni qayta tayyorlash hamda ularning malakasini oshirish markazi";
@@ -38,7 +142,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   return (
     <div className="min-h-screen flex flex-col">
       <div className="bg-blue-900 text-white text-xs py-2 hidden md:block">
-        <div className="container mx-auto px-4 flex justify-between items-center">
+        <div className="w-full max-w-[1920px] mx-auto px-4 lg:px-8 flex justify-between items-center">
           <div className="flex gap-4">
             <span className="flex items-center gap-1"><Phone size={12} /> (+99877) 363-38-36</span>
             <span className="flex items-center gap-1"><Mail size={12} /> {contactText}</span>
@@ -48,41 +152,23 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       </div>
 
       <header className="bg-white shadow-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden shrink-0">
+        <div className="w-full max-w-[1920px] mx-auto px-4 lg:px-8 py-4 flex justify-between items-center gap-4">
+          <Link to="/" className="flex items-center gap-3 shrink-0">
+            <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden shrink-0">
               <img src={headerLogo} alt={`${siteName} logosi`} className="w-full h-full object-contain" />
             </div>
-            <div className="hidden sm:block max-w-[320px]">
-              <h1 className="text-sm font-bold leading-tight text-blue-900">{siteName}</h1>
+            <div className="hidden xl:block w-[350px] shrink-0">
+              <h1 className="text-[11px] text-center font-bold leading-snug text-blue-900 uppercase">{siteName}</h1>
             </div>
           </Link>
 
-          <nav className="hidden lg:flex flex-1 justify-center">
-            <div className="flex gap-6">
-              {MENU_ITEMS.map((item) => (
-                item.path === 'external' ? (
-                  <a key={item.label} href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-sm font-medium hover:text-blue-700 transition-colors">
-                    {item.label} <ExternalLink size={14} />
-                  </a>
-                ) : (
-                  <Link
-                    key={item.label}
-                    to={item.path}
-                    className={`text-sm font-medium hover:text-blue-700 transition-colors ${location.pathname === item.path ? 'text-blue-900 border-b-2 border-amber-500' : 'text-gray-600'}`}
-                  >
-                    {item.label}
-                  </Link>
-                )
+          <nav className="hidden lg:flex flex-1 justify-end">
+            <div className="flex items-center space-x-1 lg:space-x-2">
+              {MENU_ITEMS.map((item, idx) => (
+                <DesktopMenuItem key={idx} item={item} />
               ))}
             </div>
           </nav>
-
-          <div className="hidden lg:flex items-center gap-4">
-            <div className="bg-white/95 px-2 py-1 rounded-xl shadow-sm border border-gray-100 flex items-center gap-2">
-              <LanguageSwitcher />
-            </div>
-          </div>
 
           <button className="lg:hidden shrink-0" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -90,30 +176,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </div>
 
         {isMenuOpen && (
-          <div className="lg:hidden bg-white border-t px-4 py-6 flex flex-col gap-4 animate-slideDown">
-            <div className="pb-4 border-b border-gray-200">
-              <div className="text-sm font-medium text-gray-600 mb-3">Tilni tanlang:</div>
-              <div className="flex justify-center gap-2">
-                <LanguageSwitcher />
-              </div>
-            </div>
-
-            {MENU_ITEMS.map((item) => (
-              item.path === 'external' ? (
-                <a key={item.label} href={item.url} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between p-2 hover:bg-gray-100 rounded">
-                  <span className="flex items-center gap-2">{item.icon} {item.label}</span>
-                  <ExternalLink size={16} />
-                </a>
-              ) : (
-                <Link
-                  key={item.label}
-                  to={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded"
-                >
-                  {item.icon} {item.label}
-                </Link>
-              )
+          <div className="lg:hidden bg-white border-t px-4 py-6 flex flex-col gap-2 animate-slideDown max-h-[70vh] overflow-y-auto">
+            {MENU_ITEMS.map((item, idx) => (
+              <MobileMenuItem key={idx} item={item} closeMenu={() => setIsMenuOpen(false)} />
             ))}
           </div>
         )}

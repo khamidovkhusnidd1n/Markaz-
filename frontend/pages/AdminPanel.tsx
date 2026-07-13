@@ -333,10 +333,10 @@ const AdminPanel: React.FC = () => {
             <TeachersSection app={app} loading={loading} runAction={runAction} />
           )}
           {activeSection === 'applications' && (
-            <ApplicationsSection app={app} />
+            <ApplicationsSection app={app} runAction={runAction} />
           )}
           {activeSection === 'appeals' && (
-            <AppealsSection app={app} />
+            <AppealsSection app={app} runAction={runAction} />
           )}
           {activeSection === 'library' && (
             <LibrarySection app={app} loading={loading} runAction={runAction} />
@@ -510,10 +510,13 @@ const StatisticsSection = ({ app, loading, runAction }: any) => {
         <SectionCard title="Kiritilgan qiymatlar">
           <div className="space-y-3">
             {(app.stats.studentsCount || []).map((item: any) => (
-              <div key={item.year} className="rounded-2xl border border-slate-200 bg-white p-4">
-                <p className="font-bold text-slate-900">{item.year}</p>
-                <p className="mt-1 text-sm text-slate-500">Malaka oshirish: {item.count}</p>
-                <p className="text-sm text-slate-500">Qayta tayyorlash: {item.retraining}</p>
+              <div key={item.year} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4">
+                <div>
+                  <p className="font-bold text-slate-900">{item.year}</p>
+                  <p className="mt-1 text-sm text-slate-500">Malaka oshirish: {item.count}</p>
+                  <p className="text-sm text-slate-500">Qayta tayyorlash: {item.retraining}</p>
+                </div>
+                <button onClick={() => runAction(() => BackendAPI.deleteYearlyStatistic(String(item.id)), "Yillik statistika o'chirildi.")} className="ml-4 rounded-xl bg-red-50 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-100">O'chirish</button>
               </div>
             ))}
             {(!app.stats.studentsCount || app.stats.studentsCount.length === 0) && (
@@ -1157,9 +1160,12 @@ const OpenDataSection = ({ loading, runAction, app }: any) => {
       <SectionCard title="Mavjud hujjatlar">
         <div className="space-y-3">
           {app.documents.map((item: any) => (
-            <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-              <p className="font-bold text-slate-900">{item.title}</p>
-              <p className="text-sm text-slate-500">{item.category}</p>
+            <div key={item.id} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4">
+              <div>
+                <p className="font-bold text-slate-900">{item.title}</p>
+                <p className="text-sm text-slate-500">{item.category}</p>
+              </div>
+              <button onClick={() => runAction(() => BackendAPI.deleteDocument(String(item.id)), "Hujjat o'chirildi.")} className="ml-4 rounded-xl bg-red-50 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-100">O'chirish</button>
             </div>
           ))}
         </div>
@@ -1279,7 +1285,7 @@ const ProgramsSection = ({ app, loading, runAction }: any) => {
       <SectionCard title="Mavjud kurslar">
         <div className="space-y-3">
           {app.courses.map((item: any) => (
-            <div key={item.id} className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 md:grid-cols-[140px_1fr]">
+            <div key={item.id} className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 md:grid-cols-[140px_1fr_auto]">
               <div className="h-32 overflow-hidden rounded-2xl bg-slate-100">
                 {item.photoUrl ? (
                   <img src={item.photoUrl} alt={item.title} className="h-full w-full object-cover" />
@@ -1298,6 +1304,7 @@ const ProgramsSection = ({ app, loading, runAction }: any) => {
                   {item.telegramLink && <p className="flex items-center gap-2"><Send size={16} /> {item.telegramLink}</p>}
                 </div>
               </div>
+              <button onClick={() => runAction(() => BackendAPI.deleteCourse(String(item.id)), "Kurs o'chirildi.")} className="self-start rounded-xl bg-red-50 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-100">O'chirish</button>
             </div>
           ))}
           {app.courses.length === 0 && (
@@ -1390,11 +1397,14 @@ const TeachersSection = ({ app, loading, runAction }: any) => {
       <SectionCard title="Mavjud ustozlar">
         <div className="space-y-3">
           {app.teachers.map((item: any) => (
-            <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-              <p className="font-bold text-slate-900">{item.fullName}</p>
-              <p className="mt-1 text-sm text-slate-500">{item.degree}</p>
-              <p className="text-sm text-slate-500">{item.title}</p>
-              {item.awards && <p className="text-sm text-amber-600">{item.awards}</p>}
+            <div key={item.id} className="flex items-start justify-between rounded-2xl border border-slate-200 bg-white p-4">
+              <div>
+                <p className="font-bold text-slate-900">{item.fullName}</p>
+                <p className="mt-1 text-sm text-slate-500">{item.degree}</p>
+                <p className="text-sm text-slate-500">{item.title}</p>
+                {item.awards && <p className="text-sm text-amber-600">{item.awards}</p>}
+              </div>
+              <button onClick={() => runAction(() => BackendAPI.deleteTeacher(String(item.id)), "Ustoz o'chirildi.")} className="ml-4 rounded-xl bg-red-50 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-100">O'chirish</button>
             </div>
           ))}
           {app.teachers.length === 0 && (
@@ -1408,16 +1418,20 @@ const TeachersSection = ({ app, loading, runAction }: any) => {
   );
 };
 
-const AppealsSection = ({ app }: any) => (
+const AppealsSection = ({ app, runAction }: any) => (
   <SectionCard title="Kelgan murojaatlar">
     <div className="space-y-3">
       {(app.appeals || []).map((item: any) => (
         <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-          <p className="text-sm font-bold text-blue-700">ID: {item.id}</p>
-          <p className="mt-1 font-bold text-slate-900">{item.fullName}</p>
-          <p className="text-sm text-slate-500">{item.appealTypeDisplay || item.appealType}</p>
-          <p className="mt-2 text-sm text-slate-600">{item.description}</p>
-          <p className="mt-2 text-xs text-slate-500">{item.phone} {item.email ? `| ${item.email}` : ''}</p>
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-sm font-bold text-blue-700">{item.appealTypeDisplay || item.appealType}</p>
+              <p className="mt-1 font-bold text-slate-900">{item.fullName}</p>
+              <p className="mt-2 text-sm text-slate-600">{item.description}</p>
+              <p className="mt-2 text-xs text-slate-500">{item.phone} {item.email ? `| ${item.email}` : ''}</p>
+            </div>
+            <button onClick={() => runAction(() => BackendAPI.request(`/appeals/${item.id}/`, 'DELETE'), "Murojaat o'chirildi.")} className="ml-4 shrink-0 rounded-xl bg-red-50 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-100">O'chirish</button>
+          </div>
         </div>
       ))}
       {(!app.appeals || app.appeals.length === 0) && (
@@ -1429,17 +1443,21 @@ const AppealsSection = ({ app }: any) => (
   </SectionCard>
 );
 
-const ApplicationsSection = ({ app }: any) => (
+const ApplicationsSection = ({ app, runAction }: any) => (
   <SectionCard title="Kelgan arizalar">
     <div className="space-y-3">
       {(app.applications || []).map((item: any) => (
         <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-          <p className="text-sm font-bold text-blue-700">ID: {item.id}</p>
-          <p className="mt-1 font-bold text-slate-900">{item.fullName}</p>
-          <p className="text-sm text-slate-500">{item.applicationTypeDisplay || item.applicationType}</p>
-          <p className="mt-1 text-sm text-slate-600">Ish joyi: {item.workplace}</p>
-          <p className="text-sm text-slate-600">Yo'nalish: {item.direction}</p>
-          <p className="mt-2 text-xs text-slate-500">{item.phone}</p>
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-sm font-bold text-blue-700">{item.applicationTypeDisplay || item.applicationType}</p>
+              <p className="mt-1 font-bold text-slate-900">{item.fullName}</p>
+              <p className="mt-1 text-sm text-slate-600">Ish joyi: {item.workplace}</p>
+              <p className="text-sm text-slate-600">Yo'nalish: {item.direction}</p>
+              <p className="mt-2 text-xs text-slate-500">{item.phone}</p>
+            </div>
+            <button onClick={() => runAction(() => BackendAPI.request(`/applications/${item.id}/`, 'DELETE'), "Ariza o'chirildi.")} className="ml-4 shrink-0 rounded-xl bg-red-50 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-100">O'chirish</button>
+          </div>
         </div>
       ))}
       {(!app.applications || app.applications.length === 0) && (
@@ -1495,8 +1513,9 @@ const LibrarySection = ({ app, loading, runAction }: any) => {
                   <div className="flex h-full items-center justify-center text-sm text-slate-400">Muqova yo'q</div>
                 )}
               </div>
-              <div className="p-4">
-                <p className="line-clamp-2 font-bold text-slate-900">{item.title}</p>
+              <div className="p-3">
+                <p className="line-clamp-2 font-bold text-slate-900 text-sm">{item.title}</p>
+                <button onClick={() => runAction(() => BackendAPI.deleteDocument(String(item.id)), "Adabiyot o'chirildi.")} className="mt-2 w-full rounded-lg bg-red-50 py-1.5 text-xs font-bold text-red-600 hover:bg-red-100">O'chirish</button>
               </div>
             </div>
           ))}
@@ -1549,11 +1568,17 @@ const PhotoGallerySection = ({ app, loading, runAction }: any) => {
       <SectionCard title="Mavjud foto galereya">
         <div className="space-y-3">
           {app.gallery.map((item: any) => (
-            <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-              <p className="font-bold text-slate-900">{item.title || 'Foto galereya'}</p>
-              <p className="text-sm text-slate-500">{item.images.length} ta rasm</p>
+            <div key={item.id} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4">
+              <div>
+                <p className="font-bold text-slate-900">{item.title || 'Foto galereya'}</p>
+                <p className="text-sm text-slate-500">{item.images.length} ta rasm</p>
+              </div>
+              <button onClick={() => runAction(() => BackendAPI.deleteGalleryItem(String(item.id)), "Galereya o'chirildi.")} className="ml-4 rounded-xl bg-red-50 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-100">O'chirish</button>
             </div>
           ))}
+          {app.gallery.length === 0 && (
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-500">Hozircha foto galereya yo'q.</div>
+          )}
         </div>
       </SectionCard>
     </div>
@@ -1595,11 +1620,17 @@ const ArtGallerySectionAdmin = ({ app, loading, runAction }: any) => {
       <SectionCard title="Mavjud art galereya">
         <div className="space-y-3">
           {(app.artGallery || []).map((item: any) => (
-            <div key={item.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-              <p className="font-bold text-slate-900">{item.title}</p>
-              <p className="text-sm text-slate-500">{item.author}</p>
+            <div key={item.id} className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4">
+              <div>
+                <p className="font-bold text-slate-900">{item.title}</p>
+                <p className="text-sm text-slate-500">{item.author}</p>
+              </div>
+              <button onClick={() => runAction(() => BackendAPI.deleteArtGalleryItem(String(item.id)), "Art asari o'chirildi.")} className="ml-4 rounded-xl bg-red-50 px-3 py-2 text-sm font-bold text-red-600 hover:bg-red-100">O'chirish</button>
             </div>
           ))}
+          {(app.artGallery || []).length === 0 && (
+            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-4 text-sm text-slate-500">Hozircha art galereya yo'q.</div>
+          )}
         </div>
       </SectionCard>
     </div>

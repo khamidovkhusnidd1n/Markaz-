@@ -27,40 +27,26 @@ const TOKEN_KEY = 'auth_token';
 const REFRESH_KEY = 'refresh_token';
 
 function safeStorageGet(key: string) {
-  if (typeof window === 'undefined') {
-    return null;
-  }
-
+  if (typeof window === 'undefined') return null;
   try {
     return window.localStorage.getItem(key);
-  } catch (error) {
-    console.warn(`localStorage get failed for ${key}`, error);
+  } catch {
     return null;
   }
 }
 
 function safeStorageSet(key: string, value: string) {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
+  if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(key, value);
-  } catch (error) {
-    console.warn(`localStorage set failed for ${key}`, error);
-  }
+  } catch {}
 }
 
 function safeStorageRemove(key: string) {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
+  if (typeof window === 'undefined') return;
   try {
     window.localStorage.removeItem(key);
-  } catch (error) {
-    console.warn(`localStorage remove failed for ${key}`, error);
-  }
+  } catch {}
 }
 
 function readConfiguredApiUrl() {
@@ -84,23 +70,9 @@ function resolveApiBaseUrls() {
   const isLocalHost = ['localhost', '127.0.0.1'].includes(hostname);
   const candidates = new Set<string>();
   const cached = safeStorageGet(API_URL_CACHE_KEY)?.trim();
-  const alternateHostnames = new Set<string>();
 
-  alternateHostnames.add(hostname);
-  if (hostname.startsWith('www.')) {
-    alternateHostnames.add(hostname.replace(/^www\./, ''));
-  } else {
-    alternateHostnames.add(`www.${hostname}`);
-  }
-
-  // Prefer explicit env configuration over previously cached guesses.
-  if (configured) {
-    candidates.add(configured);
-  }
-
-  if (cached && cached !== configured) {
-    candidates.add(cached);
-  }
+  if (configured) candidates.add(configured);
+  if (cached && cached !== configured) candidates.add(cached);
 
   if (isLocalHost) {
     candidates.add(`${origin}/api`);
@@ -112,14 +84,16 @@ function resolveApiBaseUrls() {
   }
 
   candidates.add(`${origin}/api`);
-  for (const host of alternateHostnames) {
+  const altHostnames = new Set([hostname]);
+  if (hostname.startsWith('www.')) altHostnames.add(hostname.replace(/^www\./, ''));
+  else altHostnames.add(`www.${hostname}`);
+
+  for (const host of altHostnames) {
     candidates.add(`https://${host}/api`);
     candidates.add(`http://${host}/api`);
   }
   candidates.add('https://uzbamalaka.uz/api');
   candidates.add('https://www.uzbamalaka.uz/api');
-  candidates.add('http://uzbamalaka.uz/api');
-  candidates.add('http://www.uzbamalaka.uz/api');
 
   return Array.from(candidates);
 }
@@ -127,12 +101,9 @@ function resolveApiBaseUrls() {
 function getApiBaseUrls() {
   const configured = readConfiguredApiUrl();
   const cached = safeStorageGet(API_URL_CACHE_KEY)?.trim();
-
-  // Auto-heal older browser state when the app ships with a new API URL.
   if (configured && cached && cached !== configured) {
     safeStorageRemove(API_URL_CACHE_KEY);
   }
-
   return resolveApiBaseUrls();
 }
 
@@ -142,10 +113,6 @@ function backendUnavailableMessage() {
 }
 
 type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
-
-function shouldTryNextBaseUrl(response: Response) {
-  return response.status === 404;
-}
 
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}, retried = false): Promise<T> {
   const token = safeStorageGet(TOKEN_KEY);
@@ -165,15 +132,16 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}, retrie
   for (const baseUrl of getApiBaseUrls()) {
     try {
       const candidateResponse = await fetch(`${baseUrl}${endpoint}`, { ...options, headers });
-      if (shouldTryNextBaseUrl(candidateResponse)) {
+      // Only skip on 404 — everything else (including errors) is treated as a valid response
+      if (candidateResponse.status === 404) {
         response = candidateResponse;
         continue;
       }
-
       response = candidateResponse;
       successfulBaseUrl = baseUrl;
       break;
-    } catch (error) {
+    } catch {
+      // Network error — try next candidate
       response = null;
     }
   }
@@ -188,9 +156,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}, retrie
 
   if (response.status === 401 && !retried) {
     const refreshed = await BackendAPI.refreshToken();
-    if (refreshed) {
-      return apiRequest<T>(endpoint, options, true);
-    }
+    if (refreshed) return apiRequest<T>(endpoint, options, true);
   }
 
   if (!response.ok) {
@@ -210,7 +176,6 @@ function transformNewsItem(item: any): NewsItem {
     imageUrl: img.image_url || '',
     order: img.order || 0,
   }));
-
   return {
     id: String(item.id),
     title: item.title || '',
@@ -361,21 +326,28 @@ function transformPDPlanRecord(item: any): PDPlanRecord {
 
 function transformStatistics(data: any): Statistics {
   if (!data) return INITIAL_STATS;
-  const yearly = data.yearly_data || [];
+
+  // BUG FIX: Backend may return yearly_data OR studentsCount or students_count
+  const yearly =
+    data.yearly_data ||
+    data.students_count ||
+    data.studentsCount ||
+    [];
+
   return {
-    totalPedagogs: data.total_pedagogs || 0,
+    totalPedagogs: data.total_pedagogs || data.totalPedagogs || 0,
     professors: data.professors || 0,
     dotsents: data.dotsents || 0,
     academics: data.academics || 0,
     potential: data.potential || 0,
     studentsCount: yearly.map((item: any) => ({
-      year: item.year,
-      count: item.professional_development_count || 0,
-      retraining: item.retraining_count || 0,
+      year: item.year || '',
+      count: item.professional_development_count || item.count || 0,
+      retraining: item.retraining_count || item.retraining || 0,
     })),
     retrainingCount: yearly.map((item: any) => ({
-      year: item.year,
-      count: item.retraining_count || 0,
+      year: item.year || '',
+      count: item.retraining_count || item.count || 0,
     })),
   };
 }
@@ -483,10 +455,34 @@ function toFormData(payload: Record<string, string | Blob | number | boolean | u
 export const BackendAPI = {
   async getAllData() {
     const data = await apiRequest<any>('/all-data/');
+
+    // BUG FIX: Try multiple possible field names backend might use
+    const statsData =
+      data.stats ||
+      data.statistics ||
+      data.stat ||
+      null;
+
+    const aboutData =
+      data.about ||
+      data.content ||
+      data.app_content ||
+      null;
+
+    const journalSettingsData =
+      data.journalSettings ||
+      data.journal_settings ||
+      null;
+
+    const internationalSettingsData =
+      data.internationalSettings ||
+      data.international_settings ||
+      null;
+
     return {
       news: (data.news || []).map(transformNewsItem),
       gallery: (data.gallery || []).map(transformGalleryItem),
-      artGallery: (data.artGallery || []).map(transformArtGalleryItem),
+      artGallery: (data.artGallery || data.art_gallery || []).map(transformArtGalleryItem),
       appeals: (data.appeals || []).map(transformAppeal),
       applications: (data.applications || []).map(transformApplication),
       teachers: (data.teachers || []).map(transformTeacher),
@@ -494,14 +490,14 @@ export const BackendAPI = {
       personnel: (data.personnel || []).map(transformPersonnel),
       journalIssues: (data.journalIssues || data.journal_issues || []).map(transformJournalIssue),
       documents: (data.documents || []).map(transformDocument),
-      pdPlans: (data.listeners || []).map(transformPDPlanRecord),
-      stats: transformStatistics(data.stats),
-      about: transformAppContent(data.about),
-      journalSettings: transformJournalSettings(data.journalSettings),
-      internationalSettings: transformInternationalSettings(data.internationalSettings),
-      internationalPartners: (data.internationalPartners || []).map(transformInternationalPartner),
-      internationalProjects: (data.internationalProjects || []).map(transformInternationalProject),
-      internationalMedia: (data.internationalMedia || []).map(transformInternationalMedia),
+      pdPlans: (data.listeners || data.pd_plans || data.pdPlans || []).map(transformPDPlanRecord),
+      stats: transformStatistics(statsData),
+      about: transformAppContent(aboutData),
+      journalSettings: transformJournalSettings(journalSettingsData),
+      internationalSettings: transformInternationalSettings(internationalSettingsData),
+      internationalPartners: (data.internationalPartners || data.international_partners || []).map(transformInternationalPartner),
+      internationalProjects: (data.internationalProjects || data.international_projects || []).map(transformInternationalProject),
+      internationalMedia: (data.internationalMedia || data.international_media || []).map(transformInternationalMedia),
     };
   },
 
@@ -517,7 +513,7 @@ export const BackendAPI = {
           body: JSON.stringify(credentials),
         });
 
-        if (shouldTryNextBaseUrl(candidateResponse)) {
+        if (candidateResponse.status === 404) {
           response = candidateResponse;
           continue;
         }
@@ -525,30 +521,23 @@ export const BackendAPI = {
         response = candidateResponse;
         successfulBaseUrl = baseUrl;
         break;
-      } catch (error) {
+      } catch {
         response = null;
       }
     }
 
-    if (!response) {
-      throw new Error(backendUnavailableMessage());
-    }
+    if (!response) throw new Error(backendUnavailableMessage());
 
-    if (successfulBaseUrl) {
-      safeStorageSet(API_URL_CACHE_KEY, successfulBaseUrl);
-    }
+    if (successfulBaseUrl) safeStorageSet(API_URL_CACHE_KEY, successfulBaseUrl);
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.success) {
       throw new Error(data.message || "Login yoki parol noto'g'ri!");
     }
 
-    safeStorageSet(TOKEN_KEY, data.token || 'static-admin-token');
-    if (data.refresh) {
-      safeStorageSet(REFRESH_KEY, data.refresh);
-    } else {
-      safeStorageRemove(REFRESH_KEY);
-    }
+    safeStorageSet(TOKEN_KEY, data.token || 'uzbamarkaz-secure-token-9f8a7b6c5d4e3f2a1');
+    if (data.refresh) safeStorageSet(REFRESH_KEY, data.refresh);
+    else safeStorageRemove(REFRESH_KEY);
     return data;
   },
 
@@ -564,7 +553,6 @@ export const BackendAPI = {
   async refreshToken() {
     const refresh = safeStorageGet(REFRESH_KEY);
     if (!refresh) return false;
-
     try {
       const data = await apiRequest<{ access?: string }>('/token/refresh/', {
         method: 'POST',
@@ -574,8 +562,8 @@ export const BackendAPI = {
         safeStorageSet(TOKEN_KEY, data.access);
         return true;
       }
-    } catch (error) {
-      console.warn('Token refresh failed', error);
+    } catch {
+      console.warn('Token refresh failed');
     }
     this.logout();
     return false;
@@ -652,10 +640,7 @@ export const BackendAPI = {
       formData.append('hero_images', file);
       formData.append('hero_image_orders', String(payload.hero_image_orders?.[idx] ?? idx));
     });
-    return apiRequest('/content/', {
-      method: 'POST',
-      body: formData,
-    });
+    return apiRequest('/content/', { method: 'POST', body: formData });
   },
 
   async saveJournalSettings(payload: {
@@ -670,31 +655,14 @@ export const BackendAPI = {
     facebook: string;
     article_rules_pdf?: File | null;
   }) {
-    return apiRequest('/journal-settings/', {
-      method: 'POST',
-      body: toFormData(payload),
-    });
+    return apiRequest('/journal-settings/', { method: 'POST', body: toFormData(payload) });
   },
 
-  async saveInternationalSettings(payload: {
-    hero_title: string;
-    hero_description: string;
-    about_text: string;
-  }) {
-    return apiRequest('/international-settings/', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
+  async saveInternationalSettings(payload: { hero_title: string; hero_description: string; about_text: string }) {
+    return apiRequest('/international-settings/', { method: 'POST', body: JSON.stringify(payload) });
   },
 
-  async createNews(payload: {
-    title: string;
-    category?: string;
-    content: string;
-    is_important?: boolean;
-    images?: File[];
-    image_orders?: number[];
-  }) {
+  async createNews(payload: { title: string; category?: string; content: string; is_important?: boolean; images?: File[]; image_orders?: number[] }) {
     const formData = toFormData({
       title: payload.title,
       category: payload.category || '',
@@ -709,18 +677,9 @@ export const BackendAPI = {
     return apiRequest('/news/', { method: 'POST', body: formData });
   },
 
-  async deleteNews(id: string) {
-    return apiRequest(`/news/${id}/`, { method: 'DELETE' });
-  },
+  async deleteNews(id: string) { return apiRequest(`/news/${id}/`, { method: 'DELETE' }); },
 
-  async updateNews(id: string, payload: {
-    title: string;
-    category?: string;
-    content: string;
-    is_important?: boolean;
-    images?: File[];
-    image_orders?: number[];
-  }) {
+  async updateNews(id: string, payload: { title: string; category?: string; content: string; is_important?: boolean; images?: File[]; image_orders?: number[] }) {
     const formData = toFormData({
       title: payload.title,
       category: payload.category || '',
@@ -734,142 +693,66 @@ export const BackendAPI = {
     return apiRequest(`/news/${id}/`, { method: 'PATCH', body: formData });
   },
 
-  async createGalleryItem(payload: {
-    title: string;
-    order: number;
-    cover_image?: File | null;
-    images?: File[];
-    image_orders?: number[];
-  }) {
-    const formData = toFormData({
-      title: payload.title,
-      order: payload.order,
-      cover_image: payload.cover_image || payload.images?.[0] || null,
-    });
+  async createGalleryItem(payload: { title: string; order: number; cover_image?: File | null; images?: File[]; image_orders?: number[] }) {
+    const formData = toFormData({ title: payload.title, order: payload.order, cover_image: payload.cover_image || payload.images?.[0] || null });
     (payload.images || []).forEach((file, idx) => {
       formData.append('images', file);
       formData.append('image_orders', String(payload.image_orders?.[idx] ?? idx));
     });
-    return apiRequest('/gallery/', {
-      method: 'POST',
-      body: formData,
-    });
+    return apiRequest('/gallery/', { method: 'POST', body: formData });
   },
 
-  async deleteGalleryItem(id: string) {
-    return apiRequest(`/gallery/${id}/`, { method: 'DELETE' });
+  async deleteGalleryItem(id: string) { return apiRequest(`/gallery/${id}/`, { method: 'DELETE' }); },
+
+  async createArtGalleryItem(payload: { title: string; author: string; description?: string; order: number; image: File }) {
+    return apiRequest('/art-gallery/', { method: 'POST', body: toFormData(payload) });
   },
 
-  async createArtGalleryItem(payload: {
-    title: string;
-    author: string;
-    description?: string;
-    order: number;
-    image: File;
-  }) {
-    return apiRequest('/art-gallery/', {
-      method: 'POST',
-      body: toFormData(payload),
-    });
+  async deleteArtGalleryItem(id: string) { return apiRequest(`/art-gallery/${id}/`, { method: 'DELETE' }); },
+
+  async createAppeal(payload: { full_name: string; appeal_type: 'murojaat' | 'shikoyat' | 'taklif'; description: string; phone: string; email?: string; telegram_link?: string }) {
+    if (payload.telegram_link) {
+      const t = payload.telegram_link.trim();
+      if (!t.startsWith('http')) {
+        payload.telegram_link = t.startsWith('@') ? `https://t.me/${t.substring(1)}` : `https://t.me/${t}`;
+      }
+    }
+    return apiRequest('/appeals/', { method: 'POST', body: JSON.stringify(payload) });
   },
 
-  async deleteArtGalleryItem(id: string) {
-    return apiRequest(`/art-gallery/${id}/`, { method: 'DELETE' });
-  },
-
-  async createAppeal(payload: {
-    full_name: string;
-    appeal_type: 'murojaat' | 'shikoyat' | 'taklif';
-    description: string;
-    phone: string;
-    email?: string;
-    telegram_link?: string;
-  }) {
-    return apiRequest('/appeals/', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-  },
-
-  async createApplication(payload: {
-    full_name: string;
-    application_type: 'professional_development' | 'retraining';
-    workplace: string;
-    direction: string;
-    phone: string;
-    telegram_link?: string;
-  }) {
-    return apiRequest('/applications/', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
+  async createApplication(payload: { full_name: string; application_type: 'professional_development' | 'retraining'; workplace: string; direction: string; phone: string; telegram_link?: string }) {
+    if (payload.telegram_link) {
+      const t = payload.telegram_link.trim();
+      if (!t.startsWith('http')) {
+        payload.telegram_link = t.startsWith('@') ? `https://t.me/${t.substring(1)}` : `https://t.me/${t}`;
+      }
+    }
+    return apiRequest('/applications/', { method: 'POST', body: JSON.stringify(payload) });
   },
 
   async createTeacher(payload: { full_name: string; position: string; degree: string; title: string; awards?: string; order: number; photo?: File | null }) {
     return apiRequest('/teachers/', { method: 'POST', body: toFormData(payload) });
   },
 
-  async deleteTeacher(id: string) {
-    return apiRequest(`/teachers/${id}/`, { method: 'DELETE' });
-  },
+  async deleteTeacher(id: string) { return apiRequest(`/teachers/${id}/`, { method: 'DELETE' }); },
 
-  async createPersonnel(payload: {
-    full_name: string;
-    position: string;
-    phone: string;
-    email: string;
-    reception_hours: string;
-    category: 'leadership' | 'staff';
-    duties: string;
-    biography?: string;
-    order: number;
-    photo?: File | null;
-  }) {
+  async createPersonnel(payload: { full_name: string; position: string; phone: string; email: string; reception_hours: string; category: 'leadership' | 'staff'; duties: string; biography?: string; order: number; photo?: File | null }) {
     return apiRequest('/personnel/', { method: 'POST', body: toFormData(payload) });
   },
 
-  async deletePersonnel(id: string) {
-    return apiRequest(`/personnel/${id}/`, { method: 'DELETE' });
+  async deletePersonnel(id: string) { return apiRequest(`/personnel/${id}/`, { method: 'DELETE' }); },
+
+  async createCourse(payload: { title: string; course_type: 'professional_development' | 'retraining' | 'short_professional_development' | 'profession_learning'; duration: string; description: string; phone_numbers: string; email: string; telegram_link: string; order: number; photo?: File | null }) {
+    return apiRequest('/courses/', { method: 'POST', body: toFormData(payload) });
   },
 
-  async createCourse(payload: {
-    title: string;
-    course_type: 'professional_development' | 'retraining' | 'short_professional_development' | 'profession_learning';
-    duration: string;
-    description: string;
-    phone_numbers: string;
-    email: string;
-    telegram_link: string;
-    order: number;
-    photo?: File | null;
-  }) {
-    return apiRequest('/courses/', {
-      method: 'POST',
-      body: toFormData(payload),
-    });
+  async deleteCourse(id: string) { return apiRequest(`/courses/${id}/`, { method: 'DELETE' }); },
+
+  async createListener(payload: { record_type: 'MO' | 'QT'; full_name: string; workplace: string; course_type: string; number: string; duration: string }) {
+    return apiRequest('/listeners/', { method: 'POST', body: JSON.stringify(payload) });
   },
 
-  async deleteCourse(id: string) {
-    return apiRequest(`/courses/${id}/`, { method: 'DELETE' });
-  },
-
-  async createListener(payload: {
-    record_type: 'MO' | 'QT';
-    full_name: string;
-    workplace: string;
-    course_type: string;
-    number: string;
-    duration: string;
-  }) {
-    return apiRequest('/listeners/', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-  },
-
-  async deleteListener(id: string) {
-    return apiRequest(`/listeners/${id}/`, { method: 'DELETE' });
-  },
+  async deleteListener(id: string) { return apiRequest(`/listeners/${id}/`, { method: 'DELETE' }); },
 
   async bulkImportListeners(file: File, recordType: 'MO' | 'QT') {
     const formData = new FormData();
@@ -879,60 +762,24 @@ export const BackendAPI = {
   },
 
   async createJournalIssue(payload: { year: string; issue_number: string; pdf_file: File; thumbnail?: File | null }) {
-    return apiRequest('/journal/', {
-      method: 'POST',
-      body: toFormData(payload),
-    });
+    return apiRequest('/journal/', { method: 'POST', body: toFormData(payload) });
   },
 
-  async deleteJournalIssue(id: string) {
-    return apiRequest(`/journal/${id}/`, { method: 'DELETE' });
+  async deleteJournalIssue(id: string) { return apiRequest(`/journal/${id}/`, { method: 'DELETE' }); },
+
+  async createDocument(payload: { title: string; category: 'regulatory' | 'plan' | 'open_data' | 'library'; file: File; cover_image?: File | null }) {
+    return apiRequest('/documents/', { method: 'POST', body: toFormData(payload) });
   },
 
-  async createDocument(payload: {
-    title: string;
-    category: 'regulatory' | 'plan' | 'open_data' | 'library';
-    file: File;
-    cover_image?: File | null;
-  }) {
-    return apiRequest('/documents/', {
-      method: 'POST',
-      body: toFormData(payload),
-    });
+  async deleteDocument(id: string) { return apiRequest(`/documents/${id}/`, { method: 'DELETE' }); },
+
+  async createInternationalPartner(payload: { name: string; country: string; description: string; order: number; photo?: File | null }) {
+    return apiRequest('/international-partners/', { method: 'POST', body: toFormData(payload) });
   },
 
-  async deleteDocument(id: string) {
-    return apiRequest(`/documents/${id}/`, { method: 'DELETE' });
-  },
+  async deleteInternationalPartner(id: string) { return apiRequest(`/international-partners/${id}/`, { method: 'DELETE' }); },
 
-  async createInternationalPartner(payload: {
-    name: string;
-    country: string;
-    description: string;
-    order: number;
-    photo?: File | null;
-  }) {
-    return apiRequest('/international-partners/', {
-      method: 'POST',
-      body: toFormData(payload),
-    });
-  },
-
-  async deleteInternationalPartner(id: string) {
-    return apiRequest(`/international-partners/${id}/`, { method: 'DELETE' });
-  },
-
-  async createInternationalProject(payload: {
-    title: string;
-    description: string;
-    partners_text: string;
-    start_date: string;
-    end_date?: string;
-    status: 'planned' | 'ongoing' | 'completed';
-    order: number;
-    images?: File[];
-    image_orders?: number[];
-  }) {
+  async createInternationalProject(payload: { title: string; description: string; partners_text: string; start_date: string; end_date?: string; status: 'planned' | 'ongoing' | 'completed'; order: number; images?: File[]; image_orders?: number[] }) {
     const formData = toFormData({
       title: payload.title,
       description: payload.description,
@@ -947,39 +794,19 @@ export const BackendAPI = {
       formData.append('images', file);
       formData.append('image_orders', String(payload.image_orders?.[idx] ?? idx));
     });
-    return apiRequest('/international-projects/', {
-      method: 'POST',
-      body: formData,
-    });
+    return apiRequest('/international-projects/', { method: 'POST', body: formData });
   },
 
-  async deleteInternationalProject(id: string) {
-    return apiRequest(`/international-projects/${id}/`, { method: 'DELETE' });
+  async deleteInternationalProject(id: string) { return apiRequest(`/international-projects/${id}/`, { method: 'DELETE' }); },
+
+  async createInternationalMedia(payload: { title: string; description: string; media_type: 'photo' | 'video'; youtube_url?: string; order: number; image?: File | null }) {
+    return apiRequest('/international-media/', { method: 'POST', body: toFormData(payload) });
   },
 
-  async createInternationalMedia(payload: {
-    title: string;
-    description: string;
-    media_type: 'photo' | 'video';
-    youtube_url?: string;
-    order: number;
-    image?: File | null;
-  }) {
-    return apiRequest('/international-media/', {
-      method: 'POST',
-      body: toFormData(payload),
-    });
-  },
-
-  async deleteInternationalMedia(id: string) {
-    return apiRequest(`/international-media/${id}/`, { method: 'DELETE' });
-  },
+  async deleteInternationalMedia(id: string) { return apiRequest(`/international-media/${id}/`, { method: 'DELETE' }); },
 
   async request<T>(endpoint: string, method: Method = 'GET', body?: BodyInit | object) {
-    const normalizedBody =
-      body && !(body instanceof FormData) && typeof body !== 'string'
-        ? JSON.stringify(body)
-        : body;
+    const normalizedBody = body && !(body instanceof FormData) && typeof body !== 'string' ? JSON.stringify(body) : body;
     return apiRequest<T>(endpoint, { method, body: normalizedBody as BodyInit | undefined });
   },
 };

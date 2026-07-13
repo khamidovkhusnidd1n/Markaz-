@@ -110,21 +110,26 @@ WSGI_APPLICATION = 'markaz_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+_db_engine = env('DB_ENGINE', 'django.db.backends.postgresql')
+_db_options = {}
+if 'postgresql' in _db_engine:
+    _db_options = {
+        'connect_timeout': int(env('DB_CONNECT_TIMEOUT', 5)),
+        'application_name': env('DB_APPLICATION_NAME', 'markaz_backend'),
+    }
+
 DATABASES = {
     'default': {
-        'ENGINE': env('DB_ENGINE', 'django.db.backends.postgresql'),
-        'NAME': env('DB_NAME', 'sayt_db'),
-        'USER': env('DB_USER', 'postgres'),
-        'PASSWORD': env('DB_PASSWORD', 'markaz3210'),
-        'HOST': env('DB_HOST', 'localhost'),
-        'PORT': env('DB_PORT', '5432'),
+        'ENGINE': _db_engine,
+        'NAME': env('DB_NAME', 'sayt_db') if 'postgresql' in _db_engine else BASE_DIR / env('DB_NAME', 'db.sqlite3'),
+        'USER': env('DB_USER', '') if 'postgresql' in _db_engine else '',
+        'PASSWORD': env('DB_PASSWORD', '') if 'postgresql' in _db_engine else '',
+        'HOST': env('DB_HOST', 'localhost') if 'postgresql' in _db_engine else '',
+        'PORT': env('DB_PORT', '5432') if 'postgresql' in _db_engine else '',
         'CONN_MAX_AGE': int(env('DB_CONN_MAX_AGE', 60)),
-        'CONN_HEALTH_CHECKS': True,
+        'CONN_HEALTH_CHECKS': 'postgresql' in _db_engine,
         'ATOMIC_REQUESTS': True,
-        'OPTIONS': {
-            'connect_timeout': int(env('DB_CONNECT_TIMEOUT', 5)),
-            'application_name': env('DB_APPLICATION_NAME', 'markaz_backend'),
-        },
+        'OPTIONS': _db_options,
     }
 }
 

@@ -28,6 +28,8 @@ class BaseModel(models.Model):
 class News(BaseModel):
     """Yangiliklar modeli"""
     title = models.CharField(max_length=500, verbose_name="Sarlavha")
+    title_ru = models.CharField(max_length=500, blank=True, default='', verbose_name="Sarlavha (RU)")
+    title_en = models.CharField(max_length=500, blank=True, default='', verbose_name="Sarlavha (EN)")
     category = models.ForeignKey(
         'NewsCategory',
         on_delete=models.SET_NULL,
@@ -37,6 +39,8 @@ class News(BaseModel):
         verbose_name="Kategoriya"
     )
     content = models.TextField(verbose_name="Matn")
+    content_ru = models.TextField(blank=True, default='', verbose_name="Matn (RU)")
+    content_en = models.TextField(blank=True, default='', verbose_name="Matn (EN)")
     is_important = models.BooleanField(default=False, verbose_name="Muhim")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
@@ -67,6 +71,8 @@ class NewsImage(BaseModel):
 class NewsCategory(BaseModel):
     """Yangilik kategoriyalari."""
     name = models.CharField(max_length=150, unique=True, verbose_name="Kategoriya nomi")
+    name_ru = models.CharField(max_length=150, blank=True, default='', verbose_name="Kategoriya nomi (RU)")
+    name_en = models.CharField(max_length=150, blank=True, default='', verbose_name="Kategoriya nomi (EN)")
     slug = models.SlugField(max_length=180, unique=True, verbose_name="Slug")
     order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
@@ -114,9 +120,13 @@ class GalleryImage(BaseModel):
 class ArtGalleryItem(BaseModel):
     """Art galereya asarlari."""
     title = models.CharField(max_length=250, verbose_name="Asar nomi")
+    title_ru = models.CharField(max_length=250, blank=True, default='', verbose_name="Asar nomi (RU)")
+    title_en = models.CharField(max_length=250, blank=True, default='', verbose_name="Asar nomi (EN)")
     author = models.CharField(max_length=250, verbose_name="Muallif")
     image = models.ImageField(upload_to=generate_unique_filename, verbose_name="Foto")
     description = models.TextField(blank=True, verbose_name="Tavsif")
+    description_ru = models.TextField(blank=True, default='', verbose_name="Tavsif (RU)")
+    description_en = models.TextField(blank=True, default='', verbose_name="Tavsif (EN)")
     order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
@@ -212,10 +222,10 @@ class Listener(BaseModel):
             self.record_type = self.record_type.upper()
         if self.record_type not in ['MO', 'QT']:
             self.record_type = 'MO'
-        
+
         # ALWAYS set series from record_type for consistent search
         self.series = self.record_type
-        
+
         super().save(*args, **kwargs)
 
 
@@ -223,9 +233,17 @@ class Teacher(BaseModel):
     """O'qituvchilar modeli"""
     full_name = models.CharField(max_length=300, verbose_name="F.I.SH")
     position = models.CharField(max_length=200, verbose_name="Lavozimi")
+    position_ru = models.CharField(max_length=200, blank=True, default='', verbose_name="Lavozimi (RU)")
+    position_en = models.CharField(max_length=200, blank=True, default='', verbose_name="Lavozimi (EN)")
     degree = models.CharField(max_length=200, blank=True, verbose_name="Ilmiy darajasi")
+    degree_ru = models.CharField(max_length=200, blank=True, default='', verbose_name="Ilmiy darajasi (RU)")
+    degree_en = models.CharField(max_length=200, blank=True, default='', verbose_name="Ilmiy darajasi (EN)")
     title = models.CharField(max_length=200, blank=True, verbose_name="Unvoni")
+    title_ru = models.CharField(max_length=200, blank=True, default='', verbose_name="Unvoni (RU)")
+    title_en = models.CharField(max_length=200, blank=True, default='', verbose_name="Unvoni (EN)")
     awards = models.CharField(max_length=300, blank=True, verbose_name="Davlat mukofotlari")
+    awards_ru = models.CharField(max_length=300, blank=True, default='', verbose_name="Davlat mukofotlari (RU)")
+    awards_en = models.CharField(max_length=300, blank=True, default='', verbose_name="Davlat mukofotlari (EN)")
     photo = models.ImageField(
         upload_to=generate_unique_filename,
         blank=True,
@@ -253,6 +271,8 @@ class Personnel(BaseModel):
 
     full_name = models.CharField(max_length=300, verbose_name="F.I.SH")
     position = models.CharField(max_length=200, verbose_name="Lavozimi")
+    position_ru = models.CharField(max_length=200, blank=True, default='', verbose_name="Lavozimi (RU)")
+    position_en = models.CharField(max_length=200, blank=True, default='', verbose_name="Lavozimi (EN)")
     phone = models.CharField(max_length=50, blank=True, verbose_name="Telefon")
     email = models.EmailField(blank=True, verbose_name="Elektron pochta")
     reception_hours = models.CharField(max_length=200, blank=True, verbose_name="Qabul soatlari")
@@ -269,7 +289,11 @@ class Personnel(BaseModel):
         verbose_name="Kategoriya"
     )
     duties = models.TextField(blank=True, verbose_name="Vazifalari")
+    duties_ru = models.TextField(blank=True, default='', verbose_name="Vazifalari (RU)")
+    duties_en = models.TextField(blank=True, default='', verbose_name="Vazifalari (EN)")
     biography = models.TextField(blank=True, verbose_name="Biografiyasi")
+    biography_ru = models.TextField(blank=True, default='', verbose_name="Biografiyasi (RU)")
+    biography_en = models.TextField(blank=True, default='', verbose_name="Biografiyasi (EN)")
     order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
@@ -292,6 +316,8 @@ class Course(BaseModel):
     ]
 
     title = models.CharField(max_length=500, verbose_name="Kurs nomi")
+    title_ru = models.CharField(max_length=500, blank=True, default='', verbose_name="Kurs nomi (RU)")
+    title_en = models.CharField(max_length=500, blank=True, default='', verbose_name="Kurs nomi (EN)")
     course_type = models.CharField(
         max_length=30,
         choices=TYPE_CHOICES,
@@ -300,6 +326,8 @@ class Course(BaseModel):
     )
     duration = models.CharField(max_length=100, blank=True, verbose_name="Davomiyligi")
     description = models.TextField(blank=True, verbose_name="Tavsif")
+    description_ru = models.TextField(blank=True, default='', verbose_name="Tavsif (RU)")
+    description_en = models.TextField(blank=True, default='', verbose_name="Tavsif (EN)")
     phone_numbers = models.CharField(max_length=500, blank=True, verbose_name="Telefon raqamlari")
     email = models.EmailField(blank=True, verbose_name="Elektron pochta")
     telegram_link = models.URLField(blank=True, verbose_name="Telegram havola")
@@ -356,6 +384,8 @@ class Document(BaseModel):
     ]
 
     title = models.CharField(max_length=500, verbose_name="Hujjat nomi")
+    title_ru = models.CharField(max_length=500, blank=True, default='', verbose_name="Hujjat nomi (RU)")
+    title_en = models.CharField(max_length=500, blank=True, default='', verbose_name="Hujjat nomi (EN)")
     category = models.CharField(
         max_length=20,
         choices=CATEGORY_CHOICES,
@@ -433,24 +463,32 @@ class AppContent(BaseModel):
     """Markaz haqida ma'lumotlar (singleton model)"""
     # Umumiy ma'lumot
     history = models.TextField(blank=True, verbose_name="Umumiy ma'lumot")
-    
+    history_ru = models.TextField(blank=True, default='', verbose_name="Umumiy ma'lumot (RU)")
+    history_en = models.TextField(blank=True, default='', verbose_name="Umumiy ma'lumot (EN)")
+
     # Markaz tuzilmasi
     structure = models.TextField(blank=True, verbose_name="Tuzilma haqida matn")
+    structure_ru = models.TextField(blank=True, default='', verbose_name="Tuzilma haqida matn (RU)")
+    structure_en = models.TextField(blank=True, default='', verbose_name="Tuzilma haqida matn (EN)")
     structure_image = models.ImageField(
         upload_to=generate_unique_filename,
         blank=True,
         null=True,
         verbose_name="Tuzilma rasmi"
     )
-    
+
     # Tinglovchilar uchun eslatmalar
     student_notes = models.TextField(blank=True, verbose_name="Tinglovchilar uchun eslatma")
-    
+    student_notes_ru = models.TextField(blank=True, default='', verbose_name="Tinglovchilar uchun eslatma (RU)")
+    student_notes_en = models.TextField(blank=True, default='', verbose_name="Tinglovchilar uchun eslatma (EN)")
+
     # Aloqa ma'lumotlari
     contact_info = models.TextField(blank=True, verbose_name="Aloqa ma'lumotlari")
     address = models.TextField(blank=True, verbose_name="Manzil")
     map_embed_url = models.URLField(blank=True, verbose_name="Google xarita havolasi")
     site_name = models.CharField(max_length=300, blank=True, verbose_name="Sayt nomi")
+    site_name_ru = models.CharField(max_length=300, blank=True, default='', verbose_name="Sayt nomi (RU)")
+    site_name_en = models.CharField(max_length=300, blank=True, default='', verbose_name="Sayt nomi (EN)")
     header_logo = models.ImageField(
         upload_to=generate_unique_filename,
         blank=True,
@@ -488,7 +526,7 @@ class JournalSettings(BaseModel):
         null=True,
         verbose_name="Maqola berish tartibi (PDF)"
     )
-    
+
     # Jurnal haqida
     about_journal = models.TextField(blank=True, verbose_name="Jurnal haqida")
     phone = models.CharField(max_length=100, blank=True, verbose_name="Telefon")
@@ -578,7 +616,11 @@ class InternationalProject(BaseModel):
     ]
 
     title = models.CharField(max_length=300, verbose_name="Loyiha nomi")
+    title_ru = models.CharField(max_length=300, blank=True, default='', verbose_name="Loyiha nomi (RU)")
+    title_en = models.CharField(max_length=300, blank=True, default='', verbose_name="Loyiha nomi (EN)")
     description = models.TextField(blank=True, verbose_name="Tavsif")
+    description_ru = models.TextField(blank=True, default='', verbose_name="Tavsif (RU)")
+    description_en = models.TextField(blank=True, default='', verbose_name="Tavsif (EN)")
     partners_text = models.CharField(max_length=500, blank=True, verbose_name="Hamkorlar")
     start_date = models.DateField(verbose_name="Boshlanish sanasi")
     end_date = models.DateField(blank=True, null=True, verbose_name="Tugash sanasi")

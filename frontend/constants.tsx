@@ -14,14 +14,79 @@ export const COLORS = {
   chart: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899']
 };
 
-export const MENU_ITEMS = [
-  { label: 'Bosh sahifa', path: '/', icon: <Home size={18} /> },
-  { label: 'Markaz haqida', path: '/about', icon: <Info size={18} /> },
-  { label: 'Kurslar', path: '/courses', icon: <GraduationCap size={18} /> },
-  { label: 'Ilmiy jurnal', path: '/journal', icon: <BookOpen size={18} /> },  { label: 'Xalqaro aloqalar', path: '/international', icon: <Globe size={18} /> },  { label: 'Tinglovchilar uchun', path: '/students', icon: <GraduationCap size={18} /> },
-  { label: 'Ochiq ma’lumotlar', path: '/open-data', icon: <Database size={18} /> },
-  { label: 'Masofaviy ta’lim', path: 'external', url: 'https://mt.uzbamalaka.uz', icon: <Globe size={18} /> },
+export type MenuItemType = {
+  label: string;
+  i18nKey?: string;
+  path?: string;
+  url?: string;
+  icon?: React.ReactNode;
+  children?: MenuItemType[];
+};
 
+export const MENU_ITEMS: MenuItemType[] = [
+  { label: 'Bosh sahifa', path: '/', icon: <Home size={18} /> },
+  {
+    label: 'Markaz haqida',
+    icon: <Info size={18} />,
+    children: [
+      { label: 'Markaz haqida', path: '/about' },
+      { label: 'Markaz tuzilmasi', path: '/about#structure' },
+      { label: 'Rahbariyat', path: '/about#leadership' },
+      { label: 'Markaziy apparat', path: '/about#staff' },
+      { label: 'Virtual qabulxona', path: '/virtual-qabulxona#murojaat' },
+      { label: 'Ariza yuborish', path: '/virtual-qabulxona#ariza' }
+    ]
+  },
+  {
+    label: "Bo'limlar",
+    icon: <Database size={18} />,
+    children: [
+      { label: 'Qayta tayyorlash va malaka oshirish monitoringi', path: '/departments#monitoring' },
+      { label: "O\u2018quv jarayonini tashkil etish", path: '/departments#edu' },
+      { label: 'Matbuot va axborot texnologiyalari', path: '/departments#it' },
+      { label: 'Xalqaro aloqalarni rivojlantirish', path: '/international' }
+    ]
+  },
+  {
+    label: "Ta'lim dasturlari",
+    icon: <GraduationCap size={18} />,
+    children: [
+      { label: 'Kurslar', path: '/courses' },
+      { label: "O\u2018quv me\u2019yoriy hujjatlar", path: '/open-data' },
+      { label: 'Kutubxona', path: '/library' }
+    ]
+  },
+  { label: 'Ilmiy jurnal', path: '/journal', icon: <BookOpen size={18} /> },
+  {
+    label: 'Tinglovchilar uchun',
+    icon: <GraduationCap size={18} />,
+    children: [
+      { label: 'Malaka oshirish rejasi', path: '/training-plan' },
+      { label: 'Portfolio', path: '/portfolio' },
+      { label: 'Reestr (Sertifikat tekshirish)', path: '/students' },
+      { label: "Masofaviy ta\u2018lim", path: 'external', url: 'https://mt.uzbamalaka.uz' }
+    ]
+  },
+  { label: "Ochiq ma'lumotlar", path: '/open-data', icon: <Database size={18} /> },
+  {
+    label: 'Media',
+    icon: <Globe size={18} />,
+    children: [
+      { label: 'Yangiliklar', path: '/news' },
+      { label: "E'lonlar", path: '/news' },
+      { label: 'Fotogalereya', path: '/photo-gallery' },
+      { label: 'Art Galereya', path: '/art-gallery' },
+      { label: "Bog'lanish uchun", path: '/about#contact' }
+    ]
+  },
+  {
+    label: 'Salohiyat',
+    icon: <Info size={18} />,
+    children: [
+      { label: 'Bizning ustozlar', path: '/teachers' },
+      { label: 'Ilmiy salohiyat', path: '/about#potential' }
+    ]
+  }
 ];
 
 export const INITIAL_STATS = {
