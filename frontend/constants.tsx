@@ -24,7 +24,6 @@ export type MenuItemType = {
 };
 
 export const MENU_ITEMS: MenuItemType[] = [
-  { label: 'Bosh sahifa', path: '/', icon: <Home size={18} /> },
   {
     label: 'Markaz haqida',
     icon: <Info size={18} />,

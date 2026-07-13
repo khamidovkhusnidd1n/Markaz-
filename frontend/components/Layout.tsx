@@ -141,24 +141,14 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="bg-blue-900 text-white text-xs py-2 hidden md:block">
-        <div className="w-full max-w-[1920px] mx-auto px-4 lg:px-8 flex justify-between items-center">
-          <div className="flex gap-4">
-            <span className="flex items-center gap-1"><Phone size={12} /> (+99877) 363-38-36</span>
-            <span className="flex items-center gap-1"><Mail size={12} /> {contactText}</span>
-          </div>
-          <div className="flex gap-4" />
-        </div>
-      </div>
-
       <header className="bg-white shadow-md sticky top-0 z-50">
         <div className="w-full max-w-[1920px] mx-auto px-4 lg:px-8 py-4 flex justify-between items-center gap-4">
           <Link to="/" className="flex items-center gap-3 shrink-0">
             <div className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden shrink-0">
               <img src={headerLogo} alt={`${siteName} logosi`} className="w-full h-full object-contain" />
             </div>
-            <div className="hidden xl:block w-[350px] shrink-0">
-              <h1 className="text-[11px] text-center font-bold leading-snug text-blue-900 uppercase">{siteName}</h1>
+            <div className="max-w-[260px] sm:max-w-[320px] md:max-w-[380px] shrink-0">
+              <h1 className="text-[10px] sm:text-[11px] md:text-[12px] font-bold leading-tight text-blue-900 text-left">{siteName}</h1>
             </div>
           </Link>
 
