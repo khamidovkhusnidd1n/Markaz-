@@ -77,8 +77,11 @@ export interface Teacher {
   id: string;
   fullName: string;
   position: string;
+  position_translated?: string;
   degree: string;
+  degree_translated?: string;
   title: string;
+  title_translated?: string;
   awards?: string;
   photoUrl?: string;
 }

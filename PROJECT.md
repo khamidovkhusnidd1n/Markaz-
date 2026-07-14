@@ -12,7 +12,7 @@
 | 1 | Exploration | Inspect the React frontend and Django backend structure, models, API endpoints, and existing placeholders. Read eskisayttexts.txt and check the document files. | None | DONE |
 | 2 | Test Suite & E2E | Design a test suite (using pytest or customized verification scripts) to verify backend API contents and document HTTP GET 200 status. | M1 | DONE |
 | 3 | Implementation | Populate backend database with text details from eskisayttexts.txt. Upload the four document files and integrate links to them in frontend. Remove all placeholder texts. | M2 | DONE |
-| 4 | Verification & Audit | Verify the entire solution against acceptance criteria and perform a Forensic Audit to ensure no placeholders remain and all links function properly. | M3 | IN_PROGRESS |
+| 4 | Verification & Audit | Verify the entire solution against acceptance criteria and perform a Forensic Audit to ensure no placeholders remain and all links function properly. | M3 | DONE |
 
 ## Interface Contracts
 ### Backend APIs
