@@ -11,6 +11,11 @@ from io import BytesIO
 from django import forms
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
+from io import BytesIO
+
+from django import forms
+from django.contrib import admin
+from django.contrib.admin import SimpleListFilter
 from django.shortcuts import render, redirect
 from django.urls import path
 from django.contrib import messages
@@ -20,7 +25,10 @@ from django.http import HttpResponse
 from .models import (
     News, NewsImage, GalleryItem, GalleryImage, Listener, Teacher, Personnel,
     Course, JournalIssue, Document, Statistics, YearlyStatistics,
-    AppContent, JournalSettings
+    AppContent, JournalSettings,
+    NewsCategory, ArtGalleryItem, Appeal, Application, AppHeroImage,
+    InternationalSettings, InternationalPartner, InternationalProject,
+    InternationalProjectImage, InternationalMedia
 )
 
 
@@ -67,7 +75,7 @@ class NewsImageInline(admin.TabularInline):
 class NewsAdmin(admin.ModelAdmin):
     """Admin configuration for News model with inline images."""
     list_display = ['title', 'created_at', 'is_important', 'is_active', 'image_count']
-    list_filter = ['is_important', 'is_active', 'created_at']
+    list_filter = ['category', 'is_important', 'is_active', 'created_at']
     search_fields = ['title', 'content']
     list_editable = ['is_important', 'is_active']
     ordering = ['-created_at']
@@ -76,7 +84,7 @@ class NewsAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Asosiy ma\'lumotlar', {
-            'fields': ('title', 'content')
+            'fields': ('title', 'title_ru', 'title_en', 'category', 'content', 'content_ru', 'content_en')
         }),
         ('Sozlamalar', {
             'fields': ('is_important', 'is_active')
@@ -358,7 +366,13 @@ class TeacherAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Asosiy ma\'lumotlar', {
-            'fields': ('full_name', 'position', 'degree', 'title')
+            'fields': (
+                'full_name',
+                'position', 'position_ru', 'position_en',
+                'degree', 'degree_ru', 'degree_en',
+                'title', 'title_ru', 'title_en',
+                'awards', 'awards_ru', 'awards_en'
+            )
         }),
         ('Rasm', {
             'fields': ('photo',)
@@ -380,10 +394,20 @@ class PersonnelAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Asosiy ma\'lumotlar', {
-            'fields': ('full_name', 'position', 'category')
+            'fields': (
+                'full_name',
+                'position', 'position_ru', 'position_en',
+                'category'
+            )
         }),
         ('Aloqa', {
             'fields': ('phone', 'reception_hours')
+        }),
+        ('Batafsil ma\'lumotlar', {
+            'fields': (
+                'duties', 'duties_ru', 'duties_en',
+                'biography', 'biography_ru', 'biography_en'
+            )
         }),
         ('Rasm va sozlamalar', {
             'fields': ('photo', 'order', 'is_active')
@@ -432,7 +456,7 @@ class DocumentAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Hujjat', {
-            'fields': ('title', 'category', 'file')
+            'fields': ('title', 'title_ru', 'title_en', 'category', 'file', 'cover_image')
         }),
         ('Sozlamalar', {
             'fields': ('is_active',)
@@ -460,24 +484,38 @@ class YearlyStatisticsAdmin(admin.ModelAdmin):
     ordering = ['-year']
 
 
+class AppHeroImageInline(admin.TabularInline):
+    """Inline admin for Homepage Hero Slider Images."""
+    model = AppHeroImage
+    extra = 3
+    fields = ['image', 'order']
+    ordering = ['order']
+
+
 @admin.register(AppContent)
 class AppContentAdmin(admin.ModelAdmin):
     """Admin configuration for AppContent (Markaz haqida) singleton model."""
     list_display = ['__str__', 'updated_at']
+    inlines = [AppHeroImageInline]
 
     fieldsets = (
         ('Umumiy ma\'lumot', {
-            'fields': ('history',)
+            'fields': ('history', 'history_ru', 'history_en')
         }),
         ('Markaz tuzilmasi', {
-            'fields': ('structure', 'structure_image'),
+            'fields': ('structure', 'structure_ru', 'structure_en', 'structure_image'),
             'description': 'Tuzilma rasmi (download qilish uchun)'
         }),
         ('Tinglovchilar uchun', {
-            'fields': ('student_notes',)
+            'fields': ('student_notes', 'student_notes_ru', 'student_notes_en')
         }),
-        ('Aloqa', {
-            'fields': ('contact_info', 'address')
+        ('Aloqa va Sozlamalar', {
+            'fields': (
+                'site_name', 'site_name_ru', 'site_name_en',
+                'header_logo', 'footer_logo',
+                'contact_info', 'address', 'map_embed_url',
+                'hero_video_url'
+            )
         }),
     )
 
@@ -508,3 +546,198 @@ class JournalSettingsAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+@admin.register(NewsCategory)
+class NewsCategoryAdmin(admin.ModelAdmin):
+    """Admin configuration for NewsCategory model."""
+    list_display = ['name', 'slug', 'order', 'is_active', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['name', 'name_ru', 'name_en', 'slug']
+    list_editable = ['order', 'is_active']
+    prepopulated_fields = {'slug': ('name',)}
+    ordering = ['order', 'name']
+
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('name', 'name_ru', 'name_en', 'slug')
+        }),
+        ('Sozlamalar', {
+            'fields': ('order', 'is_active')
+        }),
+    )
+
+
+@admin.register(ArtGalleryItem)
+class ArtGalleryItemAdmin(admin.ModelAdmin):
+    """Admin configuration for ArtGalleryItem model."""
+    list_display = ['title', 'author', 'order', 'is_active', 'created_at']
+    list_filter = ['is_active', 'created_at']
+    search_fields = ['title', 'title_ru', 'title_en', 'author', 'description']
+    list_editable = ['order', 'is_active']
+    ordering = ['order', '-created_at']
+
+    fieldsets = (
+        ('Asar ma\'lumotlari', {
+            'fields': (
+                'title', 'title_ru', 'title_en',
+                'author', 'image',
+                'description', 'description_ru', 'description_en'
+            )
+        }),
+        ('Sozlamalar', {
+            'fields': ('order', 'is_active')
+        }),
+    )
+
+
+@admin.register(Appeal)
+class AppealAdmin(admin.ModelAdmin):
+    """Admin configuration for Appeal model."""
+    list_display = ['full_name', 'appeal_type', 'phone', 'email', 'created_at']
+    list_filter = ['appeal_type', 'created_at']
+    search_fields = ['full_name', 'phone', 'email', 'description']
+    ordering = ['-created_at']
+    readonly_fields = ['created_at', 'updated_at']
+
+    fieldsets = (
+        ('Murojaatchi ma\'lumotlari', {
+            'fields': ('full_name', 'phone', 'email', 'telegram_link')
+        }),
+        ('Murojaat tafsilotlari', {
+            'fields': ('appeal_type', 'description')
+        }),
+        ('Tizim ma\'lumotlari', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
+        }),
+    )
+
+
+@admin.register(Application)
+class ApplicationAdmin(admin.ModelAdmin):
+    """Admin configuration for Application model."""
+    list_display = ['full_name', 'application_type', 'direction', 'phone', 'created_at']
+    list_filter = ['application_type', 'created_at']
+    search_fields = ['full_name', 'workplace', 'direction', 'phone']
+    ordering = ['-created_at']
+    readonly_fields = ['created_at', 'updated_at']
+
+    fieldsets = (
+        ('Ariza beruvchi ma\'lumotlari', {
+            'fields': ('full_name', 'workplace', 'phone', 'telegram_link')
+        }),
+        ('Ariza tafsilotlari', {
+            'fields': ('application_type', 'direction')
+        }),
+        ('Tizim ma\'lumotlari', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
+        }),
+    )
+
+
+@admin.register(InternationalSettings)
+class InternationalSettingsAdmin(admin.ModelAdmin):
+    """Admin configuration for InternationalSettings singleton model."""
+    list_display = ['__str__', 'updated_at']
+
+    fieldsets = (
+        ('Bosh banner (Hero)', {
+            'fields': ('hero_title', 'hero_description')
+        }),
+        ('Bo\'lim haqida matn', {
+            'fields': ('about_text',)
+        }),
+    )
+
+    def has_add_permission(self, request):
+        return not InternationalSettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(InternationalPartner)
+class InternationalPartnerAdmin(admin.ModelAdmin):
+    """Admin configuration for InternationalPartner model."""
+    list_display = ['name', 'country', 'order', 'is_active']
+    list_filter = ['country', 'is_active']
+    search_fields = ['name', 'country', 'description']
+    list_editable = ['order', 'is_active']
+    ordering = ['order', 'name']
+
+    fieldsets = (
+        ('Hamkor ma\'lumotlari', {
+            'fields': ('name', 'country', 'description', 'photo')
+        }),
+        ('Sozlamalar', {
+            'fields': ('order', 'is_active')
+        }),
+    )
+
+
+class InternationalProjectImageInline(admin.TabularInline):
+    """Inline admin for International Project Images."""
+    model = InternationalProjectImage
+    extra = 3
+    fields = ['image', 'order']
+    ordering = ['order']
+
+
+@admin.register(InternationalProject)
+class InternationalProjectAdmin(admin.ModelAdmin):
+    """Admin configuration for InternationalProject model."""
+    list_display = ['title', 'status', 'start_date', 'end_date', 'order', 'is_active', 'image_count']
+    list_filter = ['status', 'is_active', 'start_date']
+    search_fields = [
+        'title', 'title_ru', 'title_en',
+        'description', 'description_ru', 'description_en',
+        'partners_text'
+    ]
+    list_editable = ['status', 'order', 'is_active']
+    ordering = ['order', '-start_date']
+    inlines = [InternationalProjectImageInline]
+
+    fieldsets = (
+        ('Loyiha ma\'lumotlari', {
+            'fields': (
+                'title', 'title_ru', 'title_en',
+                'description', 'description_ru', 'description_en',
+                'partners_text'
+            )
+        }),
+        ('Muddati va holati', {
+            'fields': ('start_date', 'end_date', 'status')
+        }),
+        ('Sozlamalar', {
+            'fields': ('order', 'is_active')
+        }),
+    )
+
+    def image_count(self, obj):
+        return obj.images.count()
+    image_count.short_description = 'Rasmlar soni'
+
+
+@admin.register(InternationalMedia)
+class InternationalMediaAdmin(admin.ModelAdmin):
+    """Admin configuration for InternationalMedia model."""
+    list_display = ['title', 'media_type', 'order', 'is_active', 'created_at']
+    list_filter = ['media_type', 'is_active']
+    search_fields = ['title', 'description']
+    list_editable = ['order', 'is_active']
+    ordering = ['order', '-created_at']
+
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('title', 'description', 'media_type')
+        }),
+        ('Media fayllari', {
+            'fields': ('image', 'youtube_url'),
+            'description': 'Media turiga qarab rasm yuklang yoki YouTube havolasini kiriting.'
+        }),
+        ('Sozlamalar', {
+            'fields': ('order', 'is_active')
+        }),
+    )
