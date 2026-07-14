@@ -28,6 +28,10 @@ export default defineConfig(({ mode }) => {
             target: apiTarget.replace(/\/api\/?$/, ''),
             changeOrigin: true,
           },
+          '/admin': {
+            target: apiTarget.replace(/\/api\/?$/, ''),
+            changeOrigin: true,
+          },
         },
       },
       plugins: [react()],

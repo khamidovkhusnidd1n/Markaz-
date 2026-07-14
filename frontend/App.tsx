@@ -17,7 +17,6 @@ const Students = React.lazy(() => import('./pages/Students'));
 const OpenData = React.lazy(() => import('./pages/OpenData'));
 const NewsList = React.lazy(() => import('./pages/NewsList'));
 const NewsDetail = React.lazy(() => import('./pages/NewsDetail'));
-const AdminPanel = React.lazy(() => import('./pages/AdminPanel'));
 const VirtualQabulxona = React.lazy(() => import('./pages/VirtualQabulxona'));
 const Departments = React.lazy(() => import('./pages/Departments'));
 const Library = React.lazy(() => import('./pages/Library'));
@@ -49,7 +48,6 @@ const App: React.FC = () => {
               <Route path="/opendata" element={<OpenData />} />
               <Route path="/news" element={<NewsList />} />
               <Route path="/news/:id" element={<NewsDetail />} />
-              <Route path="/admin/*" element={<AdminPanel />} />
               <Route path="/virtual-qabulxona" element={<VirtualQabulxona />} />
               <Route path="/departments" element={<Departments />} />
               <Route path="/library" element={<Library />} />

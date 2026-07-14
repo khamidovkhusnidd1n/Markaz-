@@ -215,7 +215,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               <li><Link to="/journal" className="hover:text-amber-400">Ilmiy jurnal</Link></li>
               <li><a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="hover:text-amber-400">Masofaviy ta'lim</a></li>
               <li><a href="https://reestr.uzbamalaka.uz" target="_blank" rel="noreferrer" className="hover:text-amber-400">Diplom va sertifikatlar yagona reestri</a></li>
-              <li><Link to="/admin" className="hover:text-amber-400">Admin kirish</Link></li>
+              <li><a href="/admin/" className="hover:text-amber-400">Admin kirish</a></li>
             </ul>
           </div>
         </div>
