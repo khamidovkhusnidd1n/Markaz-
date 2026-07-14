@@ -55,7 +55,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'sayt_db',
         'USER': 'postgres',
-        'PASSWORD': 'markaz3210',
+        'PASSWORD': '<sizning_parolingiz>',
         'HOST': 'localhost',
         'PORT': '5432',
         'CONN_MAX_AGE': 60,

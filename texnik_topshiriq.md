@@ -1,4 +1,4 @@
-﻿# 📋 TEXNIK TOPSHIRIQ
+# 📋 TEXNIK TOPSHIRIQ
 ## O'zbekiston Badiiy Akademiyasi — Malaka Oshirish Markazi Sayti
 
 > **Loyiha nomi:** `uzbamalaka.uz` — Badiiy ta'lim yo'nalishlarida pedagog va mutaxassislar uchun
@@ -301,11 +301,11 @@ DJANGO_SECRET_KEY=...
 DB_ENGINE=django.db.backends.postgresql
 DB_NAME=sayt_db
 DB_USER=postgres
-DB_PASSWORD=markaz3210
+DB_PASSWORD=<sizning_parolingiz>
 DB_HOST=localhost
 DB_PORT=5432
 STATIC_ADMIN_USERNAME=admin
-STATIC_ADMIN_PASSWORD=1212
+STATIC_ADMIN_PASSWORD=<admin_paroli>
 STATIC_ADMIN_TOKEN=static-admin-token
 ```
 
