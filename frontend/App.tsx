@@ -46,6 +46,7 @@ const App: React.FC = () => {
               <Route path="/international" element={<International />} />
               <Route path="/students" element={<Students />} />
               <Route path="/opendata" element={<OpenData />} />
+              <Route path="/open-data" element={<OpenData />} />
               <Route path="/news" element={<NewsList />} />
               <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/virtual-qabulxona" element={<VirtualQabulxona />} />

@@ -51,7 +51,7 @@ export const MENU_ITEMS: MenuItemType[] = [
     icon: <GraduationCap size={18} />,
     children: [
       { label: 'Kurslar', path: '/courses' },
-      { label: "O\u2018quv me\u2019yoriy hujjatlar", path: '/open-data' },
+      { label: "O\u2018quv me\u2019yoriy hujjatlar", path: '/open-data?category=regulatory' },
       { label: 'Kutubxona', path: '/library' }
     ]
   },
@@ -66,7 +66,7 @@ export const MENU_ITEMS: MenuItemType[] = [
       { label: "Masofaviy ta\u2018lim", path: 'external', url: 'https://mt.uzbamalaka.uz' }
     ]
   },
-  { label: "Ochiq ma'lumotlar", path: '/open-data', icon: <Database size={18} /> },
+  { label: "Ochiq ma'lumotlar", path: '/open-data?category=open_data', icon: <Database size={18} /> },
   {
     label: 'Media',
     icon: <Globe size={18} />,

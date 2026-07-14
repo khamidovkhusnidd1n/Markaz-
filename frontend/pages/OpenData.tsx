@@ -1,10 +1,14 @@
 
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { FileText, Download, Briefcase, TrendingUp, BarChart3, Database, FolderOpen } from 'lucide-react';
 
 const OpenData: React.FC = () => {
   const { documents } = useApp();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const filterCategory = searchParams.get('category');
   
   // Get file extension from URL
   const getFileExtension = (url: string) => {
@@ -19,38 +23,52 @@ const OpenData: React.FC = () => {
     { key: 'regulatory', label: "Me'yoriy hujjatlar", icon: <TrendingUp className="text-amber-600" />, headerClass: 'bg-amber-50' },
   ];
 
+  const displayedCategories = filterCategory 
+    ? categories.filter(cat => cat.key === filterCategory)
+    : categories;
+
   // Group documents by category
   const getDocsByCategory = (category: string) => {
     return documents.filter(d => d.category === category);
   };
 
+  const pageTitle = filterCategory === 'regulatory' 
+    ? "O'quv me'yoriy hujjatlar" 
+    : "Ochiq ma'lumotlar";
+
+  const pageDesc = filterCategory === 'regulatory'
+    ? "Markazning o'quv-me'yoriy hujjatlari bilan tanishishingiz mumkin."
+    : "Markazning moliyaviy, istiqbolli va statistik ma'lumotlari bilan tanishishingiz mumkin.";
+
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
       <div className="bg-blue-900 text-white py-20">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">Ochiq ma'lumotlar</h1>
-          <p className="text-blue-200">Markazning moliyaviy, istiqbolli va statistik ma'lumotlari bilan tanishishingiz mumkin.</p>
+          <h1 className="text-4xl font-bold mb-4">{pageTitle}</h1>
+          <p className="text-blue-200">{pageDesc}</p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-16">
-        {/* Categories Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
-          {categories.map((cat, i) => {
-            const count = getDocsByCategory(cat.key).length;
-            return (
-              <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">{cat.icon}</div>
-                <h3 className="font-bold text-gray-900">{cat.label}</h3>
-                <p className="text-2xl font-black text-gray-800 mt-2">{count}</p>
-                <p className="text-xs text-gray-500 mt-1">ta hujjat mavjud</p>
-              </div>
-            );
-          })}
-        </div>
+        {/* Categories Overview - Only show if not filtered */}
+        {!filterCategory && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+            {categories.map((cat, i) => {
+              const count = getDocsByCategory(cat.key).length;
+              return (
+                <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border hover:shadow-md transition-shadow">
+                  <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">{cat.icon}</div>
+                  <h3 className="font-bold text-gray-900">{cat.label}</h3>
+                  <p className="text-2xl font-black text-gray-800 mt-2">{count}</p>
+                  <p className="text-xs text-gray-500 mt-1">ta hujjat mavjud</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Documents by Category */}
-        {categories.map((cat) => {
+        {displayedCategories.map((cat) => {
           const catDocs = getDocsByCategory(cat.key);
           if (catDocs.length === 0) return null;
           

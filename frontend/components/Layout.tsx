@@ -11,7 +11,8 @@ const DesktopMenuItem = ({ item, level = 0 }: { item: MenuItemType, level?: numb
   
   // Recursively check if active
   const checkActive = (mi: MenuItemType): boolean => {
-    if (mi.path === location.pathname && location.pathname !== '#') return true;
+    const miPathBase = mi.path?.split('?')[0];
+    if (miPathBase === location.pathname && location.pathname !== '#') return true;
     if (mi.children) return mi.children.some(checkActive);
     return false;
   };
