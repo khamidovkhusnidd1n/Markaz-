@@ -4,9 +4,12 @@ import {
   PieChart, Pie, Cell, 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { ChevronRight, Award, Users, GraduationCap, TrendingUp, Zap, ShieldCheck, CheckCircle2, XCircle, Globe, Palette, Gavel, FileText, Briefcase, Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { ArrowRight, BookOpen, Users, Trophy, ChevronRight, Play, Star, MapPin, Mail, Phone, Calendar, Search, ArrowUpRight, GraduationCap, Globe, Palette, ShieldCheck, Gavel, ClipboardList, Award, TrendingUp, Zap, CheckCircle2, XCircle, FileText, Briefcase, Clock, Send, UserCheck } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { PDPlanRecord } from '../types';
+import { NewsModal } from '../components/NewsModal';
+import { getImageUrl, stripHtml } from '../utils';
 
 // Animation hook for scroll reveal
 const useScrollReveal = () => {
@@ -30,8 +33,31 @@ const useScrollReveal = () => {
   return { ref, isVisible };
 };
 
+const formatDate = (dateStr: string | undefined, lang: string) => {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    
+    if (lang === 'uz') {
+      const uzbekMonths = [
+        "Yanvar", "Fevral", "Mart", "Aprel", "May", "Iyun",
+        "Iyul", "Avgust", "Sentabr", "Oktabr", "Noyabr", "Dekabr"
+      ];
+      return `${d.getDate()} ${uzbekMonths[d.getMonth()]}, ${d.getFullYear()}`;
+    }
+    
+    return d.toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'en-US', { 
+      day: 'numeric', month: 'long', year: 'numeric' 
+    });
+  } catch(e) {
+    return dateStr;
+  }
+};
+
 const Home: React.FC = () => {
-  const { news, stats, pdPlans, aboutContent } = useApp();
+  const { news, stats, pdPlans, aboutContent, artGallery } = useApp();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
 
   useEffect(() => {
@@ -50,25 +76,29 @@ const Home: React.FC = () => {
   const [docNumber, setDocNumber] = useState('');
   const [searchResult, setSearchResult] = useState<{status: 'idle' | 'found' | 'not_found', data?: PDPlanRecord}>({status: 'idle'});
   
-  // News carousel state
-  const [newsCarouselIndex, setNewsCarouselIndex] = useState(0);
-  const newsCarouselSize = 4; // Large card + 3 small cards
+  const [newsCarouselIndex] = useState(0);
   
 
   const [heroIndex, setHeroIndex] = useState(0);
+  const [selectedNews, setSelectedNews] = useState<any | null>(null);
+  
+  const handleNewsClick = (item: any) => {
+    setSelectedNews({
+      ...item,
+      views_count: (item.views_count || 0) + 1
+    });
+    import('../services/backend').then(({ BackendAPI }) => {
+      BackendAPI.incrementNewsView(item.id).then(newCount => {
+        item.views_count = newCount;
+      }).catch(console.error);
+    });
+  };
 
 
-  const heroImages = (aboutContent.heroImages || []).filter((item) => item.imageUrl);
+  const artImages = (artGallery || []).filter((item) => item.imageUrl);
+  const heroImages = artImages.length > 0 ? artImages : (aboutContent?.heroImages || []).filter((item) => item.imageUrl);
 
-  // News carousel effect
-  useEffect(() => {
-    if (news.length <= newsCarouselSize) return;
-    const interval = setInterval(() => {
-      setNewsCarouselIndex((prev) => (prev + 1) % (news.length - newsCarouselSize + 1));
-    }, 32000); // 30-35 seconds
-    return () => clearInterval(interval);
-  }, [news.length]);
-
+  // Hero carousel effect
   useEffect(() => {
     if (heroImages.length <= 1) return;
     const interval = setInterval(() => {
@@ -77,8 +107,9 @@ const Home: React.FC = () => {
     return () => clearInterval(interval);
   }, [heroImages.length]);
 
-  const totalMalaka = stats.studentsCount.reduce((sum, item) => sum + item.count, 0);
-  const totalQayta = stats.studentsCount.reduce((sum, item) => sum + item.retraining, 0);
+  const safeStudentsCount = stats?.studentsCount || [];
+  const totalMalaka = safeStudentsCount.reduce((sum, item) => sum + (item.count || 0), 0);
+  const totalQayta = safeStudentsCount.reduce((sum, item) => sum + (item.retraining || 0), 0);
   const totalOverall = totalMalaka + totalQayta;
 
   const distributionData = [
@@ -86,10 +117,10 @@ const Home: React.FC = () => {
     { name: 'Qayta tayyorlash', value: totalQayta, color: '#3b82f6' },
   ];
 
-  const yearlyData = stats.studentsCount.map(item => ({
+  const yearlyData = safeStudentsCount.map(item => ({
     name: item.year,
-    malaka: item.count,
-    qayta: item.retraining
+    malaka: item.count || 0,
+    qayta: item.retraining || 0
   }));
 
 
@@ -132,10 +163,12 @@ const Home: React.FC = () => {
   };
 
   const usefulLinks = [
-    { name: "Masofaviy ta'lim", url: "https://mt.uzbamalaka.uz/", icon: <Globe size={32} />, color: "bg-gradient-to-br from-blue-500 to-blue-700" },
-    { name: "Badiiy akademiya", url: "https://art-academy.uz/", icon: <Palette size={32} />, color: "bg-gradient-to-br from-amber-500 to-orange-600" },
-    { name: "MY.BIMM.UZ", url: "https://my.bimm.uz/home", icon: <ShieldCheck size={32} />, color: "bg-gradient-to-br from-emerald-500 to-teal-600" },
-    { name: "LEX.UZ", url: "https://lex.uz/uz/", icon: <Gavel size={32} />, color: "bg-gradient-to-br from-red-500 to-rose-700" },
+    { name: t('home.links_distance_edu'), url: "https://mt.uzbamalaka.uz/", icon: <Globe size={32} />, color: "bg-gradient-to-br from-blue-500 to-blue-700" },
+    { name: t('home.links_art_academy'), url: "https://art-academy.uz/", image: "/logos/badiiy_akademiya.png" },
+    { name: "MY.BIMM.UZ", url: "https://my.bimm.uz/home", image: "/logos/mybimm.png", cover: true },
+    { name: "LEX.UZ", url: "https://lex.uz/uz/", image: "/logos/lexuz.png" },
+    { name: t('home.links_forms'), url: "https://form.uzbamalaka.uz", icon: <ClipboardList size={32} />, color: "bg-gradient-to-br from-violet-500 to-purple-700" },
+    { name: "Davomat", url: "https://davomat.uzbamalaka.uz/", icon: <UserCheck size={32} />, color: "bg-gradient-to-br from-emerald-500 to-green-700" },
   ];
 
   // Scroll reveal sections
@@ -149,46 +182,49 @@ const Home: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-x-hidden">
       {/* Hero Section with Parallax Effect */}
       <section className="relative h-[85vh] overflow-hidden flex items-center">
-        <div className="absolute inset-0">
-          <img 
-            src={heroImages[heroIndex]?.imageUrl || "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=2071&auto=format&fit=crop"} 
-            alt="Hero" 
-            className="w-full h-full object-cover"
-            style={{ filter: 'brightness(0.25)' }}
-          />
-          {aboutContent.heroVideoUrl && (
+        <div className="absolute inset-0 bg-black overflow-hidden">
+          {heroImages.map((img, idx) => (
+            <img 
+              key={idx}
+              src={getImageUrl(img.imageUrl)} 
+              alt="Hero" 
+              className={`absolute inset-0 w-full h-full object-cover transition-all duration-[1500ms] ease-in-out ${
+                idx === heroIndex ? 'translate-x-0' : 
+                idx === (heroIndex - 1 + heroImages.length) % heroImages.length ? '-translate-x-full' : 'translate-x-full'
+              }`}
+            />
+          ))}
+          {aboutContent?.heroVideoUrl && (
             <a
-              href={aboutContent.heroVideoUrl}
+              href={aboutContent?.heroVideoUrl}
               target="_blank"
               rel="noreferrer"
-              className="absolute right-6 top-6 rounded-full bg-white/15 px-4 py-2 text-sm font-bold text-white backdrop-blur"
+              className="absolute right-6 top-6 rounded-full bg-black/40 hover:bg-black/60 transition-colors px-5 py-2.5 text-sm font-bold text-white backdrop-blur-md border border-white/20 flex items-center gap-2 z-20"
             >
-              Banner video
+              <Play size={16} className="fill-white" /> {t('common.banner_video')}
             </a>
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-slate-50"></div>
+          
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-50 via-transparent to-transparent z-10"></div>
         </div>
         
-        <div className="container mx-auto px-6 relative z-10 text-white">
+        <div className="container mx-auto px-6 relative z-20 text-white mt-10">
           <div className="max-w-4xl animate-fade-in-up">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full mb-8">
-              <Zap size={14} className="text-yellow-400 fill-yellow-400" />
-              <span className="text-xs font-semibold tracking-wide">Rasmiy veb-sahifa</span>
-            </div>
-            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-[1.1] tracking-tight">
-              San'at orqali tafakkur, <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Ta'lim</span> orqali taraqqiyot!
+            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-[1.1] tracking-tight drop-shadow-xl">
+              {t('common.hero_title_1')} <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 drop-shadow-none">{t('common.hero_title_span')}</span> {t('common.hero_title_2')}
             </h1>
-            <p className="text-xl text-gray-300 mb-10 leading-relaxed max-w-2xl font-light">
-              Haqiqiy pedagog o‘quvchida ijodkorlikni tarbiyalaydi.
+            <p className="text-xl md:text-2xl text-slate-300 mb-10 leading-relaxed max-w-2xl font-light">
+              {t('common.hero_subtitle')}
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link to="/about" className="group px-8 py-4 bg-white text-slate-900 hover:bg-blue-500 hover:text-white rounded-2xl font-bold transition-all duration-300 shadow-2xl shadow-white/20 flex items-center gap-3">
-                Batafsil
+              <Link to="/about" className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-500 hover:to-indigo-500 rounded-2xl font-bold transition-all duration-300 shadow-lg shadow-blue-500/30 flex items-center gap-3">
+                {t('common.details')}
                 <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/students" className="px-8 py-4 bg-white/10 backdrop-blur-xl border border-white/30 text-white hover:bg-white/20 rounded-2xl font-bold transition-all duration-300">
-                Tinglovchilar
+              <Link to="/students" className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 rounded-2xl font-bold transition-all duration-300 flex items-center gap-2">
+                <Users size={20} /> {t('common.listeners')}
               </Link>
             </div>
           </div>
@@ -211,11 +247,11 @@ const Home: React.FC = () => {
       >
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           {[
-            { label: 'Umumiy pedagoglar', value: stats.totalPedagogs, icon: <Users size={24} />, gradient: 'from-slate-700 to-slate-900' },
-            { label: 'Professorlar', value: stats.professors, icon: <GraduationCap size={24} />, gradient: 'from-blue-500 to-indigo-600' },
-            { label: 'Dotsentlar', value: stats.dotsents, icon: <Users size={24} />, gradient: 'from-emerald-500 to-teal-600' },
-            { label: 'Akademiklar', value: stats.academics, icon: <Award size={24} />, gradient: 'from-amber-500 to-orange-600' },
-            { label: 'Ilmiy salohiyat', value: `${stats.potential}%`, icon: <TrendingUp size={24} />, gradient: 'from-purple-500 to-pink-600' },
+            { label: 'Umumiy pedagoglar', value: stats?.totalPedagogs || 0, icon: <Users size={24} />, gradient: 'from-slate-700 to-slate-900' },
+            { label: 'Professorlar', value: stats?.professors || 0, icon: <GraduationCap size={24} />, gradient: 'from-blue-500 to-indigo-600' },
+            { label: 'Dotsentlar', value: stats?.dotsents || 0, icon: <Users size={24} />, gradient: 'from-emerald-500 to-teal-600' },
+            { label: 'Akademiklar', value: stats?.academics || 0, icon: <Award size={24} />, gradient: 'from-amber-500 to-orange-600' },
+            { label: 'Ilmiy salohiyat', value: `${stats?.potential || 0}%`, icon: <TrendingUp size={24} />, gradient: 'from-purple-500 to-pink-600' },
           ].map((stat, idx) => (
             <div 
               key={idx} 
@@ -470,17 +506,14 @@ const Home: React.FC = () => {
               {(() => {
                 const mainItem = news[newsCarouselIndex];
                 return (
-                  <Link 
-                    to={`/news/${mainItem.id}`} 
-                    className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 h-full"
-                  >
-                    <div className="relative h-96 overflow-hidden">
+                  <button onClick={() => handleNewsClick(mainItem)} className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 w-full text-left flex flex-col">
+                    <div className="relative w-full overflow-hidden shrink-0 aspect-video md:aspect-[21/9]">
                       <img 
                         src={mainItem.images?.[0]?.imageUrl || mainItem.image || '/placeholder.jpg'} 
                         alt={mainItem.title} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
                       {mainItem.isImportant && (
                         <div className="absolute top-6 left-6 px-4 py-2 bg-red-500 text-white text-xs font-bold uppercase rounded-full flex items-center gap-2">
                           <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
@@ -488,45 +521,42 @@ const Home: React.FC = () => {
                         </div>
                       )}
                     </div>
-                    <div className="p-8">
-                      <span className="text-sm font-medium text-slate-400">{mainItem.date}</span>
+                    <div className="p-8 flex-1">
+                      <span className="text-sm font-medium text-slate-400">{formatDate(mainItem.date, i18n.language)}</span>
                       <h3 className="text-3xl font-black text-slate-900 mt-3 mb-4 line-clamp-2 group-hover:text-blue-600 transition-colors">
                         {mainItem.title}
                       </h3>
-                      <p className="text-slate-600 line-clamp-3 text-base mb-6">{mainItem.content}</p>
-                      <div className="flex items-center gap-2 text-blue-600 font-bold group-hover:gap-3 transition-all">
+                      <p className="text-slate-600 line-clamp-3 text-base mb-6">{stripHtml(mainItem.content)}</p>
+                      <div className="flex items-center gap-2 text-blue-600 font-bold group-hover:gap-3 transition-all mt-auto">
                         Batafsil <ChevronRight size={20} />
                       </div>
                     </div>
-                  </Link>
+                  </button>
                 );
               })()}
 
               {news.length > 1 && (() => {
                 const secondaryItem = news[(newsCarouselIndex + 1) % news.length];
                 return (
-                  <Link
-                    to={`/news/${secondaryItem.id}`}
-                    className="group grid overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-md transition-all duration-500 hover:shadow-xl md:grid-cols-[280px_1fr]"
-                  >
-                    <div className="h-56 overflow-hidden bg-slate-200 md:h-full">
+                  <button onClick={() => handleNewsClick(secondaryItem)} className="group flex flex-col md:flex-row overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-md transition-all duration-500 hover:shadow-xl text-left w-full">
+                    <div className="relative w-full h-64 md:h-auto md:min-h-[250px] md:w-2/5 shrink-0 overflow-hidden">
                       <img
                         src={secondaryItem.images?.[0]?.imageUrl || secondaryItem.image || '/placeholder.jpg'}
                         alt={secondaryItem.title}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
-                    <div className="p-6">
-                      <span className="text-sm font-medium text-slate-400">{secondaryItem.date}</span>
+                    <div className="p-6 md:w-3/5 flex flex-col justify-center">
+                      <span className="text-sm font-medium text-slate-400">{formatDate(secondaryItem.date, i18n.language)}</span>
                       <h3 className="mt-3 text-2xl font-black text-slate-900 transition-colors group-hover:text-blue-600">
                         {secondaryItem.title}
                       </h3>
-                      <p className="mt-3 line-clamp-3 text-slate-600">{secondaryItem.content}</p>
+                      <p className="mt-3 line-clamp-3 text-slate-600">{stripHtml(secondaryItem.content)}</p>
                       <div className="mt-5 flex items-center gap-2 font-bold text-blue-600">
                         Batafsil <ChevronRight size={18} />
                       </div>
                     </div>
-                  </Link>
+                  </button>
                 );
               })()}
             </div>
@@ -540,27 +570,23 @@ const Home: React.FC = () => {
                   news[(newsCarouselIndex + 4) % news.length]
                 ].filter((item, index, array) => array.findIndex((entry) => entry.id === item.id) === index);
                 return smallCards.map((item, idx) => (
-                  <Link 
-                    to={`/news/${item.id}`} 
-                    key={item.id}
-                    className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-slate-100"
-                  >
-                    <div className="relative h-40 overflow-hidden">
+                  <button onClick={() => handleNewsClick(item)} key={item.id} className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-slate-100 text-left w-full flex flex-col">
+                    <div className="relative w-full aspect-video overflow-hidden">
                       <img 
                         src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'} 
                         alt={item.title} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
                     </div>
-                    <div className="p-4">
-                      <span className="text-xs font-medium text-slate-400">{item.date}</span>
+                    <div className="p-4 flex-1 flex flex-col">
+                      <span className="text-xs font-medium text-slate-400">{formatDate(item.date, i18n.language)}</span>
                       <h4 className="text-base font-black text-slate-900 mt-1 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
                         {item.title}
                       </h4>
-                      <p className="text-slate-500 line-clamp-1 text-xs">{item.content}</p>
+                      <p className="text-slate-500 line-clamp-1 text-xs">{stripHtml(item.content)}</p>
                     </div>
-                  </Link>
+                  </button>
                 ));
               })()}
             </div>
@@ -588,10 +614,11 @@ const Home: React.FC = () => {
           linksReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className="text-center mb-12">
-          <span className="text-sm font-bold text-indigo-600 uppercase tracking-wider">Resurslar</span>
-          <h2 className="text-4xl font-black text-slate-900 mt-2">Foydali manzillar</h2>
-        </div>
+        <div className="container mx-auto px-4 sm:px-10">
+          <div className="text-center mb-12">
+            <span className="text-sm font-bold text-indigo-600 uppercase tracking-wider">{t('home.links_resources')}</span>
+            <h2 className="text-4xl font-black text-slate-900 mt-2">{t('home.links_useful')}</h2>
+          </div>
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {usefulLinks.map((link, idx) => (
@@ -603,12 +630,19 @@ const Home: React.FC = () => {
               className="group flex flex-col items-center p-8 bg-white rounded-3xl shadow-lg border border-slate-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
               style={{ animationDelay: `${idx * 100}ms` }}
             >
-              <div className={`w-16 h-16 ${link.color} text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                {link.icon}
-              </div>
+              {link.image ? (
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300 bg-white overflow-hidden border border-slate-100`}>
+                  <img src={link.image} alt={link.name} className={`w-full h-full ${link.cover ? 'object-cover' : 'object-contain p-1'}`} />
+                </div>
+              ) : (
+                <div className={`w-16 h-16 ${link.color} text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  {link.icon}
+                </div>
+              )}
               <h3 className="text-sm font-black text-slate-900 text-center">{link.name}</h3>
             </a>
           ))}
+        </div>
         </div>
       </section>
 
@@ -639,7 +673,7 @@ const Home: React.FC = () => {
                   <div>
                     <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Bizning manzil</h4>
                     <p className="mt-1 text-sm text-slate-200 leading-relaxed">
-                      {aboutContent.address || "Toshkent shahri, Uchtepa tumani, Chilonzor 26-daha, Shirin ko'cha, 1A"}
+                      {aboutContent?.address || "Toshkent shahri, Uchtepa tumani, Chilonzor 26-daha, Shirin ko'cha, 1A"}
                     </p>
                   </div>
                 </div>
@@ -651,8 +685,7 @@ const Home: React.FC = () => {
                   <div>
                     <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Telefon raqamlar</h4>
                     <p className="mt-1 text-sm text-slate-200">
-                      <a href="tel:+998773633836" className="hover:text-blue-450 transition-colors hover:text-blue-400 mr-4 font-semibold">(+998 77) 363-38-36</a>
-                      <a href="tel:+998931073719" className="hover:text-blue-450 transition-colors hover:text-blue-400 font-semibold">(+998 93) 107-37-19</a>
+                      <a href="tel:+998773633836" className="hover:text-blue-450 transition-colors hover:text-blue-400 font-semibold">(+998 77) 363-38-36</a>
                     </p>
                   </div>
                 </div>
@@ -717,8 +750,12 @@ const Home: React.FC = () => {
           .animate-scale-in { animation: scale-in 0.5s ease-out forwards; }
           .animate-scroll-down { animation: scroll-down 1.5s ease-in-out infinite; }
         `}</style>
+
+        {selectedNews && (
+          <NewsModal newsItem={selectedNews} onClose={() => setSelectedNews(null)} />
+        )}
     </div>
   );
 };
 
-export default Home;
+export default Home;

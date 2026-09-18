@@ -1,24 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { ArrowLeft, Image as ImageIcon, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { GalleryItem } from '../types';
 
 const PhotoGallery: React.FC = () => {
+  const { t } = useTranslation();
   const { gallery } = useApp();
   
   const [selectedGallery, setSelectedGallery] = useState<GalleryItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+  const closeGalleryModal = () => {
+    setSelectedGallery(null);
+    document.body.style.overflow = 'auto';
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeGalleryModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
+
   const openGalleryModal = (item: GalleryItem) => {
     setSelectedGallery(item);
     setCurrentImageIndex(0);
     document.body.style.overflow = 'hidden';
-  };
-
-  const closeGalleryModal = () => {
-    setSelectedGallery(null);
-    document.body.style.overflow = 'auto';
   };
 
   const nextImage = () => {
@@ -38,11 +53,11 @@ const PhotoGallery: React.FC = () => {
       <div className="bg-purple-900 py-16 text-white">
         <div className="container mx-auto px-6">
           <Link to="/" className="inline-flex items-center gap-2 text-purple-200 hover:text-white mb-6 transition-colors text-sm">
-            <ArrowLeft size={16} /> Bosh sahifa
+            <ArrowLeft size={16} /> {t('photo_gallery.back')}
           </Link>
-          <span className="text-sm font-bold text-pink-400 uppercase tracking-wider mb-2 block">Media</span>
-          <h1 className="text-4xl md:text-5xl font-black">Fotogalereya</h1>
-          <p className="mt-4 text-lg text-purple-200 max-w-2xl">Markazimizdagi jarayonlar, tadbirlar va fotolavhalar</p>
+          <span className="text-sm font-bold text-pink-400 uppercase tracking-wider mb-2 block">{t('photo_gallery.badge')}</span>
+          <h1 className="text-4xl md:text-5xl font-black">{t('photo_gallery.title')}</h1>
+          <p className="mt-4 text-lg text-purple-200 max-w-2xl">{t('photo_gallery.subtitle')}</p>
         </div>
       </div>
       
@@ -56,13 +71,13 @@ const PhotoGallery: React.FC = () => {
             >
               <img 
                 src={item.coverImageUrl} 
-                alt={item.title || "Gallery"} 
+                alt={item.title || t('photo_gallery.gallery_alt')}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-6 left-6 right-6">
                   {item.title && <p className="text-white font-bold text-lg mb-2 truncate">{item.title}</p>}
-                  <p className="text-purple-300 text-sm">{item.images.length + 1} rasm</p>
+                  <p className="text-purple-300 text-sm">{item.images.length + 1} {t('photo_gallery.photo_count')}</p>
                 </div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -74,7 +89,7 @@ const PhotoGallery: React.FC = () => {
           )) : (
             <div className="col-span-full py-24 text-center bg-white rounded-3xl border border-slate-100 shadow-sm">
               <ImageIcon size={48} className="mx-auto text-slate-300 mb-4" />
-              <p className="text-slate-500 font-medium text-lg">Hozircha fotogalereyaga rasmlar kiritilmagan</p>
+              <p className="text-slate-500 font-medium text-lg">{t('photo_gallery.no_photos')}</p>
             </div>
           )}
         </div>
@@ -128,7 +143,7 @@ const PhotoGallery: React.FC = () => {
               return (
                 <img 
                   src={allImages[currentImageIndex].imageUrl} 
-                  alt="Gallery full view" 
+                  alt={t('photo_gallery.gallery_full_view')}
                   className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
                 />
               );

@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { Search, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Download, Info, Search } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { useTranslation } from 'react-i18next';
+import { formatDate } from '../services/dateUtils';
 
 const TrainingPlan: React.FC = () => {
-  const { pdPlans } = useApp();
+  const { t, i18n } = useTranslation();
+  const { documents, aboutContent, pdPlans } = useApp();
   const location = useLocation();
+
+  const regDocs = documents.filter((doc) => doc.category === 'regulatory');
+
+  // PD Plans search state
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchResults, setSearchResults] = useState<typeof pdPlans>([]);
+  const [pdSearchResults, setPdSearchResults] = useState<typeof pdPlans>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
   useEffect(() => {
@@ -20,27 +27,27 @@ const TrainingPlan: React.FC = () => {
         item.fullName.toLowerCase().includes(lowered) ||
         item.workplace.toLowerCase().includes(lowered) ||
         item.courseType.toLowerCase().includes(lowered) ||
-        item.duration.toLowerCase().includes(lowered)
+        (item.duration && item.duration.toLowerCase().includes(lowered))
       );
-      setSearchResults(results);
+      setPdSearchResults(results);
       setHasSearched(true);
     }
   }, [location.search, pdPlans]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handlePdSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setHasSearched(true);
     const lowered = searchTerm.trim().toLowerCase();
     if (!lowered) {
-      setSearchResults([]);
+      setPdSearchResults([]);
       return;
     }
-    setSearchResults(
+    setPdSearchResults(
       pdPlans.filter((item) =>
         item.fullName.toLowerCase().includes(lowered) ||
         item.workplace.toLowerCase().includes(lowered) ||
         item.courseType.toLowerCase().includes(lowered) ||
-        item.duration.toLowerCase().includes(lowered)
+        (item.duration && item.duration.toLowerCase().includes(lowered))
       )
     );
   };
@@ -50,63 +57,107 @@ const TrainingPlan: React.FC = () => {
       <div className="bg-gradient-to-r from-emerald-700 to-emerald-900 text-white py-16">
         <div className="container mx-auto px-4">
           <Link to="/" className="inline-flex items-center gap-2 text-emerald-200 hover:text-white mb-6 transition-colors text-sm">
-            <ArrowLeft size={16} /> Bosh sahifa
+            <ArrowLeft size={16} /> {t('training_plan.back')}
           </Link>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">Malaka oshirish rejasi</h1>
-          <p className="text-emerald-200 text-lg">Yillik malaka oshirish kurslari jadvali.</p>
+          <h1 className="text-3xl md:text-4xl font-bold mb-3">{t('training_plan.title')}</h1>
+          <p className="text-emerald-200 text-lg">{t('training_plan.subtitle')}</p>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <section className="rounded-2xl bg-white p-8 shadow-lg border border-emerald-100">
-            <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-emerald-900">
-              <Search className="text-emerald-600" /> Malaka oshirish rejasidan qidirish
-            </h2>
-            <form onSubmit={handleSearch} className="mb-8 flex flex-col gap-3 sm:flex-row">
-              <input
-                type="text"
-                placeholder="F.I.SH yoki ish joyini kiriting..."
-                className="flex-grow rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <button type="submit" className="rounded-xl bg-emerald-700 px-8 py-3 font-bold text-white transition-colors hover:bg-emerald-800">
-                Qidirish
-              </button>
-            </form>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            {/* PD Plans Search Section */}
+            <section className="rounded-2xl bg-white p-8 shadow-sm border border-emerald-100">
+              <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-emerald-900">
+                <Search className="text-emerald-600" /> {t('training_plan.search_title')}
+              </h2>
+              <form onSubmit={handlePdSearch} className="mb-8 flex flex-col gap-3 sm:flex-row">
+                <input
+                  type="text"
+                  placeholder={t('training_plan.search_placeholder')}
+                  className="flex-grow rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <button type="submit" className="rounded-xl bg-emerald-700 px-8 py-3 font-bold text-white transition-colors hover:bg-emerald-800">
+                  {t('training_plan.search_btn')}
+                </button>
+              </form>
 
-            {hasSearched && (
-              <div className="overflow-x-auto">
-                {searchResults.length > 0 ? (
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 uppercase text-gray-500 rounded-t-xl">
-                      <tr>
-                        <th className="border-b px-4 py-3">F.I.SH</th>
-                        <th className="border-b px-4 py-3">Ish joyi</th>
-                        <th className="border-b px-4 py-3">Kurs</th>
-                        <th className="border-b px-4 py-3">Muddat</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y">
-                      {searchResults.map((item) => (
-                        <tr key={item.id} className="transition-colors hover:bg-emerald-50">
-                          <td className="px-4 py-4 font-medium text-gray-900">{item.fullName}</td>
-                          <td className="px-4 py-4 text-gray-600">{item.workplace}</td>
-                          <td className="px-4 py-4 text-gray-600">{item.courseType}</td>
-                          <td className="px-4 py-4 text-gray-600">{item.duration || '-'}</td>
+              {hasSearched && (
+                <div className="overflow-x-auto">
+                  {pdSearchResults.length > 0 ? (
+                    <table className="w-full text-left text-sm">
+                      <thead className="bg-gray-50 uppercase text-gray-500 rounded-t-xl">
+                        <tr>
+                          <th className="border-b px-4 py-3">{t('training_plan.col_name')}</th>
+                          <th className="border-b px-4 py-3">{t('training_plan.col_workplace')}</th>
+                          <th className="border-b px-4 py-3">{t('training_plan.col_course')}</th>
+                          <th className="border-b px-4 py-3">{t('training_plan.col_duration')}</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <div className="rounded-xl bg-gray-50 py-10 text-center text-gray-500">
-                    Kechirasiz, bunday ma'lumot topilmadi.
+                      </thead>
+                      <tbody className="divide-y">
+                        {pdSearchResults.map((item) => (
+                          <tr key={item.id} className="transition-colors hover:bg-emerald-50">
+                            <td className="px-4 py-4 font-medium text-gray-900">{item.fullName}</td>
+                            <td className="px-4 py-4 text-gray-600">{item.workplace}</td>
+                            <td className="px-4 py-4 text-gray-600">{item.courseType}</td>
+                            <td className="px-4 py-4 text-gray-600">{item.duration || '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="rounded-xl bg-gray-50 py-10 text-center text-gray-500">
+                      {t('training_plan.no_results')}
+                    </div>
+                  )}
+                </div>
+              )}
+            </section>
+
+            <section className="rounded-2xl border bg-white p-8 shadow-sm">
+              <h2 className="mb-6 text-2xl font-bold text-blue-900">{t('students.regulatory_title')}</h2>
+              <div className="space-y-4">
+                {regDocs.length > 0 ? regDocs.map((doc) => (
+                  <div key={doc.id} className="group flex items-center justify-between rounded-xl border bg-gray-50 p-4 transition-all hover:border-blue-300">
+                    <div className="flex items-center gap-4">
+                      {doc.coverImageUrl ? (
+                        <img src={doc.coverImageUrl} alt={doc.title} className="h-16 w-12 rounded object-cover" />
+                      ) : (
+                        <div className="flex h-10 w-10 items-center justify-center rounded bg-red-100 text-red-600">
+                          <Download size={20} />
+                        </div>
+                      )}
+                      <div>
+                        <h4 className="font-bold text-gray-900">{doc.title}</h4>
+                        <p className="text-xs text-gray-500">{formatDate(doc.date, i18n.language)} {t('students.uploaded_suffix')}</p>
+                      </div>
+                    </div>
+                    <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
+                      <Download size={20} />
+                    </a>
+                  </div>
+                )) : (
+                  <div className="rounded-xl border-2 border-dashed py-10 text-center text-gray-500">
+                    {t('students.no_regulatory')}
                   </div>
                 )}
               </div>
-            )}
-          </section>
+            </section>
+          </div>
+
+          <div className="space-y-8">
+            <div className="sticky top-24 rounded-2xl border border-amber-100 bg-amber-50 p-6">
+              <h3 className="mb-6 flex items-center gap-2 text-xl font-bold text-amber-900">
+                <Info className="text-amber-600" /> {t('students.notes_title')}
+              </h3>
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-amber-900">
+                {aboutContent.studentNotes || t('students.notes_fallback')}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

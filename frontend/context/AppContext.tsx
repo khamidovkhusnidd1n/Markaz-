@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AppContent,
   Appeal,
@@ -18,6 +19,9 @@ import {
   Personnel,
   Statistics,
   Teacher,
+  Department,
+  Pedagogue,
+  PedagogueProject,
 } from '../types';
 import { BackendAPI } from '../services/backend';
 import { INITIAL_STATS } from '../constants';
@@ -44,6 +48,9 @@ interface AppState {
   loading: boolean;
   // BUG FIX: expose error state so UI can show a friendly message
   backendError: string | null;
+  departments: Department[];
+  pedagogues: Pedagogue[];
+  pedagogueProjects: PedagogueProject[];
   refreshData: () => Promise<void>;
 }
 
@@ -77,6 +84,7 @@ const defaultInternationalSettings: InternationalSettings = {
 const AppContext = createContext<AppState | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [backendError, setBackendError] = useState<string | null>(null);
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -98,6 +106,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [internationalPartners, setInternationalPartners] = useState<InternationalPartner[]>([]);
   const [internationalProjects, setInternationalProjects] = useState<InternationalProject[]>([]);
   const [internationalMedia, setInternationalMedia] = useState<InternationalMedia[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [pedagogues, setPedagogues] = useState<Pedagogue[]>([]);
+  const [pedagogueProjects, setPedagogueProjects] = useState<PedagogueProject[]>([]);
 
   const refreshData = useCallback(async () => {
     setLoading(true);
@@ -125,8 +136,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setInternationalPartners(data.internationalPartners);
       setInternationalProjects(data.internationalProjects);
       setInternationalMedia(data.internationalMedia);
+      setDepartments(data.departments || []);
+      setPedagogues(data.pedagogues || []);
+      setPedagogueProjects(data.pedagogueProjects || []);
     } catch (error) {
-      const msg = error instanceof Error ? error.message : "Ma'lumotlarni yuklashda xatolik";
+      const msg = error instanceof Error ? error.message : t('error.load_failed');
       console.error("Backend xatosi:", msg);
       // BUG FIX: store error but don't crash — keep existing/default data visible
       setBackendError(msg);
@@ -137,7 +151,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   useEffect(() => {
     refreshData();
-  }, [refreshData]);
+  }, [i18n.language, refreshData]);
 
   // BUG FIX: Don't block render waiting for backend — show skeleton only on very first load
   // when there's literally nothing to show yet
@@ -146,7 +160,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       <div className="flex min-h-screen items-center justify-center bg-slate-900 text-white">
         <div className="text-center">
           <div className="mx-auto mb-4 h-16 w-16 animate-spin rounded-full border-t-4 border-blue-500" />
-          <p className="text-xs font-bold uppercase tracking-[0.3em]">Yuklanmoqda...</p>
+          <p className="text-xs font-bold uppercase tracking-[0.3em]">{t('error.loading')}</p>
         </div>
       </div>
     );
@@ -173,6 +187,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         internationalPartners,
         internationalProjects,
         internationalMedia,
+    departments,
+    pedagogues,
+    pedagogueProjects,
         loading,
         backendError,
         refreshData,
@@ -190,3 +207,5 @@ export const useApp = () => {
   }
   return context;
 };
+
+console.log('AppProvider mounted!');

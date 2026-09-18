@@ -1,0 +1,74 @@
+[
+  {
+    "id": 8,
+    "title": "Badiiy kashtachilik usta-rassomi",
+    "desc": "",
+    "duration": "720 soat"
+  },
+  {
+    "id": 9,
+    "title": "Badiiy zardoʻzlik usta-rassomi",
+    "desc": "",
+    "duration": "720 soat"
+  },
+  {
+    "id": 10,
+    "title": "Dastgohli rangtasvir rassomi",
+    "desc": "",
+    "duration": "720 soat"
+  },
+  {
+    "id": 11,
+    "title": "Liboslar dizayneri",
+    "desc": "",
+    "duration": "720 soat"
+  },
+  {
+    "id": 7,
+    "title": "Rangtasvir (turlari boʻyicha)",
+    "desc": "",
+    "duration": "864 soat"
+  },
+  {
+    "id": 2,
+    "title": "Tasviriy sanʼat (turlari boʻyicha)",
+    "desc": "Ushbu kurs tasviriy san’atning asosiy turlari bo‘yicha zamonaviy o‘qitish metodikalarini o‘zlashtirish, ijodiy yondashuvni rivojlantirish va o‘quv jarayoniga innovatsion pedagogik texnologiyalarni joriy etishni nazarda tutadi.",
+    "duration": "144 soat"
+  },
+  {
+    "id": 3,
+    "title": "Amaliy sanʼat  (turlari boʻyicha)",
+    "desc": "Ushbu kurs amaliy san’atning asosiy turlari bo‘yicha zamonaviy pedagogik yondashuvlarni o‘rganish, milliy an’analarni ta’lim jarayoniga integratsiya qilish va o‘quv mashg‘ulotlarini samarali tashkil etish ko‘nikmalarini rivojlantirishni nazarda tutadi.",
+    "duration": "144 soat"
+  },
+  {
+    "id": 4,
+    "title": "Grafika (turlari boʻyicha)",
+    "desc": "malaka oshirish kursi pedagoglarning dastgoh grafikasi, kitob grafikasi, plakat, illyustratsiya va zamonaviy raqamli grafika yo‘nalishlari bo‘yicha nazariy bilimlari hamda amaliy mahoratini takomillashtirishga qaratilgan.",
+    "duration": "144 soat"
+  },
+  {
+    "id": 5,
+    "title": "Dizayn (turlari boʻyicha)",
+    "desc": "malaka oshirish kursi grafik dizayn, interyer dizayni, sanoat dizayni va vizual kommunikatsiya yo‘nalishlari bo‘yicha pedagoglarning nazariy bilimlari hamda amaliy ko‘nikmalarini takomillashtirishga qaratilgan.",
+    "duration": "144 soat"
+  },
+  {
+    "id": 6,
+    "title": "Sanʼatshunoslik (turlari boʻyicha)",
+    "desc": "malaka oshirish kursi tasviriy va amaliy san’at, dizayn hamda grafika yo‘nalishlarining nazariy asoslari, tarixiy rivojlanishi va tahlil metodlarini chuqurlashtirishga qaratilgan.",
+    "duration": "144 soat"
+  },
+  {
+    "id": 12,
+    "title": "Haykaltaroshlik (turlari bo‘yicha)",
+    "desc": "malaka oshirish kursi dastgoh va monumental haykaltaroshlik shuningdek, dekorativ plastika yo‘nalishlari bo‘yicha pedagoglarning nazariy bilimlari hamda amaliy mahoratini takomillashtirishga qaratilgan.",
+    "duration": "144 soat"
+  },
+  {
+    "id": 13,
+    "title": "Muzeyshunoslik (turlari bo‘yicha)",
+    "desc": "malaka oshirish kursi muzey faoliyatining nazariy asoslari, ekspozitsiya va fond ishini tashkil etish, muzey pedagogikasi hamda madaniy merosni saqlash yo‘nalishlari bo‘yicha kasbiy bilim va ko‘nikmalarni takomillashtirishga qaratilgan.",
+    "duration": "144 soat"
+  }
+]

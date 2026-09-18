@@ -35,10 +35,21 @@ def env(key, default=None, cast=None):
 load_env_file(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY', 'django-insecure-x7k9m2p5q8r1t4w6y0b3c6f9h2j5l8n1')
+SECRET_KEY = env('DJANGO_SECRET_KEY', 'sayt-production-secret-key-9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1-fallback')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG', True, cast=bool)
+DEBUG = env('DEBUG', False, cast=bool)
+
+# Secure deployment settings
+SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', True, cast=bool)
+CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', True, cast=bool)
+SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', not DEBUG, cast=bool)
+SECURE_HSTS_SECONDS = int(env('SECURE_HSTS_SECONDS', 31536000))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env('SECURE_HSTS_INCLUDE_SUBDOMAINS', True, cast=bool)
+SECURE_HSTS_PRELOAD = env('SECURE_HSTS_PRELOAD', True, cast=bool)
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
 
 ALLOWED_HOSTS = [
     'uzbamalaka.uz',
@@ -48,12 +59,20 @@ ALLOWED_HOSTS = [
     '172.31.96.1',
     '192.168.0.104',
     'testserver',
-    '*',
 ]
+
+if DEBUG:
+    ALLOWED_HOSTS.append('*')
+
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'http://192.168.0.105:3000',
+    'http://192.168.0.102:3000',
+    'http://192.168.0.102:8000',
+    'http://172.31.80.1:3000',
+    'http://172.20.80.1:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'http://localhost:8001',
@@ -88,46 +107,79 @@ INSTALLED_APPS = [
 ]
 
 JAZZMIN_SETTINGS = {
-    "site_title": "Markaz Admin",
-    "site_header": "Markaz",
-    "site_brand": "Markaz Admin",
+    "site_title": "Markaz Executive Admin",
+    "site_header": "Markaz Boshqaruvi",
+    "site_brand": "MARKAZ ADMIN",
     "site_logo_classes": "img-circle",
-    "welcome_sign": "Markaz boshqaruv paneliga xush kelibsiz",
-    "copyright": "Badiiy ta'lim yo'nalishlarida monitoring markazi",
-    "search_model": ["core.Personnel", "core.Teacher"],
+    "welcome_sign": "Badiiy Ta'lim Markazi — Boshqaruv Tizimiga Xush Kelibsiz",
+    "copyright": "O'zbekiston Badiiy Akademiyasi Huzuridagi Markaz",
+    "search_model": ["core.Personnel", "core.Teacher", "core.Course", "core.News"],
     "show_sidebar": True,
     "navigation_expanded": True,
+    "custom_css": "css/custom_jazzmin.css",
     "topmenu_links": [
         {"name": "Bosh sahifa", "url": "admin:index", "permissions": ["auth.view_user"]},
         {"model": "core.AppContent"},
+        {"model": "core.News"},
+        {"model": "core.Course"},
+    ],
+    "order_with_respect_to": [
+        "core.AppContent",
+        "core.Department",
+        "core.Personnel",
+        "core.Teacher",
+        "core.Pedagogue",
+        "core.Course",
+        "core.Listener",
+        "core.YearlyStatistics",
+        "core.Statistics",
+        "core.News",
+        "core.NewsCategory",
+        "core.GalleryItem",
+        "core.ArtGalleryItem",
+        "core.JournalIssue",
+        "core.JournalSettings",
+        "core.Document",
+        "core.Appeal",
+        "core.Application",
+        "core.InternationalSettings",
+        "core.InternationalPartner",
+        "core.InternationalProject",
     ],
     "icons": {
-        "auth": "fas fa-users-cog",
-        "auth.user": "fas fa-user",
-        "auth.Group": "fas fa-users",
+        "auth": "fas fa-shield-alt",
+        "auth.user": "fas fa-user-shield",
+        "auth.Group": "fas fa-users-cog",
+        "core.AppContent": "fas fa-university",
+        "core.Department": "fas fa-sitemap",
+        "core.DepartmentTask": "fas fa-tasks",
+        "core.Personnel": "fas fa-user-tie",
+        "core.Teacher": "fas fa-chalkboard-teacher",
+        "core.Pedagogue": "fas fa-user-graduate",
+        "core.PedagogueProject": "fas fa-award",
+        "core.Course": "fas fa-graduation-cap",
+        "core.Listener": "fas fa-id-card",
+        "core.YearlyStatistics": "fas fa-chart-line",
+        "core.Statistics": "fas fa-chart-bar",
         "core.News": "fas fa-newspaper",
         "core.NewsCategory": "fas fa-tags",
-        "core.Teacher": "fas fa-chalkboard-teacher",
-        "core.Personnel": "fas fa-id-badge",
-        "core.Course": "fas fa-graduation-cap",
-        "core.Listener": "fas fa-user-graduate",
-        "core.Document": "fas fa-file-contract",
-        "core.ArtGalleryItem": "fas fa-paint-brush",
         "core.GalleryItem": "fas fa-images",
-        "core.Appeal": "fas fa-comment-alt",
-        "core.Application": "fas fa-paper-plane",
+        "core.ArtGalleryItem": "fas fa-paint-brush",
         "core.JournalIssue": "fas fa-book-open",
-        "core.Statistics": "fas fa-chart-bar",
-        "core.AppContent": "fas fa-cogs",
         "core.JournalSettings": "fas fa-sliders-h",
-        "core.InternationalSettings": "fas fa-globe",
-        "core.InternationalProject": "fas fa-project-diagram",
+        "core.Document": "fas fa-file-pdf",
+        "core.Appeal": "fas fa-comment-dots",
+        "core.Application": "fas fa-paper-plane",
+        "core.InternationalSettings": "fas fa-globe-americas",
         "core.InternationalPartner": "fas fa-handshake",
+        "core.InternationalProject": "fas fa-project-diagram",
+        "core.InternationalMedia": "fas fa-photo-video",
     },
-    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_parents": "fas fa-folder",
     "default_icon_children": "fas fa-circle",
     "related_modal_active": True,
-    "show_ui_builder": True,
+    "show_ui_builder": False,
+    "changeform_format": "horizontal_tabs",
 }
 
 JAZZMIN_UI_TWEAKS = {
@@ -137,17 +189,17 @@ JAZZMIN_UI_TWEAKS = {
     "brand_small_text": False,
     "brand_colour": "navbar-dark",
     "accent": "accent-primary",
-    "navbar": "navbar-dark bg-indigo",
-    "no_navbar_border": False,
+    "navbar": "navbar-dark navbar-navy",
+    "no_navbar_border": True,
     "navbar_double_row": False,
-    "sidebar": "sidebar-dark-primary",
+    "sidebar": "sidebar-dark-indigo",
     "sidebar_nav_small_text": False,
     "sidebar_disable_expand": False,
     "sidebar_nav_child_indent": True,
     "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
-    "sidebar_nav_flat_style": False,
-    "theme": "flatly",
+    "sidebar_nav_flat_style": True,
+    "theme": "pulse",
     "dark_mode_theme": None,
     "button_classes": {
         "primary": "btn-primary",
@@ -254,6 +306,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'core' / 'static',
+]
 if importlib.util.find_spec("whitenoise"):
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 

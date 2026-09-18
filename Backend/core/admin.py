@@ -19,7 +19,7 @@ from django.contrib.admin import SimpleListFilter
 from django.shortcuts import render, redirect
 from django.urls import path
 from django.contrib import messages
-from django.db import transaction
+from django.db import models, transaction
 from django.http import HttpResponse
 
 from .models import (
@@ -37,6 +37,91 @@ admin.site.site_header = "Markaz Boshqaruv Paneli"
 admin.site.site_title = "Markaz Admin"
 admin.site.index_title = "Boshqaruv Paneli"
 
+
+class RichTextWidget(forms.Textarea):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'class' in self.attrs:
+            self.attrs['class'] += ' rich-text-editor'
+        else:
+            self.attrs['class'] = 'rich-text-editor'
+
+    def render(self, name, value, attrs=None, renderer=None):
+        html = super().render(name, value, attrs, renderer)
+        html += """
+        <style>
+            .cke_notification_warning {
+                display: none !important;
+            }
+        </style>
+        <script>
+            (function() {
+                function initCK(element) {
+                    if (typeof CKEDITOR !== 'undefined') {
+                        var id = element.id;
+                        if (id && !CKEDITOR.instances[id] && !id.includes('__prefix__')) {
+                            CKEDITOR.replace(id, { versionCheck: false });
+                        }
+                    } else {
+                        setTimeout(function() { initCK(element); }, 100);
+                    }
+                }
+                
+                // Init existing on load
+                var textareas = document.querySelectorAll('textarea.rich-text-editor');
+                textareas.forEach(function(ta) { initCK(ta); });
+                
+                // Handle dynamically added inlines in Django Admin
+                if (typeof window.ckeditor_inline_listener_added === 'undefined') {
+                    window.ckeditor_inline_listener_added = true;
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (typeof django !== 'undefined' && django.jQuery) {
+                            django.jQuery(document).on('formset:added', function(event, $row, formsetName) {
+                                $row.find('textarea.rich-text-editor').each(function() {
+                                    var id = this.id;
+                                    if (id && typeof CKEDITOR !== 'undefined' && !CKEDITOR.instances[id]) {
+                                        CKEDITOR.replace(id, { versionCheck: false });
+                                    }
+                                });
+                            });
+                        }
+                    });
+                }
+            })();
+        </script>
+        """
+        from django.utils.safestring import mark_safe
+        return mark_safe(html)
+
+from django.contrib.admin.widgets import AdminFileWidget
+
+class CustomAdminFileWidget(AdminFileWidget):
+    clear_checkbox_label = "O'chirish (Clear)"
+
+class RichTextFieldsMixin:
+    rich_fields = [
+        'description', 'description_ru', 'description_en',
+        'bio', 'bio_ru', 'bio_en',
+        'biography', 'biography_ru', 'biography_en',
+        'duties', 'duties_ru', 'duties_en',
+        'history', 'history_ru', 'history_en',
+        'structure', 'structure_ru', 'structure_en',
+        'about_journal', 'about_journal_ru', 'about_journal_en',
+        'article_rules_text', 'article_rules_text_ru', 'article_rules_text_en',
+        'about_text', 'about_text_ru', 'about_text_en',
+        'hero_description', 'hero_description_ru', 'hero_description_en',
+        'content', 'content_ru', 'content_en'
+    ]
+
+    class Media:
+        js = (
+            'https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js',
+        )
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name in self.rich_fields:
+            kwargs['widget'] = RichTextWidget()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 class ExcelImportForm(forms.Form):
     """Form for Excel file import."""
@@ -72,7 +157,7 @@ class NewsImageInline(admin.TabularInline):
 
 
 @admin.register(News)
-class NewsAdmin(admin.ModelAdmin):
+class NewsAdmin(RichTextFieldsMixin, admin.ModelAdmin):
     """Admin configuration for News model with inline images."""
     list_display = ['title', 'created_at', 'is_important', 'is_active', 'image_count']
     list_filter = ['category', 'is_important', 'is_active', 'created_at']
@@ -356,7 +441,7 @@ class ListenerAdmin(admin.ModelAdmin):
 
 
 @admin.register(Teacher)
-class TeacherAdmin(admin.ModelAdmin):
+class TeacherAdmin(RichTextFieldsMixin, admin.ModelAdmin):
     """Admin configuration for Teacher model - simplified."""
     list_display = ['full_name', 'position', 'degree', 'title', 'order', 'is_active']
     list_filter = ['is_active']
@@ -371,7 +456,8 @@ class TeacherAdmin(admin.ModelAdmin):
                 'position', 'position_ru', 'position_en',
                 'degree', 'degree_ru', 'degree_en',
                 'title', 'title_ru', 'title_en',
-                'awards', 'awards_ru', 'awards_en'
+                'awards', 'awards_ru', 'awards_en',
+                'biography', 'biography_ru', 'biography_en'
             )
         }),
         ('Rasm', {
@@ -384,7 +470,7 @@ class TeacherAdmin(admin.ModelAdmin):
 
 
 @admin.register(Personnel)
-class PersonnelAdmin(admin.ModelAdmin):
+class PersonnelAdmin(RichTextFieldsMixin, admin.ModelAdmin):
     """Admin configuration for Personnel model."""
     list_display = ['full_name', 'position', 'category', 'phone', 'order', 'is_active']
     list_filter = ['category', 'is_active']
@@ -405,8 +491,7 @@ class PersonnelAdmin(admin.ModelAdmin):
         }),
         ('Batafsil ma\'lumotlar', {
             'fields': (
-                'duties', 'duties_ru', 'duties_en',
-                'biography', 'biography_ru', 'biography_en'
+                'duties', 'duties_ru', 'duties_en'
             )
         }),
         ('Rasm va sozlamalar', {
@@ -416,7 +501,7 @@ class PersonnelAdmin(admin.ModelAdmin):
 
 
 @admin.register(Course)
-class CourseAdmin(admin.ModelAdmin):
+class CourseAdmin(RichTextFieldsMixin, admin.ModelAdmin):
     """Admin configuration for Course model."""
     list_display = ['title', 'course_type', 'duration', 'order', 'is_active']
     list_filter = ['course_type', 'is_active']
@@ -493,7 +578,7 @@ class AppHeroImageInline(admin.TabularInline):
 
 
 @admin.register(AppContent)
-class AppContentAdmin(admin.ModelAdmin):
+class AppContentAdmin(RichTextFieldsMixin, admin.ModelAdmin):
     """Admin configuration for AppContent (Markaz haqida) singleton model."""
     list_display = ['__str__', 'updated_at']
     inlines = [AppHeroImageInline]
@@ -527,17 +612,17 @@ class AppContentAdmin(admin.ModelAdmin):
 
 
 @admin.register(JournalSettings)
-class JournalSettingsAdmin(admin.ModelAdmin):
+class JournalSettingsAdmin(RichTextFieldsMixin, admin.ModelAdmin):
     """Admin configuration for JournalSettings (Jurnal sozlamalari) singleton model."""
     list_display = ['__str__', 'updated_at']
 
     fieldsets = (
         ('Maqola berish tartibi', {
-            'fields': ('article_rules_text', 'article_rules_pdf'),
+            'fields': ('article_rules_text', 'article_rules_text_ru', 'article_rules_text_en', 'article_rules_pdf'),
             'description': 'PDF faylni yuklash mumkin (download qilish uchun)'
         }),
         ('Jurnal haqida', {
-            'fields': ('about_journal',)
+            'fields': ('about_journal', 'about_journal_ru', 'about_journal_en')
         }),
     )
 
@@ -593,48 +678,100 @@ class ArtGalleryItemAdmin(admin.ModelAdmin):
 
 @admin.register(Appeal)
 class AppealAdmin(admin.ModelAdmin):
-    """Admin configuration for Appeal model."""
-    list_display = ['full_name', 'appeal_type', 'phone', 'email', 'created_at']
+    """Admin configuration for Appeal model - read only inbox."""
+    list_display = ['full_name', 'appeal_type_display', 'status', 'phone_link', 'email', 'created_at']
     list_filter = ['appeal_type', 'created_at']
     search_fields = ['full_name', 'phone', 'email', 'description']
     ordering = ['-created_at']
-    readonly_fields = ['created_at', 'updated_at']
+    date_hierarchy = 'created_at'
 
     fieldsets = (
-        ('Murojaatchi ma\'lumotlari', {
+        ('📱 Murojaatchi', {
             'fields': ('full_name', 'phone', 'email', 'telegram_link')
         }),
-        ('Murojaat tafsilotlari', {
+        ('Murojaat matni', {
             'fields': ('appeal_type', 'description')
         }),
-        ('Tizim ma\'lumotlari', {
-            'fields': ('created_at', 'updated_at'),
+        ('Holat va Natija', {
+            'fields': ('status', 'admin_note')
+        }),
+        ('🕐 Yuborilgan vaqt', {
+            'fields': ('created_at',),
             'classes': ('collapse',),
         }),
     )
 
+    def get_readonly_fields(self, request, obj=None):
+        return [f.name for f in self.model._meta.fields if f.name not in ['status', 'admin_note']]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return True
+
+    def phone_link(self, obj):
+        from django.utils.html import format_html
+        if obj.phone:
+            return format_html('<a href="tel:{}" style="font-weight:bold;color:#1a73e8;font-size:1.05em;">📞 {}</a>', obj.phone, obj.phone)
+        return '-'
+    phone_link.short_description = 'Telefon'
+    phone_link.allow_tags = True
+
+    def appeal_type_display(self, obj):
+        icons = {'murojaat': '📩', 'shikoyat': '⚠️', 'taklif': '💡'}
+        icon = icons.get(obj.appeal_type, '📩')
+        return f"{icon} {obj.get_appeal_type_display()}"
+    appeal_type_display.short_description = 'Murojaat turi'
+
 
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
-    """Admin configuration for Application model."""
-    list_display = ['full_name', 'application_type', 'direction', 'phone', 'created_at']
+    """Admin configuration for Application model - read only inbox."""
+    list_display = ['full_name', 'application_type_display', 'direction', 'status', 'phone_link', 'created_at']
     list_filter = ['application_type', 'created_at']
     search_fields = ['full_name', 'workplace', 'direction', 'phone']
     ordering = ['-created_at']
-    readonly_fields = ['created_at', 'updated_at']
+    date_hierarchy = 'created_at'
 
     fieldsets = (
-        ('Ariza beruvchi ma\'lumotlari', {
+        ('📱 Ariza beruvchi', {
             'fields': ('full_name', 'workplace', 'phone', 'telegram_link')
         }),
         ('Ariza tafsilotlari', {
             'fields': ('application_type', 'direction')
         }),
-        ('Tizim ma\'lumotlari', {
-            'fields': ('created_at', 'updated_at'),
+        ('Holat va Natija', {
+            'fields': ('status', 'admin_note')
+        }),
+        ('🕐 Yuborilgan vaqt', {
+            'fields': ('created_at',),
             'classes': ('collapse',),
         }),
     )
+
+    def get_readonly_fields(self, request, obj=None):
+        return [f.name for f in self.model._meta.fields if f.name not in ['status', 'admin_note']]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return True
+
+    def phone_link(self, obj):
+        from django.utils.html import format_html
+        if obj.phone:
+            return format_html('<a href="tel:{}" style="font-weight:bold;color:#1a73e8;font-size:1.05em;">📞 {}</a>', obj.phone, obj.phone)
+        return '-'
+    phone_link.short_description = 'Telefon'
+    phone_link.allow_tags = True
+
+    def application_type_display(self, obj):
+        icons = {'professional_development': '🎓', 'retraining': '🔄'}
+        icon = icons.get(obj.application_type, '📋')
+        return f"{icon} {obj.get_application_type_display()}"
+    application_type_display.short_description = 'Ariza turi'
 
 
 @admin.register(InternationalSettings)
@@ -644,10 +781,10 @@ class InternationalSettingsAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Bosh banner (Hero)', {
-            'fields': ('hero_title', 'hero_description')
+            'fields': ('hero_title', 'hero_title_ru', 'hero_title_en', 'hero_description', 'hero_description_ru', 'hero_description_en')
         }),
         ('Bo\'lim haqida matn', {
-            'fields': ('about_text',)
+            'fields': ('about_text', 'about_text_ru', 'about_text_en')
         }),
     )
 
@@ -741,3 +878,174 @@ class InternationalMediaAdmin(admin.ModelAdmin):
             'fields': ('order', 'is_active')
         }),
     )
+
+from django import forms
+from django.utils.safestring import mark_safe
+from .models import Department, DepartmentTask, DepartmentPost, DepartmentPostImage, DepartmentImage, DepartmentVideo, Pedagogue, PedagogueProject, PedagogueProjectImage
+
+class DepartmentTaskInline(admin.StackedInline):
+    model = DepartmentTask
+    extra = 1
+    fields = ['title', 'title_ru', 'title_en', 'task_text', 'task_text_ru', 'task_text_en', 'order']
+    
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if isinstance(db_field, models.TextField):
+            kwargs['widget'] = RichTextWidget()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+
+
+class DepartmentImageInline(admin.TabularInline):
+    model = DepartmentImage
+    extra = 1
+
+class DepartmentVideoInline(admin.TabularInline):
+    model = DepartmentVideo
+    extra = 1
+
+class DepartmentPostImageInline(admin.TabularInline):
+    model = DepartmentPostImage
+    extra = 1
+
+@admin.register(Department)
+class DepartmentAdmin(admin.ModelAdmin):
+    list_display = ['name', 'order', 'created_at']
+    search_fields = ['name', 'name_ru', 'name_en']
+    list_editable = ['order']
+    inlines = [DepartmentTaskInline, DepartmentImageInline, DepartmentVideoInline]
+    
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': (
+                'name', 'name_ru', 'name_en',
+                'description', 'description_ru', 'description_en',
+                'icon_name', 'color_classes', 'order'
+            )
+        }),
+        ('Batafsil ma\'lumot (Qilingan ishlar)', {
+            'fields': (
+                'detail_text', 'detail_text_ru', 'detail_text_en',
+            )
+        }),
+    )
+
+    class Media:
+        js = (
+            'https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js',
+        )
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name in ['detail_text', 'detail_text_ru', 'detail_text_en']:
+            kwargs['widget'] = RichTextWidget()
+        elif db_field.name == 'detail_image':
+            kwargs['widget'] = CustomAdminFileWidget()
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+
+@admin.register(Pedagogue)
+class PedagogueAdmin(RichTextFieldsMixin, admin.ModelAdmin):
+    list_display = ['full_name', 'order', 'created_at']
+    search_fields = ['full_name', 'full_name_ru', 'full_name_en']
+    list_editable = ['order']
+    fieldsets = (
+        ('Shaxsiy ma\'lumotlar', {
+            'fields': (
+                'full_name', 'full_name_ru', 'full_name_en',
+                'bio', 'bio_ru', 'bio_en',
+                'image', 'order'
+            )
+        }),
+    )
+
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput(attrs={'multiple': True}))
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        if isinstance(data, (list, tuple)):
+            result = [single_file_clean(d, initial) for d in data]
+        else:
+            result = single_file_clean(data, initial)
+        return result
+
+
+class PedagogueProjectForm(forms.ModelForm):
+    images_upload = MultipleFileField(
+        required=False,
+        label="Ko'plab rasmlarni bir vaqtda yuklash (Shu yerdan bir nechta rasmni tanlashingiz mumkin)"
+    )
+
+    class Meta:
+        model = PedagogueProject
+        fields = '__all__'
+
+class PedagogueProjectImageInline(admin.TabularInline):
+    model = PedagogueProjectImage
+    extra = 1
+
+from django.urls import reverse
+from django.utils.html import format_html
+
+@admin.register(PedagogueProject)
+class PedagogueProjectAdmin(RichTextFieldsMixin, admin.ModelAdmin):
+    form = PedagogueProjectForm
+    list_display = ['title', 'pedagogue', 'views_count', 'votes_count', 'delete_action']
+    search_fields = ['title', 'title_ru', 'title_en']
+    list_filter = ['pedagogue']
+    inlines = [PedagogueProjectImageInline]
+    fieldsets = (
+        ('Loyiha ma\'lumotlari', {
+            'fields': (
+                'pedagogue', 'title', 'title_ru', 'title_en', 'description', 'description_ru', 'description_en',
+                'views_count', 'votes_count',
+                'images_upload'
+            )
+        }),
+    )
+
+    def delete_action(self, obj):
+        url = reverse('admin:core_pedagogueproject_delete', args=[obj.id])
+        return format_html('<a class="btn btn-danger btn-sm" style="padding: 2px 8px; font-size: 12px; border-radius: 4px;" href="{}">O\'chirish</a>', url)
+    delete_action.short_description = "Amal"
+    delete_action.allow_tags = True
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        
+        # Handle multiple images upload
+        files = request.FILES.getlist('images_upload')
+        for f in files:
+            if isinstance(f, list):
+                for sub_f in f:
+                    if sub_f:
+                        PedagogueProjectImage.objects.create(project=obj, image=sub_f)
+            elif f:
+                PedagogueProjectImage.objects.create(project=obj, image=f)
+
+
+
+@admin.register(DepartmentPost)
+class DepartmentPostAdmin(admin.ModelAdmin):
+    list_display = ('title', 'department', 'date', 'is_active')
+    list_filter = ('department', 'date', 'is_active')
+    search_fields = ('title', 'content', 'title_ru', 'title_en')
+    date_hierarchy = 'date'
+    formfield_overrides = {
+        models.TextField: {'widget': RichTextWidget},
+    }
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('department', 'title', 'title_ru', 'title_en', 'image', 'image_url', 'video', 'video_url', 'date', 'is_active')
+        }),
+        ('Matn (Matnga ixtiyoriy rasmlarni qo\'shish mumkin)', {
+            'fields': ('content', 'content_ru', 'content_en')
+        }),
+    )
+    inlines = [DepartmentPostImageInline]

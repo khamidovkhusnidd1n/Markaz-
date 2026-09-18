@@ -5,11 +5,19 @@ from rest_framework import authentication, exceptions
 
 
 class StaticAdminAuthentication(authentication.BaseAuthentication):
-    """Allow a fixed admin token for lightweight site admin access."""
+    """Allow a fixed admin token for lightweight site admin access in development mode."""
 
     def authenticate(self, request):
         auth_header = request.headers.get('Authorization', '')
         if not auth_header:
+            return None
+
+        # Prevent static admin token bypass in production
+        if not settings.DEBUG and not getattr(settings, 'ALLOW_STATIC_ADMIN_AUTH', False):
+            return None
+
+        # Reject empty or default weak tokens
+        if not settings.STATIC_ADMIN_TOKEN or settings.STATIC_ADMIN_TOKEN in ('static-admin-token', '1212', ''):
             return None
 
         expected = f"Bearer {settings.STATIC_ADMIN_TOKEN}"

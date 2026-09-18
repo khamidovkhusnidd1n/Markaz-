@@ -1,16 +1,17 @@
-
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
+import { useTranslation } from 'react-i18next';
+import { formatDate } from '../services/dateUtils';
 import { FileText, Download, Briefcase, TrendingUp, BarChart3, Database, FolderOpen } from 'lucide-react';
 
 const OpenData: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const { documents } = useApp();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const filterCategory = searchParams.get('category');
   
-  // Get file extension from URL
   const getFileExtension = (url: string) => {
     if (!url) return 'FILE';
     const ext = url.split('.').pop()?.split('?')[0]?.toUpperCase() || 'FILE';
@@ -18,27 +19,26 @@ const OpenData: React.FC = () => {
   };
 
   const categories = [
-    { key: 'open_data', label: "Ochiq ma'lumotlar", icon: <FolderOpen className="text-blue-600" />, headerClass: 'bg-blue-50' },
-    { key: 'plan', label: 'Ish rejalari', icon: <Briefcase className="text-green-600" />, headerClass: 'bg-green-50' },
-    { key: 'regulatory', label: "Me'yoriy hujjatlar", icon: <TrendingUp className="text-amber-600" />, headerClass: 'bg-amber-50' },
+    { key: 'open_data', label: t('open_data.cat_open_data'), icon: <FolderOpen className="text-blue-600" />, headerClass: 'bg-blue-50' },
+    { key: 'plan', label: t('open_data.cat_plan'), icon: <Briefcase className="text-green-600" />, headerClass: 'bg-green-50' },
+    { key: 'regulatory', label: t('open_data.cat_regulatory'), icon: <TrendingUp className="text-amber-600" />, headerClass: 'bg-amber-50' },
   ];
 
   const displayedCategories = filterCategory 
     ? categories.filter(cat => cat.key === filterCategory)
     : categories;
 
-  // Group documents by category
   const getDocsByCategory = (category: string) => {
     return documents.filter(d => d.category === category);
   };
 
   const pageTitle = filterCategory === 'regulatory' 
-    ? "O'quv me'yoriy hujjatlar" 
-    : "Ochiq ma'lumotlar";
+    ? t('open_data.title_regulatory')
+    : t('open_data.title_open_data');
 
   const pageDesc = filterCategory === 'regulatory'
-    ? "Markazning o'quv-me'yoriy hujjatlari bilan tanishishingiz mumkin."
-    : "Markazning moliyaviy, istiqbolli va statistik ma'lumotlari bilan tanishishingiz mumkin.";
+    ? t('open_data.desc_regulatory')
+    : t('open_data.desc_open_data');
 
   return (
     <div className="bg-gray-50 min-h-screen pb-20">
@@ -60,7 +60,7 @@ const OpenData: React.FC = () => {
                   <div className="w-12 h-12 bg-gray-50 rounded-lg flex items-center justify-center mb-4">{cat.icon}</div>
                   <h3 className="font-bold text-gray-900">{cat.label}</h3>
                   <p className="text-2xl font-black text-gray-800 mt-2">{count}</p>
-                  <p className="text-xs text-gray-500 mt-1">ta hujjat mavjud</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('open_data.docs_count_suffix')}</p>
                 </div>
               );
             })}
@@ -79,7 +79,7 @@ const OpenData: React.FC = () => {
                   {cat.icon}
                   <h2 className="text-xl font-bold text-gray-900">{cat.label}</h2>
                 </div>
-                <span className="text-sm bg-gray-200 px-3 py-1 rounded-full font-medium">{catDocs.length} ta</span>
+                <span className="text-sm bg-gray-200 px-3 py-1 rounded-full font-medium">{catDocs.length} {t('open_data.count_suffix')}</span>
               </div>
               <div className="divide-y">
                 {catDocs.map(doc => (
@@ -95,7 +95,7 @@ const OpenData: React.FC = () => {
                       <div>
                         <h4 className="font-bold text-gray-900">{doc.title}</h4>
                         <p className="text-xs text-gray-500 mt-1">
-                          Sana: {doc.date} | Format: {getFileExtension(doc.fileUrl)}
+                          {t('open_data.date_label')}: {formatDate(doc.date, i18n.language)} | {t('open_data.format_label')}: {getFileExtension(doc.fileUrl)}
                         </p>
                       </div>
                     </div>
@@ -108,7 +108,7 @@ const OpenData: React.FC = () => {
                           download
                           className="flex items-center gap-2 text-sm font-bold text-white bg-blue-600 px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors"
                         >
-                          <Download size={18} /> Yuklab olish
+                          <Download size={18} /> {t('open_data.download')}
                         </a>
                       )}
                     </div>
@@ -124,8 +124,8 @@ const OpenData: React.FC = () => {
           <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
             <div className="p-20 text-center text-gray-500">
               <Database size={48} className="mx-auto mb-4 text-gray-300" />
-              <h3 className="text-lg font-bold text-gray-700 mb-2">Hujjatlar mavjud emas</h3>
-              <p>Ochiq ma'lumotlar to'plami shakllanmoqda. Yaqin kunlarda barcha hujjatlar joylanadi.</p>
+              <h3 className="text-lg font-bold text-gray-700 mb-2">{t('open_data.no_docs_title')}</h3>
+              <p>{t('open_data.no_docs_desc')}</p>
             </div>
           </div>
         )}

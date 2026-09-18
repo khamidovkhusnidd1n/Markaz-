@@ -1,37 +1,27 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { ArtGalleryItem as ArtItem } from '../types';
+import { useTranslation } from 'react-i18next';
+import { formatDate } from '../services/dateUtils';
 
 interface ArtGallerySectionProps {
   items: ArtItem[];
 }
 
 const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
-  // State management
+  const { t, i18n } = useTranslation();
   const [selectedArt, setSelectedArt] = useState<ArtItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const carouselSize = 4;
 
-  // Art carousel effect
   useEffect(() => {
     if (items.length <= carouselSize) return;
     const interval = setInterval(() => {
       setCarouselIndex((prev) => (prev + 1) % (items.length - carouselSize + 1));
-    }, 12000); // 10-15 seconds
+    }, 12000);
     return () => clearInterval(interval);
   }, [items.length]);
-
-  // Handle ESC key press
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isModalOpen) {
-        closeModal();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isModalOpen]);
 
   const openModal = useCallback((item: ArtItem) => {
     setSelectedArt(item);
@@ -45,27 +35,41 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
     setCarouselIndex(0);
   }, []);
 
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        closeModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isModalOpen, closeModal]);
+
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       closeModal();
     }
   };
 
-  // Carousel navigation
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (selectedArt) {
-      // In case we implement multi-image support in future
-      // For now, we keep it at 0 since each art has one main image
-    }
   };
 
   const handleNextImage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (selectedArt) {
-      // In case we implement multi-image support in future
-      // For now, we keep it at 0 since each art has one main image
-    }
   };
 
   return (
@@ -73,10 +77,10 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
       {/* Art Gallery Section */}
       <section className="container mx-auto px-6 py-16">
         <div className="text-center mb-12">
-          <span className="text-sm font-bold text-pink-600 uppercase tracking-wider">San'at</span>
-          <h2 className="text-4xl font-black text-slate-900 mt-2">Art Galereya</h2>
+          <span className="text-sm font-bold text-pink-600 uppercase tracking-wider">{t('art_gallery_section.badge')}</span>
+          <h2 className="text-4xl font-black text-slate-900 mt-2">{t('art_gallery_section.title')}</h2>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto mt-4">
-            Badiiy asarlar va ijodiy ehtiroj tanlovini o'rganing
+            {t('art_gallery_section.subtitle')}
           </p>
         </div>
 
@@ -92,6 +96,7 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
                     item={item}
                     onClick={() => openModal(item)}
                     delay={idx * 50}
+                    viewLabel={t('art_gallery_section.view_btn')}
                   />
                 ))}
               </div>
@@ -104,6 +109,7 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
                       item={item}
                       onClick={() => openModal(item)}
                       delay={idx * 50}
+                      viewLabel={t('art_gallery_section.view_btn')}
                     />
                   </div>
                 ))}
@@ -112,7 +118,7 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
           </div>
         ) : (
           <div className="py-20 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-            <p className="text-slate-400 font-medium">Hozircha asarlar mavjud emas</p>
+            <p className="text-slate-400 font-medium">{t('art_gallery_section.no_items')}</p>
           </div>
         )}
       </section>
@@ -127,7 +133,7 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
           <button
             onClick={closeModal}
             className="absolute top-4 right-4 z-50 p-3 bg-white/10 hover:bg-white/20 rounded-full transition-colors"
-            aria-label="Yopish"
+            aria-label={t('art_gallery_section.close')}
           >
             <X className="text-white" size={28} />
           </button>
@@ -169,11 +175,15 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
                 {/* Meta Info */}
                 {selectedArt.createdAt && (
                   <p className="text-xs md:text-sm text-slate-400 mt-4">
-                    Chiqarilgan: {new Date(selectedArt.createdAt).toLocaleDateString('uz-UZ', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                    {t('art_gallery_section.published')}: {formatDate(
+                      selectedArt.createdAt,
+                      i18n.language,
+                      {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      }
+                    )}
                   </p>
                 )}
               </div>
@@ -185,43 +195,17 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
       {/* Styles */}
       <style>{`
         @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes scale-in {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
         }
-
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out forwards;
-        }
-
-        .animate-scale-in {
-          animation: scale-in 0.4s ease-out forwards;
-        }
-
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
+        .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+        .animate-scale-in { animation: scale-in 0.4s ease-out forwards; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
       `}</style>
     </>
   );
@@ -232,9 +216,10 @@ interface ArtCardProps {
   item: ArtItem;
   onClick: () => void;
   delay?: number;
+  viewLabel: string;
 }
 
-const ArtCard: React.FC<ArtCardProps> = ({ item, onClick, delay = 0 }) => {
+const ArtCard: React.FC<ArtCardProps> = ({ item, onClick, delay = 0, viewLabel }) => {
   return (
     <div
       onClick={onClick}
@@ -272,7 +257,7 @@ const ArtCard: React.FC<ArtCardProps> = ({ item, onClick, delay = 0 }) => {
 
         {/* View Button */}
         <button className="w-full px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-300 text-sm flex items-center justify-center gap-2 group/btn">
-          Ko'rish
+          {viewLabel}
           <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
         </button>
       </div>

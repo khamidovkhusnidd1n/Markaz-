@@ -1,0 +1,23 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/custom_jazzmin.css' %}?v=3">
+<style>
+  /* Failsafe direct overrides */
+  .main-header, .main-header.navbar, .main-header.bg-indigo, .brand-link, .brand-link.bg-indigo {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+    border-bottom: 1px solid #1e293b !important;
+  }
+  .main-sidebar, .main-sidebar.sidebar-dark-indigo, .main-sidebar.sidebar-dark-primary {
+    background: #0f172a !important;
+    background-color: #0f172a !important;
+  }
+  .nav-sidebar .nav-link.active, .sidebar-dark-indigo .nav-sidebar > .nav-item > .nav-link.active {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    border-radius: 10px !important;
+  }
+</style>
+{% endblock %}

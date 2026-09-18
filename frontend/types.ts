@@ -18,6 +18,7 @@ export interface NewsItem {
   isActive?: boolean;
   externalLink?: string;
   videoUrl?: string;
+  views_count?: number;
 }
 
 // Gallery image (single image in album)
@@ -83,6 +84,9 @@ export interface Teacher {
   title: string;
   title_translated?: string;
   awards?: string;
+  awards_translated?: string;
+  biography?: string;
+  biography_translated?: string;
   photoUrl?: string;
 }
 
@@ -228,4 +232,109 @@ export interface InternationalMedia {
   youtubeUrl?: string;
   order: number;
   isActive?: boolean;
+}
+
+export interface DepartmentTask {
+  id: number;
+  department: number;
+  title: string;
+  title_ru?: string;
+  title_en?: string;
+  task_text: string;
+  task_text_ru?: string;
+  task_text_en?: string;
+  order: number;
+}
+
+
+export interface DepartmentImage {
+  id: number;
+  image: string;
+  image_url?: string;
+  order: number;
+}
+
+export interface DepartmentVideo {
+  id: number;
+  video_url: string;
+  order: number;
+}
+
+export interface DepartmentPostImage {
+  id: number;
+  image?: string;
+  image_url?: string;
+  video?: string;
+  video_url?: string;
+}
+
+export interface DepartmentPost {
+  id: number;
+  title: string;
+  title_ru?: string;
+  title_en?: string;
+  content: string;
+  content_ru?: string;
+  content_en?: string;
+  image?: string;
+  image_url?: string;
+  video?: string;
+  video_url?: string;
+  date: string;
+  views_count: number;
+  images?: DepartmentPostImage[];
+}
+
+export interface Department {
+  id: number;
+  name: string;
+  name_ru?: string;
+  name_en?: string;
+  icon_name?: string;
+  color_classes?: string;
+  description: string;
+  description_ru?: string;
+  description_en?: string;
+  detail_text: string;
+  detail_text_ru?: string;
+  detail_text_en?: string;
+  order: number;
+  department_posts?: DepartmentPost[];
+  department_tasks?: DepartmentTask[];
+  images?: DepartmentImage[];
+  videos?: DepartmentVideo[];
+}
+
+export interface PedagogueProjectImage {
+  id: number;
+  image: string;
+  project: number;
+}
+
+export interface PedagogueProject {
+  id: number;
+  title: string;
+  title_ru?: string;
+  title_en?: string;
+  description?: string;
+  description_ru?: string;
+  description_en?: string;
+  views_count: number;
+  votes_count: number;
+  images: PedagogueProjectImage[];
+  pedagogue: number;
+  pedagogue_name?: string;
+}
+
+export interface Pedagogue {
+  id: number;
+  full_name: string;
+  full_name_ru?: string;
+  full_name_en?: string;
+  bio: string;
+  bio_ru?: string;
+  bio_en?: string;
+  image?: string;
+  projects: PedagogueProject[];
+  order: number;
 }

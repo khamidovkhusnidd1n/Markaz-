@@ -1,0 +1,86 @@
+{
+  "deploy_check": {
+    "exit_code": 0,
+    "stdout": "System check identified no issues (0 silenced).\n",
+    "stderr": ""
+  },
+  "static_admin_auth": [
+    {
+      "scenario": "DEBUG=False, token='static-admin-token'",
+      "expected": "None",
+      "actual": "None",
+      "passed": true
+    },
+    {
+      "scenario": "DEBUG=False, strong token='custom-secret-token-99999'",
+      "expected": "None",
+      "actual": "None",
+      "passed": true
+    },
+    {
+      "scenario": "DEBUG=False, ALLOW_STATIC_ADMIN_AUTH=True, weak token='1212'",
+      "expected": "None",
+      "actual": "None",
+      "passed": true
+    },
+    {
+      "scenario": "DEBUG=False, ALLOW_STATIC_ADMIN_AUTH=True, strong token",
+      "expected": "User object",
+      "actual": "admin",
+      "passed": true
+    },
+    {
+      "scenario": "DEBUG=True, weak token='static-admin-token'",
+      "expected": "None",
+      "actual": "None",
+      "passed": true
+    }
+  ],
+  "password_validation": [
+    {
+      "password": "1212",
+      "accepted": false,
+      "errors": [
+        "This password is too short. It must contain at least 8 characters.",
+        "This password is too common.",
+        "This password is entirely numeric."
+      ]
+    },
+    {
+      "password": "123456",
+      "accepted": false,
+      "errors": [
+        "This password is too short. It must contain at least 8 characters.",
+        "This password is too common.",
+        "This password is entirely numeric."
+      ]
+    },
+    {
+      "password": "password",
+      "accepted": false,
+      "errors": [
+        "This password is too common."
+      ]
+    },
+    {
+      "password": "admin",
+      "accepted": false,
+      "errors": [
+        "This password is too short. It must contain at least 8 characters.",
+        "This password is too common."
+      ]
+    },
+    {
+      "password": "Short1!",
+      "accepted": false,
+      "errors": [
+        "This password is too short. It must contain at least 8 characters."
+      ]
+    },
+    {
+      "password": "ValidStrongPassword2026!",
+      "accepted": true,
+      "errors": []
+    }
+  ]
+}

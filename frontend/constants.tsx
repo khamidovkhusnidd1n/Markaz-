@@ -2,7 +2,7 @@
 import React from 'react';
 import { 
   Home, Info, BookOpen, GraduationCap, 
-  Database, Globe 
+  Database, Globe, Users
 } from 'lucide-react';
 
 export const COLORS = {
@@ -26,65 +26,71 @@ export type MenuItemType = {
 export const MENU_ITEMS: MenuItemType[] = [
   {
     label: 'Markaz haqida',
+    i18nKey: 'menu.about',
     icon: <Info size={18} />,
+    path: '#',
     children: [
-      { label: 'Markaz haqida', path: '/about' },
-      { label: 'Markaz tuzilmasi', path: '/about#structure' },
-      { label: 'Rahbariyat', path: '/about#leadership' },
-      { label: 'Markaziy apparat', path: '/about#staff' },
-      { label: 'Virtual qabulxona', path: '/virtual-qabulxona#murojaat' },
-      { label: 'Ariza yuborish', path: '/virtual-qabulxona#ariza' }
+      { label: 'Markaz haqida', path: '/about/info', i18nKey: 'menu.about' },
+      { label: 'Markaz tuzilmasi', path: '/about/structure', i18nKey: 'menu.structure' },
+      { label: 'Rahbariyat', path: '/about/leadership', i18nKey: 'menu.leadership' },
+      { label: 'Markaziy apparat', path: '/about/staff', i18nKey: 'menu.staff' },
+      { label: 'Virtual qabulxona', path: '/virtual-qabulxona#murojaat', i18nKey: 'menu.virtual_reception' },
+      { label: 'Ariza yuborish', path: '/virtual-qabulxona#ariza', i18nKey: 'menu.submit_app' }
     ]
   },
   {
     label: "Bo'limlar",
+    i18nKey: 'menu.departments',
     icon: <Database size={18} />,
+    path: '#',
     children: [
-      { label: 'Qayta tayyorlash va malaka oshirish monitoringi', path: '/departments#monitoring' },
-      { label: "O\u2018quv jarayonini tashkil etish", path: '/departments#edu' },
-      { label: 'Matbuot va axborot texnologiyalari', path: '/departments#it' },
-      { label: 'Xalqaro aloqalarni rivojlantirish', path: '/international' }
+      { label: 'Qayta tayyorlash va malaka oshirish monitoringi', path: '/departments/2', i18nKey: 'menu.monitoring' },
+      { label: "O'quv jarayonini tashkil etish", path: '/departments/3', i18nKey: 'menu.edu_process' },
+      { label: 'Matbuot va axborot texnologiyalari', path: '/departments/1', i18nKey: 'menu.it' },
+      { label: 'Xalqaro aloqalarni rivojlantirish', path: '/departments/4', i18nKey: 'menu.international' }
     ]
   },
   {
     label: "Ta'lim dasturlari",
+    i18nKey: 'menu.programs',
     icon: <GraduationCap size={18} />,
     children: [
-      { label: 'Kurslar', path: '/courses' },
-      { label: "O\u2018quv me\u2019yoriy hujjatlar", path: '/open-data?category=regulatory' },
-      { label: 'Kutubxona', path: '/library' }
+      { label: 'Kurslar', path: '/courses', i18nKey: 'menu.courses' },
+      { label: "O\u2018quv me\u2019yoriy hujjatlar", path: '/open-data?category=regulatory', i18nKey: 'menu.regulatory' },
+      { label: 'Kutubxona', path: '/library', i18nKey: 'menu.library' }
     ]
   },
-  { label: 'Ilmiy jurnal', path: '/journal', icon: <BookOpen size={18} /> },
+  { label: 'Ilmiy jurnal', path: '/journal', icon: <BookOpen size={18} />, i18nKey: 'menu.journal' },
   {
     label: 'Tinglovchilar uchun',
-    icon: <GraduationCap size={18} />,
+    i18nKey: 'menu.for_listeners',
+    icon: <Users size={18} />,
     children: [
-      { label: 'Malaka oshirish rejasi', path: '/training-plan' },
-      { label: 'Portfolio', path: '/portfolio' },
-      { label: 'Reestr (Sertifikat tekshirish)', path: '/students' },
-      { label: "Masofaviy ta\u2018lim", path: 'external', url: 'https://mt.uzbamalaka.uz' }
+      { label: 'Malaka oshirish rejasi', path: '/training-plan', i18nKey: 'menu.training_plan' },
+      { label: 'Portfolio', path: '/portfolio', i18nKey: 'menu.portfolio' },
+      { label: 'Reyestr (Sertifikatni tekshirish)', path: '/students', i18nKey: 'menu.registry' },
+      { label: "Masofaviy ta'lim", path: 'external', url: 'https://mt.uzbamalaka.uz', i18nKey: 'menu.distance_edu' },
+      { label: "Davomat tizimi", path: 'external', url: 'https://t.me/uzbadavomatbot', i18nKey: 'menu.attendance' }
     ]
   },
-  { label: "Ochiq ma'lumotlar", path: '/open-data?category=open_data', icon: <Database size={18} /> },
+  { label: "Ochiq ma'lumotlar", path: '/open-data?category=open_data', icon: <Database size={18} />, i18nKey: 'menu.open_data' },
   {
     label: 'Media',
+    i18nKey: 'menu.media',
     icon: <Globe size={18} />,
     children: [
-      { label: 'Yangiliklar', path: '/news' },
-      { label: "E'lonlar", path: '/news' },
-      { label: 'Fotogalereya', path: '/photo-gallery' },
-      { label: 'Art Galereya', path: '/art-gallery' },
-      { label: "Bog'lanish uchun", path: '/#contact' }
+      { label: 'Yangiliklar', path: '/news?category=yangiliklar', i18nKey: 'menu.news' },
+      { label: "E'lonlar", path: '/news?category=elonlar', i18nKey: 'menu.announcements' },
+      { label: 'Fotogalereya', path: '/photo-gallery', i18nKey: 'menu.gallery' },
+      { label: 'Art Galereya', path: '/art-gallery', i18nKey: 'menu.art_gallery' },
+      { label: "Bog'lanish uchun", path: '/#contact', i18nKey: 'menu.contact' }
     ]
   },
   {
-    label: 'Salohiyat',
+    label: 'Ilmiy salohiyat',
+    path: '/scientific-potential',
     icon: <Info size={18} />,
-    children: [
-      { label: 'Bizning ustozlar', path: '/teachers' },
-      { label: 'Ilmiy salohiyat', path: '/about#potential' }
-    ]
+    i18nKey: 'menu.sci_potential'
   }
 ];
 

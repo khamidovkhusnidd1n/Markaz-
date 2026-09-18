@@ -1,3 +1,4 @@
+import i18n from '../i18n';
 import {
   AppContent,
   Appeal,
@@ -17,12 +18,15 @@ import {
   NewsItem,
   Statistics,
   PDPlanRecord,
+  Department,
+  Pedagogue,
+  PedagogueProject,
   Personnel,
   Teacher,
 } from '../types';
 import { INITIAL_STATS } from '../constants';
 
-const API_URL_CACHE_KEY = 'working_api_base_url';
+const API_URL_CACHE_KEY = 'working_api_base_url_v2';
 const TOKEN_KEY = 'auth_token';
 const REFRESH_KEY = 'refresh_token';
 
@@ -116,6 +120,10 @@ type Method = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
 
 async function apiRequest<T>(endpoint: string, options: RequestInit = {}, retried = false): Promise<T> {
   const token = safeStorageGet(TOKEN_KEY);
+  const lang = (i18n.language || 'uz').substring(0, 2);
+  const sep = endpoint.includes('?') ? '&' : '?';
+  const urlWithLang = `${endpoint}${sep}lang=${lang}`;
+
   const headers: HeadersInit = { ...options.headers };
 
   if (token) {
@@ -131,7 +139,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}, retrie
 
   for (const baseUrl of getApiBaseUrls()) {
     try {
-      const candidateResponse = await fetch(`${baseUrl}${endpoint}`, { ...options, headers });
+      const candidateResponse = await fetch(`${baseUrl}${urlWithLang}`, { ...options, headers });
       // Only skip on 404 — everything else (including errors) is treated as a valid response
       if (candidateResponse.status === 404) {
         response = candidateResponse;
@@ -168,7 +176,91 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}, retrie
   return (text ? JSON.parse(text) : {}) as T;
 }
 
-const toDate = (value?: string) => (value ? new Date(value).toLocaleDateString('uz-UZ') : '');
+const toDate = (value?: string) => {
+  if (!value) return '';
+  const lang = (i18n.language || 'uz').substring(0, 2);
+  const locale = lang === 'en' ? 'en-US' : lang === 'ru' ? 'ru-RU' : 'uz-UZ';
+  return new Date(value).toLocaleDateString(locale);
+};
+
+
+function transformDepartment(item: any): Department {
+  return {
+    id: item.id,
+    name: item.name || '',
+    name_ru: item.name_ru || '',
+    name_en: item.name_en || '',
+    icon_name: item.icon_name || '',
+    color_classes: item.color_classes || '',
+    description: item.description || '',
+    description_ru: item.description_ru || '',
+    description_en: item.description_en || '',
+    tasks: item.tasks || '',
+    tasks_ru: item.tasks_ru || '',
+    tasks_en: item.tasks_en || '',
+    detail_text: item.detail_text || '',
+    detail_text_ru: item.detail_text_ru || '',
+    detail_text_en: item.detail_text_en || '',
+    detail_image: item.detail_image || '',
+    detail_video_url: item.detail_video_url || '',
+    order: item.order || 0,
+    department_posts: item.department_posts || [],
+      department_tasks: (item.department_tasks || []).map((t: any) => ({
+      id: t.id,
+      department: t.department,
+      task_text: t.task_text || '',
+      task_text_ru: t.task_text_ru || '',
+      task_text_en: t.task_text_en || '',
+      order: t.order || 0,
+    })),
+    images: (item.images || []).map((img: any) => ({
+      id: img.id,
+      image: img.image || '',
+      image_url: img.image_url || '',
+      order: img.order || 0,
+    })),
+    videos: (item.videos || []).map((v: any) => ({
+      id: v.id,
+      video_url: v.video_url || '',
+      order: v.order || 0,
+    })),
+  };
+}
+
+function transformPedagogue(item: any): Pedagogue {
+  return {
+    id: item.id,
+    full_name: item.full_name || '',
+    full_name_ru: item.full_name_ru || '',
+    full_name_en: item.full_name_en || '',
+    bio: item.bio || '',
+    bio_ru: item.bio_ru || '',
+    bio_en: item.bio_en || '',
+    image: item.image || '',
+    order: item.order || 0,
+    projects: (item.projects || []).map(transformPedagogueProject),
+  };
+}
+
+function transformPedagogueProject(item: any): PedagogueProject {
+  return {
+    id: item.id,
+    pedagogue: item.pedagogue,
+    title: item.title || '',
+    title_ru: item.title_ru || '',
+    title_en: item.title_en || '',
+    description: item.description || '',
+    description_ru: item.description_ru || '',
+    description_en: item.description_en || '',
+    views_count: item.views_count || 0,
+    votes_count: item.votes_count || 0,
+    images: (item.images || []).map((img: any) => ({
+      id: Number(img.id),
+      image: img.image || '',
+      project: item.id,
+    })),
+  };
+}
 
 function transformNewsItem(item: any): NewsItem {
   const images = (item.images || []).map((img: any) => ({
@@ -177,22 +269,23 @@ function transformNewsItem(item: any): NewsItem {
     order: img.order || 0,
   }));
   return {
-    id: String(item.id),
-    title: item.title || '',
+    id: item.id,
+    title: item.title_translated || item.title || '',
     category: item.category_name || '',
     categoryId: item.category_id ? String(item.category_id) : '',
-    content: item.content || '',
-    date: toDate(item.created_at),
+    content: item.content_translated || item.content || '',
+    date: item.created_at || '',
     image: images[0]?.imageUrl || item.image_url || '',
     images,
     isImportant: item.is_important,
     isActive: item.is_active,
+    views_count: item.views_count || 0,
   };
 }
 
 function transformGalleryItem(item: any): GalleryItem {
   return {
-    id: String(item.id),
+    id: item.id,
     title: item.title || '',
     coverImageUrl: item.cover_image_url || '',
     images: (item.images || []).map((img: any): GalleryImage => ({
@@ -207,11 +300,11 @@ function transformGalleryItem(item: any): GalleryItem {
 
 function transformArtGalleryItem(item: any): ArtGalleryItem {
   return {
-    id: String(item.id),
+    id: item.id,
     imageUrl: item.image_url || '',
-    title: item.title || '',
+    title: item.title_translated || item.title || '',
     author: item.author || '',
-    description: item.description || '',
+    description: item.description_translated || item.description || '',
     createdAt: item.created_at || '',
     order: item.order || 0,
     isActive: item.is_active,
@@ -220,7 +313,7 @@ function transformArtGalleryItem(item: any): ArtGalleryItem {
 
 function transformAppeal(item: any): Appeal {
   return {
-    id: String(item.id),
+    id: item.id,
     fullName: item.full_name || '',
     appealType: item.appeal_type,
     appealTypeDisplay: item.appeal_type_display || '',
@@ -234,7 +327,7 @@ function transformAppeal(item: any): Appeal {
 
 function transformApplication(item: any): Application {
   return {
-    id: String(item.id),
+    id: item.id,
     fullName: item.full_name || '',
     applicationType: item.application_type,
     applicationTypeDisplay: item.application_type_display || '',
@@ -248,39 +341,43 @@ function transformApplication(item: any): Application {
 
 function transformTeacher(item: any): Teacher {
   return {
-    id: String(item.id),
+    id: item.id,
     fullName: item.full_name || '',
     position: item.position || '',
+    position_translated: item.position_translated || '',
     degree: item.degree || '',
+    degree_translated: item.degree_translated || '',
     title: item.title || '',
+    title_translated: item.title_translated || '',
     awards: item.awards || '',
+    awards_translated: item.awards_translated || '',
     photoUrl: item.photo_url || '',
   };
 }
 
 function transformPersonnel(item: any): Personnel {
   return {
-    id: String(item.id),
+    id: item.id,
     fullName: item.full_name || '',
-    position: item.position || '',
+    position: item.position_translated || item.position || '',
     phone: item.phone || '',
     email: item.email || '',
     receptionHours: item.reception_hours || '',
     photoUrl: item.photo_url || '',
     category: item.category,
-    duties: item.duties || '',
-    biography: item.biography || '',
+    duties: item.duties_translated || item.duties || '',
+    biography: item.biography_translated || item.biography || '',
   };
 }
 
 function transformCourse(item: any): Course {
   return {
-    id: String(item.id),
-    title: item.title || '',
+    id: item.id,
+    title: item.title_translated || item.title || '',
     type: item.course_type,
     typeDisplay: item.course_type_display || '',
     duration: item.duration || '',
-    description: item.description || '',
+    description: item.description_translated || item.description || '',
     phoneNumbers: item.phone_numbers || '',
     email: item.email || '',
     telegramLink: item.telegram_link || '',
@@ -290,7 +387,7 @@ function transformCourse(item: any): Course {
 
 function transformJournalIssue(item: any): JournalIssue {
   return {
-    id: String(item.id),
+    id: item.id,
     year: item.year || '',
     issueNumber: item.issue_number || '',
     pdfUrl: item.pdf_url || '',
@@ -300,19 +397,19 @@ function transformJournalIssue(item: any): JournalIssue {
 
 function transformDocument(item: any): Document {
   return {
-    id: String(item.id),
-    title: item.title || '',
+    id: item.id,
+    title: item.title_translated || item.title || '',
     category: item.category,
     fileUrl: item.file_url || '',
     coverImageUrl: item.cover_image_url || '',
-    date: toDate(item.created_at),
+    date: item.created_at || '',
   };
 }
 
 function transformPDPlanRecord(item: any): PDPlanRecord {
   const recordType = ((item.record_type || item.series || 'MO').toUpperCase() === 'QT' ? 'QT' : 'MO') as 'MO' | 'QT';
   return {
-    id: String(item.id),
+    id: item.id,
     recordType,
     fullName: item.full_name || '',
     workplace: item.workplace || '',
@@ -354,19 +451,19 @@ function transformStatistics(data: any): Statistics {
 
 function transformAppContent(data: any): AppContent {
   return {
-    history: data?.history || '',
-    structure: data?.structure || '',
+    history: data?.history_translated || data?.history || '',
+    structure: data?.structure_translated || data?.structure || '',
     structureImage: data?.structure_image_url || '',
-    studentNotes: data?.student_notes || '',
+    studentNotes: data?.student_notes_translated || data?.student_notes || '',
     contactInfo: data?.contact_info || '',
     address: data?.address || '',
     mapEmbedUrl: data?.map_embed_url || '',
-    siteName: data?.site_name || '',
+    siteName: data?.site_name_translated || data?.site_name || '',
     headerLogo: data?.header_logo_url || '',
     footerLogo: data?.footer_logo_url || '',
     heroVideoUrl: data?.hero_video_url || '',
     heroImages: (data?.hero_images || []).map((item: any) => ({
-      id: String(item.id),
+      id: item.id,
       imageUrl: item.image_url || '',
       order: item.order || 0,
     })),
@@ -398,7 +495,7 @@ function transformInternationalSettings(data: any): InternationalSettings {
 
 function transformInternationalPartner(item: any): InternationalPartner {
   return {
-    id: String(item.id),
+    id: item.id,
     name: item.name || '',
     country: item.country || '',
     description: item.description || '',
@@ -410,9 +507,9 @@ function transformInternationalPartner(item: any): InternationalPartner {
 
 function transformInternationalProject(item: any): InternationalProject {
   return {
-    id: String(item.id),
-    title: item.title || '',
-    description: item.description || '',
+    id: item.id,
+    title: item.title_translated || item.title || '',
+    description: item.description_translated || item.description || '',
     partners: item.partners || [],
     partnersText: item.partners_text || '',
     startDate: item.start_date || '',
@@ -431,7 +528,7 @@ function transformInternationalProject(item: any): InternationalProject {
 
 function transformInternationalMedia(item: any): InternationalMedia {
   return {
-    id: String(item.id),
+    id: item.id,
     title: item.title || '',
     description: item.description || '',
     mediaType: item.media_type,
@@ -498,10 +595,74 @@ export const BackendAPI = {
       internationalPartners: (data.internationalPartners || data.international_partners || []).map(transformInternationalPartner),
       internationalProjects: (data.internationalProjects || data.international_projects || []).map(transformInternationalProject),
       internationalMedia: (data.internationalMedia || data.international_media || []).map(transformInternationalMedia),
-    };
+        departments: (data.departments || []).map(transformDepartment),
+        pedagogues: (data.pedagogues || []).map(transformPedagogue),
+        pedagogueProjects: (data.pedagogueProjects || data.pedagogue_projects || []).map(transformPedagogueProject),
+      };
   },
 
-  async login(credentials: { username: string; password: string }) {
+  
+    async incrementProjectView(projectId: number) {
+      let successfulBaseUrl: string | null = null;
+      for (const baseUrl of getApiBaseUrls()) {
+        try {
+          const res = await fetch(`${baseUrl}/projects/${projectId}/view/`, { method: 'POST' });
+          if (res.ok) {
+            const data = await res.json();
+            return data.views_count;
+          }
+        } catch (e) {
+          console.warn(`Failed on ${baseUrl}`, e);
+        }
+      }
+      throw new Error('Failed to increment view');
+    },
+
+    async incrementNewsView(newsId: string | number) {
+      for (const baseUrl of getApiBaseUrls()) {
+        try {
+          const res = await fetch(`${baseUrl}/news/${newsId}/view/`, { method: 'POST' });
+          if (res.ok) {
+            const data = await res.json();
+            return data.views_count;
+          }
+        } catch (e) {
+          console.warn(`Failed on ${baseUrl}`, e);
+        }
+      }
+      throw new Error('Failed to increment news view');
+    },
+
+    async incrementDepartmentPostView(postId: string | number) {
+      for (const baseUrl of getApiBaseUrls()) {
+        try {
+          const res = await fetch(`${baseUrl}/department-posts/${postId}/view/`, { method: 'POST' });
+          if (res.ok) {
+            const data = await res.json();
+            return data.views_count;
+          }
+        } catch (e) {
+          console.warn(`Failed on ${baseUrl}`, e);
+        }
+      }
+      throw new Error('Failed to increment department post view');
+    },
+
+    async incrementProjectVote(projectId: number) {
+      let successfulBaseUrl: string | null = null;
+      for (const baseUrl of getApiBaseUrls()) {
+        try {
+          const res = await fetch(`${baseUrl}/projects/${projectId}/vote/`, { method: 'POST' });
+          if (res.ok) {
+            successfulBaseUrl = baseUrl;
+            return { data: await res.json() };
+          }
+        } catch (e) {}
+      }
+      throw new Error('Failed to increment vote');
+    },
+
+    async login(credentials: { username: string; password: string }) {
     let response: Response | null = null;
     let successfulBaseUrl: string | null = null;
 
@@ -532,7 +693,7 @@ export const BackendAPI = {
 
     const data = await response.json().catch(() => ({}));
     if (!response.ok || !data.success) {
-      throw new Error(data.message || "Login yoki parol noto'g'ri!");
+      throw new Error(data.message || i18n.t('auth.login_failed'));
     }
 
     safeStorageSet(TOKEN_KEY, data.token || 'uzbamarkaz-secure-token-9f8a7b6c5d4e3f2a1');

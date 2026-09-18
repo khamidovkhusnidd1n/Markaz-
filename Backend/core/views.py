@@ -37,6 +37,10 @@ logger = logging.getLogger('core')
 
 def is_static_admin_request(request):
     from django.conf import settings
+    if not settings.DEBUG and not getattr(settings, 'ALLOW_STATIC_ADMIN_AUTH', False):
+        return False
+    if not settings.STATIC_ADMIN_TOKEN or settings.STATIC_ADMIN_TOKEN == 'static-admin-token':
+        return False
     auth_header = request.headers.get('Authorization', '')
     expected = f"Bearer {settings.STATIC_ADMIN_TOKEN}"
     return auth_header == expected
@@ -55,6 +59,40 @@ class IsAdminOrReadOnly(permissions.BasePermission):
             return True
         return has_admin_access(request)
 
+
+
+from .models import Department, Pedagogue, PedagogueProject
+from .serializers import DepartmentSerializer, PedagogueSerializer, PedagogueProjectSerializer
+from rest_framework.decorators import action
+
+class DepartmentViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Department.objects.all().order_by('order', '-created_at')
+    serializer_class = DepartmentSerializer
+    permission_classes = [permissions.AllowAny]
+
+class PedagogueViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Pedagogue.objects.all().order_by('order', '-created_at')
+    serializer_class = PedagogueSerializer
+    permission_classes = [permissions.AllowAny]
+
+class PedagogueProjectViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = PedagogueProject.objects.all().order_by('-votes_count', '-created_at')
+    serializer_class = PedagogueProjectSerializer
+    permission_classes = [permissions.AllowAny]
+
+    @action(detail=True, methods=['post'])
+    def view(self, request, pk=None):
+        project = self.get_object()
+        project.views_count += 1
+        project.save(update_fields=['views_count'])
+        return Response({'views_count': project.views_count})
+
+    @action(detail=True, methods=['post'])
+    def vote(self, request, pk=None):
+        project = self.get_object()
+        project.votes_count += 1
+        project.save(update_fields=['votes_count'])
+        return Response({'votes_count': project.votes_count})
 
 class NewsViewSet(viewsets.ModelViewSet):
     """ViewSet for News CRUD operations with inline images."""
@@ -116,15 +154,6 @@ class NewsViewSet(viewsets.ModelViewSet):
         response_serializer = NewsSerializer(news, context={'request': request})
         return Response(response_serializer.data, status=status.HTTP_201_CREATED)
 
-
-class NewsCategoryViewSet(viewsets.ModelViewSet):
-    queryset = NewsCategory.objects.all().order_by('order', 'name')
-    serializer_class = NewsCategorySerializer
-    permission_classes = [IsAdminOrReadOnly]
-
-    def perform_create(self, serializer):
-        serializer.save(is_active=True)
-
     @action(detail=True, methods=['post'], parser_classes=[MultiPartParser])
     def add_images(self, request, pk=None):
         """Add images to existing news."""
@@ -155,6 +184,15 @@ class NewsCategoryViewSet(viewsets.ModelViewSet):
         news.save()
         serializer = NewsSerializer(news, context={'request': request})
         return Response(serializer.data)
+
+
+class NewsCategoryViewSet(viewsets.ModelViewSet):
+    queryset = NewsCategory.objects.all().order_by('order', 'name')
+    serializer_class = NewsCategorySerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
 
 
 class GalleryItemViewSet(viewsets.ModelViewSet):
@@ -861,6 +899,21 @@ def get_all_data(request):
                 many=True,
                 context=ctx
             ).data,
+            'departments': DepartmentSerializer(
+                Department.objects.all().order_by('order', '-created_at'),
+                many=True,
+                context=ctx
+            ).data,
+            'pedagogues': PedagogueSerializer(
+                Pedagogue.objects.all().order_by('order', '-created_at'),
+                many=True,
+                context=ctx
+            ).data,
+            'pedagogueProjects': PedagogueProjectSerializer(
+                PedagogueProject.objects.all().order_by('-votes_count', '-created_at'),
+                many=True,
+                context=ctx
+            ).data,
             'internationalMedia': InternationalMediaSerializer(
                 InternationalMedia.objects.filter(is_active=True).order_by('order', '-created_at'),
                 many=True,
@@ -916,3 +969,48 @@ def custom_login(request):
         {'success': False, 'message': "Login yoki parol noto'g'ri!"},
         status=status.HTTP_401_UNAUTHORIZED
     )
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def increment_project_view(request, pk):
+    try:
+        project = PedagogueProject.objects.get(pk=pk)
+        project.views_count += 1
+        project.save(update_fields=['views_count'])
+        return Response({'views_count': project.views_count})
+    except PedagogueProject.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def increment_news_view(request, pk):
+    try:
+        news = News.objects.get(pk=pk)
+        news.views_count += 1
+        news.save(update_fields=['views_count'])
+        return Response({'views_count': news.views_count})
+    except News.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def increment_department_post_view(request, pk):
+    try:
+        post = DepartmentPost.objects.get(pk=pk)
+        post.views_count += 1
+        post.save(update_fields=['views_count'])
+        return Response({'views_count': post.views_count})
+    except DepartmentPost.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def increment_project_vote(request, pk):
+    try:
+        project = PedagogueProject.objects.get(pk=pk)
+        project.votes_count += 1
+        project.save(update_fields=['votes_count'])
+        return Response({'votes_count': project.votes_count})
+    except PedagogueProject.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)

@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -6,8 +7,8 @@ interface ErrorBoundaryState {
   stack?: string;
 }
 
-export class ErrorBoundary extends React.Component<
-  { children: React.ReactNode },
+class ErrorBoundaryComponent extends React.Component<
+  { children: React.ReactNode } & WithTranslation,
   ErrorBoundaryState
 > {
   state: ErrorBoundaryState = {
@@ -23,26 +24,26 @@ export class ErrorBoundary extends React.Component<
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Frontend render xatoligi:', error);
     this.setState({
-      errorMessage: error?.message || 'Nomaʼlum xatolik',
+      errorMessage: error?.message || this.props.t('error.unknown'),
       stack: errorInfo?.componentStack || error?.stack || '',
     });
   }
 
   render() {
+    const { t } = this.props;
     if (this.state.hasError) {
       return (
         <div className="flex min-h-screen items-center justify-center bg-slate-100 px-6">
           <div className="w-full max-w-xl rounded-3xl bg-white p-8 text-center shadow-xl">
             <h1 className="mb-3 text-2xl font-black text-slate-900">
-              Sahifa yuklanmadi
+              {t('error.page_not_loaded')}
             </h1>
             <p className="text-slate-600">
-              Frontend render vaqtida xatolik yuz berdi. Sahifani yangilang.
-              Muammo saqlansa, konsolda chiqqan xatoni tekshiring.
+              {t('error.render_error_desc')}
             </p>
             {this.state.errorMessage && (
               <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-left text-sm text-red-700">
-                <p className="font-bold">Xatolik:</p>
+                <p className="font-bold">{t('error.label')}</p>
                 <p className="mt-2 break-words">{this.state.errorMessage}</p>
                 {this.state.stack && (
                   <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap rounded-xl bg-white p-3 text-xs text-slate-700">
@@ -59,3 +60,5 @@ export class ErrorBoundary extends React.Component<
     return this.props.children;
   }
 }
+
+export const ErrorBoundary = withTranslation()(ErrorBoundaryComponent);

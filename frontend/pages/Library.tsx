@@ -2,8 +2,10 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Library: React.FC = () => {
+  const { t } = useTranslation();
   const { documents } = useApp();
 
   return (
@@ -11,16 +13,16 @@ const Library: React.FC = () => {
       <div className="bg-blue-900 py-16 text-white">
         <div className="container mx-auto px-6">
           <Link to="/" className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-6 transition-colors text-sm">
-            <ArrowLeft size={16} /> Bosh sahifa
+            <ArrowLeft size={16} /> {t('library.back')}
           </Link>
-          <span className="text-sm font-bold text-amber-500 uppercase tracking-wider mb-2 block">Kutubxona</span>
-          <h1 className="text-4xl md:text-5xl font-black">Adabiyotlar</h1>
-          <p className="mt-4 text-lg text-blue-200 max-w-2xl">Markazimizning elektron kutubxonasiga xush kelibsiz. Bu yerda barcha o'quv adabiyotlari bilan tanishishingiz mumkin.</p>
+          <span className="text-sm font-bold text-amber-500 uppercase tracking-wider mb-2 block">{t('library.badge')}</span>
+          <h1 className="text-4xl md:text-5xl font-black">{t('library.title')}</h1>
+          <p className="mt-4 text-lg text-blue-200 max-w-2xl">{t('library.subtitle')}</p>
         </div>
       </div>
       
       <section className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-3 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 max-w-7xl mx-auto">
           {documents.filter((item) => item.category === 'library').length > 0 ? (
             documents
               .filter((item) => item.category === 'library')
@@ -36,17 +38,17 @@ const Library: React.FC = () => {
                     {item.coverImageUrl ? (
                       <img src={item.coverImageUrl} alt={item.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-sm text-slate-400">Muqova yo'q</div>
+                      <div className="flex h-full items-center justify-center text-sm text-slate-400">{t('library.no_cover')}</div>
                     )}
                   </div>
-                  <div className="p-5">
-                    <p className="line-clamp-2 text-sm font-bold text-slate-900 leading-snug">{item.title}</p>
+                  <div className="p-4">
+                    <p className="line-clamp-2 text-xs font-bold text-slate-900 leading-snug">{item.title}</p>
                   </div>
                 </a>
               ))
           ) : (
             <div className="col-span-full rounded-3xl border-2 border-dashed border-slate-200 bg-slate-50 py-24 text-center text-slate-400">
-              <p className="text-lg">Hozircha kutubxona materiallari kiritilmagan</p>
+              <p className="text-lg">{t('library.no_materials')}</p>
             </div>
           )}
         </div>

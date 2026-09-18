@@ -277,3 +277,4 @@ npm run dev
 ## Eslatma
 
 Repo ichida avvaldan foydalanuvchi tomonidan qilingan boshqa o'zgarishlar ham bor. Ushbu update asosan Django backendni PostgreSQL va DTL talablariga moslab mustahkamladi.
+# Markaz-

@@ -9,6 +9,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from . import views
 
 router = DefaultRouter()
+router.register(r'departments', views.DepartmentViewSet, basename='departments')
+router.register(r'pedagogues', views.PedagogueViewSet, basename='pedagogues')
+router.register(r'pedagogue-projects', views.PedagogueProjectViewSet, basename='pedagogue-projects')
 router.register(r'news', views.NewsViewSet, basename='news')
 router.register(r'news-categories', views.NewsCategoryViewSet, basename='news-category')
 router.register(r'gallery', views.GalleryItemViewSet, basename='gallery')
@@ -31,6 +34,10 @@ router.register(r'international-projects', views.InternationalProjectViewSet, ba
 router.register(r'international-media', views.InternationalMediaViewSet, basename='international-media')
 
 urlpatterns = [
+    path('projects/<int:pk>/view/', views.increment_project_view, name='views.increment_project_view'),
+    path('news/<int:pk>/view/', views.increment_news_view, name='views.increment_news_view'),
+    path('department-posts/<int:pk>/view/', views.increment_department_post_view, name='views.increment_department_post_view'),
+    path('projects/<int:pk>/vote/', views.increment_project_vote, name='views.increment_project_vote'),
     # Router URLs
     path('', include(router.urls)),
 

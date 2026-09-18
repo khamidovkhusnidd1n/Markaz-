@@ -1,0 +1,31 @@
+﻿--- Model Registration Audit ---
+Total concrete models defined in core: 24
+Total registered models found (standalone or inline): 26
+
+Registered Models:
+ - AppContent (standalone)
+ - AppHeroImage (inline)
+ - Appeal (standalone)
+ - Application (standalone)
+ - ArtGalleryItem (standalone)
+ - Course (standalone)
+ - Document (standalone)
+ - GalleryImage (inline)
+ - GalleryItem (standalone)
+ - InternationalMedia (standalone)
+ - InternationalPartner (standalone)
+ - InternationalProject (standalone)
+ - InternationalProjectImage (inline)
+ - InternationalSettings (standalone)
+ - JournalIssue (standalone)
+ - JournalSettings (standalone)
+ - Listener (standalone)
+ - News (standalone)
+ - NewsCategory (standalone)
+ - NewsImage (inline)
+ - Personnel (standalone)
+ - Statistics (standalone)
+ - Teacher (standalone)
+ - YearlyStatistics (standalone)
+
+SUCCESS: All concrete models defined in core/models.py are registered in Django Admin!

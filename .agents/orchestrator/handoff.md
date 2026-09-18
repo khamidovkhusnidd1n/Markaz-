@@ -1,37 +1,51 @@
-# Handoff Report — Project Orchestrator Complete
+# Final Handoff Report — SAYT Project Orchestrator
 
-## Observation
-- All milestones defined in `PROJECT.md` have been successfully completed:
-  1. **Exploration**: System structure, endpoints, models, front-end pages, raw text contents, and documents verified.
-  2. **Test Suite & E2E**: Created E2E test cases validating Courses, Personnel, AppContent description, Document serving, and absence of placeholders. Initial runs failed as expected.
-  3. **Implementation**: Seeding command created and loaded with transactional safety; translation logic corrected to cleanly fallback without suffixes; AppContentViewSet context resolved stand-alone translations; frontend files Students.tsx and Portfolio.tsx updated to utilize backend logic and render dynamic results.
-  4. **Verification & Audit**: Final Forensic Auditing verified clean implementation (CLEAN verdict), E2E test execution verified (all 6 tests passing), and React frontend verified to compile cleanly.
-- The SQLite database contains exact record counts matching the requirements:
-  - 12 courses
-  - 16 personnel
-  - 1 AppContent
-  - 4 documents (copied to media path and loaded into DB)
-- All "Tez kunda" placeholders are removed.
+## Milestone State
+- [x] **Milestone 1: Exploration & Diagnostics**: Completed (Explorers 1, 2, 3)
+- [x] **Milestone 2: Implementation (Upload Fix & Security Hardening)**: Completed (Worker 1)
+- [x] **Milestone 3: Verification & Forensic Audit**: Completed (Reviewers 1 & 2, Challengers 1 & 2, Forensic Auditor 1)
+- [x] **Milestone 4: Final Handoff**: Completed
 
-## Logic Chain
-- **Portability**: Relative path calculations with absolute path fallbacks ensure that the database seeding command and E2E tests work on any machine while still executing on the user's specific directory.
-- **Stability**: Utilizing transaction atomicity during seeding guarantees database integrity on failures, and using size checks/try-catch ensures that file permission locks on Windows (WinError 32) do not crash the script.
-- **Translation Quality**: Passing the lang parameter to the serializer context inside AppContentViewSet and cleaning fallback translation suffixes ensures a professional localization mechanism.
-- **Verification**: The green E2E test suite (6/6 tests passing) and successful Vite build verify complete requirement compliance.
+## Summary of Accomplishments
 
-## Caveats
-- The environment runs in `CODE_ONLY` network restriction, so offline translation dictionaries were used. If new terms are added, they must be registered in the dictionary mapping.
+### 1. R1: Django Admin Image Upload Fix & Verification
+- **`PedagogueProject` Multi-Image Upload Fix**:
+  - Replaced standard `forms.FileField` on `PedagogueProjectForm.images_upload` with custom `MultipleFileField` subclassing `forms.FileField` in `Backend/core/admin.py`. This resolves `AttributeError: 'list' object has no attribute 'name'` when uploading multiple files simultaneously.
+  - Updated `PedagogueProjectAdmin.save_model` to save each uploaded file from `request.FILES.getlist('images_upload')` as linked `PedagogueProjectImage` objects in the database.
+  - Removed stray `save_model` method from `AppContentAdmin`.
+- **Standard Image Upload Verification**:
+  - Verified standard single/multiple photo upload lifecycles across `Course` (covers), `News`/`NewsImage` (main and inline images), `GalleryItem`/`GalleryImage` (album covers and photos), and `Teacher` (photos).
+  - Relocated misplaced `@action` methods (`add_images`, `toggle_active`, `toggle_important`) from `NewsCategoryViewSet` to `NewsViewSet` in `Backend/core/views.py`.
+  - Executed management command `python manage.py clean_orphaned_images` to purge 8 broken database records referencing non-existent media files on disk.
 
-## Conclusion
-- The mission to satisfy the user request for updating the React frontend and Django backend of the SAYT project has been fully accomplished.
+### 2. R2: Django Admin Security Hardening ("Cyber Chief")
+- **Deployment Security Check (`python manage.py check --deploy`)**:
+  - Configured `Backend/markaz_backend/settings.py` and `Backend/.env` to resolve all security warnings. `python manage.py check --deploy` now passes cleanly with **`System check identified no issues (0 silenced).`**
+- **Production Security Configurations**:
+  - `SESSION_COOKIE_SECURE = True` and `CSRF_COOKIE_SECURE = True` enforced.
+  - `SECURE_SSL_REDIRECT = True` active for production deployment (`DEBUG=False`).
+  - HSTS enabled: `SECURE_HSTS_SECONDS = 31536000` (1 year), `SECURE_HSTS_INCLUDE_SUBDOMAINS = True`, `SECURE_HSTS_PRELOAD = True`.
+  - Content protection: `X_FRAME_OPTIONS = 'DENY'`, `SECURE_CONTENT_TYPE_NOSNIFF = True`, `SECURE_BROWSER_XSS_FILTER = True`.
+  - Django password validation enforced via all 4 standard validators (`UserAttributeSimilarityValidator`, `MinimumLengthValidator`, `CommonPasswordValidator`, `NumericPasswordValidator`).
+- **Static Admin Authentication Guard**:
+  - Hardened `StaticAdminAuthentication` in `Backend/core/authentication.py` and `is_static_admin_request` in `Backend/core/views.py`. Static token authentication is disabled in production (`DEBUG=False` and `ALLOW_STATIC_ADMIN_AUTH` not set) and rejects weak/default tokens (`static-admin-token`, `1212`, empty strings).
 
-## Verification Method
-1. Navigate to Django backend:
-   `cd C:\Users\Salohiddin Markaz\Desktop\SAYT\SAYT\Backend`
-2. Run tests:
-   `python manage.py test core.tests_e2e` (returns OK)
-3. Check database model counts:
-   `python manage.py shell -c "from core.models import Course, Personnel, AppContent, Document; print('Courses:', Course.objects.count()); print('Personnel:', Personnel.objects.count()); print('AppContent:', AppContent.objects.count()); print('Document:', Document.objects.count())"`
-4. Verify React compilation:
-   `cd C:\Users\Salohiddin Markaz\Desktop\SAYT\SAYT\frontend`
-   `npm run build` (transforms modules and builds cleanly)
+## Verification Results & Evidence
+
+| Verification Suite | Execution Command | Result |
+| :--- | :--- | :--- |
+| **Django Deployment Check** | `python manage.py check --deploy` | **PASS** (0 issues) |
+| **Milestone 2 Unit Tests** | `python manage.py test core.tests_milestone2` | **PASS** (4/4 tests OK) |
+| **Empirical Milestone 3 Tests** | `python manage.py test core.tests_empirical_m3` | **PASS** (10/10 tests OK) |
+| **Full Backend Regression Suite** | `python manage.py test core` | **PASS** (19/19 tests OK) |
+| **Forensic Integrity Audit** | Auditor audit sweep against source & tests | **VERDICT: CLEAN** (0 violations) |
+
+## Active Subagents Status
+All subagents (Explorers 1-3, Worker 1, Reviewers 1-2, Challengers 1-2, Auditor 1) have completed their assigned tasks and delivered final reports. No subagents are pending.
+
+## Key Artifacts
+- Plan & Roadmap: `c:\Users\Salohiddin Markaz\Desktop\SAYT\SAYT\.agents\orchestrator\plan.md`
+- Progress Log: `c:\Users\Salohiddin Markaz\Desktop\SAYT\SAYT\.agents\orchestrator\progress.md`
+- Working Memory Briefing: `c:\Users\Salohiddin Markaz\Desktop\SAYT\SAYT\.agents\orchestrator\BRIEFING.md`
+- Worker Handoff: `c:\Users\Salohiddin Markaz\Desktop\SAYT\SAYT\.agents\worker_m2_1\handoff.md`
+- Forensic Audit Report: `c:\Users\Salohiddin Markaz\Desktop\SAYT\SAYT\.agents\auditor_m3_1\audit.md`

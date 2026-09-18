@@ -65,7 +65,7 @@ class NewsSerializer(serializers.ModelSerializer):
             'id', 'title', 'title_ru', 'title_en', 'title_translated',
             'category', 'category_id', 'category_name',
             'content', 'content_ru', 'content_en', 'content_translated',
-            'images', 'image_url',
+            'images', 'image_url', 'views_count',
             'is_important', 'is_active', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -172,6 +172,7 @@ class TeacherSerializer(serializers.ModelSerializer):
     degree_translated = serializers.SerializerMethodField()
     title_translated = serializers.SerializerMethodField()
     awards_translated = serializers.SerializerMethodField()
+    biography_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = Teacher
@@ -181,6 +182,7 @@ class TeacherSerializer(serializers.ModelSerializer):
             'degree', 'degree_ru', 'degree_en', 'degree_translated',
             'title', 'title_ru', 'title_en', 'title_translated',
             'awards', 'awards_ru', 'awards_en', 'awards_translated',
+            'biography', 'biography_ru', 'biography_en', 'biography_translated',
             'photo', 'photo_url', 'order', 'is_active',
             'created_at', 'updated_at'
         ]
@@ -205,6 +207,9 @@ class TeacherSerializer(serializers.ModelSerializer):
 
     def get_awards_translated(self, obj):
         return get_translated(obj, 'awards', self.context.get('lang', 'uz'))
+
+    def get_biography_translated(self, obj):
+        return get_translated(obj, 'biography', self.context.get('lang', 'uz'))
 
 
 class PersonnelSerializer(serializers.ModelSerializer):
@@ -391,12 +396,14 @@ class ArtGalleryItemSerializer(serializers.ModelSerializer):
 
 class AppealSerializer(serializers.ModelSerializer):
     appeal_type_display = serializers.CharField(source='get_appeal_type_display', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
 
     class Meta:
         model = Appeal
         fields = [
             'id', 'full_name', 'appeal_type', 'appeal_type_display',
             'description', 'phone', 'email', 'telegram_link',
+            'status', 'status_display', 'admin_note',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -404,12 +411,14 @@ class AppealSerializer(serializers.ModelSerializer):
 
 class ApplicationSerializer(serializers.ModelSerializer):
     application_type_display = serializers.CharField(source='get_application_type_display', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
 
     class Meta:
         model = Application
         fields = [
             'id', 'full_name', 'application_type', 'application_type_display',
             'workplace', 'direction', 'phone', 'telegram_link',
+            'status', 'status_display', 'admin_note',
             'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
@@ -671,3 +680,80 @@ class InternationalMediaSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.image.url)
             return obj.image.url
         return None
+
+from .models import Department, DepartmentTask, DepartmentPost, DepartmentPostImage, DepartmentImage, DepartmentVideo, Pedagogue, PedagogueProject, PedagogueProjectImage
+
+class DepartmentTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DepartmentTask
+        fields = '__all__'
+
+class DepartmentImageSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = DepartmentImage
+        fields = ['id', 'image', 'image_url', 'order']
+
+    def get_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.image:
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return None
+
+class DepartmentVideoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DepartmentVideo
+        fields = '__all__'
+
+
+
+
+class DepartmentPostImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DepartmentPostImage
+        fields = '__all__'
+
+class DepartmentPostSerializer(serializers.ModelSerializer):
+    images = DepartmentPostImageSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = DepartmentPost
+        fields = '__all__'
+
+class DepartmentSerializer(serializers.ModelSerializer):
+    department_tasks = DepartmentTaskSerializer(many=True, read_only=True)
+    department_posts = DepartmentPostSerializer(source='posts', many=True, read_only=True)
+    images = DepartmentImageSerializer(many=True, read_only=True)
+    videos = DepartmentVideoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Department
+        fields = '__all__'
+
+class PedagogueProjectImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PedagogueProjectImage
+        fields = '__all__'
+
+class PedagogueProjectSerializer(serializers.ModelSerializer):
+    images = PedagogueProjectImageSerializer(many=True, read_only=True)
+    pedagogue_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PedagogueProject
+        fields = '__all__'
+
+    def get_pedagogue_name(self, obj):
+        if obj.pedagogue:
+            return obj.pedagogue.full_name or ''
+        return ''
+
+class PedagogueSerializer(serializers.ModelSerializer):
+    projects = PedagogueProjectSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Pedagogue
+        fields = '__all__'

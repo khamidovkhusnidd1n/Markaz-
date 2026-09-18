@@ -13,7 +13,7 @@ urlpatterns = main_urlpatterns + [
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
 
-@override_settings(ROOT_URLCONF='core.tests_e2e')
+@override_settings(ROOT_URLCONF='core.tests_e2e', SECURE_SSL_REDIRECT=False)
 class E2ETestSuite(APITestCase):
     """
     E2E Test Suite programmatically verifying:
@@ -201,4 +201,4 @@ class E2ETestSuite(APITestCase):
         # Find the course 'Badiiy kashtachilik usta-rassomi'
         target_course = next((c for c in results if c['title'] == 'Badiiy kashtachilik usta-rassomi'), None)
         self.assertIsNotNone(target_course, "Target course not found in courses API")
-        self.assertEqual(target_course.get('title_translated'), 'Мастер-художник по художественной вышивке')
+        self.assertEqual(target_course.get('title_translated'), 'Мастер-художник художественной вышивки')
