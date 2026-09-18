@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/SIZNING_CPANEL_LOGININGIZ/public_html/
+    - /bin/cp -R * $DEPLOYPATH

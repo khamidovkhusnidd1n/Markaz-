@@ -201,7 +201,7 @@ const Home: React.FC = () => {
               rel="noreferrer"
               className="absolute right-6 top-6 rounded-full bg-black/40 hover:bg-black/60 transition-colors px-5 py-2.5 text-sm font-bold text-white backdrop-blur-md border border-white/20 flex items-center gap-2 z-20"
             >
-              <Play size={16} className="fill-white" /> {t('common.banner_video')}
+              <Play size={16} className="fill-white" /> {t('home.banner_video')}
             </a>
           )}
           
@@ -212,19 +212,19 @@ const Home: React.FC = () => {
         <div className="container mx-auto px-6 relative z-20 text-white mt-10">
           <div className="max-w-4xl animate-fade-in-up">
             <h1 className="text-5xl md:text-7xl font-black mb-6 leading-[1.1] tracking-tight drop-shadow-xl">
-              {t('common.hero_title_1')} <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 drop-shadow-none">{t('common.hero_title_span')}</span> {t('common.hero_title_2')}
+              {t('home.hero_title_1')} <br/>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 drop-shadow-none">{t('home.hero_title_span')}</span> {t('home.hero_title_2')}
             </h1>
             <p className="text-xl md:text-2xl text-slate-300 mb-10 leading-relaxed max-w-2xl font-light">
-              {t('common.hero_subtitle')}
+              {t('home.hero_subtitle')}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link to="/about" className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-500 hover:to-indigo-500 rounded-2xl font-bold transition-all duration-300 shadow-lg shadow-blue-500/30 flex items-center gap-3">
-                {t('common.details')}
+                {t('home.details')}
                 <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link to="/students" className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 rounded-2xl font-bold transition-all duration-300 flex items-center gap-2">
-                <Users size={20} /> {t('common.listeners')}
+                <Users size={20} /> {t('home.listeners')}
               </Link>
             </div>
           </div>
