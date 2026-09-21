@@ -1,0 +1,1 @@
+const o=(t,c,n)=>{if(!t)return"";try{const r=(c||"uz").split("-")[0].split("_")[0].toLowerCase(),e=r==="en"?"en-US":r==="ru"?"ru-RU":"uz-UZ",a=new Date(t);return isNaN(a.getTime())?t:a.toLocaleDateString(e,n)}catch{try{const e=new Date(t);return isNaN(e.getTime())?t:e.toLocaleDateString("uz-UZ",n)}catch{return t}}};export{o as f};
