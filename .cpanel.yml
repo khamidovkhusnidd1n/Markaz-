@@ -1,7 +1,7 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/SIZNING_CPANEL_LOGININGIZ
+    - export DEPLOYPATH=/home/uzbamala
     - /bin/cp -R frontend/dist/* $DEPLOYPATH/public_html/
     - /bin/mkdir -p $DEPLOYPATH/uzbamalaka_backend
     - /bin/cp -R Backend/* $DEPLOYPATH/uzbamalaka_backend/
