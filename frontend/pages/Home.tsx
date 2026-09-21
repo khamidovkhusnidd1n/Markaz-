@@ -682,8 +682,8 @@ const Home: React.FC = () => {
                   <div>
                     <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">{t('home.contact_emails')}</h4>
                     <p className="mt-1 text-sm text-slate-200 flex flex-col gap-0.5">
-                      <a href="mailto:uzbahuzuridagimarkaz@gmail.com" className="hover:text-blue-450 transition-colors hover:text-blue-400">uzbahuzuridagimarkaz@gmail.com</a>
-                      <a href="mailto:thecentreaauzglobal@gmail.com" className="hover:text-blue-450 transition-colors hover:text-blue-400">thecentreaauzglobal@gmail.com</a>
+                      <a href="mailto:uzbamalakamarkaz@umail.uz" className="hover:text-blue-450 transition-colors hover:text-blue-400">uzbamalakamarkaz@umail.uz</a>
+                      
                     </p>
                   </div>
                 </div>
