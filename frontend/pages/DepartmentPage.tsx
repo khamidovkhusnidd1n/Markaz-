@@ -191,7 +191,7 @@ const DepartmentPage: React.FC = () => {
 
               return (
                 <div className="mt-10 pt-10 border-t border-gray-100">
-                  <h3 className="text-xl font-bold text-gray-800 mb-6">Batafsil ma'lumot</h3>
+                  <h3 className="text-xl font-bold text-gray-800 mb-6">{t('news.more_info')}</h3>
                   <div className={hasMedia ? "grid grid-cols-1 lg:grid-cols-5 gap-8 items-start" : "w-full"}>
                     
                     {/* Detail Text & Accordion */}
@@ -309,7 +309,7 @@ const DepartmentPage: React.FC = () => {
       {dept.department_posts && dept.department_posts.length > 0 && (
         <section className="container mx-auto px-6 py-16">
           <div className="mb-8 border-l-4 border-blue-600 pl-4">
-            <h2 className="text-2xl font-bold text-slate-800 uppercase tracking-wide">Qilingan ishlar / Hamkorliklar</h2>
+            <h2 className="text-2xl font-bold text-slate-800 uppercase tracking-wide">{t('department.works_and_partnerships')}</h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {dept.department_posts.map((post: any) => (
@@ -330,7 +330,7 @@ const DepartmentPage: React.FC = () => {
                             className="h-full w-full object-contain p-2 bg-white transition-transform duration-700 group-hover:scale-105"
                           />
                     ) : (
-                        <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">Rasm yo'q</div>
+                        <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">{t('common.no_image')}</div>
                     )}
                   </div>
                 <div className="p-6 flex-1 flex flex-col">

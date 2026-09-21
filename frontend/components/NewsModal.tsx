@@ -137,22 +137,20 @@ export const NewsModal: React.FC<NewsModalProps> = ({ newsItem, onClose }) => {
               <div className="flex-1 space-y-6">
                 <div>
                   <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-2">
-                    <Calendar size={14} /> Yuklangan sana
-                  </p>
+                    <Calendar size={14} />{t('news.upload_date')}</p>
                   <p className="text-lg font-bold text-blue-600">{formatDate(newsItem.date, i18n.language)}</p>
                 </div>
                 
                 <div>
                   <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-2">
-                    <User size={14} /> Muallif / Saytga yukladi
+                    <User size={14} /> {t('news.author')} / {t('news.uploaded_by_site')}
                   </p>
-                  <p className="text-slate-800 font-bold">Markaz ma'muriyati</p>
+                  <p className="text-slate-800 font-bold">{t('news.administration')}</p>
                 </div>
                 
                 <div className="pt-2 border-t border-slate-100">
                   <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-2">
-                    <Eye size={14} /> Ko'rishlar
-                  </p>
+                    <Eye size={14} />{t('news.views')}</p>
                   <p className="text-slate-800 font-bold">{newsItem.views_count || 0} marta o'qildi</p>
                 </div>
               </div>
@@ -160,14 +158,12 @@ export const NewsModal: React.FC<NewsModalProps> = ({ newsItem, onClose }) => {
 
             {/* Description Section */}
             <div className="mt-4">
-              <h4 className="text-xl font-bold text-slate-900 mb-6 pb-3 border-b border-slate-100">
-                Batafsil ma'lumot
-              </h4>
+              <h4 className="text-xl font-bold text-slate-900 mb-6 pb-3 border-b border-slate-100">{t('news.more_info')}</h4>
               <div className="prose prose-slate prose-blue max-w-none prose-img:rounded-xl">
                 {newsItem.content ? (
                   <div dangerouslySetInnerHTML={{ __html: newsItem.content.replace(/\n/g, '<br/>') }} />
                 ) : (
-                  <p className="text-slate-400 italic">Ma'lumot kiritilmagan.</p>
+                  <p className="text-slate-400 italic">{t('news.no_info')}</p>
                 )}
               </div>
             </div>
@@ -175,7 +171,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({ newsItem, onClose }) => {
             {/* If there are more images (gallery) */}
             {allImages.length > 1 && (
               <div className="mt-10 pt-6 border-t border-slate-100">
-                <h4 className="text-lg font-bold text-slate-900 mb-4">Qo'shimcha rasmlar</h4>
+                <h4 className="text-lg font-bold text-slate-900 mb-4">{t('news.additional_images')}</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {allImages.slice(1).map((img, idx) => (
                     <div 

@@ -161,7 +161,7 @@ const Departments: React.FC = () => {
 
                     return (
                       <div className="mt-10 pt-10 border-t border-gray-100">
-                        <h3 className="text-xl font-bold text-gray-800 mb-6">Batafsil ma'lumot</h3>
+                        <h3 className="text-xl font-bold text-gray-800 mb-6">{t('news.more_info')}</h3>
                         <div className={hasMedia ? "grid grid-cols-1 lg:grid-cols-5 gap-8 items-start" : "w-full"}>
                           
                           {/* Detail Text & Accordion */}

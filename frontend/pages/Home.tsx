@@ -279,14 +279,10 @@ const Home: React.FC = () => {
           <div className="text-center mb-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full mb-6">
               <FileText size={18} className="text-blue-600" />
-              <span className="text-sm font-bold text-blue-600">Online tekshiruv</span>
+              <span className="text-sm font-bold text-blue-600">{t('home.reestr_online_check')}</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">
-              Hujjat haqiqiyligini tekshiring
-            </h2>
-            <p className="text-lg text-slate-500">
-              Diplom yoki sertifikat turini tanlang va raqamni kiriting
-            </p>
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">{t('home.reestr_title')}</h2>
+            <p className="text-lg text-slate-500">{t('home.reestr_subtitle')}</p>
           </div>
 
           <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100">
@@ -307,8 +303,8 @@ const Home: React.FC = () => {
                 }`}>
                   <Award size={28} />
                 </div>
-                <p className="font-black text-lg">Sertifikat (MO)</p>
-                <p className="text-xs font-medium mt-1 opacity-70">Malaka oshirish</p>
+                <p className="font-black text-lg">{t('students.tab_mo')}</p>
+                <p className="text-xs font-medium mt-1 opacity-70">{t('home.charts_mo')}</p>
                 {activeReestrTab === 'mo' && (
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
                 )}
@@ -329,8 +325,8 @@ const Home: React.FC = () => {
                 }`}>
                   <Briefcase size={28} />
                 </div>
-                <p className="font-black text-lg">Diplom (QT)</p>
-                <p className="text-xs font-medium mt-1 opacity-70">Qayta tayyorlash</p>
+                <p className="font-black text-lg">{t('students.tab_qt')}</p>
+                <p className="text-xs font-medium mt-1 opacity-70">{t('home.charts_qt')}</p>
                 {activeReestrTab === 'qt' && (
                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
                 )}
@@ -366,9 +362,7 @@ const Home: React.FC = () => {
                       ? 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/30' 
                       : 'bg-gradient-to-r from-blue-500 to-indigo-600 shadow-blue-500/30'
                   }`}
-                >
-                  Tekshirish
-                </button>
+                >{t('students.search_btn')}</button>
               </div>
             </form>
 
@@ -390,9 +384,7 @@ const Home: React.FC = () => {
                           <h4 className="text-2xl font-black text-slate-900">{searchResult.data.fullName}</h4>
                           <span className={`px-3 py-1 text-white text-xs font-black rounded-full ${
                             searchResult.data.recordType === 'QT' ? 'bg-blue-500' : 'bg-emerald-500'
-                          }`}>
-                            HAQIQIY
-                          </span>
+                          }`}>{t('home.result_valid')}</span>
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                           {[
@@ -416,14 +408,12 @@ const Home: React.FC = () => {
                     <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-red-500 text-white flex items-center justify-center">
                       <XCircle size={32} />
                     </div>
-                    <h4 className="text-xl font-black text-slate-900 mb-2">Ma'lumot topilmadi</h4>
-                    <p className="text-slate-500 mb-4">Kiritilgan hujjat bazada mavjud emas</p>
+                    <h4 className="text-xl font-black text-slate-900 mb-2">{t('sci_potential.no_data')}</h4>
+                    <p className="text-slate-500 mb-4">{t('home.result_not_found_desc')}</p>
                     <button 
                       onClick={() => setSearchResult({status: 'idle'})} 
                       className="text-red-600 font-bold text-sm hover:underline"
-                    >
-                      Qayta urinish
-                    </button>
+                    >{t('students.retry')}</button>
                   </div>
                 )}
               </div>
@@ -441,7 +431,7 @@ const Home: React.FC = () => {
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
-            <h3 className="text-xl font-black text-slate-900 mb-6">Umumiy taqsimot</h3>
+            <h3 className="text-xl font-black text-slate-900 mb-6">{t('home.charts_distribution')}</h3>
             <div className="relative h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -453,7 +443,7 @@ const Home: React.FC = () => {
               </ResponsiveContainer>
               <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
                 <span className="text-4xl font-black text-slate-900">{totalOverall}</span>
-                <span className="text-sm text-slate-500">Jami</span>
+                <span className="text-sm text-slate-500">{t('home.charts_total')}</span>
               </div>
             </div>
             <div className="flex justify-center gap-8 mt-4">
@@ -467,7 +457,7 @@ const Home: React.FC = () => {
           </div>
           
           <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
-            <h3 className="text-xl font-black text-slate-900 mb-6">Yillar kesimida</h3>
+            <h3 className="text-xl font-black text-slate-900 mb-6">{t('home.charts_by_years')}</h3>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={yearlyData}>
@@ -494,8 +484,8 @@ const Home: React.FC = () => {
         }`}
       >
         <div className="mb-12">
-          <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">Yangiliklar</span>
-          <h2 className="text-4xl font-black text-slate-900 mt-2">So'nggi yangiliklar</h2>
+          <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">{t('news_list.badge')}</span>
+          <h2 className="text-4xl font-black text-slate-900 mt-2">{t('home.news_title')}</h2>
         </div>
         
         {news.length > 0 ? (
@@ -516,9 +506,7 @@ const Home: React.FC = () => {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
                       {mainItem.isImportant && (
                         <div className="absolute top-6 left-6 px-4 py-2 bg-red-500 text-white text-xs font-bold uppercase rounded-full flex items-center gap-2">
-                          <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                          Muhim
-                        </div>
+                          <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>{t('news_detail.important')}</div>
                       )}
                     </div>
                     <div className="p-8 flex-1">
@@ -527,8 +515,7 @@ const Home: React.FC = () => {
                         {mainItem.title}
                       </h3>
                       <p className="text-slate-600 line-clamp-3 text-base mb-6">{stripHtml(mainItem.content)}</p>
-                      <div className="flex items-center gap-2 text-blue-600 font-bold group-hover:gap-3 transition-all mt-auto">
-                        Batafsil <ChevronRight size={20} />
+                      <div className="flex items-center gap-2 text-blue-600 font-bold group-hover:gap-3 transition-all mt-auto">{t('news_list.read_more')}<ChevronRight size={20} />
                       </div>
                     </div>
                   </button>
@@ -552,8 +539,7 @@ const Home: React.FC = () => {
                         {secondaryItem.title}
                       </h3>
                       <p className="mt-3 line-clamp-3 text-slate-600">{stripHtml(secondaryItem.content)}</p>
-                      <div className="mt-5 flex items-center gap-2 font-bold text-blue-600">
-                        Batafsil <ChevronRight size={18} />
+                      <div className="mt-5 flex items-center gap-2 font-bold text-blue-600">{t('news_list.read_more')}<ChevronRight size={18} />
                       </div>
                     </div>
                   </button>
@@ -595,14 +581,13 @@ const Home: React.FC = () => {
               <Link
                 to="/news"
                 className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-6 py-3 font-bold text-blue-700 shadow-sm transition-all hover:border-blue-300 hover:bg-blue-50"
-              >
-                Ko'proq <ChevronRight size={18} />
+              >{t('home.news_more_btn')}<ChevronRight size={18} />
               </Link>
             </div>
           </div>
         ) : (
           <div className="py-20 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-            <p className="text-slate-400 font-medium">Hozircha yangiliklar mavjud emas</p>
+            <p className="text-slate-400 font-medium">{t('home.news_no_news')}</p>
           </div>
         )}
       </section>
@@ -648,8 +633,8 @@ const Home: React.FC = () => {
 
       <section id="contact" className="container mx-auto px-6 pb-20">
         <div className="mb-10">
-          <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">Aloqa</span>
-          <h2 className="mt-2 text-4xl font-black text-slate-900">Bizning manzil</h2>
+          <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">{t('home.contact_badge')}</span>
+          <h2 className="mt-2 text-4xl font-black text-slate-900">{t('home.contact_our_address')}</h2>
         </div>
         <div className="grid gap-6 rounded-[2rem] bg-white p-4 shadow-lg lg:grid-cols-[1.1fr_0.9fr]">
           <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 min-h-[400px]">
@@ -663,7 +648,7 @@ const Home: React.FC = () => {
           </div>
           <div className="rounded-[1.5rem] bg-slate-950 p-8 text-white flex flex-col justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-blue-400 mb-6">Aloqa va Manzil Ma'lumotlari</p>
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-blue-400 mb-6">{t('home.contact_info_title')}</p>
               
               <div className="space-y-5">
                 <div className="flex gap-4 items-start">
@@ -671,7 +656,7 @@ const Home: React.FC = () => {
                     <MapPin size={18} />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Bizning manzil</h4>
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">{t('home.contact_our_address')}</h4>
                     <p className="mt-1 text-sm text-slate-200 leading-relaxed">
                       {aboutContent?.address || "Toshkent shahri, Uchtepa tumani, Chilonzor 26-daha, Shirin ko'cha, 1A"}
                     </p>
@@ -683,7 +668,7 @@ const Home: React.FC = () => {
                     <Phone size={18} />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Telefon raqamlar</h4>
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">{t('home.contact_phones')}</h4>
                     <p className="mt-1 text-sm text-slate-200">
                       <a href="tel:+998773633836" className="hover:text-blue-450 transition-colors hover:text-blue-400 font-semibold">(+998 77) 363-38-36</a>
                     </p>
@@ -695,7 +680,7 @@ const Home: React.FC = () => {
                     <Mail size={18} />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Elektron pochta</h4>
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">{t('home.contact_emails')}</h4>
                     <p className="mt-1 text-sm text-slate-200 flex flex-col gap-0.5">
                       <a href="mailto:uzbahuzuridagimarkaz@gmail.com" className="hover:text-blue-450 transition-colors hover:text-blue-400">uzbahuzuridagimarkaz@gmail.com</a>
                       <a href="mailto:thecentreaauzglobal@gmail.com" className="hover:text-blue-450 transition-colors hover:text-blue-400">thecentreaauzglobal@gmail.com</a>
@@ -708,7 +693,7 @@ const Home: React.FC = () => {
                     <Send size={18} />
                   </div>
                   <div>
-                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">Telegram kanallar</h4>
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">{t('home.contact_telegrams')}</h4>
                     <p className="mt-1 text-sm text-slate-200 flex flex-wrap gap-x-4 gap-y-1">
                       <a href="https://t.me/Uzbamarkaz_jurnali" target="_blank" rel="noopener noreferrer" className="hover:text-blue-450 transition-colors hover:text-blue-400">@Uzbamarkaz_jurnali</a>
                       <a href="https://t.me/badiiytalimvapedagogika" target="_blank" rel="noopener noreferrer" className="hover:text-blue-450 transition-colors hover:text-blue-400">@badiiytalimvapedagogika</a>
@@ -723,8 +708,8 @@ const Home: React.FC = () => {
                 <Clock size={18} />
               </div>
               <div>
-                <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Ish tartibi</h4>
-                <p className="mt-1 text-sm text-slate-200 font-semibold">Dushanba - Juma: 09:00 - 18:00</p>
+                <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">{t('home.contact_work_hours')}</h4>
+                <p className="mt-1 text-sm text-slate-200 font-semibold">{t('home.contact_work_hours_value')}</p>
               </div>
             </div>
           </div>

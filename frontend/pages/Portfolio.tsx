@@ -213,7 +213,7 @@ const Portfolio: React.FC = () => {
             {(!pedagogues || pedagogues.length === 0) && (
               <div className="col-span-full text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
                 <Users size={48} className="text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 font-medium">Pedagoglar hozircha yo'q.</p>
+                <p className="text-gray-500 font-medium">{t('portfolio.no_pedagogues')}</p>
               </div>
             )}
           </div>

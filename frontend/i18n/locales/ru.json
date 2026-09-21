@@ -327,7 +327,8 @@
     "close_btn": "Закрыть (X)",
     "description_title": "Описание проекта:",
     "no_description": "Описание не введено.",
-    "project_count": "Проектов: {{count}}"
+    "project_count": "Проектов: {{count}}",
+    "no_pedagogues": "Педагогов пока нет."
   },
   "students": {
     "title": "Реестр (проверка сертификата)",
@@ -428,5 +429,21 @@
     "instagram": "Инстаграм",
     "official_channel": "Наш официальный канал",
     "visit_page": "Перейти на страницу"
+  },
+  "news": {
+    "upload_date": "Дата загрузки",
+    "author": "Автор",
+    "uploaded_by_site": "Загрузил на сайт",
+    "administration": "Администрация центра",
+    "views": "Просмотры",
+    "more_info": "Подробная информация",
+    "no_info": "Информация не указана.",
+    "additional_images": "Дополнительные изображения"
+  },
+  "common": {
+    "no_image": "Нет фото"
+  },
+  "department": {
+    "works_and_partnerships": "Выполненные работы / Сотрудничество"
   }
 }

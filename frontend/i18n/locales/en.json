@@ -327,7 +327,8 @@
     "close_btn": "Close (X)",
     "description_title": "Project description:",
     "no_description": "No description entered.",
-    "project_count": "Projects: {{count}}"
+    "project_count": "Projects: {{count}}",
+    "no_pedagogues": "No pedagogues yet."
   },
   "students": {
     "title": "Registry (Certificate check)",
@@ -428,5 +429,21 @@
     "instagram": "Instagram",
     "official_channel": "Our official channel",
     "visit_page": "Visit page"
+  },
+  "news": {
+    "upload_date": "Upload date",
+    "author": "Author",
+    "uploaded_by_site": "Uploaded to site",
+    "administration": "Center administration",
+    "views": "Views",
+    "more_info": "Detailed information",
+    "no_info": "No information provided.",
+    "additional_images": "Additional images"
+  },
+  "common": {
+    "no_image": "No image"
+  },
+  "department": {
+    "works_and_partnerships": "Completed Works / Partnerships"
   }
 }

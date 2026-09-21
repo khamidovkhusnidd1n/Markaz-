@@ -57,8 +57,8 @@ const Journal: React.FC = () => {
               {journalSettings.email && <p className="flex items-center gap-3 text-gray-600"><Mail size={18} className="text-blue-600" /> {journalSettings.email}</p>}
               {journalSettings.telegramPrimary && <a href={journalSettings.telegramPrimary} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-600 hover:text-blue-700"><Send size={18} className="text-blue-600" /> {t('journal.telegram_1')}</a>}
               {journalSettings.telegramSecondary && <a href={journalSettings.telegramSecondary} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-600 hover:text-blue-700"><Send size={18} className="text-blue-600" /> {t('journal.telegram_2')}</a>}
-              {journalSettings.instagram && <a href={journalSettings.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-600 hover:text-pink-600"><Instagram size={18} className="text-pink-500" /> Instagram</a>}
-              {journalSettings.facebook && <a href={journalSettings.facebook} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-600 hover:text-blue-700"><Facebook size={18} className="text-blue-600" /> Facebook</a>}
+              {journalSettings.instagram && <a href={journalSettings.instagram} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-600 hover:text-pink-600"><Instagram size={18} className="text-pink-500" />{t('social.instagram')}</a>}
+              {journalSettings.facebook && <a href={journalSettings.facebook} target="_blank" rel="noreferrer" className="flex items-center gap-3 text-gray-600 hover:text-blue-700"><Facebook size={18} className="text-blue-600" />{t('social.facebook')}</a>}
             </div>
           </div>
 

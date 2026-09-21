@@ -327,7 +327,8 @@
     "close_btn": "Yopish (X)",
     "description_title": "Loyiha tavsifi:",
     "no_description": "Tavsif kiritilmagan.",
-    "project_count": "{{count}} ta loyiha"
+    "project_count": "{{count}} ta loyiha",
+    "no_pedagogues": "Pedagoglar hozircha yo'q."
   },
   "students": {
     "title": "Reestr (Sertifikat tekshirish)",
@@ -428,5 +429,21 @@
     "instagram": "Instagram",
     "official_channel": "Rasmiy kanalimiz",
     "visit_page": "Sahifaga o'tish"
+  },
+  "news": {
+    "upload_date": "Yuklangan sana",
+    "author": "Muallif",
+    "uploaded_by_site": "Saytga yukladi",
+    "administration": "Markaz ma'muriyati",
+    "views": "Ko'rishlar",
+    "more_info": "Batafsil ma'lumot",
+    "no_info": "Ma'lumot kiritilmagan.",
+    "additional_images": "Qo'shimcha rasmlar"
+  },
+  "common": {
+    "no_image": "Rasm yo'q"
+  },
+  "department": {
+    "works_and_partnerships": "Qilingan ishlar / Hamkorliklar"
   }
 }
