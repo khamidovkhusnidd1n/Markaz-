@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 const Journal: React.FC = () => {
   const { t } = useTranslation();
   const { journalIssues, journalSettings } = useApp();
+  const [viewDoc, setViewDoc] = React.useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">

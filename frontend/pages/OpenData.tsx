@@ -12,6 +12,7 @@ const OpenData: React.FC = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const filterCategory = searchParams.get('category');
+  const [viewDoc, setViewDoc] = React.useState<string | null>(null);
   
   const getFileExtension = (url: string) => {
     if (!url) return 'FILE';

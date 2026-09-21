@@ -17,6 +17,7 @@ const TrainingPlan: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [pdSearchResults, setPdSearchResults] = useState<typeof pdPlans>([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [viewDoc, setViewDoc] = useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
