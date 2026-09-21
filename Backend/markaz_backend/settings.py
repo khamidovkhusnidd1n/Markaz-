@@ -248,17 +248,15 @@ if 'postgresql' in _db_engine:
 DATABASES = {
     'default': {
         'ENGINE': _db_engine,
-        'NAME': env('DB_NAME', 'sayt_db') if 'postgresql' in _db_engine else BASE_DIR / env('DB_NAME', 'db.sqlite3'),
-        'USER': env('DB_USER', '') if 'postgresql' in _db_engine else '',
-        'PASSWORD': env('DB_PASSWORD', '') if 'postgresql' in _db_engine else '',
-        'HOST': env('DB_HOST', 'localhost') if 'postgresql' in _db_engine else '',
-        'PORT': env('DB_PORT', '5432') if 'postgresql' in _db_engine else '',
-        'CONN_MAX_AGE': int(env('DB_CONN_MAX_AGE', 60)),
-        'CONN_HEALTH_CHECKS': 'postgresql' in _db_engine,
-        'ATOMIC_REQUESTS': True,
-        'OPTIONS': _db_options,
+        'NAME': BASE_DIR / env('DB_NAME', 'db.sqlite3') if 'sqlite' in _db_engine else env('DB_NAME', 'sayt_db'),
+        'USER': env('DB_USER', ''),
+        'PASSWORD': env('DB_PASSWORD', ''),
+        'HOST': env('DB_HOST', '127.0.0.1'),
+        'PORT': env('DB_PORT', '3306'),
+        'OPTIONS': {'charset': 'utf8mb4'} if 'mysql' in _db_engine else {},
     }
 }
+
 
 
 # Password validation
