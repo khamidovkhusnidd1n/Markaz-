@@ -397,3 +397,11 @@ LOGGING = {
 STATIC_ADMIN_USERNAME = env('STATIC_ADMIN_USERNAME', 'admin')
 STATIC_ADMIN_PASSWORD = env('STATIC_ADMIN_PASSWORD', '')
 STATIC_ADMIN_TOKEN = env('STATIC_ADMIN_TOKEN', '')
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': BASE_DIR / 'django_cache',
+        'TIMEOUT': 300,
+    }
+}

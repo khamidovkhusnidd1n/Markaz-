@@ -806,8 +806,11 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         return [IsAdminOrReadOnly()]
 
 
+from django.views.decorators.cache import cache_page
+
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
+@cache_page(60 * 5) # Cache for 5 minutes to handle massive traffic
 def get_all_data(request):
     """
     Get all data for initial frontend load.
