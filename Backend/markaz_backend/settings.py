@@ -302,7 +302,11 @@ if importlib.util.find_spec("whitenoise"):
 
 # Media files (User uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# If running on cPanel, save directly to public_html so Apache can serve it without symlinks.
+if os.path.exists('/home/uzbamala/public_html'):
+    MEDIA_ROOT = '/home/uzbamala/public_html/media'
+else:
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Default primary key field type
