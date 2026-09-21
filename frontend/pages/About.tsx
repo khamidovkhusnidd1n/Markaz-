@@ -129,9 +129,7 @@ const About: React.FC = () => {
                         <Mail size={12} /> {person.email}
                       </span>
                     )}
-                    <span className="text-xs font-bold text-slate-500 flex items-center justify-center gap-2">
-                      <Clock size={12} /> {person.receptionHours || t('about.hours_unknown')}
-                    </span>
+                    
                   </div>
                 </div>
               )) : (

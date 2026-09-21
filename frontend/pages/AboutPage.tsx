@@ -127,9 +127,7 @@ const AboutPage: React.FC = () => {
                             <Mail size={14} className="shrink-0" /> {person.email}
                           </span>
                         )}
-                        <span className="text-xs font-medium flex items-center justify-center gap-2 w-full bg-white/10 p-2.5 rounded-xl backdrop-blur-md hover:bg-white/20 transition-colors">
-                          <Clock size={14} className="shrink-0" /> {person.receptionHours || t('about.hours_unknown')}
-                        </span>
+                        
                       </div>
                     </div>
                     {/* Content below image */}
