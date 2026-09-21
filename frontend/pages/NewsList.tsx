@@ -21,14 +21,14 @@ const NewsList: React.FC = () => {
   const filteredNews = useMemo(() => {
     return news.filter((item: any) => {
       if (categoryParam === 'elonlar') {
-        const catName = (item.category_name || item.category?.name || "").toLowerCase();
-        const catId1 = typeof item.category === 'object' ? item.category?.id : item.category;
-        const catId2 = typeof item.category_id === 'object' ? item.category_id?.id : item.category_id;
+        const catName = String(item.category || "").toLowerCase();
+        const catId1 = item.categoryId;
+        
         
         const titleStr = String(item.title || "").toLowerCase();
-        return Number(catId1) === 1 || Number(catId2) === 1 || catName.includes("lon") || titleStr.includes("lon");
+        return Number(catId1) === 1 || catName.includes("lon") || titleStr.includes("lon");
       } else if (categoryParam === 'yangiliklar') {
-        return !item.category_name && !item.category && !item.category_id;
+        return !item.category && !item.categoryId;
       }
       return true;
     });
