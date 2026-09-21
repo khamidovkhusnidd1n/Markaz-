@@ -2,7 +2,9 @@
 DRF Serializers for the Educational Center Management System.
 Cleaned up version without unnecessary URL fields.
 """
+import logging
 from rest_framework import serializers
+from django.core.cache import cache
 from .models import (
     News, NewsImage, NewsCategory, GalleryItem, GalleryImage, ArtGalleryItem, Appeal, Application, Listener, Teacher, Personnel,
     Course, JournalIssue, Document, Statistics, YearlyStatistics,
@@ -10,13 +12,44 @@ from .models import (
     InternationalProject, InternationalProjectImage, InternationalMedia
 )
 
+logger = logging.getLogger(__name__)
+
+# Language code mapping for deep-translator
+LANG_MAP = {'ru': 'ru', 'en': 'en'}
+
+
+def auto_translate(text, target_lang):
+    """Translate text using Google Translate via deep-translator, with caching."""
+    if not text or not text.strip():
+        return text
+    # Only translate first 4000 chars to avoid issues
+    text_to_translate = text[:4000]
+    cache_key = f"tr:{target_lang}:{hash(text_to_translate)}"
+    cached = cache.get(cache_key)
+    if cached:
+        return cached
+    try:
+        from deep_translator import GoogleTranslator
+        result = GoogleTranslator(source='uz', target=LANG_MAP.get(target_lang, target_lang)).translate(text_to_translate)
+        if result:
+            cache.set(cache_key, result, 60 * 60 * 24)  # Cache for 24 hours
+            return result
+    except Exception as e:
+        logger.warning("Translation failed for lang=%s: %s", target_lang, e)
+    return text
+
 
 def get_translated(obj, field, lang):
-    """Return translated field value if available, fallback to original."""
+    """Return translated field value if available, else auto-translate via Google."""
     if lang and lang != 'uz':
+        # 1. Check if manual translation exists in DB
         translated = getattr(obj, f'{field}_{lang}', '') or ''
         if translated.strip():
             return translated
+        # 2. Auto-translate the original text
+        original = getattr(obj, field, '') or ''
+        if original.strip():
+            return auto_translate(original, lang)
     return getattr(obj, field, '') or ''
 
 
