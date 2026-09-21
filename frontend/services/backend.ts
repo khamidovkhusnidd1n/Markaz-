@@ -362,7 +362,7 @@ function transformPersonnel(item: any): Personnel {
     position: item.position_translated || item.position || '',
     phone: item.phone || '',
     email: item.email || '',
-    receptionHours: item.reception_hours || '',
+    receptionHours: item.reception_hours === 'Dushanbadan-Jumagacha' ? (localStorage.getItem('i18nextLng')?.startsWith('en') ? 'Monday - Friday' : localStorage.getItem('i18nextLng')?.startsWith('ru') ? 'С Понедельника по Пятницу' : 'Dushanbadan-Jumagacha') : (item.reception_hours || ''),
     photoUrl: item.photo_url || '',
     category: item.category,
     duties: item.duties_translated || item.duties || '',
