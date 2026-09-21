@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { ArrowLeft, Download, Info, Search } from 'lucide-react';
+import { ArrowLeft, Download, Info, Search, Eye } from 'lucide-react';
+import DocumentViewer from '../components/DocumentViewer';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
@@ -135,9 +136,7 @@ const TrainingPlan: React.FC = () => {
                         <p className="text-xs text-gray-500">{formatDate(doc.date, i18n.language)} {t('students.uploaded_suffix')}</p>
                       </div>
                     </div>
-                    <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                      <Download size={20} />
-                    </a>
+                    <button onClick={() => setViewDoc(doc.fileUrl)} className="text-blue-600 hover:text-blue-800" title="Ko'rish"><Eye size={20} /></button>
                   </div>
                 )) : (
                   <div className="rounded-xl border-2 border-dashed py-10 text-center text-gray-500">
@@ -160,6 +159,7 @@ const TrainingPlan: React.FC = () => {
           </div>
         </div>
       </div>
+      {viewDoc && <DocumentViewer url={viewDoc} onClose={() => setViewDoc(null)} />}
     </div>
   );
 };

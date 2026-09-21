@@ -3,7 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
-import { FileText, Download, Briefcase, TrendingUp, BarChart3, Database, FolderOpen } from 'lucide-react';
+import { FileText, Download, Briefcase, TrendingUp, BarChart3, Database, FolderOpen, Eye } from 'lucide-react';
+import DocumentViewer from '../components/DocumentViewer';
 
 const OpenData: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -101,15 +102,7 @@ const OpenData: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       {doc.fileUrl && (
-                        <a 
-                          href={doc.fileUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          download
-                          className="flex items-center gap-2 text-sm font-bold text-white bg-blue-600 px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors"
-                        >
-                          <Download size={18} /> {t('open_data.download')}
-                        </a>
+                        <button onClick={() => setViewDoc(doc.fileUrl)} className="flex items-center gap-2 text-sm font-bold text-white bg-blue-600 px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors"><Eye size={18} /> Ko'rish</button>
                       )}
                     </div>
                   </div>
@@ -130,6 +123,7 @@ const OpenData: React.FC = () => {
           </div>
         )}
       </div>
+      {viewDoc && <DocumentViewer url={viewDoc} onClose={() => setViewDoc(null)} />}
     </div>
   );
 };

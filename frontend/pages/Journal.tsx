@@ -1,5 +1,6 @@
 import React from 'react';
-import { Download, FileText, Mail, Phone, MapPin, Send, Instagram, Facebook } from 'lucide-react';
+import { Download, FileText, Mail, Phone, MapPin, Send, Instagram, Facebook, Eye } from 'lucide-react';
+import DocumentViewer from '../components/DocumentViewer';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 
@@ -35,9 +36,7 @@ const Journal: React.FC = () => {
                     <h3 className="font-bold text-gray-900 group-hover:text-blue-700">{t('journal.issue_label')} {issue.year}</h3>
                     <p className="text-sm text-gray-500">{issue.issueNumber || issue.year}</p>
                   </div>
-                  <a href={issue.pdfUrl} download className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline">
-                    <Download size={14} /> {t('journal.download_pdf')}
-                  </a>
+                  <button onClick={() => setViewDoc(issue.pdfUrl)} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Eye size={14} /> Ko'rish</button>
                 </div>
               </div>
             )) : (
@@ -69,18 +68,12 @@ const Journal: React.FC = () => {
                 dangerouslySetInnerHTML={{ __html: journalSettings.articleRulesText || t('journal.for_authors_fallback') }}
               />
             {journalSettings.articleRulesPdfUrl && (
-              <a 
-                href={journalSettings.articleRulesPdfUrl} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2.5 text-xs md:text-sm font-semibold text-white transition-colors hover:bg-amber-700 shadow-sm"
-              >
-                <FileText size={16} /> {t('journal.article_rules_pdf')}
-              </a>
+              <button onClick={() => setViewDoc(journalSettings.articleRulesPdfUrl)} className="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2.5 text-xs md:text-sm font-semibold text-white transition-colors hover:bg-amber-700 shadow-sm"><Eye size={16} /> Ko'rish</button>
             )}
           </div>
         </div>
       </div>
+      {viewDoc && <DocumentViewer url={viewDoc} onClose={() => setViewDoc(null)} />}
     </div>
   );
 };
