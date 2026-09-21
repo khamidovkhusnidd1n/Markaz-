@@ -35,7 +35,7 @@ def env(key, default=None, cast=None):
 load_env_file(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY', 'sayt-production-secret-key-9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1-fallback')
+SECRET_KEY = env('DJANGO_SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG', False, cast=bool)
@@ -54,36 +54,24 @@ X_FRAME_OPTIONS = 'DENY'
 ALLOWED_HOSTS = [
     'uzbamalaka.uz',
     'www.uzbamalaka.uz',
-    'localhost',
-    '127.0.0.1',
-    '172.31.96.1',
-    '192.168.0.104',
-    'testserver',
 ]
 
 if DEBUG:
-    ALLOWED_HOSTS.append('*')
+    ALLOWED_HOSTS += ['localhost', '127.0.0.1', '*']
 
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://192.168.0.105:3000',
-    'http://192.168.0.102:3000',
-    'http://192.168.0.102:8000',
-    'http://172.31.80.1:3000',
-    'http://172.20.80.1:3000',
-    'http://localhost:8000',
-    'http://127.0.0.1:8000',
-    'http://localhost:8001',
-    'http://127.0.0.1:8001',
-    'http://172.31.96.1:3000',
-    'http://172.31.96.1:8000',
-    'http://172.31.96.1:8001',
-    'http://192.168.0.104:3000',
-    'http://192.168.0.104:8000',
-    'http://192.168.0.104:8001',
+    'https://uzbamalaka.uz',
+    'https://www.uzbamalaka.uz',
 ]
+
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS += [
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+    ]
 
 
 # Application definition
@@ -403,5 +391,5 @@ LOGGING = {
 }
 
 STATIC_ADMIN_USERNAME = env('STATIC_ADMIN_USERNAME', 'admin')
-STATIC_ADMIN_PASSWORD = env('STATIC_ADMIN_PASSWORD', '1212')
-STATIC_ADMIN_TOKEN = env('STATIC_ADMIN_TOKEN', 'static-admin-token')
+STATIC_ADMIN_PASSWORD = env('STATIC_ADMIN_PASSWORD', '')
+STATIC_ADMIN_TOKEN = env('STATIC_ADMIN_TOKEN', '')
