@@ -208,7 +208,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       `}</style>
       <header className="bg-white shadow-md sticky top-0 z-50 flex flex-col">
         <div className="bg-blue-600 text-white py-2 border-b border-blue-700 flex items-center w-full overflow-hidden">
-          <div className="animate-seamless text-xs md:text-sm font-black tracking-widest uppercase">
+          <div className="animate-seamless text-[10px] md:text-xs font-bold tracking-wider uppercase">
             {[...Array(20)].map((_, i) => (
               <span key={i} className="mx-16 whitespace-nowrap">{t('layout.test_mode')}</span>
             ))}

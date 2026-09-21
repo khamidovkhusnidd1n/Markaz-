@@ -51,7 +51,7 @@
     "scroll_top": "Scroll to top",
     "scroll_bottom": "Scroll to bottom",
     "not_found_message": "Sorry, this page does not exist.",
-    "test_mode": "TEST MODE ⚠️"
+    "test_mode": "Operating in test mode"
   },
   "home": {
     "read_more": "Read more",
@@ -136,7 +136,10 @@
     "no_data": "No information entered",
     "phone_unknown": "Unknown",
     "hours_unknown": "Unknown",
-    "reception_hours": "Working hours"
+    "reception_hours": "Reception hours",
+    "position": "Position",
+    "email": "Email",
+    "duties": "Job Duties"
   },
   "courses": {
     "badge": "Courses",
@@ -417,9 +420,13 @@
     "stat_potential": "Scientific potential",
     "staff_title": "Scientific staff",
     "staff_subtitle": "Teaching staff with academic degrees and titles",
-    "academic_title": "Academic title",
+    "academic_title": "Academic Title",
     "awards": "Awards",
-    "no_data": "No data found"
+    "no_data": "No data found",
+    "position": "Position",
+    "academic_degree": "Academic Degree",
+    "biography": "Biography",
+    "no_biography": "Biography not provided."
   },
   "social": {
     "phone": "Phone",

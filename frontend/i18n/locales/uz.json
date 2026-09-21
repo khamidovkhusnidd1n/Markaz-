@@ -51,7 +51,7 @@
     "scroll_top": "Tepaga o'tish",
     "scroll_bottom": "Pastga o'tish",
     "not_found_message": "Kechirasiz, bunday sahifa mavjud emas.",
-    "test_mode": "TEST REJIMIDA ⚠️"
+    "test_mode": "Test rejimida ishlamoqda"
   },
   "home": {
     "read_more": "Batafsil o'qish",
@@ -136,7 +136,10 @@
     "no_data": "Ma'lumotlar kiritilmagan",
     "phone_unknown": "Noma'lum",
     "hours_unknown": "Noma'lum",
-    "reception_hours": "Ish vaqti"
+    "reception_hours": "Ish vaqti",
+    "position": "Lavozimi",
+    "email": "Elektron pochta",
+    "duties": "Lavozim vazifasi"
   },
   "courses": {
     "badge": "Kurslar",
@@ -417,9 +420,13 @@
     "stat_potential": "Ilmiy salohiyat",
     "staff_title": "Ilmiy xodimlar",
     "staff_subtitle": "Ilmiy daraja va unvonga ega bo'lgan professor-o'qituvchilar",
-    "academic_title": "Ilmiy unvon",
-    "awards": "Mukofotlar",
-    "no_data": "Ma'lumot topilmadi"
+    "academic_title": "Ilmiy unvoni",
+    "awards": "Mukofotlari",
+    "no_data": "Ma'lumot topilmadi",
+    "position": "Lavozimi",
+    "academic_degree": "Ilmiy darajasi",
+    "biography": "Biografiyasi",
+    "no_biography": "Biografiya kiritilmagan."
   },
   "social": {
     "phone": "Telefon",
