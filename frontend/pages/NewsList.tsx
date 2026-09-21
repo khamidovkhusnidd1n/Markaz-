@@ -49,7 +49,7 @@ const NewsList: React.FC = () => {
       <section className="bg-[linear-gradient(135deg,#0f172a,#172554_45%,#2563eb)] text-white">
         <div className="container mx-auto px-6 py-20">
           <p className="text-sm font-bold uppercase tracking-[0.35em] text-blue-200">{categoryParam === 'elonlar' ? t('news_list.announcements_badge') : t('news_list.badge')}</p>
-          <h1 className="mt-4 text-4xl font-black md:text-5xl">{categoryParam === 'elonlar' ? t('news_list.announcements_title') : t('news')}</h1>
+          <h1 className="mt-4 text-4xl font-black md:text-5xl">{categoryParam === 'elonlar' ? t('news_list.announcements_title') : t('news_list.title')}</h1>
           <p className="mt-4 max-w-2xl text-slate-200">
             {t('news_list.subtitle')}
           </p>
