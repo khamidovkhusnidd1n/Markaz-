@@ -6,6 +6,8 @@ Production-ready configuration following Django best practices.
 import importlib.util
 import os
 from pathlib import Path
+import pymysql
+pymysql.install_as_MySQLdb()
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
