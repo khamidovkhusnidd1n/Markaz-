@@ -344,23 +344,35 @@ class ListenerAdmin(admin.ModelAdmin):
                             # Raqamni tekshirib to'g'rilash (masalan, "358" ni "000358" ga aylantirish)
                             if listener_data.get('number') and str(listener_data['number']).isdigit():
                                 listener_data['number'] = str(listener_data['number']).zfill(6)
-                                
-                            s = listener_data.get('series', record_type)
-                            n = listener_data['number']
-                            
-                            # Check for existing record by series and number
-                            existing = Listener.objects.filter(
-                                series=s, number=n
-                            ).first()
 
-                            if existing:
-                                for key, value in listener_data.items():
-                                    setattr(existing, key, value)
-                                existing.save()
-                                updated_count += 1
-                            else:
-                                Listener.objects.create(**listener_data)
-                                created_count += 1
+                            n = listener_data['number']
+                            # save() always sets series=record_type, so search by that
+                            lookup = {'series': record_type, 'number': n}
+
+                            # Remove lookup fields from defaults to avoid conflicts
+                            defaults = {k: v for k, v in listener_data.items()
+                                        if k not in ('series', 'number')}
+
+                            try:
+                                obj, created = Listener.objects.update_or_create(
+                                    defaults=defaults, **lookup
+                                )
+                                if created:
+                                    created_count += 1
+                                else:
+                                    updated_count += 1
+                            except Exception:
+                                # Fallback: try to find and update existing record
+                                existing = Listener.objects.filter(
+                                    record_type=record_type, number=n
+                                ).first()
+                                if existing:
+                                    for key, value in listener_data.items():
+                                        setattr(existing, key, value)
+                                    existing.save()
+                                    updated_count += 1
+                                else:
+                                    skipped_count += 1
 
                     msg = f"Muvaffaqiyat! {created_count} ta yangi qo'shildi, {updated_count} ta yangilandi."
                     if skipped_count > 0:
