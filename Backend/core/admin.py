@@ -379,7 +379,7 @@ class ListenerAdmin(admin.ModelAdmin):
                                     created_count += 1
                                 else:
                                     updated_count += 1
-                            except Exception:
+                            except Exception as e:
                                 # Fallback: try to find and update existing record
                                 existing = Listener.objects.filter(
                                     record_type=record_type, number=n
@@ -387,9 +387,16 @@ class ListenerAdmin(admin.ModelAdmin):
                                 if existing:
                                     for key, value in listener_data.items():
                                         setattr(existing, key, value)
-                                    existing.save()
-                                    updated_count += 1
+                                    try:
+                                        existing.save()
+                                        updated_count += 1
+                                    except Exception as e_save:
+                                        if first_row_debug:
+                                            first_row_debug['error'] = str(e_save)
+                                        skipped_count += 1
                                 else:
+                                    if first_row_debug:
+                                        first_row_debug['error'] = str(e)
                                     skipped_count += 1
 
                     msg = f"Muvaffaqiyat! {created_count} ta yangi qo'shildi, {updated_count} ta yangilandi."
