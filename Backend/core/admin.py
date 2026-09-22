@@ -364,40 +364,24 @@ class ListenerAdmin(admin.ModelAdmin):
                                 listener_data['number'] = str(listener_data['number']).zfill(6)
 
                             n = listener_data['number']
-                            # save() always sets series=record_type, so search by that
-                            lookup = {'series': record_type, 'number': n}
-
-                            # Remove lookup fields from defaults to avoid conflicts
-                            defaults = {k: v for k, v in listener_data.items()
-                                        if k not in ('series', 'number')}
+                            # Explicitly check for existing record
+                            existing = Listener.objects.filter(series=record_type, number=n).first()
 
                             try:
-                                obj, created = Listener.objects.update_or_create(
-                                    defaults=defaults, **lookup
-                                )
-                                if created:
-                                    created_count += 1
-                                else:
-                                    updated_count += 1
-                            except Exception as e:
-                                # Fallback: try to find and update existing record
-                                existing = Listener.objects.filter(
-                                    record_type=record_type, number=n
-                                ).first()
                                 if existing:
                                     for key, value in listener_data.items():
-                                        setattr(existing, key, value)
-                                    try:
-                                        existing.save()
-                                        updated_count += 1
-                                    except Exception as e_save:
-                                        if first_row_debug:
-                                            first_row_debug['error'] = str(e_save)
-                                        skipped_count += 1
+                                        if key not in ('series', 'number'):
+                                            setattr(existing, key, value)
+                                    existing.save()
+                                    updated_count += 1
                                 else:
-                                    if first_row_debug:
-                                        first_row_debug['error'] = str(e)
-                                    skipped_count += 1
+                                    # Create new
+                                    Listener.objects.create(series=record_type, number=n, **{k: v for k, v in listener_data.items() if k not in ('series', 'number')})
+                                    created_count += 1
+                            except Exception as e:
+                                if first_row_debug and 'error' not in first_row_debug:
+                                    first_row_debug['error'] = f"Row error: {e}"
+                                skipped_count += 1
 
                     msg = f"Muvaffaqiyat! {created_count} ta yangi qo'shildi, {updated_count} ta yangilandi."
                     if skipped_count > 0:
