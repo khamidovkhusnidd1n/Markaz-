@@ -315,6 +315,18 @@ class ListenerAdmin(admin.ModelAdmin):
                     
                     print(f"Topilgan ustunlar: {actual_mapping}")
 
+                    # If full_name column not found, try first column as fallback
+                    mapped_fields = set(actual_mapping.values())
+                    if 'full_name' not in mapped_fields and len(df.columns) > 0:
+                        # Use the very first column as full_name
+                        first_col = df.columns[0]
+                        actual_mapping[first_col] = 'full_name'
+                        print(f"Fallback: '{first_col}' -> full_name")
+
+                    # Show mapping info to user
+                    mapping_info = ', '.join([f"'{k}'→{v}" for k, v in actual_mapping.items()])
+                    unmapped = [c for c in df.columns if c not in actual_mapping]
+
                     created_count = 0
                     updated_count = 0
                     skipped_count = 0
@@ -377,6 +389,9 @@ class ListenerAdmin(admin.ModelAdmin):
                     msg = f"Muvaffaqiyat! {created_count} ta yangi qo'shildi, {updated_count} ta yangilandi."
                     if skipped_count > 0:
                         msg += f" {skipped_count} ta qator o'tkazib yuborildi (ism topilmadi)."
+                    msg += f" | Ustunlar: {mapping_info}"
+                    if unmapped:
+                        msg += f" | Ishlatilmagan: {unmapped}"
                     
                     messages.success(request, msg)
                     return redirect('..')
