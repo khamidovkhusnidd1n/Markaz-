@@ -347,12 +347,10 @@ class ListenerAdmin(admin.ModelAdmin):
                                 
                             s = listener_data.get('series', record_type)
                             n = listener_data['number']
-                            series_num = f"{s}-{n}"
                             
-                            from django.db.models import Q
-                            # Check for existing record by series_number OR (series+number)
+                            # Check for existing record by series and number
                             existing = Listener.objects.filter(
-                                Q(series_number=series_num) | Q(series=s, number=n)
+                                series=s, number=n
                             ).first()
 
                             if existing:
