@@ -332,13 +332,19 @@ class ListenerAdmin(admin.ModelAdmin):
                     skipped_count = 0
 
                     with transaction.atomic():
+                        first_row_debug = None
                         for idx, row in df.iterrows():
                             listener_data = {'record_type': record_type}
 
                             for excel_col, model_field in actual_mapping.items():
                                 value = row[excel_col]
-                                if pd.notna(value):
+                                # Handle both real NaN and string 'nan'
+                                if pd.notna(value) and str(value).strip().lower() != 'nan':
                                     listener_data[model_field] = str(value).strip()
+
+                            # Debug: capture first row data
+                            if first_row_debug is None:
+                                first_row_debug = {col: str(row[col])[:30] for col in df.columns[:4]}
 
                             # Skip if no name found
                             if not listener_data.get('full_name'):
@@ -392,6 +398,8 @@ class ListenerAdmin(admin.ModelAdmin):
                     msg += f" | Ustunlar: {mapping_info}"
                     if unmapped:
                         msg += f" | Ishlatilmagan: {unmapped}"
+                    if first_row_debug:
+                        msg += f" | 1-qator: {first_row_debug}"
                     
                     messages.success(request, msg)
                     return redirect('..')
