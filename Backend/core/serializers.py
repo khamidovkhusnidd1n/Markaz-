@@ -49,7 +49,11 @@ def get_translated(obj, field, lang):
         # 2. Auto-translate the original text
         original = getattr(obj, field, '') or ''
         if original.strip():
-            return auto_translate(original, lang)
+            try:
+                res = auto_translate(original, lang)
+                return res if res else original
+            except Exception:
+                return original
     return getattr(obj, field, '') or ''
 
 

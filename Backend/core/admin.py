@@ -341,10 +341,18 @@ class ListenerAdmin(admin.ModelAdmin):
                             if not listener_data.get('series'):
                                 listener_data['series'] = record_type
 
-                            # Check for existing record
+                            # Raqamni tekshirib to'g'rilash (masalan, "358" ni "000358" ga aylantirish)
+                            if listener_data.get('number') and str(listener_data['number']).isdigit():
+                                listener_data['number'] = str(listener_data['number']).zfill(6)
+                                
+                            s = listener_data.get('series', record_type)
+                            n = listener_data['number']
+                            series_num = f"{s}-{n}"
+                            
+                            from django.db.models import Q
+                            # Check for existing record by series_number OR (series+number)
                             existing = Listener.objects.filter(
-                                series=listener_data.get('series', record_type),
-                                number=listener_data['number']
+                                Q(series_number=series_num) | Q(series=s, number=n)
                             ).first()
 
                             if existing:
