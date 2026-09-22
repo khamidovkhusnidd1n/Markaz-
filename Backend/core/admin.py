@@ -164,7 +164,7 @@ class NewsAdmin(RichTextFieldsMixin, admin.ModelAdmin):
     search_fields = ['title', 'content']
     list_editable = ['is_important', 'is_active']
     ordering = ['-created_at']
-    date_hierarchy = 'created_at'
+
     inlines = [NewsImageInline]
 
     fieldsets = (
@@ -223,7 +223,7 @@ class ListenerAdmin(admin.ModelAdmin):
     search_fields = ['full_name', 'number', 'workplace', 'series', 'course_type', 'record_type']
     list_editable = ['is_verified']
     ordering = ['-created_at']
-    date_hierarchy = 'created_at'
+
 
     fieldsets = (
         ('Sertifikat turi', {
@@ -689,7 +689,7 @@ class AppealAdmin(admin.ModelAdmin):
     list_filter = ['appeal_type', 'created_at']
     search_fields = ['full_name', 'phone', 'email', 'description']
     ordering = ['-created_at']
-    date_hierarchy = 'created_at'
+
 
     fieldsets = (
         ('📱 Murojaatchi', {
@@ -738,7 +738,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_filter = ['application_type', 'created_at']
     search_fields = ['full_name', 'workplace', 'direction', 'phone']
     ordering = ['-created_at']
-    date_hierarchy = 'created_at'
+
 
     fieldsets = (
         ('📱 Ariza beruvchi', {
@@ -1042,7 +1042,7 @@ class DepartmentPostAdmin(admin.ModelAdmin):
     list_display = ('title', 'department', 'date', 'is_active')
     list_filter = ('department', 'date', 'is_active')
     search_fields = ('title', 'content', 'title_ru', 'title_en')
-    date_hierarchy = 'date'
+
     formfield_overrides = {
         models.TextField: {'widget': RichTextWidget},
     }
