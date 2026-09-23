@@ -270,7 +270,8 @@ class ListenerAdmin(admin.ModelAdmin):
             form = ExcelImportForm(request.POST, request.FILES)
             if form.is_valid():
                 excel_file = request.FILES['excel_file']
-                record_type = request.POST.get('record_type', 'MO')
+                record_type_raw = request.POST.get('record_type', 'certificate')
+                record_type = 'QT' if record_type_raw == 'diploma' else 'MO'
 
                 try:
                     # Read all columns as strings to preserve leading zeros
