@@ -364,23 +364,26 @@ class ListenerAdmin(admin.ModelAdmin):
                                 listener_data['number'] = str(listener_data['number']).zfill(6)
 
                             n = listener_data['number']
-                            # Explicitly check for existing record
-                            existing = Listener.objects.filter(series=record_type, number=n).first()
-
+                            
                             try:
-                                if existing:
-                                    for key, value in listener_data.items():
-                                        if key not in ('series', 'number'):
-                                            setattr(existing, key, value)
-                                    existing.save()
-                                    updated_count += 1
-                                else:
-                                    # Create new
-                                    Listener.objects.create(series=record_type, number=n, **{k: v for k, v in listener_data.items() if k not in ('series', 'number')})
-                                    created_count += 1
+                                with transaction.atomic():
+                                    # Explicitly check for existing record
+                                    existing = Listener.objects.filter(series=record_type, number=n).first()
+                                    if existing:
+                                        for key, value in listener_data.items():
+                                            if key not in ('series', 'number'):
+                                                setattr(existing, key, value)
+                                        existing.save()
+                                        updated_count += 1
+                                    else:
+                                        # Create new
+                                        Listener.objects.create(series=record_type, number=n, **{k: v for k, v in listener_data.items() if k not in ('series', 'number')})
+                                        created_count += 1
                             except Exception as e:
+                                # Find what's actually in DB for this number
+                                db_vals = list(Listener.objects.filter(number=n).values_list('series', 'record_type'))
                                 if first_row_debug and 'error' not in first_row_debug:
-                                    first_row_debug['error'] = f"Row error: {e}"
+                                    first_row_debug['error'] = f"Row error: {e}. In DB for {n}: {db_vals}"
                                 skipped_count += 1
 
                     msg = f"Muvaffaqiyat! {created_count} ta yangi qo'shildi, {updated_count} ta yangilandi."
