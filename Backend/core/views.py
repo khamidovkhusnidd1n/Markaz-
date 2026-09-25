@@ -1039,7 +1039,7 @@ def share_news_preview(request, pk):
         
     frontend_url = f"https://uzbamalaka.uz/#/news?id={pk}"
     
-    html = f\"\"\"
+    html = f"""
     <!DOCTYPE html>
     <html lang="uz">
     <head>
@@ -1058,5 +1058,5 @@ def share_news_preview(request, pk):
         <p>Yo'naltirilmoqda... <a href="{frontend_url}">Saytga o'tish</a></p>
     </body>
     </html>
-    \"\"\"
+    """
     return HttpResponse(html)
