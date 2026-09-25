@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Calendar, ChevronRight } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
@@ -14,9 +14,21 @@ const NewsList: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { news } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
   const categoryParam = searchParams.get('category');
+  const idParam = searchParams.get('id');
+  
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+
+  useEffect(() => {
+    if (idParam && news.length > 0) {
+      const found = news.find((n: any) => String(n.id) === idParam);
+      if (found && !selectedNews) {
+        setSelectedNews(found);
+      }
+    }
+  }, [idParam, news]);
 
   const filteredNews = useMemo(() => {
     return news.filter((item: any) => {
@@ -35,6 +47,10 @@ const NewsList: React.FC = () => {
   }, [news, categoryParam]);
 
   const handleNewsClick = (item: NewsItem) => {
+    const params = new URLSearchParams(location.search);
+    params.set('id', String(item.id));
+    navigate({ search: params.toString() }, { replace: true });
+
     setSelectedNews({
       ...item,
       views_count: (item.views_count || 0) + 1
@@ -42,6 +58,13 @@ const NewsList: React.FC = () => {
     BackendAPI.incrementNewsView(item.id).then(newCount => {
       item.views_count = newCount;
     }).catch(console.error);
+  };
+
+  const handleClose = () => {
+    setSelectedNews(null);
+    const params = new URLSearchParams(location.search);
+    params.delete('id');
+    navigate({ search: params.toString() }, { replace: true });
   };
 
   return (
@@ -91,7 +114,7 @@ const NewsList: React.FC = () => {
       </section>
       
       {selectedNews && (
-        <NewsModal newsItem={selectedNews} onClose={() => setSelectedNews(null)} />
+        <NewsModal newsItem={selectedNews} onClose={handleClose} />
       )}
     </div>
   );
