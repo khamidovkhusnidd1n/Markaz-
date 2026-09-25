@@ -1017,3 +1017,46 @@ def increment_project_vote(request, pk):
         return Response({'votes_count': project.votes_count})
     except PedagogueProject.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from .models import News
+import re
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def share_news_preview(request, pk):
+    news = get_object_or_404(News, pk=pk)
+    
+    title = news.title.replace('"', '&quot;')
+    description = re.sub(r'<[^>]+>', '', news.content)[:200] + '...' if news.content else ''
+    
+    image_url = ""
+    if news.image:
+        image_url = request.build_absolute_uri(news.image.url)
+    elif news.images.exists():
+        image_url = request.build_absolute_uri(news.images.first().image.url)
+        
+    frontend_url = f"https://uzbamalaka.uz/#/news?id={pk}"
+    
+    html = f\"\"\"
+    <!DOCTYPE html>
+    <html lang="uz">
+    <head>
+        <meta charset="UTF-8">
+        <title>{title}</title>
+        <meta property="og:title" content="{title}">
+        <meta property="og:description" content="{description}">
+        <meta property="og:image" content="{image_url}">
+        <meta property="og:url" content="{frontend_url}">
+        <meta property="og:type" content="article">
+        <script>
+            window.location.replace("{frontend_url}");
+        </script>
+    </head>
+    <body>
+        <p>Yo'naltirilmoqda... <a href="{frontend_url}">Saytga o'tish</a></p>
+    </body>
+    </html>
+    \"\"\"
+    return HttpResponse(html)

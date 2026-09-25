@@ -36,6 +36,7 @@ router.register(r'international-media', views.InternationalMediaViewSet, basenam
 urlpatterns = [
     path('projects/<int:pk>/view/', views.increment_project_view, name='views.increment_project_view'),
     path('news/<int:pk>/view/', views.increment_news_view, name='views.increment_news_view'),
+    path('s/news/<int:pk>/', views.share_news_preview, name='share_news_preview'),
     path('department-posts/<int:pk>/view/', views.increment_department_post_view, name='views.increment_department_post_view'),
     path('projects/<int:pk>/vote/', views.increment_project_vote, name='views.increment_project_vote'),
     # Router URLs

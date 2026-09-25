@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
-import { X, Calendar, User, Eye, ZoomIn } from 'lucide-react';
+import { X, Calendar, User, Eye, ZoomIn, Share2 } from 'lucide-react';
 import { getImageUrl } from '../utils';
 import { NewsItem } from '../types';
 import { MediaItem, ImageModal } from './ImageModal';
@@ -67,6 +67,13 @@ export const NewsModal: React.FC<NewsModalProps> = ({ newsItem, onClose }) => {
       document.body.style.overflow = 'auto';
     };
   }, []);
+
+  const handleShare = () => {
+    const shareUrl = `https://uzbamalaka.uz/api/s/news/${newsItem.id}/`;
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => alert("Maxsus link nusxalandi! \nEndi uni Telegramga tashlasangiz sarlavhasi va rasmi bilan chiroyli chiqadi."))
+      .catch(err => console.error('Xatolik:', err));
+  };
 
   return (
     <>
@@ -152,6 +159,13 @@ export const NewsModal: React.FC<NewsModalProps> = ({ newsItem, onClose }) => {
                   <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-2">
                     <Eye size={14} />{t('news.views')}</p>
                   <p className="text-slate-800 font-bold">{newsItem.views_count || 0} marta o'qildi</p>
+                </div>
+
+                <div className="pt-2">
+                  <button onClick={handleShare} className="flex items-center justify-center gap-2 w-full hover:bg-blue-600 hover:text-white transition-colors bg-blue-50 px-4 py-2.5 rounded-xl text-blue-700 font-bold cursor-pointer" title="Ulashish">
+                    <Share2 size={18} />
+                    <span>Ulashish</span>
+                  </button>
                 </div>
               </div>
             </div>
