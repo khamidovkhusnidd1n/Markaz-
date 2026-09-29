@@ -108,7 +108,7 @@ const NewsDetail: React.FC = () => {
             <h4 className="text-xl font-bold text-slate-900 mb-6 pb-3 border-b border-slate-100">{t('news.more_info')}</h4>
             <div className="prose prose-slate prose-blue max-w-none prose-img:rounded-xl">
               {newsItem.content ? (
-                <div dangerouslySetInnerHTML={{ __html: newsItem.content.replace(/\n/g, '<br/>') }} />
+                <div dangerouslySetInnerHTML={{ __html: newsItem.content }} />
               ) : (
                 <p className="text-slate-400 italic">{t('news.no_info')}</p>
               )}

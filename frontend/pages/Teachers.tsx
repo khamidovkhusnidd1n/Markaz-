@@ -148,7 +148,7 @@ const Teachers: React.FC = () => {
                 </h4>
                 <div className="prose prose-slate max-w-none">
                   {selectedTeacher.biography_translated || selectedTeacher.biography ? (
-                    <div dangerouslySetInnerHTML={{ __html: (selectedTeacher.biography_translated || selectedTeacher.biography).replace(/\n/g, '<br/>') }} />
+                    <div dangerouslySetInnerHTML={{ __html: (selectedTeacher.biography_translated || selectedTeacher.biography) }} />
                   ) : (
                     <p className="text-slate-400 italic">{t('sci_potential.no_biography', 'Biografiya kiritilmagan.')}</p>
                   )}
