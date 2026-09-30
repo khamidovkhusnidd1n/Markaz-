@@ -1032,10 +1032,9 @@ def share_news_preview(request, pk):
     description = re.sub(r'<[^>]+>', '', news.content)[:200] + '...' if news.content else ''
     
     image_url = ""
-    if news.image:
-        image_url = request.build_absolute_uri(news.image.url)
-    elif news.images.exists():
-        image_url = request.build_absolute_uri(news.images.first().image.url)
+    first_image = news.images.first()
+    if first_image and first_image.image:
+        image_url = request.build_absolute_uri(first_image.image.url)
         
     frontend_url = f"https://uzbamalaka.uz/#/news?id={pk}"
     
