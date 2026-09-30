@@ -1060,3 +1060,40 @@ def share_news_preview(request, pk):
     </html>
     """
     return HttpResponse(html)
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def share_journal_preview(request, pk):
+    from .models import JournalIssue
+    issue = get_object_or_404(JournalIssue, pk=pk)
+    
+    title = f"Jurnal {issue.year} - {issue.issue_number if issue.issue_number else ''}".replace('"', '&quot;')
+    description = f"O'zBA Malaka oshirish markazi ilmiy jurnali. {issue.year}-yilgi soni."
+    
+    image_url = ""
+    if issue.thumbnail:
+        image_url = request.build_absolute_uri(issue.thumbnail.url)
+        
+    frontend_url = f"https://uzbamalaka.uz/#/journal?id={pk}"
+    
+    html = f\"\"\"
+    <!DOCTYPE html>
+    <html lang="uz">
+    <head>
+        <meta charset="UTF-8">
+        <title>{title}</title>
+        <meta property="og:title" content="{title}">
+        <meta property="og:description" content="{description}">
+        <meta property="og:image" content="{image_url}">
+        <meta property="og:url" content="{frontend_url}">
+        <meta property="og:type" content="article">
+        <script>
+            window.location.replace("{frontend_url}");
+        </script>
+    </head>
+    <body>
+        <p>Yo'naltirilmoqda... <a href="{frontend_url}">Saytga o'tish</a></p>
+    </body>
+    </html>
+    \"\"\"
+    return HttpResponse(html)

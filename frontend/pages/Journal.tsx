@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, FileText, Mail, Phone, MapPin, Send, Instagram, Facebook, Eye } from 'lucide-react';
+import { Download, FileText, Mail, Phone, MapPin, Send, Instagram, Facebook, Eye, Share2 } from 'lucide-react';
 import DocumentViewer from '../components/DocumentViewer';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,24 @@ const Journal: React.FC = () => {
   const { t } = useTranslation();
   const { journalIssues, journalSettings } = useApp();
   const [viewDoc, setViewDoc] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.hash.split('?')[1]);
+    const id = params.get('id');
+    if (id && journalIssues.length > 0) {
+      const issue = journalIssues.find(i => i.id.toString() === id);
+      if (issue) {
+        setViewDoc(issue.pdfUrl);
+      }
+    }
+  }, [journalIssues]);
+
+  const handleShare = (issueId: number) => {
+    const shareUrl = `https://uzbamalaka.uz/api/s/journal/${issueId}/`;
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => alert("Jurnal uchun maxsus link nusxalandi! \nEndi uni Telegramga tashlasangiz rasmi va sarlavhasi bilan chiroyli chiqadi."))
+      .catch(err => console.error('Xatolik:', err));
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
@@ -37,7 +55,13 @@ const Journal: React.FC = () => {
                     <h3 className="font-bold text-gray-900 group-hover:text-blue-700">{t('journal.issue_label')} {issue.year}</h3>
                     <p className="text-sm text-gray-500">{issue.issueNumber || issue.year}</p>
                   </div>
-                  <button onClick={() => setViewDoc(issue.pdfUrl)} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Eye size={14} /> Ko'rish</button>
+                  <div className="flex gap-4 mt-2">
+                    <button onClick={() => {
+                      setViewDoc(issue.pdfUrl);
+                      window.location.hash = `#/journal?id=${issue.id}`;
+                    }} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Eye size={14} /> Ko'rish</button>
+                    <button onClick={(e) => { e.stopPropagation(); handleShare(issue.id); }} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Share2 size={14} /> Ulashish</button>
+                  </div>
                 </div>
               </div>
             )) : (
@@ -74,7 +98,10 @@ const Journal: React.FC = () => {
           </div>
         </div>
       </div>
-      {viewDoc && <DocumentViewer url={viewDoc} onClose={() => setViewDoc(null)} />}
+      {viewDoc && <DocumentViewer url={viewDoc} onClose={() => {
+        setViewDoc(null);
+        window.location.hash = '#/journal';
+      }} />}
     </div>
   );
 };
