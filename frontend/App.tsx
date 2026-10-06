@@ -30,6 +30,18 @@ const PhotoGallery = React.lazy(() => import('./pages/PhotoGallery'));
 const ArtGallery = React.lazy(() => import('./pages/ArtGallery'));
 const ScientificPotential = React.lazy(() => import('./pages/ScientificPotential'));
 
+const DjangoAdminRedirect: React.FC = () => {
+  React.useEffect(() => {
+    window.location.href = '/admin/';
+  }, []);
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
+      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-900"></div>
+      <p className="text-slate-600 font-medium">Boshqaruv paneliga o'tilmoqda...</p>
+    </div>
+  );
+};
+
 const App: React.FC = () => {
   const { t } = useTranslation();
   return (
@@ -63,6 +75,9 @@ const App: React.FC = () => {
               <Route path="/photo-gallery" element={<PhotoGallery />} />
               <Route path="/art-gallery" element={<ArtGallery />} />
               <Route path="/scientific-potential" element={<ScientificPotential />} />
+              <Route path="/admin" element={<DjangoAdminRedirect />} />
+              <Route path="/api/admin" element={<DjangoAdminRedirect />} />
+              <Route path="/login" element={<DjangoAdminRedirect />} />
               <Route path="*" element={
                 <div className="flex flex-col items-center justify-center py-20">
                   <h2 className="text-4xl font-bold text-blue-900 mb-4">404</h2>

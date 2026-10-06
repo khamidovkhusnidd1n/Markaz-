@@ -9,6 +9,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     # DTL (server-side rendering) frontend is disabled.
     # The DRF API handles all root requests.
+    path('api/admin/', admin.site.urls),
     path('api/', include('core.urls')),
     path('', include('core.urls')),
     path('admin/', admin.site.urls),
