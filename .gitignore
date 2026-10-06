@@ -228,3 +228,4 @@ db2.sqlite3
 backend-run.err.log
 *.zip
 verify_report.txt
+django_cache/
