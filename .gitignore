@@ -22,7 +22,9 @@ media
 .Python
 build/
 develop-eggs/
-dist/
+# dist/ (allowed for cPanel deployment)
+!frontend/dist/
+!frontend/dist/**
 downloads/
 eggs/
 .eggs/
