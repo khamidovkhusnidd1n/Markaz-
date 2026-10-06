@@ -91,14 +91,14 @@ const NewsList: React.FC = () => {
                 <div className="h-40 overflow-hidden bg-slate-200 w-full">
                   <img
                     src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'}
-                    alt={item.title}
+                    alt={item.title_translated || item.title}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
                 <div className="p-6 flex-1 flex flex-col">
                   <p className="flex items-center gap-2 text-sm text-slate-400"><Calendar size={16} /> {formatDate(item.date, i18n.language)}</p>
-                  <h2 className="mt-3 text-xl font-black text-slate-900 transition-colors group-hover:text-blue-700 line-clamp-2">{item.title}</h2>
-                  <p className="mt-3 text-sm leading-6 text-slate-600 line-clamp-3 flex-1">{stripHtml(item.content)}</p>
+                  <h2 className="mt-3 text-xl font-black text-slate-900 transition-colors group-hover:text-blue-700 line-clamp-2">{item.title_translated || item.title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-600 line-clamp-3 flex-1">{stripHtml(item.content_translated || item.content)}</p>
                   <div className="mt-5 flex items-center gap-2 font-bold text-blue-700">
                     {t('news_list.read_more')} <ChevronRight size={18} />
                   </div>

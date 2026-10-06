@@ -6,9 +6,12 @@ Production-ready configuration following Django best practices.
 import importlib.util
 import os
 from pathlib import Path
-import pymysql
-pymysql.install_as_MySQLdb()
 from datetime import timedelta
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -255,7 +258,7 @@ DATABASES = {
         'PASSWORD': env('DB_PASSWORD', ''),
         'HOST': env('DB_HOST', '127.0.0.1'),
         'PORT': env('DB_PORT', '3306'),
-        'OPTIONS': {'charset': 'utf8mb4'} if 'mysql' in _db_engine else {},
+        'OPTIONS': {'charset': 'utf8mb4'} if 'mysql' in _db_engine else {'timeout': 30} if 'sqlite' in _db_engine else {},
     }
 }
 
@@ -335,6 +338,14 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '120/minute',
+        'user': '600/minute',
+    },
 }
 
 # JWT Settings

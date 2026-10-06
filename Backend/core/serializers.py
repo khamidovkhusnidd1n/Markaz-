@@ -443,7 +443,7 @@ class AppealSerializer(serializers.ModelSerializer):
             'status', 'status_display', 'admin_note',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'status', 'admin_note', 'created_at', 'updated_at']
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -458,7 +458,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'status', 'status_display', 'admin_note',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'status', 'admin_note', 'created_at', 'updated_at']
 
 
 class YearlyStatisticsSerializer(serializers.ModelSerializer):

@@ -836,16 +836,8 @@ def get_all_data(request):
                 many=True,
                 context=ctx
             ).data,
-            'appeals': AppealSerializer(
-                Appeal.objects.all().order_by('-created_at') if has_admin_access(request) else Appeal.objects.none(),
-                many=True,
-                context=ctx
-            ).data,
-            'applications': ApplicationSerializer(
-                Application.objects.all().order_by('-created_at') if has_admin_access(request) else Application.objects.none(),
-                many=True,
-                context=ctx
-            ).data,
+            'appeals': [],
+            'applications': [],
             'teachers': TeacherSerializer(
                 Teacher.objects.filter(is_active=True).order_by('order', 'full_name'),
                 many=True,
@@ -945,7 +937,13 @@ def custom_login(request):
 
     from django.conf import settings
 
-    if username == settings.STATIC_ADMIN_USERNAME and password == settings.STATIC_ADMIN_PASSWORD:
+    allow_static = (
+        getattr(settings, 'DEBUG', False)
+        and getattr(settings, 'ALLOW_STATIC_ADMIN_AUTH', False)
+        and bool(getattr(settings, 'STATIC_ADMIN_PASSWORD', ''))
+        and bool(getattr(settings, 'STATIC_ADMIN_TOKEN', ''))
+    )
+    if allow_static and username == settings.STATIC_ADMIN_USERNAME and password == settings.STATIC_ADMIN_PASSWORD:
         logger.info("Static admin login succeeded for username=%s", username)
         return Response({
             'success': True,
@@ -977,10 +975,15 @@ def custom_login(request):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def increment_project_view(request, pk):
+    from django.core.cache import cache
+    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    cache_key = f"view_proj_lock_{pk}_{ip}"
     try:
         project = PedagogueProject.objects.get(pk=pk)
-        project.views_count += 1
-        project.save(update_fields=['views_count'])
+        if not cache.get(cache_key):
+            project.views_count += 1
+            project.save(update_fields=['views_count'])
+            cache.set(cache_key, True, timeout=300)
         return Response({'views_count': project.views_count})
     except PedagogueProject.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -988,10 +991,15 @@ def increment_project_view(request, pk):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def increment_news_view(request, pk):
+    from django.core.cache import cache
+    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    cache_key = f"view_news_lock_{pk}_{ip}"
     try:
         news = News.objects.get(pk=pk)
-        news.views_count += 1
-        news.save(update_fields=['views_count'])
+        if not cache.get(cache_key):
+            news.views_count += 1
+            news.save(update_fields=['views_count'])
+            cache.set(cache_key, True, timeout=300)
         return Response({'views_count': news.views_count})
     except News.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -999,10 +1007,15 @@ def increment_news_view(request, pk):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def increment_department_post_view(request, pk):
+    from django.core.cache import cache
+    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    cache_key = f"view_dept_lock_{pk}_{ip}"
     try:
         post = DepartmentPost.objects.get(pk=pk)
-        post.views_count += 1
-        post.save(update_fields=['views_count'])
+        if not cache.get(cache_key):
+            post.views_count += 1
+            post.save(update_fields=['views_count'])
+            cache.set(cache_key, True, timeout=300)
         return Response({'views_count': post.views_count})
     except DepartmentPost.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -1010,10 +1023,17 @@ def increment_department_post_view(request, pk):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def increment_project_vote(request, pk):
+    from django.core.cache import cache
+    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    cache_key = f"vote_lock_{pk}_{ip}"
+    if cache.get(cache_key):
+        return Response({'detail': "Siz ushbu loyihaga allaqachon ovoz bergansiz. Har bir foydalanuvchi sutkasiga 1 marta ovoz berishi mumkin."}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+
     try:
         project = PedagogueProject.objects.get(pk=pk)
         project.votes_count += 1
         project.save(update_fields=['votes_count'])
+        cache.set(cache_key, True, timeout=86400)
         return Response({'votes_count': project.votes_count})
     except PedagogueProject.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)

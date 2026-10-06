@@ -59,7 +59,7 @@ const NewsDetail: React.FC = () => {
       >
         {/* Modal Header */}
         <div className="flex justify-between items-start p-6 border-b border-slate-100 bg-white sticky top-0 z-10">
-          <h3 className="text-2xl font-black text-slate-900 pr-8">{newsItem.title}</h3>
+          <h3 className="text-2xl font-black text-slate-900 pr-8">{newsItem.title_translated || newsItem.title}</h3>
           <button 
             onClick={() => navigate(-1)}
             className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors"
@@ -75,7 +75,7 @@ const NewsDetail: React.FC = () => {
             <div className="w-full md:w-[40%] flex-shrink-0">
               <img 
                 src={allImages[0] ? getImageUrl(allImages[0]) : '/placeholder.jpg'} 
-                alt={newsItem.title} 
+                alt={newsItem.title_translated || newsItem.title} 
                 className="w-full aspect-square object-cover rounded-2xl shadow-sm" 
               />
             </div>
@@ -107,8 +107,8 @@ const NewsDetail: React.FC = () => {
           <div className="mt-4">
             <h4 className="text-xl font-bold text-slate-900 mb-6 pb-3 border-b border-slate-100">{t('news.more_info')}</h4>
             <div className="prose prose-slate prose-blue max-w-none prose-img:rounded-xl">
-              {newsItem.content ? (
-                <div dangerouslySetInnerHTML={{ __html: newsItem.content }} />
+              {(newsItem.content_translated || newsItem.content) ? (
+                <div dangerouslySetInnerHTML={{ __html: (newsItem.content_translated || newsItem.content) }} />
               ) : (
                 <p className="text-slate-400 italic">{t('news.no_info')}</p>
               )}
@@ -124,7 +124,7 @@ const NewsDetail: React.FC = () => {
                   <img 
                     key={idx}
                     src={getImageUrl(img)}
-                    alt={`${newsItem.title} ${idx + 2}`}
+                    alt={`${newsItem.title_translated || newsItem.title} ${idx + 2}`}
                     className="w-full aspect-video object-cover rounded-xl shadow-sm border border-slate-100 hover:scale-105 transition-transform cursor-pointer"
                   />
                 ))}
