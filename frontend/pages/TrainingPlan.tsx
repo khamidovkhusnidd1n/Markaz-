@@ -6,6 +6,24 @@ import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
 
+const UZ_REGIONS = [
+  "Barchasi",
+  "Toshkent shahri",
+  "Toshkent viloyati",
+  "Sirdaryo viloyati",
+  "Jizzax viloyati",
+  "Samarqand viloyati",
+  "Qashqadaryo viloyati",
+  "Surxondaryo viloyati",
+  "Buxoro viloyati",
+  "Navoiy viloyati",
+  "Xorazm viloyati",
+  "Andijon viloyati",
+  "Namangan viloyati",
+  "Farg'ona viloyati",
+  "Qoraqalpog'iston Respublikasi"
+];
+
 const TrainingPlan: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { documents, aboutContent, trainingPlanRecords } = useApp();
@@ -15,6 +33,7 @@ const TrainingPlan: React.FC = () => {
 
   // PD Plans search state
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchRegion, setSearchRegion] = useState('Barchasi');
   const [pdSearchResults, setPdSearchResults] = useState<typeof trainingPlanRecords>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [viewDoc, setViewDoc] = useState<string | null>(null);
@@ -40,17 +59,20 @@ const TrainingPlan: React.FC = () => {
     e.preventDefault();
     setHasSearched(true);
     const lowered = searchTerm.trim().toLowerCase();
-    if (!lowered) {
-      setPdSearchResults([]);
-      return;
-    }
+    
     setPdSearchResults(
-      trainingPlanRecords.filter((item) =>
-        item.fullName.toLowerCase().includes(lowered) ||
-        item.workplace.toLowerCase().includes(lowered) ||
-        item.courseName.toLowerCase().includes(lowered) ||
-        (item.lastTrainingDate && item.lastTrainingDate.toLowerCase().includes(lowered))
-      )
+      trainingPlanRecords.filter((item) => {
+        const matchesTerm = !lowered || 
+          item.fullName.toLowerCase().includes(lowered) ||
+          item.workplace.toLowerCase().includes(lowered) ||
+          item.courseName.toLowerCase().includes(lowered) ||
+          (item.lastTrainingDate && item.lastTrainingDate.toLowerCase().includes(lowered));
+          
+        const matchesRegion = searchRegion === 'Barchasi' || 
+          (item.region && item.region.toLowerCase().includes(searchRegion.toLowerCase()));
+          
+        return matchesTerm && matchesRegion;
+      })
     );
   };
 
@@ -82,7 +104,16 @@ const TrainingPlan: React.FC = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <button type="submit" className="rounded-xl bg-emerald-700 px-8 py-3 font-bold text-white transition-colors hover:bg-emerald-800">
+                <select
+                  value={searchRegion}
+                  onChange={(e) => setSearchRegion(e.target.value)}
+                  className="rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  {UZ_REGIONS.map(region => (
+                    <option key={region} value={region}>{region}</option>
+                  ))}
+                </select>
+                <button type="submit" className="rounded-xl bg-emerald-700 px-8 py-3 font-bold text-white transition-colors hover:bg-emerald-800 whitespace-nowrap">
                   {t('training_plan.search_btn')}
                 </button>
               </form>
@@ -94,6 +125,7 @@ const TrainingPlan: React.FC = () => {
                       <thead className="bg-gray-50 uppercase text-gray-500 rounded-t-xl">
                         <tr>
                           <th className="border-b px-4 py-3">{t('training_plan.col_name')}</th>
+                          <th className="border-b px-4 py-3">Viloyat</th>
                           <th className="border-b px-4 py-3">{t('training_plan.col_workplace')}</th>
                           <th className="border-b px-4 py-3">{t('training_plan.col_course')}</th>
                           <th className="border-b px-4 py-3">{t('training_plan.col_duration')}</th>
@@ -103,6 +135,7 @@ const TrainingPlan: React.FC = () => {
                         {pdSearchResults.map((item) => (
                           <tr key={item.id} className="transition-colors hover:bg-emerald-50">
                             <td className="px-4 py-4 font-medium text-gray-900">{item.fullName}</td>
+                            <td className="px-4 py-4 text-gray-600">{item.region || '-'}</td>
                             <td className="px-4 py-4 text-gray-600">{item.workplace}</td>
                             <td className="px-4 py-4 text-gray-600">{item.courseName}</td>
                             <td className="px-4 py-4 text-gray-600">

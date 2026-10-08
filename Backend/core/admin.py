@@ -481,8 +481,8 @@ from .models import TrainingPlanRecord
 @admin.register(TrainingPlanRecord)
 class TrainingPlanRecordAdmin(admin.ModelAdmin):
     """Admin configuration for TrainingPlanRecord with bulk import."""
-    list_display = ['full_name', 'workplace', 'course_name', 'last_training_date', 'status']
-    search_fields = ['full_name', 'workplace', 'course_name']
+    list_display = ['full_name', 'region', 'workplace', 'course_name', 'last_training_date', 'status']
+    search_fields = ['full_name', 'region', 'workplace', 'course_name']
     ordering = ['-created_at']
 
     # We reuse the listener_change_list template for import/export buttons
@@ -512,6 +512,8 @@ class TrainingPlanRecordAdmin(admin.ModelAdmin):
                         'fish': 'full_name',
                         'f.i.sh.': 'full_name',
                         'ism familiya': 'full_name',
+                        'viloyat': 'region',
+                        'hudud': 'region',
                         'ish joyi': 'workplace',
                         'yo\'nalish': 'course_name',
                         'kurs': 'course_name',
@@ -576,6 +578,7 @@ class TrainingPlanRecordAdmin(admin.ModelAdmin):
         for record in queryset:
             data.append({
                 'F.I.SH': record.full_name,
+                'Viloyat': record.region,
                 'Ish joyi': record.workplace,
                 'Kurs nomi': record.course_name,
                 'Muddat': record.last_training_date,
@@ -590,6 +593,7 @@ class TrainingPlanRecordAdmin(admin.ModelAdmin):
     def download_template(self, request):
         df = pd.DataFrame({
             'F.I.SH': ['Eshmatov Toshmat'],
+            'Viloyat': ['Toshkent shahri'],
             'Ish joyi': ['Toshkent shahar 1-maktab'],
             'Kurs nomi (Yo\'nalish)': ['Amaliy san\'at'],
             'Muddat': ['2026-03-31'],

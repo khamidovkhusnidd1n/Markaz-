@@ -52,6 +52,7 @@ export interface ArtGalleryItem {
 export interface Appeal {
   id: string;
   fullName: string;
+  region: string;
   appealType: 'murojaat' | 'shikoyat' | 'taklif';
   appealTypeDisplay?: string;
   description: string;
@@ -64,6 +65,7 @@ export interface Appeal {
 export interface Application {
   id: string;
   fullName: string;
+  region: string;
   applicationType: 'professional_development' | 'retraining';
   applicationTypeDisplay?: string;
   workplace: string;
@@ -77,6 +79,7 @@ export interface Application {
 export interface Teacher {
   id: string;
   fullName: string;
+  region: string;
   position: string;
   position_translated?: string;
   degree: string;
@@ -106,6 +109,7 @@ export interface Course {
 export interface Personnel {
   id: string;
   fullName: string;
+  region: string;
   position: string;
   phone: string;
   email?: string;
@@ -140,6 +144,7 @@ export interface PDPlanRecord {
   id: string;
   recordType: 'MO' | 'QT'; // MO - Malaka oshirish, QT - Qayta tayyorlash
   fullName: string;
+  region: string;
   workplace: string; // Ish joyi
   courseType: string; // Yo'nalish
   series: string; // Seriya
@@ -341,6 +346,7 @@ export interface Pedagogue {
 export interface TrainingPlanItem {
   id: string;
   fullName: string;
+  region: string;
   workplace: string;
   courseName: string;
   lastTrainingDate: string;

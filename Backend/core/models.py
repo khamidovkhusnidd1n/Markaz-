@@ -365,6 +365,7 @@ class Listener(BaseModel):
 class TrainingPlanRecord(BaseModel):
     """Malaka oshirish rejasi (yillik reja) modeli"""
     full_name = models.CharField(max_length=300, verbose_name="F.I.SH")
+    region = models.CharField(max_length=200, blank=True, default='', verbose_name="Viloyat")
     workplace = models.CharField(max_length=500, blank=True, default='', verbose_name="Ish joyi")
     course_name = models.CharField(max_length=500, blank=True, default='', verbose_name="Kurs nomi (Yo'nalish)")
     last_training_date = models.CharField(max_length=200, blank=True, default='', verbose_name="Oxirgi malaka oshirgan vaqti (Muddat)")

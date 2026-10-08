@@ -592,6 +592,7 @@ export const BackendAPI = {
       trainingPlanRecords: (data.training_plan_records || []).map((item: any) => ({
         id: item.id,
         fullName: item.full_name,
+        region: item.region || '',
         workplace: item.workplace,
         courseName: item.course_name,
         lastTrainingDate: item.last_training_date,
