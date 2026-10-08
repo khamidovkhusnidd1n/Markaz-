@@ -11,11 +11,15 @@ const VirtualQabulxona: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'murojaat' | 'ariza'>('murojaat');
 
   useEffect(() => {
+    // Both hash (#ariza) and query (?tab=ariza) support for backwards compatibility
     const hash = location.hash?.replace('#', '');
-    if (hash === 'ariza' || hash === 'murojaat') {
-      setActiveTab(hash as 'murojaat' | 'ariza');
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab') || hash;
+    
+    if (tab === 'ariza' || tab === 'murojaat') {
+      setActiveTab(tab as 'murojaat' | 'ariza');
     }
-  }, [location.hash]);
+  }, [location.hash, location.search]);
   
   const [appealForm, setAppealForm] = useState({
     full_name: '',
