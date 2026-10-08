@@ -17,7 +17,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import (
-    News, NewsImage, NewsCategory, GalleryItem, GalleryImage, ArtGalleryItem, Appeal, Application, Listener, Teacher, Personnel,
+    News, NewsImage, NewsCategory, GalleryItem, GalleryImage, ArtGalleryItem, Appeal, Application, Listener, TrainingPlanRecord, Teacher, Personnel,
     Course, JournalIssue, Document, Statistics, YearlyStatistics,
     AppContent, AppHeroImage, JournalSettings, InternationalSettings, InternationalPartner,
     InternationalProject, InternationalProjectImage, InternationalMedia
