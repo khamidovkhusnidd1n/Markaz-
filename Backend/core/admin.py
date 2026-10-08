@@ -476,6 +476,131 @@ class ListenerAdmin(admin.ModelAdmin):
         return response
 
 
+from .models import TrainingPlanRecord
+
+@admin.register(TrainingPlanRecord)
+class TrainingPlanRecordAdmin(admin.ModelAdmin):
+    """Admin configuration for TrainingPlanRecord with bulk import."""
+    list_display = ['full_name', 'workplace', 'course_name', 'last_training_date', 'status']
+    search_fields = ['full_name', 'workplace', 'course_name']
+    ordering = ['-created_at']
+
+    # We reuse the listener_change_list template for import/export buttons
+    # You might want to create a specific template if labels differ, but it uses the same excel import logic.
+    change_list_template = "admin/trainingplan_change_list.html"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('import-excel/', self.admin_site.admin_view(self.import_excel), name='trainingplan_import_excel'),
+            path('export-excel/', self.admin_site.admin_view(self.export_excel), name='trainingplan_export_excel'),
+            path('download-template/', self.admin_site.admin_view(self.download_template), name='trainingplan_download_template'),
+        ]
+        return custom_urls + urls
+
+    def import_excel(self, request):
+        if request.method == 'POST':
+            form = ExcelImportForm(request.POST, request.FILES)
+            if form.is_valid():
+                excel_file = request.FILES['excel_file']
+                try:
+                    df = pd.read_excel(BytesIO(excel_file.read()), dtype=str)
+                    
+                    # Columns to look for
+                    mapping = {
+                        'f.i.sh': 'full_name',
+                        'fish': 'full_name',
+                        'f.i.sh.': 'full_name',
+                        'ism familiya': 'full_name',
+                        'ish joyi': 'workplace',
+                        'yo\'nalish': 'course_name',
+                        'kurs': 'course_name',
+                        'muddat': 'last_training_date',
+                        'o\'qish muddati': 'last_training_date',
+                        'holati': 'status'
+                    }
+                    
+                    actual_mapping = {}
+                    unmapped = []
+                    for col in df.columns:
+                        normalized_col = str(col).lower().strip()
+                        matched = False
+                        for key, field in mapping.items():
+                            if key in normalized_col:
+                                actual_mapping[col] = field
+                                matched = True
+                                break
+                        if not matched:
+                            unmapped.append(col)
+                    
+                    if not actual_mapping or 'full_name' not in actual_mapping.values():
+                        messages.error(request, f"Xato: Ustunlar topilmadi. 'F.I.SH' ustuni bo'lishi shart. Topilgan ustunlar: {list(df.columns)}")
+                        return redirect('..')
+                        
+                    created_count = 0
+                    skipped_count = 0
+                    
+                    for idx, row in df.iterrows():
+                        record_data = {}
+                        for excel_col, model_field in actual_mapping.items():
+                            value = row[excel_col]
+                            if pd.notna(value) and str(value).strip().lower() != 'nan':
+                                record_data[model_field] = str(value).strip()
+                        
+                        if not record_data.get('full_name'):
+                            skipped_count += 1
+                            continue
+                            
+                        TrainingPlanRecord.objects.create(**record_data)
+                        created_count += 1
+                        
+                    msg = f"Muvaffaqiyat! {created_count} ta reja kiritildi."
+                    if skipped_count > 0:
+                        msg += f" {skipped_count} ta qator o'tkazib yuborildi."
+                    messages.success(request, msg)
+                    
+                except Exception as e:
+                    messages.error(request, f"Xatolik yuz berdi: {str(e)}")
+                    
+            return redirect('..')
+            
+        return render(request, "admin/excel_import.html", {
+            "form": ExcelImportForm(),
+            "opts": self.model._meta,
+            "title": "Excel fayl orqali malaka oshirish rejasini yuklash"
+        })
+
+    def export_excel(self, request):
+        queryset = TrainingPlanRecord.objects.all()
+        data = []
+        for record in queryset:
+            data.append({
+                'F.I.SH': record.full_name,
+                'Ish joyi': record.workplace,
+                'Kurs nomi': record.course_name,
+                'Muddat': record.last_training_date,
+                'Holati': record.status,
+            })
+        df = pd.DataFrame(data)
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="malaka_oshirish_rejasi.xlsx"'
+        df.to_excel(response, index=False, engine='openpyxl')
+        return response
+
+    def download_template(self, request):
+        df = pd.DataFrame({
+            'F.I.SH': ['Eshmatov Toshmat'],
+            'Ish joyi': ['Toshkent shahar 1-maktab'],
+            'Kurs nomi (Yo\'nalish)': ['Amaliy san\'at'],
+            'Muddat': ['2026-03-31'],
+            'Holati': ['Rejalashtirilgan']
+        })
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="malaka_oshirish_rejasi_shablon.xlsx"'
+        df.to_excel(response, index=False, engine='openpyxl')
+        return response
+
+
 @admin.register(Teacher)
 class TeacherAdmin(RichTextFieldsMixin, admin.ModelAdmin):
     """Admin configuration for Teacher model - simplified."""

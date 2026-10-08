@@ -6,7 +6,7 @@ import logging
 from rest_framework import serializers
 from django.core.cache import cache
 from .models import (
-    News, NewsImage, NewsCategory, GalleryItem, GalleryImage, ArtGalleryItem, Appeal, Application, Listener, Teacher, Personnel,
+    News, NewsImage, NewsCategory, GalleryItem, GalleryImage, ArtGalleryItem, Appeal, Application, Listener, TrainingPlanRecord, Teacher, Personnel,
     Course, JournalIssue, Document, Statistics, YearlyStatistics,
     AppContent, AppHeroImage, JournalSettings, InternationalSettings, InternationalPartner,
     InternationalProject, InternationalProjectImage, InternationalMedia
@@ -200,6 +200,12 @@ class ListenerBulkImportSerializer(serializers.Serializer):
         ('MO', 'Malaka oshirish (MO)'),
         ('QT', 'Qayta tayyorlash (QT)'),
     ])
+
+
+class TrainingPlanRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingPlanRecord
+        fields = '__all__'
 
 
 class TeacherSerializer(serializers.ModelSerializer):

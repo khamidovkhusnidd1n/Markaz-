@@ -362,6 +362,23 @@ class Listener(BaseModel):
         super().save(*args, **kwargs)
 
 
+class TrainingPlanRecord(BaseModel):
+    """Malaka oshirish rejasi (yillik reja) modeli"""
+    full_name = models.CharField(max_length=300, verbose_name="F.I.SH")
+    workplace = models.CharField(max_length=500, blank=True, default='', verbose_name="Ish joyi")
+    course_name = models.CharField(max_length=500, blank=True, default='', verbose_name="Kurs nomi (Yo'nalish)")
+    last_training_date = models.CharField(max_length=200, blank=True, default='', verbose_name="Oxirgi malaka oshirgan vaqti (Muddat)")
+    status = models.CharField(max_length=100, blank=True, default='', verbose_name="Holati (Masalan: Rejalashtirilgan)")
+
+    class Meta:
+        verbose_name = "Malaka oshirish rejasi (Tinglovchi)"
+        verbose_name_plural = "Malaka oshirish rejasi"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.full_name} - {self.course_name}"
+
+
 class Teacher(BaseModel):
     """O'qituvchilar modeli"""
     full_name = models.CharField(max_length=300, verbose_name="F.I.SH")

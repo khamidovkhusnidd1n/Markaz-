@@ -25,6 +25,7 @@ from .models import (
 from .serializers import (
     NewsSerializer, NewsCreateSerializer, NewsImageSerializer, NewsCategorySerializer,
     GalleryItemSerializer, ArtGalleryItemSerializer, AppealSerializer, ApplicationSerializer, ListenerSerializer, ListenerBulkImportSerializer,
+    TrainingPlanRecordSerializer,
     TeacherSerializer, PersonnelSerializer, CourseSerializer,
     JournalIssueSerializer, DocumentSerializer, StatisticsSerializer,
     YearlyStatisticsSerializer, AppContentSerializer, JournalSettingsSerializer,
@@ -859,6 +860,11 @@ def get_all_data(request):
             ).data,
             'documents': DocumentSerializer(
                 Document.objects.filter(is_active=True).order_by('-created_at'),
+                many=True,
+                context=ctx
+            ).data,
+            'training_plan_records': TrainingPlanRecordSerializer(
+                TrainingPlanRecord.objects.all().order_by('-created_at'),
                 many=True,
                 context=ctx
             ).data,

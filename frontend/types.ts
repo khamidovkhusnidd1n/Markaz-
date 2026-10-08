@@ -338,3 +338,11 @@ export interface Pedagogue {
   projects: PedagogueProject[];
   order: number;
 }
+export interface TrainingPlanItem {
+  id: string;
+  fullName: string;
+  workplace: string;
+  courseName: string;
+  lastTrainingDate: string;
+  status: string;
+}

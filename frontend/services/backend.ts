@@ -18,6 +18,7 @@ import {
   NewsItem,
   Statistics,
   PDPlanRecord,
+  TrainingPlanItem,
   Department,
   Pedagogue,
   PedagogueProject,
@@ -588,6 +589,14 @@ export const BackendAPI = {
       journalIssues: (data.journalIssues || data.journal_issues || []).map(transformJournalIssue),
       documents: (data.documents || []).map(transformDocument),
       pdPlans: (data.listeners || data.pd_plans || data.pdPlans || []).map(transformPDPlanRecord),
+      trainingPlanRecords: (data.training_plan_records || []).map((item: any) => ({
+        id: item.id,
+        fullName: item.full_name,
+        workplace: item.workplace,
+        courseName: item.course_name,
+        lastTrainingDate: item.last_training_date,
+        status: item.status
+      })),
       stats: transformStatistics(statsData),
       about: transformAppContent(aboutData),
       journalSettings: transformJournalSettings(journalSettingsData),

@@ -8,14 +8,14 @@ import { formatDate } from '../services/dateUtils';
 
 const TrainingPlan: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { documents, aboutContent, pdPlans } = useApp();
+  const { documents, aboutContent, trainingPlanRecords } = useApp();
   const location = useLocation();
 
   const regDocs = documents.filter((doc) => doc.category === 'regulatory');
 
   // PD Plans search state
   const [searchTerm, setSearchTerm] = useState('');
-  const [pdSearchResults, setPdSearchResults] = useState<typeof pdPlans>([]);
+  const [pdSearchResults, setPdSearchResults] = useState<typeof trainingPlanRecords>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [viewDoc, setViewDoc] = useState<string | null>(null);
 
@@ -25,16 +25,16 @@ const TrainingPlan: React.FC = () => {
     if (query) {
       setSearchTerm(query);
       const lowered = query.toLowerCase();
-      const results = pdPlans.filter((item) =>
+      const results = trainingPlanRecords.filter((item) =>
         item.fullName.toLowerCase().includes(lowered) ||
         item.workplace.toLowerCase().includes(lowered) ||
-        item.courseType.toLowerCase().includes(lowered) ||
-        (item.duration && item.duration.toLowerCase().includes(lowered))
+        item.courseName.toLowerCase().includes(lowered) ||
+        (item.lastTrainingDate && item.lastTrainingDate.toLowerCase().includes(lowered))
       );
       setPdSearchResults(results);
       setHasSearched(true);
     }
-  }, [location.search, pdPlans]);
+  }, [location.search, trainingPlanRecords]);
 
   const handlePdSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,11 +45,11 @@ const TrainingPlan: React.FC = () => {
       return;
     }
     setPdSearchResults(
-      pdPlans.filter((item) =>
+      trainingPlanRecords.filter((item) =>
         item.fullName.toLowerCase().includes(lowered) ||
         item.workplace.toLowerCase().includes(lowered) ||
-        item.courseType.toLowerCase().includes(lowered) ||
-        (item.duration && item.duration.toLowerCase().includes(lowered))
+        item.courseName.toLowerCase().includes(lowered) ||
+        (item.lastTrainingDate && item.lastTrainingDate.toLowerCase().includes(lowered))
       )
     );
   };
@@ -104,8 +104,10 @@ const TrainingPlan: React.FC = () => {
                           <tr key={item.id} className="transition-colors hover:bg-emerald-50">
                             <td className="px-4 py-4 font-medium text-gray-900">{item.fullName}</td>
                             <td className="px-4 py-4 text-gray-600">{item.workplace}</td>
-                            <td className="px-4 py-4 text-gray-600">{item.courseType}</td>
-                            <td className="px-4 py-4 text-gray-600">{item.duration || '-'}</td>
+                            <td className="px-4 py-4 text-gray-600">{item.courseName}</td>
+                            <td className="px-4 py-4 text-gray-600">
+                              {item.lastTrainingDate.replace(' 00:00:00', '') || '-'}
+                            </td>
                           </tr>
                         ))}
                       </tbody>

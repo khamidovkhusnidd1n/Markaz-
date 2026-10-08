@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import {
+import { TrainingPlanItem, useTranslation } from 'react-i18next';
+import { TrainingPlanItem,
   AppContent,
   Appeal,
   Application,
@@ -23,8 +23,8 @@ import {
   Pedagogue,
   PedagogueProject,
 } from '../types';
-import { BackendAPI } from '../services/backend';
-import { INITIAL_STATS } from '../constants';
+import { TrainingPlanItem, BackendAPI } from '../services/backend';
+import { TrainingPlanItem, INITIAL_STATS } from '../constants';
 
 interface AppState {
   news: NewsItem[];
@@ -38,6 +38,7 @@ interface AppState {
   journalIssues: JournalIssue[];
   documents: Document[];
   pdPlans: PDPlanRecord[];
+  trainingPlanRecords: TrainingPlanItem[];
   stats: Statistics;
   aboutContent: AppContent;
   journalSettings: JournalSettings;
@@ -98,6 +99,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [journalIssues, setJournalIssues] = useState<JournalIssue[]>([]);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [pdPlans, setPdPlans] = useState<PDPlanRecord[]>([]);
+  const [trainingPlanRecords, setTrainingPlanRecords] = useState<TrainingPlanItem[]>([]);
   // BUG FIX: start with INITIAL_STATS so charts always have fallback data
   const [stats, setStats] = useState<Statistics>(INITIAL_STATS);
   const [aboutContent, setAboutContent] = useState<AppContent>(defaultAbout);
@@ -126,6 +128,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setJournalIssues(data.journalIssues);
       setDocuments(data.documents);
       setPdPlans(data.pdPlans);
+      if (data.trainingPlanRecords) setTrainingPlanRecords(data.trainingPlanRecords);
       // BUG FIX: only update stats if backend returned real data
       if (data.stats && (data.stats.totalPedagogs > 0 || data.stats.studentsCount.length > 0)) {
         setStats(data.stats);
@@ -180,6 +183,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         journalIssues,
         documents,
         pdPlans,
+        trainingPlanRecords,
         stats,
         aboutContent,
         journalSettings,
