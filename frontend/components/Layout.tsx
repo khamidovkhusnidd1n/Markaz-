@@ -220,7 +220,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center overflow-hidden shrink-0">
               <img src={headerLogo} alt={t('layout.logo_alt', { name: siteName })} className="w-full h-full object-contain" />
             </div>
-            <div className="min-w-0 max-w-[200px] sm:max-w-[280px] md:max-w-[320px] max-[1850px]:max-w-[240px]">
+            <div className="min-w-0 max-w-[200px] sm:max-w-[280px] md:max-w-[320px] max-[1850px]:max-w-[180px]">
               <h1 className="text-[9px] sm:text-[11px] md:text-[12px] max-[1850px]:text-[10px] font-bold leading-tight text-blue-900 text-left">{siteName}</h1>
             </div>
           </Link>
@@ -235,14 +235,14 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <div className="flex items-center gap-1 ml-2 shrink-0">
               <button 
                 onClick={() => setIsUsefulLinksOpen(true)}
-                className="relative overflow-hidden rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-1.5 text-[12px] md:text-[13px] font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] flex items-center gap-2 group mr-1"
+                className="relative overflow-hidden rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-2.5 py-1 min-[1850px]:px-4 min-[1850px]:py-1.5 text-[10px] min-[1850px]:text-[13px] font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] flex items-center gap-1 min-[1850px]:gap-2 group mr-0 min-[1850px]:mr-1 shrink-0"
               >
                 <LayoutGrid size={15} className="relative z-10 group-hover:rotate-90 transition-transform duration-500" />
                 <span className="relative z-10 whitespace-nowrap">{t('layout.useful_links', "Foydali havolalar")}</span>
                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               </button>
               
-              <div className="desktop-nav-lang-container flex items-center gap-1 border-l pl-2 border-gray-200">
+              <div className="desktop-nav-lang-container flex items-center gap-0.5 min-[1850px]:gap-1 border-l pl-1 min-[1850px]:pl-2 border-gray-200 shrink-0">
                 <LangButton lang="uz" label="UZB" />
                 <LangButton lang="ru" label="RUS" />
                 <LangButton lang="en" label="ENG" />
