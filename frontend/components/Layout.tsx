@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ExternalLink, Phone, Mail, MapPin, ChevronUp, ChevronDown, ChevronRight, Globe, MonitorPlay, Award, BookOpen, Scale, LayoutGrid } from 'lucide-react';
+import { Menu, X, ExternalLink, Phone, Mail, MapPin, ChevronUp, ChevronDown, ChevronRight, Globe, MonitorPlay, Award, BookOpen, Scale, LayoutGrid, Landmark, LayoutDashboard, ClipboardList, UserCheck } from 'lucide-react';
 import { MENU_ITEMS, MenuItemType } from '../constants';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -373,7 +373,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           onClick={() => setIsUsefulLinksOpen(false)} 
         />
         <div 
-          className={`relative w-full max-w-[360px] md:max-w-md bg-white h-full shadow-[0_0_40px_rgba(0,0,0,0.1)] transition-transform duration-300 flex flex-col ${isUsefulLinksOpen ? 'translate-x-0' : 'translate-x-full'}`}
+          className={`relative w-full max-w-[380px] md:max-w-lg bg-white h-full shadow-[0_0_40px_rgba(0,0,0,0.1)] transition-transform duration-300 flex flex-col ${isUsefulLinksOpen ? 'translate-x-0' : 'translate-x-full'}`}
         >
           <div className="flex items-center justify-between p-5 md:p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
             <h2 className="text-lg md:text-xl font-black text-slate-800 flex items-center gap-3">
@@ -388,46 +388,56 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             </button>
           </div>
           
-          <div className="flex-1 overflow-y-auto p-5 md:p-6 flex flex-col gap-4">
-            <a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="group flex items-start gap-4 p-4 md:p-5 rounded-2xl border border-blue-100 bg-white hover:border-blue-300 hover:bg-blue-50/50 transition-all shadow-sm hover:shadow-md">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:-rotate-3 transition-transform">
-                <MonitorPlay size={24} />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-800 group-hover:text-blue-700 transition-colors">{t('menu.distance_edu', "Masofaviy ta'lim")}</h3>
-                <p className="text-xs md:text-sm text-gray-500 mt-1 line-clamp-2">Masofadan turib malaka oshirish va qayta tayyorlash platformasi</p>
-              </div>
-            </a>
-            
-            <a href="https://reestr.uzbamalaka.uz" target="_blank" rel="noreferrer" className="group flex items-start gap-4 p-4 md:p-5 rounded-2xl border border-indigo-100 bg-white hover:border-indigo-300 hover:bg-indigo-50/50 transition-all shadow-sm hover:shadow-md">
-              <div className="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                <Award size={24} />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">{t('menu.registry', "Diplom va sertifikatlar yagona reestri")}</h3>
-                <p className="text-xs md:text-sm text-gray-500 mt-1 line-clamp-2">Tinglovchilarning sertifikat va diplomlarini tekshirish tizimi</p>
-              </div>
-            </a>
+          <div className="flex-1 overflow-y-auto p-5 md:p-6">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Masofaviy ta'lim */}
+              <a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-blue-300 hover:shadow-md transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-sm">
+                  <Globe size={24} />
+                </div>
+                <span className="text-xs font-bold text-slate-700">Masofaviy ta'lim</span>
+              </a>
 
-            <Link to="/journal" onClick={() => setIsUsefulLinksOpen(false)} className="group flex items-start gap-4 p-4 md:p-5 rounded-2xl border border-amber-100 bg-white hover:border-amber-300 hover:bg-amber-50/50 transition-all shadow-sm hover:shadow-md">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:-rotate-3 transition-transform">
-                <BookOpen size={24} />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-800 group-hover:text-amber-700 transition-colors">{t('menu.journal', "Ilmiy jurnal")}</h3>
-                <p className="text-xs md:text-sm text-gray-500 mt-1 line-clamp-2">Markazning ilmiy-amaliy elektron jurnali maqolalari va nashrlari</p>
-              </div>
-            </Link>
-            
-            <a href="https://lex.uz" target="_blank" rel="noreferrer" className="group flex items-start gap-4 p-4 md:p-5 rounded-2xl border border-emerald-100 bg-white hover:border-emerald-300 hover:bg-emerald-50/50 transition-all shadow-sm hover:shadow-md">
-              <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-transform">
-                <Scale size={24} />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-800 group-hover:text-emerald-700 transition-colors">Lex.uz</h3>
-                <p className="text-xs md:text-sm text-gray-500 mt-1 line-clamp-2">O'zbekiston Respublikasi Qonunchilik ma'lumotlari milliy bazasi</p>
-              </div>
-            </a>
+              {/* Badiiy akademiya */}
+              <a href="https://mrdi.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-blue-300 hover:shadow-md transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 text-blue-600 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
+                  <Landmark size={24} />
+                </div>
+                <span className="text-xs font-bold text-slate-700">Badiiy akademiya</span>
+              </a>
+
+              {/* MY.BIMM.UZ */}
+              <a href="https://my.bimm.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-emerald-300 hover:shadow-md transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                  <LayoutDashboard size={24} />
+                </div>
+                <span className="text-xs font-bold text-slate-700">MY.BIMM.UZ</span>
+              </a>
+
+              {/* LEX.UZ */}
+              <a href="https://lex.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-blue-300 hover:shadow-md transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 text-blue-500 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-sm">
+                  <Scale size={24} />
+                </div>
+                <span className="text-xs font-bold text-slate-700">LEX.UZ</span>
+              </a>
+
+              {/* Form uchun arizalar */}
+              <Link to="/virtual-qabulxona#ariza" onClick={() => setIsUsefulLinksOpen(false)} className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-purple-300 hover:shadow-md transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                  <ClipboardList size={24} />
+                </div>
+                <span className="text-xs font-bold text-slate-700">Form uchun arizalar</span>
+              </Link>
+
+              {/* Davomat */}
+              <a href="https://t.me/uzbadavomatbot" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-green-300 hover:shadow-md transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-green-600 text-white flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
+                  <UserCheck size={24} />
+                </div>
+                <span className="text-xs font-bold text-slate-700">Davomat</span>
+              </a>
+            </div>
           </div>
           
           <div className="p-5 md:p-6 bg-slate-50 border-t border-gray-100 text-center">
