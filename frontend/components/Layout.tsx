@@ -423,12 +423,12 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               </a>
 
               {/* Form uchun arizalar */}
-              <Link to="/virtual-qabulxona#ariza" onClick={() => setIsUsefulLinksOpen(false)} className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-purple-300 hover:shadow-md transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+              <a href="https://form.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-purple-300 hover:shadow-md transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-sm">
                   <ClipboardList size={24} />
                 </div>
                 <span className="text-xs font-bold text-slate-700">Form uchun arizalar</span>
-              </Link>
+              </a>
 
               {/* Davomat */}
               <a href="https://t.me/uzbadavomatbot" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-green-300 hover:shadow-md transition-all text-center gap-3 group">
