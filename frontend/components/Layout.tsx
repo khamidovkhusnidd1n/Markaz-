@@ -399,7 +399,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               </a>
 
               {/* Badiiy akademiya */}
-              <a href="https://mrdi.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-blue-300 hover:shadow-md transition-all text-center gap-3 group">
+              <a href="https://art-academy.uz/" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-blue-300 hover:shadow-md transition-all text-center gap-3 group">
                 <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 text-blue-600 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
                   <Landmark size={24} />
                 </div>
