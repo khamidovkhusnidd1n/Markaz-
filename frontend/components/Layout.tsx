@@ -235,10 +235,10 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <div className="flex items-center gap-1 ml-2 shrink-0">
               <button 
                 onClick={() => setIsUsefulLinksOpen(true)}
-                className="relative overflow-hidden rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 px-2.5 py-1 min-[1850px]:px-4 min-[1850px]:py-1.5 text-[10px] min-[1850px]:text-[13px] font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] flex items-center gap-1 min-[1850px]:gap-2 group mr-0 min-[1850px]:mr-1 shrink-0"
+                title={t('layout.useful_links', "Foydali havolalar")}
+                className="relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 p-2 min-[1850px]:p-2.5 font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] flex items-center justify-center group mr-1 shrink-0"
               >
-                <LayoutGrid size={15} className="relative z-10 group-hover:rotate-90 transition-transform duration-500" />
-                <span className="relative z-10 whitespace-nowrap hidden min-[1750px]:inline-block">{t('layout.useful_links', "Foydali havolalar")}</span>
+                <LayoutGrid size={20} className="relative z-10 group-hover:rotate-90 transition-transform duration-500" />
                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               </button>
               
