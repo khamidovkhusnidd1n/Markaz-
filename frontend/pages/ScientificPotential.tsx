@@ -17,13 +17,15 @@ const ScientificPotential: React.FC = () => {
     id: p.id,
     fullName: p.fullName,
     position: p.position,
-    position_translated: '',
-    degree: '',
-    degree_translated: '',
-    title: '',
-    title_translated: '',
-    awards: '',
-    awards_translated: '',
+    position_translated: (p as any).position_translated || p.position || '',
+    degree: (p as any).degree || '',
+    degree_translated: (p as any).degree_translated || '',
+    title: (p as any).title || '',
+    title_translated: (p as any).title_translated || '',
+    awards: (p as any).awards || '',
+    awards_translated: (p as any).awards_translated || '',
+    biography: p.biography || '',
+    biography_translated: (p as any).biography_translated || p.biography || '',
     photoUrl: p.photoUrl || '',
   }));
 
@@ -130,6 +132,10 @@ const ScientificPotential: React.FC = () => {
                     )}
                   </div>
                 )}
+                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-center gap-1.5 text-xs font-semibold text-blue-600 group-hover:text-blue-700 transition-colors">
+                  <span>{t('sci_potential.view_details', "Batafsil / Biografiya")}</span>
+                  <span className="text-sm transform group-hover:translate-x-1 transition-transform">→</span>
+                </div>
               </div>
             </div>
           )) : (
@@ -213,7 +219,15 @@ const ScientificPotential: React.FC = () => {
                 </h4>
                 <div className="prose prose-slate max-w-none">
                   {selectedTeacher.biography_translated || selectedTeacher.biography ? (
-                    <div dangerouslySetInnerHTML={{ __html: (selectedTeacher.biography_translated || selectedTeacher.biography) }} />
+                    (() => {
+                      const bio = selectedTeacher.biography_translated || selectedTeacher.biography;
+                      const hasHtml = /<[a-z][\s\S]*>/i.test(bio);
+                      return hasHtml ? (
+                        <div className="[&>ul]:list-disc [&>ul]:pl-5 [&>ul>li]:mb-2 [&>p]:mb-3 leading-relaxed text-slate-700 text-base" dangerouslySetInnerHTML={{ __html: bio }} />
+                      ) : (
+                        <div className="whitespace-pre-line text-slate-700 leading-relaxed text-base">{bio}</div>
+                      );
+                    })()
                   ) : (
                     <p className="text-slate-400 italic">{t('sci_potential.no_biography', 'Biografiya kiritilmagan.')}</p>
                   )}

@@ -344,14 +344,17 @@ function transformTeacher(item: any): Teacher {
   return {
     id: item.id,
     fullName: item.full_name || '',
+    region: item.region || '',
     position: item.position || '',
-    position_translated: item.position_translated || '',
+    position_translated: item.position_translated || item.position || '',
     degree: item.degree || '',
-    degree_translated: item.degree_translated || '',
+    degree_translated: item.degree_translated || item.degree || '',
     title: item.title || '',
-    title_translated: item.title_translated || '',
+    title_translated: item.title_translated || item.title || '',
     awards: item.awards || '',
-    awards_translated: item.awards_translated || '',
+    awards_translated: item.awards_translated || item.awards || '',
+    biography: item.biography || '',
+    biography_translated: item.biography_translated || item.biography || '',
     photoUrl: item.photo_url || '',
   };
 }
