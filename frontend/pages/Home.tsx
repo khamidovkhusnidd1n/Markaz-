@@ -110,21 +110,78 @@ const Home: React.FC = () => {
   }, [heroImages.length]);
 
   const reportDetails = {
+    sectionBadge: stats?.reportDetails?.sectionBadge || "KO'RSATKICHLAR VA HISOBOT",
+    sectionTitle: stats?.reportDetails?.sectionTitle || "Markaz faoliyati statistikasi",
+    card1Badge: stats?.reportDetails?.card1Badge || "O'quv faoliyati",
+    card1Title: stats?.reportDetails?.card1Title || "Qayta tayyorlash va malaka oshirish faoliyati",
+    card1Summary: stats?.reportDetails?.card1Summary || "Mazkur markazda faoliyat davrida O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligining 284 nafar, Madaniyat vazirligining 740 nafar, Badiiy akademiya tasarrufidagi ta'lim muassasalaridan 578 nafar, kasbni rivojlantirishga yo'naltirilgan qisqa kurslarda 141 nafar, jami 1743 nafar pedagog va mutaxassis kadrlar malaka oshirishdi hamda 389 nafar pedagog kadrlar qayta tayyorlovdan o'tkazildi.",
+    moTotalLabel: stats?.reportDetails?.moTotalLabel || "Jami malaka oshirganlar",
     moTotal: stats?.reportDetails?.moTotal ?? 1743,
+    moHigherEduLabel: stats?.reportDetails?.moHigherEduLabel || "Oliy ta'lim muassasalaridan",
     moHigherEdu: stats?.reportDetails?.moHigherEdu ?? 284,
+    moCultureMinistryLabel: stats?.reportDetails?.moCultureMinistryLabel || "O'zbekiston Respublikasi Madaniyat vazirligi tasarrufidagi ta'lim muassasalaridan",
     moCultureMinistry: stats?.reportDetails?.moCultureMinistry ?? 740,
+    moArtAcademyLabel: stats?.reportDetails?.moArtAcademyLabel || "O'zbekiston Badiiy akademiyasi tasarrufidagi ta'lim muassasalaridan",
     moArtAcademy: stats?.reportDetails?.moArtAcademy ?? 578,
+    moShortCoursesLabel: stats?.reportDetails?.moShortCoursesLabel || "Qisqa malaka oshirish kurslarida",
     moShortCourses: stats?.reportDetails?.moShortCourses ?? 141,
+    qtTotalLabel: stats?.reportDetails?.qtTotalLabel || "Jami qayta tayyorlash kurslarida",
     qtTotal: stats?.reportDetails?.qtTotal ?? 389,
+    qtPaintingLabel: stats?.reportDetails?.qtPaintingLabel || "Rangtasvir (turlari bo'yicha)",
     qtPainting: stats?.reportDetails?.qtPainting ?? 0,
+    qtEmbroideryLabel: stats?.reportDetails?.qtEmbroideryLabel || "Badiiy kashtachilik usta-rassomi",
     qtEmbroidery: stats?.reportDetails?.qtEmbroidery ?? 0,
+    qtGoldEmbroideryLabel: stats?.reportDetails?.qtGoldEmbroideryLabel || "Badiiy zardo'zlik usta-rassomi",
     qtGoldEmbroidery: stats?.reportDetails?.qtGoldEmbroidery ?? 0,
+    card2Badge: stats?.reportDetails?.card2Badge || "Xalqaro aloqalar",
+    card2Title: stats?.reportDetails?.card2Title || "Xalqaro hamkorlik va xalqaro loyihalar",
+    card2Summary: stats?.reportDetails?.card2Summary || "Bugungi kunda Markaz tomonidan 10 ta xorijiy (Italiya, Xitoy, Gruziya, Belarus, Turkiya, Rossiya, Hindiston, Qozog'iston, Koreya, Ozarbayjon) mamlakatlarning 15 ta badiiy ta'limga ixtisoslashgan muassasalari bilan memorandumlar imzolandi va hamkorlik aloqalari yo'lga qo'yildi.",
+    intlCountriesLabel: stats?.reportDetails?.intlCountriesLabel || "Xorijiy mamlakatlar",
     intlCountriesCount: stats?.reportDetails?.intlCountriesCount ?? 10,
     intlCountriesList: stats?.reportDetails?.intlCountriesList || "Italiya\nXitoy\nGruziya\nBelarus\nTurkiya\nRossiya\nHindiston\nQozog'iston\nKoreya\nOzarbayjon",
+    intlOrganizationsLabel: stats?.reportDetails?.intlOrganizationsLabel || "Hamkor xorijiy tashkilotlar",
     intlOrganizationsCount: stats?.reportDetails?.intlOrganizationsCount ?? 15,
+    intlOrganizationsSummary: stats?.reportDetails?.intlOrganizationsSummary || "",
     intlOrganizationsList: stats?.reportDetails?.intlOrganizationsList || "",
+    intlProjectsLabel: stats?.reportDetails?.intlProjectsLabel || "Xalqaro ilmiy-ijodiy loyihalar",
     intlProjectsCount: stats?.reportDetails?.intlProjectsCount ?? 0,
     intlProjectsList: stats?.reportDetails?.intlProjectsList || "",
+  };
+
+  const getCountryFlagUrl = (countryName: string): string | null => {
+    const c = countryName.toLowerCase().trim();
+    const map: Record<string, string> = {
+      'italiya': 'it', 'italy': 'it', 'италия': 'it',
+      'xitoy': 'cn', 'china': 'cn', 'китай': 'cn',
+      'gruziya': 'ge', 'georgia': 'ge', 'грузия': 'ge',
+      'belarus': 'by', 'belarussiya': 'by', 'беларусь': 'by',
+      'turkiya': 'tr', 'turkey': 'tr', 'турция': 'tr',
+      'rossiya': 'ru', 'russia': 'ru', 'россия': 'ru',
+      'hindiston': 'in', 'india': 'in', 'индия': 'in',
+      "qozog'iston": 'kz', 'qozogiston': 'kz', 'qozoqiston': 'kz', 'kazakhstan': 'kz', 'казахстан': 'kz',
+      'koreya': 'kr', 'janubiy koreya': 'kr', 'korea': 'kr', 'корея': 'kr',
+      'ozarbayjon': 'az', 'azerbaijan': 'az', 'азербайджан': 'az',
+      "o'zbekiston": 'uz', 'uzbekistan': 'uz',
+      'aqsh': 'us', 'usa': 'us',
+      'germaniya': 'de', 'germany': 'de',
+      'fransiya': 'fr', 'france': 'fr',
+      'yaponiya': 'jp', 'japan': 'jp',
+      'buyuk britaniya': 'gb', 'angliya': 'gb', 'uk': 'gb',
+      'ispaniya': 'es', 'spain': 'es',
+      "qirg'iziston": 'kg', 'kyrgyzstan': 'kg',
+      'tojikiston': 'tj', 'tajikistan': 'tj',
+      'turkmaniston': 'tm', 'turkmenistan': 'tm',
+      'eron': 'ir', 'iran': 'ir',
+      'misr': 'eg', 'egypt': 'eg',
+      'malayziya': 'my', 'malaysia': 'my',
+      'polsha': 'pl', 'poland': 'pl',
+    };
+    for (const [key, code] of Object.entries(map)) {
+      if (c.includes(key)) {
+        return `https://flagcdn.com/w40/${code}.png`;
+      }
+    }
+    return null;
   };
 
   const countriesArray = reportDetails.intlCountriesList
@@ -144,13 +201,11 @@ const Home: React.FC = () => {
 
   const displayedProjectsCount = reportDetails.intlProjectsCount > 0
     ? reportDetails.intlProjectsCount
-    : (internationalProjects.length + customProjectsArray.length);
+    : customProjectsArray.length;
 
   const safeStudentsCount = stats?.studentsCount || [];
-  const sumYearlyMalaka = safeStudentsCount.reduce((sum, item) => sum + (item.count || 0), 0);
-  const sumYearlyQayta = safeStudentsCount.reduce((sum, item) => sum + (item.retraining || 0), 0);
-  const totalMalaka = reportDetails.moTotal > 0 ? reportDetails.moTotal : sumYearlyMalaka;
-  const totalQayta = reportDetails.qtTotal > 0 ? reportDetails.qtTotal : sumYearlyQayta;
+  const totalMalaka = safeStudentsCount.reduce((sum, item) => sum + (item.count || 0), 0);
+  const totalQayta = safeStudentsCount.reduce((sum, item) => sum + (item.retraining || 0), 0);
   const totalOverall = totalMalaka + totalQayta;
 
   const distributionData = [
@@ -470,253 +525,10 @@ const Home: React.FC = () => {
           chartsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
         }`}
       >
-        <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <div>
-            <span className="text-sm font-bold text-emerald-600 uppercase tracking-wider">KO'RSATKICHLAR VA HISOBOT</span>
-            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mt-1">Markaz faoliyati statistikasi</h2>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <button
-              onClick={() => setActiveStatsModal('training')}
-              className="px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-sm flex items-center gap-2 border border-emerald-200 transition-all shadow-sm"
-            >
-              <GraduationCap size={18} />
-              <span>1-oyna: Malaka oshirish va qayta tayyorlash</span>
-            </button>
-            <button
-              onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-              className="px-4 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-sm flex items-center gap-2 border border-blue-200 transition-all shadow-sm"
-            >
-              <Globe size={18} />
-              <span>2-oyna: Xalqaro hamkorlik va loyihalar</span>
-            </button>
-          </div>
-        </div>
-
-        {/* 1-oyna va 2-oyna: Asosiy Hisobot Kartochkalari */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          {/* 1-oyna Card */}
-          <div
-            onClick={() => setActiveStatsModal('training')}
-            className="group cursor-pointer bg-white p-6 md:p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-emerald-100 hover:border-emerald-300 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full pointer-events-none" />
-            <div>
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase tracking-wider">
-                  1-oyna • O'quv faoliyati
-                </span>
-                <span className="text-xs font-bold text-emerald-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                  Batafsil oyna <ArrowUpRight size={15} />
-                </span>
-              </div>
-              <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-3 group-hover:text-emerald-700 transition-colors">
-                Qayta tayyorlash va malaka oshirish faoliyati
-              </h3>
-              <p className="text-xs md:text-sm text-slate-600 leading-relaxed mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                Mazkur markazda faoliyat davrida O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligining <strong className="text-slate-900">{reportDetails.moHigherEdu} nafar</strong>, Madaniyat vazirligining <strong className="text-slate-900">{reportDetails.moCultureMinistry} nafar</strong>, Badiiy akademiya tasarrufidagi ta'lim muassasalaridan <strong className="text-slate-900">{reportDetails.moArtAcademy} nafar</strong>, kasbni rivojlantirishga yo'naltirilgan qisqa kurslarda <strong className="text-slate-900">{reportDetails.moShortCourses} nafar</strong>, jami <strong className="text-emerald-600">{reportDetails.moTotal} nafar</strong> pedagog va mutaxassis kadrlar malaka oshirishdi hamda <strong className="text-blue-600">{reportDetails.qtTotal} nafar</strong> pedagog kadrlar qayta tayyorlovdan o'tkazildi.
-              </p>
-
-              {/* Jami malaka oshirganlar */}
-              <div className="space-y-3 mb-5">
-                <div className="flex items-center justify-between bg-emerald-50/80 px-4 py-3 rounded-2xl border border-emerald-200/70">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black shrink-0">
-                      <GraduationCap size={18} />
-                    </div>
-                    <span className="font-black text-slate-900 text-sm md:text-base">Jami malaka oshirganlar</span>
-                  </div>
-                  <span className="text-xl md:text-2xl font-black text-emerald-700">{reportDetails.moTotal} <small className="text-xs font-bold">nafar</small></span>
-                </div>
-
-                <div className="pl-2 space-y-2 text-xs md:text-sm">
-                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Shundan:</p>
-                  <div className="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50/40 transition-colors">
-                    <span className="text-slate-700">• Oliy ta'lim muassasalaridan</span>
-                    <span className="font-black text-slate-900 shrink-0 ml-2">{reportDetails.moHigherEdu} nafar</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50/40 transition-colors">
-                    <span className="text-slate-700">• O'zR Madaniyat vazirligi tasarrufidagi ta'lim muassasalaridan</span>
-                    <span className="font-black text-slate-900 shrink-0 ml-2">{reportDetails.moCultureMinistry} nafar</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50/40 transition-colors">
-                    <span className="text-slate-700">• O'zbekiston Badiiy akademiyasi tasarrufidagi ta'lim muassasalaridan</span>
-                    <span className="font-black text-slate-900 shrink-0 ml-2">{reportDetails.moArtAcademy} nafar</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50/40 transition-colors">
-                    <span className="text-slate-700">• Qisqa malaka oshirish kurslarida</span>
-                    <span className="font-black text-slate-900 shrink-0 ml-2">{reportDetails.moShortCourses} nafar</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Jami qayta tayyorlash */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between bg-blue-50/80 px-4 py-3 rounded-2xl border border-blue-200/70">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black shrink-0">
-                      <Award size={18} />
-                    </div>
-                    <span className="font-black text-slate-900 text-sm md:text-base">Jami qayta tayyorlash kurslarida</span>
-                  </div>
-                  <span className="text-xl md:text-2xl font-black text-blue-700">{reportDetails.qtTotal} <small className="text-xs font-bold">nafar</small></span>
-                </div>
-                {(reportDetails.qtPainting > 0 || reportDetails.qtEmbroidery > 0 || reportDetails.qtGoldEmbroidery > 0) && (
-                  <div className="pl-2 space-y-1.5 text-xs md:text-sm pt-1">
-                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Shundan:</p>
-                    <div className="flex items-center justify-between py-1 px-3 rounded-xl bg-slate-50">
-                      <span className="text-slate-700">• Rangtasvir (turlari bo'yicha)</span>
-                      <span className="font-black text-slate-900">{reportDetails.qtPainting} nafar</span>
-                    </div>
-                    <div className="flex items-center justify-between py-1 px-3 rounded-xl bg-slate-50">
-                      <span className="text-slate-700">• Badiiy kashtachilik usta-rassomi</span>
-                      <span className="font-black text-slate-900">{reportDetails.qtEmbroidery} nafar</span>
-                    </div>
-                    <div className="flex items-center justify-between py-1 px-3 rounded-xl bg-slate-50">
-                      <span className="text-slate-700">• Badiiy zardo'zlik usta-rassomi</span>
-                      <span className="font-black text-slate-900">{reportDetails.qtGoldEmbroidery} nafar</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
-              <span>To'liq taqsimotni ko'rish uchun bosing</span>
-              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </div>
-          </div>
-
-          {/* 2-oyna Card */}
-          <div
-            className="bg-white p-6 md:p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-blue-100 hover:border-blue-300 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
-          >
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-bl-full pointer-events-none" />
-            <div>
-              <div className="flex items-center justify-between gap-3 mb-4">
-                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold uppercase tracking-wider">
-                  2-oyna • Xalqaro aloqalar
-                </span>
-                <button
-                  onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                  className="text-xs font-bold text-blue-600 flex items-center gap-1 hover:translate-x-1 transition-transform"
-                >
-                  Batafsil oyna <ArrowUpRight size={15} />
-                </button>
-              </div>
-              <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-3">
-                Xalqaro hamkorlik va xalqaro loyihalar
-              </h3>
-              <p className="text-xs md:text-sm text-slate-600 leading-relaxed mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                Bugungi kunda Markaz tomonidan <strong className="text-blue-600">{reportDetails.intlCountriesCount} ta xorijiy</strong> ({countriesArray.join(', ')}) mamlakatlarning <strong className="text-indigo-600">{reportDetails.intlOrganizationsCount} ta badiiy ta'limga ixtisoslashgan muassasalari</strong> bilan memorandumlar imzolandi va hamkorlik aloqalari yo'lga qo'yildi.
-              </p>
-
-              {/* 3 Interactive Clickable Indicators */}
-              <div className="space-y-3.5">
-                <button
-                  type="button"
-                  onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                  className="w-full text-left group/btn flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50/50 hover:from-blue-100 hover:to-indigo-100/70 border border-blue-200/80 transition-all shadow-sm"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
-                      <Globe size={22} />
-                    </div>
-                    <div>
-                      <p className="text-sm md:text-base font-black text-slate-900 group-hover/btn:text-blue-700 transition-colors">
-                        Xorijiy mamlakatlar
-                      </p>
-                      <p className="text-xs text-slate-500">Ustiga bosilganda davlatlar ro'yxati chiqadi</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-2xl md:text-3xl font-black text-blue-700">{reportDetails.intlCountriesCount} <small className="text-xs font-bold">ta</small></span>
-                    <ChevronRight size={18} className="text-blue-600 group-hover/btn:translate-x-1 transition-transform" />
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => { setIntlModalTab('organizations'); setActiveStatsModal('international'); }}
-                  className="w-full text-left group/btn flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50/50 hover:from-indigo-100 hover:to-purple-100/70 border border-indigo-200/80 transition-all shadow-sm"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20 shrink-0">
-                      <Briefcase size={22} />
-                    </div>
-                    <div>
-                      <p className="text-sm md:text-base font-black text-slate-900 group-hover/btn:text-indigo-700 transition-colors">
-                        Hamkor xorijiy tashkilotlar
-                      </p>
-                      <p className="text-xs text-slate-500">Ustiga bosilganda tashkilotlar ro'yxati chiqadi</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-2xl md:text-3xl font-black text-indigo-700">{reportDetails.intlOrganizationsCount} <small className="text-xs font-bold">ta</small></span>
-                    <ChevronRight size={18} className="text-indigo-600 group-hover/btn:translate-x-1 transition-transform" />
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => { setIntlModalTab('projects'); setActiveStatsModal('international'); }}
-                  className="w-full text-left group/btn flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50/50 hover:from-purple-100 hover:to-pink-100/70 border border-purple-200/80 transition-all shadow-sm"
-                >
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-500/20 shrink-0">
-                      <Trophy size={22} />
-                    </div>
-                    <div>
-                      <p className="text-sm md:text-base font-black text-slate-900 group-hover/btn:text-purple-700 transition-colors">
-                        Xalqaro ilmiy-ijodiy loyihalar
-                      </p>
-                      <p className="text-xs text-slate-500">Ustiga bosilganda loyiha nomlari chiqadi</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-2xl md:text-3xl font-black text-purple-700">{displayedProjectsCount} <small className="text-xs font-bold">ta</small></span>
-                    <ChevronRight size={18} className="text-purple-600 group-hover/btn:translate-x-1 transition-transform" />
-                  </div>
-                </button>
-              </div>
-
-              {/* Quick Country Pills */}
-              <div className="mt-5 pt-4 border-t border-slate-100">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Hamkor davlatlar:</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {countriesArray.map((country, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                      className="px-3 py-1 rounded-full bg-slate-100 hover:bg-blue-100 text-slate-700 hover:text-blue-800 text-xs font-bold transition-colors"
-                    >
-                      🌍 {country}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-700">
-              <span>Davlatlar, tashkilotlar va loyihalar ro'yxatini ochish</span>
-              <ChevronRight size={16} />
-            </div>
-          </div>
-        </div>
-
-        {/* Diagrammalar: Umumiy taqsimot va Yillar kesimida */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div
-            onClick={() => setActiveStatsModal('training')}
-            className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100 cursor-pointer hover:border-emerald-200 transition-all"
-          >
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-black text-slate-900">{t('home.charts_distribution')}</h3>
-              <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
-                Batafsil <ChevronRight size={14} />
-              </span>
-            </div>
+        {/* Original Diagrammalar: Umumiy taqsimot va Yillar kesimida */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
+            <h3 className="text-xl font-black text-slate-900 mb-6">{t('home.charts_distribution')}</h3>
             <div className="relative h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -735,7 +547,7 @@ const Home: React.FC = () => {
               {distributionData.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                  <span className="text-sm font-medium text-slate-600">{item.name}: <strong className="text-slate-900">{item.value}</strong></span>
+                  <span className="text-sm font-medium text-slate-600">{item.name}</span>
                 </div>
               ))}
             </div>
@@ -759,9 +571,257 @@ const Home: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Statistika va Faoliyat Ko'rsatkichlari Sarlavhasi */}
+        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <span className="text-sm font-bold text-emerald-600 uppercase tracking-wider">{reportDetails.sectionBadge}</span>
+            <h2 className="text-3xl md:text-4xl font-black text-slate-900 mt-1">{reportDetails.sectionTitle}</h2>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => setActiveStatsModal('training')}
+              className="px-4 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold text-sm flex items-center gap-2 border border-emerald-200 transition-all shadow-sm"
+            >
+              <GraduationCap size={18} />
+              <span>{reportDetails.card1Title}</span>
+            </button>
+            <button
+              onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
+              className="px-4 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-sm flex items-center gap-2 border border-blue-200 transition-all shadow-sm"
+            >
+              <Globe size={18} />
+              <span>{reportDetails.card2Title}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Statistika Kartochkalari */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* O'quv faoliyati Card */}
+          <div
+            onClick={() => setActiveStatsModal('training')}
+            className="group cursor-pointer bg-white p-6 md:p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-emerald-100 hover:border-emerald-300 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-bl-full pointer-events-none" />
+            <div>
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold uppercase tracking-wider">
+                  {reportDetails.card1Badge}
+                </span>
+                <span className="text-xs font-bold text-emerald-600 flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                  Batafsil <ArrowUpRight size={15} />
+                </span>
+              </div>
+              <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-3 group-hover:text-emerald-700 transition-colors">
+                {reportDetails.card1Title}
+              </h3>
+              {reportDetails.card1Summary && (
+                <p className="text-xs md:text-sm text-slate-600 leading-relaxed mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100 whitespace-pre-line">
+                  {reportDetails.card1Summary}
+                </p>
+              )}
+
+              {/* Jami malaka oshirganlar */}
+              <div className="space-y-3 mb-5">
+                <div className="flex items-center justify-between bg-emerald-50/80 px-4 py-3 rounded-2xl border border-emerald-200/70">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black shrink-0">
+                      <GraduationCap size={18} />
+                    </div>
+                    <span className="font-black text-slate-900 text-sm md:text-base">{reportDetails.moTotalLabel}</span>
+                  </div>
+                  <span className="text-xl md:text-2xl font-black text-emerald-700">{reportDetails.moTotal} <small className="text-xs font-bold">nafar</small></span>
+                </div>
+
+                <div className="pl-2 space-y-2 text-xs md:text-sm">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Shundan:</p>
+                  <div className="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50/40 transition-colors">
+                    <span className="text-slate-700">• {reportDetails.moHigherEduLabel}</span>
+                    <span className="font-black text-slate-900 shrink-0 ml-2">{reportDetails.moHigherEdu} nafar</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50/40 transition-colors">
+                    <span className="text-slate-700">• {reportDetails.moCultureMinistryLabel}</span>
+                    <span className="font-black text-slate-900 shrink-0 ml-2">{reportDetails.moCultureMinistry} nafar</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50/40 transition-colors">
+                    <span className="text-slate-700">• {reportDetails.moArtAcademyLabel}</span>
+                    <span className="font-black text-slate-900 shrink-0 ml-2">{reportDetails.moArtAcademy} nafar</span>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 px-3 rounded-xl bg-slate-50 hover:bg-emerald-50/40 transition-colors">
+                    <span className="text-slate-700">• {reportDetails.moShortCoursesLabel}</span>
+                    <span className="font-black text-slate-900 shrink-0 ml-2">{reportDetails.moShortCourses} nafar</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Jami qayta tayyorlash */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between bg-blue-50/80 px-4 py-3 rounded-2xl border border-blue-200/70">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black shrink-0">
+                      <Award size={18} />
+                    </div>
+                    <span className="font-black text-slate-900 text-sm md:text-base">{reportDetails.qtTotalLabel}</span>
+                  </div>
+                  <span className="text-xl md:text-2xl font-black text-blue-700">{reportDetails.qtTotal} <small className="text-xs font-bold">nafar</small></span>
+                </div>
+                {(reportDetails.qtPainting > 0 || reportDetails.qtEmbroidery > 0 || reportDetails.qtGoldEmbroidery > 0) && (
+                  <div className="pl-2 space-y-1.5 text-xs md:text-sm pt-1">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Shundan:</p>
+                    <div className="flex items-center justify-between py-1 px-3 rounded-xl bg-slate-50">
+                      <span className="text-slate-700">• {reportDetails.qtPaintingLabel}</span>
+                      <span className="font-black text-slate-900">{reportDetails.qtPainting} nafar</span>
+                    </div>
+                    <div className="flex items-center justify-between py-1 px-3 rounded-xl bg-slate-50">
+                      <span className="text-slate-700">• {reportDetails.qtEmbroideryLabel}</span>
+                      <span className="font-black text-slate-900">{reportDetails.qtEmbroidery} nafar</span>
+                    </div>
+                    <div className="flex items-center justify-between py-1 px-3 rounded-xl bg-slate-50">
+                      <span className="text-slate-700">• {reportDetails.qtGoldEmbroideryLabel}</span>
+                      <span className="font-black text-slate-900">{reportDetails.qtGoldEmbroidery} nafar</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
+              <span>To'liq taqsimotni ko'rish uchun bosing</span>
+              <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* Xalqaro aloqalar Card */}
+          <div
+            className="bg-white p-6 md:p-8 rounded-3xl shadow-xl shadow-slate-200/50 border border-blue-100 hover:border-blue-300 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-bl from-blue-500/10 to-transparent rounded-bl-full pointer-events-none" />
+            <div>
+              <div className="flex items-center justify-between gap-3 mb-4">
+                <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-extrabold uppercase tracking-wider">
+                  {reportDetails.card2Badge}
+                </span>
+                <button
+                  onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
+                  className="text-xs font-bold text-blue-600 flex items-center gap-1 hover:translate-x-1 transition-transform"
+                >
+                  Batafsil <ArrowUpRight size={15} />
+                </button>
+              </div>
+              <h3 className="text-xl md:text-2xl font-black text-slate-900 mb-3">
+                {reportDetails.card2Title}
+              </h3>
+              {reportDetails.card2Summary && (
+                <p className="text-xs md:text-sm text-slate-600 leading-relaxed mb-6 bg-slate-50 p-4 rounded-2xl border border-slate-100 whitespace-pre-line">
+                  {reportDetails.card2Summary}
+                </p>
+              )}
+
+              {/* 3 Interactive Clickable Indicators */}
+              <div className="space-y-3.5">
+                <button
+                  type="button"
+                  onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
+                  className="w-full text-left group/btn flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-blue-50 to-indigo-50/50 hover:from-blue-100 hover:to-indigo-100/70 border border-blue-200/80 transition-all shadow-sm"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
+                      <Globe size={22} />
+                    </div>
+                    <div>
+                      <p className="text-sm md:text-base font-black text-slate-900 group-hover/btn:text-blue-700 transition-colors">
+                        {reportDetails.intlCountriesLabel}
+                      </p>
+                      <p className="text-xs text-slate-500">Ustiga bosilganda davlatlar ro'yxati chiqadi</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-2xl md:text-3xl font-black text-blue-700">{reportDetails.intlCountriesCount} <small className="text-xs font-bold">ta</small></span>
+                    <ChevronRight size={18} className="text-blue-600 group-hover/btn:translate-x-1 transition-transform" />
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setIntlModalTab('organizations'); setActiveStatsModal('international'); }}
+                  className="w-full text-left group/btn flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-indigo-50 to-purple-50/50 hover:from-indigo-100 hover:to-purple-100/70 border border-indigo-200/80 transition-all shadow-sm"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20 shrink-0">
+                      <Briefcase size={22} />
+                    </div>
+                    <div>
+                      <p className="text-sm md:text-base font-black text-slate-900 group-hover/btn:text-indigo-700 transition-colors">
+                        {reportDetails.intlOrganizationsLabel}
+                      </p>
+                      <p className="text-xs text-slate-500">Ustiga bosilganda tashkilotlar ro'yxati chiqadi</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-2xl md:text-3xl font-black text-indigo-700">{reportDetails.intlOrganizationsCount} <small className="text-xs font-bold">ta</small></span>
+                    <ChevronRight size={18} className="text-indigo-600 group-hover/btn:translate-x-1 transition-transform" />
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => { setIntlModalTab('projects'); setActiveStatsModal('international'); }}
+                  className="w-full text-left group/btn flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50/50 hover:from-purple-100 hover:to-pink-100/70 border border-purple-200/80 transition-all shadow-sm"
+                >
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-500/20 shrink-0">
+                      <Trophy size={22} />
+                    </div>
+                    <div>
+                      <p className="text-sm md:text-base font-black text-slate-900 group-hover/btn:text-purple-700 transition-colors">
+                        {reportDetails.intlProjectsLabel}
+                      </p>
+                      <p className="text-xs text-slate-500">Ustiga bosilganda loyiha nomlari chiqadi</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-2xl md:text-3xl font-black text-purple-700">{displayedProjectsCount} <small className="text-xs font-bold">ta</small></span>
+                    <ChevronRight size={18} className="text-purple-600 group-hover/btn:translate-x-1 transition-transform" />
+                  </div>
+                </button>
+              </div>
+
+              {/* Quick Country Pills with National Flags */}
+              <div className="mt-5 pt-4 border-t border-slate-100">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5">Hamkor davlatlar:</p>
+                <div className="flex flex-wrap gap-2">
+                  {countriesArray.map((country, i) => {
+                    const flagUrl = getCountryFlagUrl(country);
+                    return (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
+                        className="px-3 py-1.5 rounded-full bg-slate-100 hover:bg-blue-100 text-slate-800 hover:text-blue-800 text-xs font-bold transition-colors inline-flex items-center gap-2 border border-slate-200/70"
+                      >
+                        {flagUrl ? (
+                          <img src={flagUrl} alt={country} className="w-5 h-3.5 object-cover rounded-[2px] shadow-sm shrink-0" />
+                        ) : (
+                          <Globe size={13} className="text-blue-600 shrink-0" />
+                        )}
+                        <span>{country}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-blue-700">
+              <span>Davlatlar, tashkilotlar va loyihalar ro'yxatini ochish</span>
+              <ChevronRight size={16} />
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* 1-MODAL OYNA: Qayta tayyorlash va malaka oshirish faoliyati */}
+      {/* MODAL: Qayta tayyorlash va malaka oshirish faoliyati */}
       {activeStatsModal === 'training' && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
@@ -777,8 +837,8 @@ const Home: React.FC = () => {
                   <GraduationCap size={24} />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-100">1-modal oyna</span>
-                  <h3 className="text-xl md:text-2xl font-black">Qayta tayyorlash va malaka oshirish faoliyati</h3>
+                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-100">{reportDetails.card1Badge}</span>
+                  <h3 className="text-xl md:text-2xl font-black">{reportDetails.card1Title}</h3>
                 </div>
               </div>
               <button
@@ -790,24 +850,25 @@ const Home: React.FC = () => {
             </div>
 
             <div className="p-6 md:p-8 overflow-y-auto space-y-6">
-              {/* Summary Box */}
-              <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-slate-700 text-sm md:text-base leading-relaxed">
-                Mazkur markazda faoliyat davrida O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligining <strong>{reportDetails.moHigherEdu} nafar</strong>, Madaniyat vazirligining <strong>{reportDetails.moCultureMinistry} nafar</strong>, Badiiy akademiya tasarrufidagi ta'lim muassasalaridan <strong>{reportDetails.moArtAcademy} nafar</strong>, kasbni rivojlantirishga yo'naltirilgan qisqa kurslarda <strong>{reportDetails.moShortCourses} nafar</strong>, jami <strong className="text-emerald-700">{reportDetails.moTotal} nafar</strong> pedagog va mutaxassis kadrlar malaka oshirishdi hamda <strong className="text-blue-700">{reportDetails.qtTotal} nafar</strong> pedagog kadrlar qayta tayyorlovdan o'tkazildi.
-              </div>
+              {reportDetails.card1Summary && (
+                <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200 text-slate-700 text-sm md:text-base leading-relaxed whitespace-pre-line">
+                  {reportDetails.card1Summary}
+                </div>
+              )}
 
               {/* Section 1: Malaka oshirish */}
               <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/80">
                 <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
-                  <span className="text-lg md:text-xl font-black text-slate-900">Jami malaka oshirganlar:</span>
+                  <span className="text-lg md:text-xl font-black text-slate-900">{reportDetails.moTotalLabel}:</span>
                   <span className="text-2xl md:text-3xl font-black text-emerald-600">{reportDetails.moTotal} nafar</span>
                 </div>
                 <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">Shundan:</p>
                 <div className="space-y-3">
                   {[
-                    { label: "Oliy ta'lim muassasalaridan", val: reportDetails.moHigherEdu, color: "bg-emerald-500" },
-                    { label: "O'zbekiston Respublikasi Madaniyat vazirligi tasarrufidagi ta'lim muassasalaridan", val: reportDetails.moCultureMinistry, color: "bg-teal-500" },
-                    { label: "O'zbekiston Badiiy akademiyasi tasarrufidagi ta'lim muassasalaridan", val: reportDetails.moArtAcademy, color: "bg-cyan-500" },
-                    { label: "Qisqa malaka oshirish kurslarida", val: reportDetails.moShortCourses, color: "bg-blue-500" },
+                    { label: reportDetails.moHigherEduLabel, val: reportDetails.moHigherEdu, color: "bg-emerald-500" },
+                    { label: reportDetails.moCultureMinistryLabel, val: reportDetails.moCultureMinistry, color: "bg-teal-500" },
+                    { label: reportDetails.moArtAcademyLabel, val: reportDetails.moArtAcademy, color: "bg-cyan-500" },
+                    { label: reportDetails.moShortCoursesLabel, val: reportDetails.moShortCourses, color: "bg-blue-500" },
                   ].map((item, idx) => {
                     const pct = reportDetails.moTotal > 0 ? Math.round((item.val / reportDetails.moTotal) * 100) : 0;
                     return (
@@ -828,15 +889,15 @@ const Home: React.FC = () => {
               {/* Section 2: Qayta tayyorlash */}
               <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/80">
                 <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
-                  <span className="text-lg md:text-xl font-black text-slate-900">Jami qayta tayyorlash kurslarida:</span>
+                  <span className="text-lg md:text-xl font-black text-slate-900">{reportDetails.qtTotalLabel}:</span>
                   <span className="text-2xl md:text-3xl font-black text-blue-600">{reportDetails.qtTotal} nafar</span>
                 </div>
                 <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">Shundan:</p>
                 <div className="space-y-3">
                   {[
-                    { label: "Rangtasvir (turlari bo'yicha)", val: reportDetails.qtPainting },
-                    { label: "Badiiy kashtachilik usta-rassomi", val: reportDetails.qtEmbroidery },
-                    { label: "Badiiy zardo'zlik usta-rassomi", val: reportDetails.qtGoldEmbroidery },
+                    { label: reportDetails.qtPaintingLabel, val: reportDetails.qtPainting },
+                    { label: reportDetails.qtEmbroideryLabel, val: reportDetails.qtEmbroidery },
+                    { label: reportDetails.qtGoldEmbroideryLabel, val: reportDetails.qtGoldEmbroidery },
                   ].map((item, idx) => (
                     <div key={idx} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center justify-between gap-4">
                       <span className="text-sm md:text-base font-semibold text-slate-800">- {item.label}</span>
@@ -852,7 +913,7 @@ const Home: React.FC = () => {
         </div>
       )}
 
-      {/* 2-MODAL OYNA: Xalqaro hamkorlik va xalqaro loyihalar */}
+      {/* MODAL: Xalqaro hamkorlik va xalqaro loyihalar */}
       {activeStatsModal === 'international' && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
@@ -868,8 +929,8 @@ const Home: React.FC = () => {
                   <Globe size={24} />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-blue-200">2-modal oyna</span>
-                  <h3 className="text-xl md:text-2xl font-black">Xalqaro hamkorlik va xalqaro loyihalar</h3>
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-200">{reportDetails.card2Badge}</span>
+                  <h3 className="text-xl md:text-2xl font-black">{reportDetails.card2Title}</h3>
                 </div>
               </div>
               <button
@@ -891,7 +952,7 @@ const Home: React.FC = () => {
                     : 'bg-white text-slate-700 hover:bg-blue-50 border border-slate-200'
                 }`}
               >
-                <span>🌍 {reportDetails.intlCountriesCount} ta xorijiy mamlakatlar</span>
+                <span>{reportDetails.intlCountriesCount} ta {reportDetails.intlCountriesLabel.toLowerCase()}</span>
               </button>
               <button
                 type="button"
@@ -902,7 +963,7 @@ const Home: React.FC = () => {
                     : 'bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200'
                 }`}
               >
-                <span>🏛️ {reportDetails.intlOrganizationsCount} ta hamkor tashkilotlar</span>
+                <span>{reportDetails.intlOrganizationsCount} ta {reportDetails.intlOrganizationsLabel.toLowerCase()}</span>
               </button>
               <button
                 type="button"
@@ -913,7 +974,7 @@ const Home: React.FC = () => {
                     : 'bg-white text-slate-700 hover:bg-purple-50 border border-slate-200'
                 }`}
               >
-                <span>🏆 {displayedProjectsCount} ta xalqaro loyihalar</span>
+                <span>{displayedProjectsCount} ta {reportDetails.intlProjectsLabel.toLowerCase()}</span>
               </button>
             </div>
 
@@ -921,20 +982,27 @@ const Home: React.FC = () => {
               {intlModalTab === 'countries' && (
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-4">
-                    Hamkorlik yo'lga qo'yilgan xorijiy mamlakatlar ({reportDetails.intlCountriesCount} ta):
+                    {reportDetails.intlCountriesLabel} ({reportDetails.intlCountriesCount} ta):
                   </h4>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {countriesArray.map((country, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 font-bold text-slate-800 shadow-sm"
-                      >
-                        <span className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs font-black shrink-0">
-                          {idx + 1}
-                        </span>
-                        <span className="text-sm md:text-base">{country}</span>
-                      </div>
-                    ))}
+                    {countriesArray.map((country, idx) => {
+                      const flagUrl = getCountryFlagUrl(country);
+                      return (
+                        <div
+                          key={idx}
+                          className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 font-bold text-slate-800 shadow-sm"
+                        >
+                          {flagUrl ? (
+                            <img src={flagUrl} alt={country} className="w-8 h-6 object-cover rounded shadow-sm shrink-0 border border-slate-200" />
+                          ) : (
+                            <span className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs font-black shrink-0">
+                              {idx + 1}
+                            </span>
+                          )}
+                          <span className="text-sm md:text-base">{country}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -942,36 +1010,28 @@ const Home: React.FC = () => {
               {intlModalTab === 'organizations' && (
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-4">
-                    Hamkor xorijiy tashkilot va muassasalar ({reportDetails.intlOrganizationsCount} ta):
+                    {reportDetails.intlOrganizationsLabel} ({reportDetails.intlOrganizationsCount} ta):
                   </h4>
-                  <p className="text-sm text-slate-600 mb-4 bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100">
-                    Markaz tomonidan {reportDetails.intlCountriesCount} ta xorijiy mamlakatlarning <strong>{reportDetails.intlOrganizationsCount} ta badiiy ta'limga ixtisoslashgan muassasalari</strong> bilan memorandumlar imzolangan va hamkorlik aloqalari yo'lga qo'yilgan.
-                  </p>
+                  {reportDetails.intlOrganizationsSummary && (
+                    <p className="text-sm text-slate-600 mb-4 bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 whitespace-pre-line">
+                      {reportDetails.intlOrganizationsSummary}
+                    </p>
+                  )}
                   <div className="space-y-3">
-                    {customOrgsArray.map((orgName, idx) => (
-                      <div key={`custom-org-${idx}`} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
-                        <span className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0">
-                          {idx + 1}
-                        </span>
-                        <span className="font-bold text-slate-900 text-sm md:text-base">{orgName}</span>
-                      </div>
-                    ))}
-                    {internationalPartners.map((partner, idx) => (
-                      <div key={partner.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-4">
-                        {partner.photoUrl ? (
-                          <img src={partner.photoUrl} alt={partner.name} className="w-12 h-12 rounded-xl object-contain bg-white p-1 border border-slate-200 shrink-0" />
-                        ) : (
-                          <span className="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0">
-                            {customOrgsArray.length + idx + 1}
+                    {customOrgsArray.length > 0 ? (
+                      customOrgsArray.map((orgName, idx) => (
+                        <div key={`custom-org-${idx}`} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
+                          <span className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0">
+                            {idx + 1}
                           </span>
-                        )}
-                        <div>
-                          <h5 className="font-black text-slate-900 text-sm md:text-base">{partner.name}</h5>
-                          {partner.country && <p className="text-xs font-bold text-indigo-600">{partner.country}</p>}
-                          {partner.description && <p className="text-xs text-slate-500 mt-1">{stripHtml(partner.description)}</p>}
+                          <span className="font-bold text-slate-900 text-sm md:text-base">{orgName}</span>
                         </div>
+                      ))
+                    ) : (
+                      <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
+                        Hamkor xorijiy tashkilotlar ro'yxati Admin paneldagi <strong>Statistika</strong> bo'limi orqali kiritiladi.
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               )}
@@ -979,32 +1039,21 @@ const Home: React.FC = () => {
               {intlModalTab === 'projects' && (
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-4">
-                    Xalqaro ilmiy-ijodiy loyihalar ({displayedProjectsCount} ta):
+                    {reportDetails.intlProjectsLabel} ({displayedProjectsCount} ta):
                   </h4>
                   <div className="space-y-3">
-                    {customProjectsArray.map((projName, idx) => (
-                      <div key={`custom-proj-${idx}`} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
-                        <span className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-black shrink-0">
-                          {idx + 1}
-                        </span>
-                        <span className="font-bold text-slate-900 text-sm md:text-base">{projName}</span>
-                      </div>
-                    ))}
-                    {internationalProjects.map((proj, idx) => (
-                      <div key={proj.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-200">
-                        <div className="flex items-center gap-3 mb-1">
-                          <span className="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs font-black shrink-0">
-                            {customProjectsArray.length + idx + 1}
+                    {customProjectsArray.length > 0 ? (
+                      customProjectsArray.map((projName, idx) => (
+                        <div key={`custom-proj-${idx}`} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
+                          <span className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-black shrink-0">
+                            {idx + 1}
                           </span>
-                          <h5 className="font-black text-slate-900 text-sm md:text-base">{proj.title}</h5>
+                          <span className="font-bold text-slate-900 text-sm md:text-base">{projName}</span>
                         </div>
-                        {proj.partnersText && <p className="text-xs font-bold text-purple-600 ml-10">{proj.partnersText}</p>}
-                        {proj.description && <p className="text-xs text-slate-600 mt-1.5 ml-10 line-clamp-3">{stripHtml(proj.description)}</p>}
-                      </div>
-                    ))}
-                    {customProjectsArray.length === 0 && internationalProjects.length === 0 && (
+                      ))
+                    ) : (
                       <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
-                        Xalqaro ilmiy-ijodiy loyihalar ro'yxati Admin panel orqali kiritiladi.
+                        Xalqaro ilmiy-ijodiy loyihalar ro'yxati Admin paneldagi <strong>Statistika</strong> bo'limi orqali kiritiladi.
                       </div>
                     )}
                   </div>

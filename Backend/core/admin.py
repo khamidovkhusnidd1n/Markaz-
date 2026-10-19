@@ -715,68 +715,79 @@ class DocumentAdmin(admin.ModelAdmin):
 
 
 class StatisticsAdminForm(forms.ModelForm):
-    mo_total = forms.IntegerField(
-        required=False, initial=1743,
-        label="Jami malaka oshirganlar (nafar)"
+    section_badge = forms.CharField(required=False, label="Bo'lim kichik sarlavhasi (Badge)")
+    section_title = forms.CharField(required=False, label="Bo'lim asosiy sarlavhasi")
+
+    card1_badge = forms.CharField(required=False, label="O'quv faoliyati kichik sarlavhasi (Badge)")
+    card1_title = forms.CharField(required=False, label="O'quv faoliyati sarlavhasi")
+    card1_summary = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 4}),
+        label="O'quv faoliyati umumiy matni (izoh)"
     )
-    mo_higher_edu = forms.IntegerField(
-        required=False, initial=284,
-        label="Shundan: Oliy ta'lim muassasalaridan (nafar)"
+
+    mo_total_label = forms.CharField(required=False, label="Jami malaka oshirganlar yozuvi")
+    mo_total = forms.IntegerField(required=False, initial=1743, label="Jami malaka oshirganlar soni (nafar)")
+
+    mo_higher_edu_label = forms.CharField(required=False, label="1-qator nomi (Oliy ta'lim...)")
+    mo_higher_edu = forms.IntegerField(required=False, initial=284, label="1-qator soni (nafar)")
+
+    mo_culture_ministry_label = forms.CharField(required=False, label="2-qator nomi (Madaniyat vazirligi...)")
+    mo_culture_ministry = forms.IntegerField(required=False, initial=740, label="2-qator soni (nafar)")
+
+    mo_art_academy_label = forms.CharField(required=False, label="3-qator nomi (Badiiy akademiya...)")
+    mo_art_academy = forms.IntegerField(required=False, initial=578, label="3-qator soni (nafar)")
+
+    mo_short_courses_label = forms.CharField(required=False, label="4-qator nomi (Qisqa kurslar...)")
+    mo_short_courses = forms.IntegerField(required=False, initial=141, label="4-qator soni (nafar)")
+
+    qt_total_label = forms.CharField(required=False, label="Jami qayta tayyorlash yozuvi")
+    qt_total = forms.IntegerField(required=False, initial=389, label="Jami qayta tayyorlash soni (nafar)")
+
+    qt_painting_label = forms.CharField(required=False, label="Qayta tayyorlash 1-yo'nalish nomi (Rangtasvir...)")
+    qt_painting = forms.IntegerField(required=False, initial=0, label="Qayta tayyorlash 1-yo'nalish soni (nafar)")
+
+    qt_embroidery_label = forms.CharField(required=False, label="Qayta tayyorlash 2-yo'nalish nomi (Kashtachilik...)")
+    qt_embroidery = forms.IntegerField(required=False, initial=0, label="Qayta tayyorlash 2-yo'nalish soni (nafar)")
+
+    qt_gold_embroidery_label = forms.CharField(required=False, label="Qayta tayyorlash 3-yo'nalish nomi (Zardo'zlik...)")
+    qt_gold_embroidery = forms.IntegerField(required=False, initial=0, label="Qayta tayyorlash 3-yo'nalish soni (nafar)")
+
+    card2_badge = forms.CharField(required=False, label="Xalqaro bo'lim kichik sarlavhasi (Badge)")
+    card2_title = forms.CharField(required=False, label="Xalqaro bo'lim sarlavhasi")
+    card2_summary = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 4}),
+        label="Xalqaro bo'lim umumiy matni (izoh)"
     )
-    mo_culture_ministry = forms.IntegerField(
-        required=False, initial=740,
-        label="Shundan: O'zbekiston Respublikasi Madaniyat vazirligi tasarrufidagi ta'lim muassasalaridan (nafar)"
-    )
-    mo_art_academy = forms.IntegerField(
-        required=False, initial=578,
-        label="Shundan: O'zbekiston Badiiy akademiyasi tasarrufidagi ta'lim muassasalaridan (nafar)"
-    )
-    mo_short_courses = forms.IntegerField(
-        required=False, initial=141,
-        label="Shundan: Qisqa malaka oshirish kurslarida (nafar)"
-    )
-    qt_total = forms.IntegerField(
-        required=False, initial=389,
-        label="Jami qayta tayyorlash kurslarida (nafar)"
-    )
-    qt_painting = forms.IntegerField(
-        required=False, initial=0,
-        label="Shundan: Rangtasvir (turlari bo'yicha) (nafar)"
-    )
-    qt_embroidery = forms.IntegerField(
-        required=False, initial=0,
-        label="Shundan: Badiiy kashtachilik usta-rassomi (nafar)"
-    )
-    qt_gold_embroidery = forms.IntegerField(
-        required=False, initial=0,
-        label="Shundan: Badiiy zardo'zlik usta-rassomi (nafar)"
-    )
-    intl_countries_count = forms.IntegerField(
-        required=False, initial=10,
-        label="Xorijiy mamlakatlar soni"
-    )
+
+    intl_countries_label = forms.CharField(required=False, label="Xorijiy mamlakatlar qatori nomi")
+    intl_countries_count = forms.IntegerField(required=False, initial=10, label="Xorijiy mamlakatlar soni")
     intl_countries_list = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'rows': 5}),
-        label="Xorijiy mamlakatlar ro'yxati (har bir qatorda bittadan)"
+        label="Xorijiy mamlakatlar ro'yxati (har bir qatorda bittadan davlat nomi)"
     )
-    intl_organizations_count = forms.IntegerField(
-        required=False, initial=15,
-        label="Hamkor xorijiy tashkilotlar soni"
+
+    intl_organizations_label = forms.CharField(required=False, label="Hamkor tashkilotlar qatori nomi")
+    intl_organizations_count = forms.IntegerField(required=False, initial=15, label="Hamkor xorijiy tashkilotlar soni")
+    intl_organizations_summary = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 3}),
+        label="Hamkor tashkilotlar oynasi ichidagi izoh matni (ixtiyoriy)"
     )
     intl_organizations_list = forms.CharField(
         required=False,
-        widget=forms.Textarea(attrs={'rows': 5}),
-        label="Hamkor xorijiy tashkilotlar ro'yxati (har bir qatorda bittadan, bo'sh qolsa Xalqaro hamkorlar bo'limidan olinadi)"
+        widget=forms.Textarea(attrs={'rows': 6}),
+        label="Hamkor xorijiy tashkilotlar ro'yxati (har bir qatorda bittadan tashkilot nomi)"
     )
-    intl_projects_count = forms.IntegerField(
-        required=False, initial=0,
-        label="Xalqaro ilmiy-ijodiy loyihalar soni (0 bo'lsa avtomatik Xalqaro loyihalar bo'limidan olinadi)"
-    )
+
+    intl_projects_label = forms.CharField(required=False, label="Xalqaro loyihalar qatori nomi")
+    intl_projects_count = forms.IntegerField(required=False, initial=0, label="Xalqaro ilmiy-ijodiy loyihalar soni")
     intl_projects_list = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={'rows': 5}),
-        label="Xalqaro ilmiy-ijodiy loyihalar ro'yxati (har bir qatorda bittadan, bo'sh qolsa Xalqaro loyihalar bo'limidan olinadi)"
+        label="Xalqaro ilmiy-ijodiy loyihalar ro'yxati (har bir qatorda bittadan loyiha nomi)"
     )
 
     class Meta:
@@ -811,25 +822,38 @@ class StatisticsAdmin(admin.ModelAdmin):
         ("Ilmiy salohiyat ko'rsatkichlari", {
             'fields': ('total_pedagogs', 'professors', 'dotsents', 'academics', 'potential')
         }),
-        ("1-oyna: Qayta tayyorlash va malaka oshirish faoliyati (Oylik hisobot)", {
+        ("Statistika bo'limi sarlavhalari", {
+            'fields': ('section_badge', 'section_title')
+        }),
+        ("Qayta tayyorlash va malaka oshirish faoliyati (Matn va Raqamlar)", {
             'fields': (
-                'mo_total',
-                'mo_higher_edu',
-                'mo_culture_ministry',
-                'mo_art_academy',
-                'mo_short_courses',
-                'qt_total',
-                'qt_painting',
-                'qt_embroidery',
-                'qt_gold_embroidery',
+                'card1_badge',
+                'card1_title',
+                'card1_summary',
+                'mo_total_label', 'mo_total',
+                'mo_higher_edu_label', 'mo_higher_edu',
+                'mo_culture_ministry_label', 'mo_culture_ministry',
+                'mo_art_academy_label', 'mo_art_academy',
+                'mo_short_courses_label', 'mo_short_courses',
+                'qt_total_label', 'qt_total',
+                'qt_painting_label', 'qt_painting',
+                'qt_embroidery_label', 'qt_embroidery',
+                'qt_gold_embroidery_label', 'qt_gold_embroidery',
             )
         }),
-        ("2-oyna: Xalqaro hamkorlik va xalqaro loyihalar (Oylik hisobot)", {
+        ("Xalqaro hamkorlik va xalqaro loyihalar (Matn va Raqamlar)", {
             'fields': (
+                'card2_badge',
+                'card2_title',
+                'card2_summary',
+                'intl_countries_label',
                 'intl_countries_count',
                 'intl_countries_list',
+                'intl_organizations_label',
                 'intl_organizations_count',
+                'intl_organizations_summary',
                 'intl_organizations_list',
+                'intl_projects_label',
                 'intl_projects_count',
                 'intl_projects_list',
             )
