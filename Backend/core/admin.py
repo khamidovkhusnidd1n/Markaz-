@@ -888,7 +888,7 @@ class StatisticsAdminForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'style': 'width:100%; max-width:650px; font-weight:700;'})
     )
     intl_organizations_count = forms.IntegerField(
-        required=False, initial=15,
+        required=False, initial=0,
         label="Hamkor xorijiy tashkilotlar soni (ta)",
         widget=forms.NumberInput(attrs={'style': 'max-width:220px; font-weight:800; font-size:1.1rem;'})
     )

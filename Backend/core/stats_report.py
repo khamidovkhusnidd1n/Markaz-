@@ -50,7 +50,7 @@ DEFAULT_STATS_REPORT = {
     "intl_countries_list": "Italiya\nXitoy\nGruziya\nBelarus\nTurkiya\nRossiya\nHindiston\nQozog'iston\nKoreya\nOzarbayjon",
 
     "intl_organizations_label": "Hamkor xorijiy tashkilotlar",
-    "intl_organizations_count": 15,
+    "intl_organizations_count": 0,
     "intl_organizations_summary": "",
     "intl_organizations_list": "",
 

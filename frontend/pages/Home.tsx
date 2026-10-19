@@ -140,7 +140,7 @@ const Home: React.FC = () => {
     intlCountriesCount: stats?.reportDetails?.intlCountriesCount ?? 10,
     intlCountriesList: stats?.reportDetails?.intlCountriesList || "Italiya\nXitoy\nGruziya\nBelarus\nTurkiya\nRossiya\nHindiston\nQozog'iston\nKoreya\nOzarbayjon",
     intlOrganizationsLabel: stats?.reportDetails?.intlOrganizationsLabel || "Hamkor xorijiy tashkilotlar",
-    intlOrganizationsCount: stats?.reportDetails?.intlOrganizationsCount ?? 15,
+    intlOrganizationsCount: stats?.reportDetails?.intlOrganizationsCount ?? 0,
     intlOrganizationsSummary: stats?.reportDetails?.intlOrganizationsSummary || "",
     intlOrganizationsList: stats?.reportDetails?.intlOrganizationsList || "",
     intlProjectsLabel: stats?.reportDetails?.intlProjectsLabel || "Xalqaro ilmiy-ijodiy loyihalar",
@@ -199,9 +199,17 @@ const Home: React.FC = () => {
     .map(s => s.trim())
     .filter(Boolean);
 
-  const displayedProjectsCount = reportDetails.intlProjectsCount > 0
-    ? reportDetails.intlProjectsCount
-    : customProjectsArray.length;
+  const displayedCountriesCount = countriesArray.length > 0
+    ? (reportDetails.intlCountriesCount > 0 ? reportDetails.intlCountriesCount : countriesArray.length)
+    : 0;
+
+  const displayedOrgsCount = customOrgsArray.length > 0
+    ? (reportDetails.intlOrganizationsCount > 0 ? reportDetails.intlOrganizationsCount : customOrgsArray.length)
+    : 0;
+
+  const displayedProjectsCount = customProjectsArray.length > 0
+    ? (reportDetails.intlProjectsCount > 0 ? reportDetails.intlProjectsCount : customProjectsArray.length)
+    : 0;
 
   const safeStudentsCount = stats?.studentsCount || [];
   const sumMalaka = safeStudentsCount.reduce((sum, item) => sum + (item.count || 0), 0);
@@ -559,7 +567,7 @@ const Home: React.FC = () => {
                 className="px-4 py-3 rounded-2xl bg-white hover:bg-blue-50/60 border border-blue-200/80 shadow-sm text-left transition-all group"
               >
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-blue-700">{reportDetails.intlCountriesLabel}</p>
-                <p className="text-xl md:text-2xl font-black text-blue-600 mt-0.5">{reportDetails.intlCountriesCount} <small className="text-xs font-bold text-slate-500">ta</small></p>
+                <p className="text-xl md:text-2xl font-black text-blue-600 mt-0.5">{displayedCountriesCount} <small className="text-xs font-bold text-slate-500">ta</small></p>
               </button>
               <button
                 type="button"
@@ -567,7 +575,7 @@ const Home: React.FC = () => {
                 className="px-4 py-3 rounded-2xl bg-white hover:bg-indigo-50/60 border border-indigo-200/80 shadow-sm text-left transition-all group"
               >
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-indigo-700">{reportDetails.intlOrganizationsLabel}</p>
-                <p className="text-xl md:text-2xl font-black text-indigo-600 mt-0.5">{reportDetails.intlOrganizationsCount} <small className="text-xs font-bold text-slate-500">ta</small></p>
+                <p className="text-xl md:text-2xl font-black text-indigo-600 mt-0.5">{displayedOrgsCount} <small className="text-xs font-bold text-slate-500">ta</small></p>
               </button>
             </div>
           </div>
@@ -754,7 +762,7 @@ const Home: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-2xl font-black text-blue-700">{reportDetails.intlCountriesCount} <small className="text-xs font-bold">ta</small></span>
+                        <span className="text-2xl font-black text-blue-700">{displayedCountriesCount} <small className="text-xs font-bold">ta</small></span>
                         <ChevronRight size={18} className="text-blue-600 group-hover/btn:translate-x-1 transition-transform" />
                       </div>
                     </button>
@@ -776,41 +784,39 @@ const Home: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-2xl font-black text-indigo-700">{reportDetails.intlOrganizationsCount} <small className="text-xs font-bold">ta</small></span>
+                        <span className="text-2xl font-black text-indigo-700">{displayedOrgsCount} <small className="text-xs font-bold">ta</small></span>
                         <ChevronRight size={18} className="text-indigo-600 group-hover/btn:translate-x-1 transition-transform" />
                       </div>
                     </button>
 
-                    {(displayedProjectsCount > 0 || customProjectsArray.length > 0) && (
-                      <button
-                        type="button"
-                        onClick={() => { setIntlModalTab('projects'); setActiveStatsModal('international'); }}
-                        className="w-full text-left group/btn flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-purple-50/90 to-pink-50/40 hover:from-purple-100 hover:to-pink-100/70 border border-purple-200/80 transition-all shadow-sm"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-11 h-11 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-500/20 shrink-0">
-                            <Trophy size={20} />
-                          </div>
-                          <div>
-                            <p className="text-sm font-black text-slate-900 group-hover/btn:text-purple-700 transition-colors">
-                              {reportDetails.intlProjectsLabel}
-                            </p>
-                            <p className="text-[11px] text-slate-500">Loyihalar ro'yxatini ko'rish</p>
-                          </div>
+                    <button
+                      type="button"
+                      onClick={() => { setIntlModalTab('projects'); setActiveStatsModal('international'); }}
+                      className="w-full text-left group/btn flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-purple-50/90 to-pink-50/40 hover:from-purple-100 hover:to-pink-100/70 border border-purple-200/80 transition-all shadow-sm"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-500/20 shrink-0">
+                          <Trophy size={20} />
                         </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-2xl font-black text-purple-700">{displayedProjectsCount} <small className="text-xs font-bold">ta</small></span>
-                          <ChevronRight size={18} className="text-purple-600 group-hover/btn:translate-x-1 transition-transform" />
+                        <div>
+                          <p className="text-sm font-black text-slate-900 group-hover/btn:text-purple-700 transition-colors">
+                            {reportDetails.intlProjectsLabel}
+                          </p>
+                          <p className="text-[11px] text-slate-500">Loyihalar ro'yxatini ko'rish</p>
                         </div>
-                      </button>
-                    )}
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="text-2xl font-black text-purple-700">{displayedProjectsCount} <small className="text-xs font-bold">ta</small></span>
+                        <ChevronRight size={18} className="text-purple-600 group-hover/btn:translate-x-1 transition-transform" />
+                      </div>
+                    </button>
                   </div>
 
                   {/* Davlatlar bayroqlari bilan chiroyli grid */}
                   <div className="mt-5 pt-4 border-t border-slate-100">
                     <div className="flex items-center justify-between mb-3">
                       <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Hamkor davlatlar:</p>
-                      <span className="text-xs font-bold text-blue-600">{countriesArray.length} ta davlat</span>
+                      <span className="text-xs font-bold text-blue-600">{displayedCountriesCount} ta davlat</span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {countriesArray.map((country, i) => {
@@ -1034,7 +1040,7 @@ const Home: React.FC = () => {
                     : 'bg-white text-slate-700 hover:bg-blue-50 border border-slate-200'
                 }`}
               >
-                <span>{reportDetails.intlCountriesCount} ta {reportDetails.intlCountriesLabel.toLowerCase()}</span>
+                <span>{displayedCountriesCount} ta {reportDetails.intlCountriesLabel.toLowerCase()}</span>
               </button>
               <button
                 type="button"
@@ -1045,7 +1051,7 @@ const Home: React.FC = () => {
                     : 'bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200'
                 }`}
               >
-                <span>{reportDetails.intlOrganizationsCount} ta {reportDetails.intlOrganizationsLabel.toLowerCase()}</span>
+                <span>{displayedOrgsCount} ta {reportDetails.intlOrganizationsLabel.toLowerCase()}</span>
               </button>
               <button
                 type="button"
@@ -1064,7 +1070,7 @@ const Home: React.FC = () => {
               {intlModalTab === 'countries' && (
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-4">
-                    {reportDetails.intlCountriesLabel} ({reportDetails.intlCountriesCount} ta):
+                    {reportDetails.intlCountriesLabel} ({displayedCountriesCount} ta):
                   </h4>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {countriesArray.map((country, idx) => {
@@ -1092,7 +1098,7 @@ const Home: React.FC = () => {
               {intlModalTab === 'organizations' && (
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-4">
-                    {reportDetails.intlOrganizationsLabel} ({reportDetails.intlOrganizationsCount} ta):
+                    {reportDetails.intlOrganizationsLabel} ({displayedOrgsCount} ta):
                   </h4>
                   {reportDetails.intlOrganizationsSummary && (
                     <p className="text-sm text-slate-600 mb-4 bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 whitespace-pre-line">
@@ -1111,7 +1117,7 @@ const Home: React.FC = () => {
                       ))
                     ) : (
                       <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
-                        Hamkor xorijiy tashkilotlar ro'yxati Admin paneldagi <strong>Statistika</strong> bo'limi orqali kiritiladi.
+                        Ma'lumot kiritilmagan (0 ta)
                       </div>
                     )}
                   </div>
@@ -1135,7 +1141,7 @@ const Home: React.FC = () => {
                       ))
                     ) : (
                       <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
-                        Xalqaro ilmiy-ijodiy loyihalar ro'yxati Admin paneldagi <strong>Statistika</strong> bo'limi orqali kiritiladi.
+                        Ma'lumot kiritilmagan (0 ta)
                       </div>
                     )}
                   </div>
