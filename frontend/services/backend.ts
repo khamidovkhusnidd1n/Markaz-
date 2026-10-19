@@ -435,6 +435,8 @@ function transformStatistics(data: any): Statistics {
     data.studentsCount ||
     [];
 
+  const rd = data.report_details || data.reportDetails || {};
+
   return {
     totalPedagogs: data.total_pedagogs || data.totalPedagogs || 0,
     professors: data.professors || 0,
@@ -450,6 +452,23 @@ function transformStatistics(data: any): Statistics {
       year: item.year || '',
       count: item.retraining_count || item.count || 0,
     })),
+    reportDetails: {
+      moTotal: rd.mo_total ?? rd.moTotal ?? 1743,
+      moHigherEdu: rd.mo_higher_edu ?? rd.moHigherEdu ?? 284,
+      moCultureMinistry: rd.mo_culture_ministry ?? rd.moCultureMinistry ?? 740,
+      moArtAcademy: rd.mo_art_academy ?? rd.moArtAcademy ?? 578,
+      moShortCourses: rd.mo_short_courses ?? rd.moShortCourses ?? 141,
+      qtTotal: rd.qt_total ?? rd.qtTotal ?? 389,
+      qtPainting: rd.qt_painting ?? rd.qtPainting ?? 0,
+      qtEmbroidery: rd.qt_embroidery ?? rd.qtEmbroidery ?? 0,
+      qtGoldEmbroidery: rd.qt_gold_embroidery ?? rd.qtGoldEmbroidery ?? 0,
+      intlCountriesCount: rd.intl_countries_count ?? rd.intlCountriesCount ?? 10,
+      intlCountriesList: rd.intl_countries_list ?? rd.intlCountriesList ?? "Italiya\nXitoy\nGruziya\nBelarus\nTurkiya\nRossiya\nHindiston\nQozog'iston\nKoreya\nOzarbayjon",
+      intlOrganizationsCount: rd.intl_organizations_count ?? rd.intlOrganizationsCount ?? 15,
+      intlOrganizationsList: rd.intl_organizations_list ?? rd.intlOrganizationsList ?? "",
+      intlProjectsCount: rd.intl_projects_count ?? rd.intlProjectsCount ?? 0,
+      intlProjectsList: rd.intl_projects_list ?? rd.intlProjectsList ?? "",
+    },
   };
 }
 

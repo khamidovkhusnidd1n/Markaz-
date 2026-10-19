@@ -112,5 +112,22 @@ export const INITIAL_STATS = {
     { year: '2022', count: 150 },
     { year: '2023', count: 180 },
     { year: '2024', count: 195 },
-  ]
+  ],
+  reportDetails: {
+    moTotal: 1743,
+    moHigherEdu: 284,
+    moCultureMinistry: 740,
+    moArtAcademy: 578,
+    moShortCourses: 141,
+    qtTotal: 389,
+    qtPainting: 0,
+    qtEmbroidery: 0,
+    qtGoldEmbroidery: 0,
+    intlCountriesCount: 10,
+    intlCountriesList: "Italiya\nXitoy\nGruziya\nBelarus\nTurkiya\nRossiya\nHindiston\nQozog'iston\nKoreya\nOzarbayjon",
+    intlOrganizationsCount: 15,
+    intlOrganizationsList: "",
+    intlProjectsCount: 0,
+    intlProjectsList: "",
+  }
 };

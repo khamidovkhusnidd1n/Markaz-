@@ -714,10 +714,127 @@ class DocumentAdmin(admin.ModelAdmin):
     )
 
 
+class StatisticsAdminForm(forms.ModelForm):
+    mo_total = forms.IntegerField(
+        required=False, initial=1743,
+        label="Jami malaka oshirganlar (nafar)"
+    )
+    mo_higher_edu = forms.IntegerField(
+        required=False, initial=284,
+        label="Shundan: Oliy ta'lim muassasalaridan (nafar)"
+    )
+    mo_culture_ministry = forms.IntegerField(
+        required=False, initial=740,
+        label="Shundan: O'zbekiston Respublikasi Madaniyat vazirligi tasarrufidagi ta'lim muassasalaridan (nafar)"
+    )
+    mo_art_academy = forms.IntegerField(
+        required=False, initial=578,
+        label="Shundan: O'zbekiston Badiiy akademiyasi tasarrufidagi ta'lim muassasalaridan (nafar)"
+    )
+    mo_short_courses = forms.IntegerField(
+        required=False, initial=141,
+        label="Shundan: Qisqa malaka oshirish kurslarida (nafar)"
+    )
+    qt_total = forms.IntegerField(
+        required=False, initial=389,
+        label="Jami qayta tayyorlash kurslarida (nafar)"
+    )
+    qt_painting = forms.IntegerField(
+        required=False, initial=0,
+        label="Shundan: Rangtasvir (turlari bo'yicha) (nafar)"
+    )
+    qt_embroidery = forms.IntegerField(
+        required=False, initial=0,
+        label="Shundan: Badiiy kashtachilik usta-rassomi (nafar)"
+    )
+    qt_gold_embroidery = forms.IntegerField(
+        required=False, initial=0,
+        label="Shundan: Badiiy zardo'zlik usta-rassomi (nafar)"
+    )
+    intl_countries_count = forms.IntegerField(
+        required=False, initial=10,
+        label="Xorijiy mamlakatlar soni"
+    )
+    intl_countries_list = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 5}),
+        label="Xorijiy mamlakatlar ro'yxati (har bir qatorda bittadan)"
+    )
+    intl_organizations_count = forms.IntegerField(
+        required=False, initial=15,
+        label="Hamkor xorijiy tashkilotlar soni"
+    )
+    intl_organizations_list = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 5}),
+        label="Hamkor xorijiy tashkilotlar ro'yxati (har bir qatorda bittadan, bo'sh qolsa Xalqaro hamkorlar bo'limidan olinadi)"
+    )
+    intl_projects_count = forms.IntegerField(
+        required=False, initial=0,
+        label="Xalqaro ilmiy-ijodiy loyihalar soni (0 bo'lsa avtomatik Xalqaro loyihalar bo'limidan olinadi)"
+    )
+    intl_projects_list = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'rows': 5}),
+        label="Xalqaro ilmiy-ijodiy loyihalar ro'yxati (har bir qatorda bittadan, bo'sh qolsa Xalqaro loyihalar bo'limidan olinadi)"
+    )
+
+    class Meta:
+        model = Statistics
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from .stats_report import get_stats_report
+        report = get_stats_report()
+        for key, val in report.items():
+            if key in self.fields:
+                self.fields[key].initial = val
+
+    def save(self, commit=True):
+        instance = super().save(commit=commit)
+        from .stats_report import save_stats_report, DEFAULT_STATS_REPORT
+        report_data = {}
+        for key in DEFAULT_STATS_REPORT.keys():
+            if key in self.cleaned_data and self.cleaned_data[key] is not None:
+                report_data[key] = self.cleaned_data[key]
+        save_stats_report(report_data)
+        return instance
+
+
 @admin.register(Statistics)
 class StatisticsAdmin(admin.ModelAdmin):
     """Admin configuration for Statistics singleton model."""
-    list_display = ['__str__', 'professors', 'dotsents', 'academics', 'potential']
+    form = StatisticsAdminForm
+    list_display = ['__str__', 'total_pedagogs', 'professors', 'dotsents', 'academics', 'potential']
+    fieldsets = (
+        ("Ilmiy salohiyat ko'rsatkichlari", {
+            'fields': ('total_pedagogs', 'professors', 'dotsents', 'academics', 'potential')
+        }),
+        ("1-oyna: Qayta tayyorlash va malaka oshirish faoliyati (Oylik hisobot)", {
+            'fields': (
+                'mo_total',
+                'mo_higher_edu',
+                'mo_culture_ministry',
+                'mo_art_academy',
+                'mo_short_courses',
+                'qt_total',
+                'qt_painting',
+                'qt_embroidery',
+                'qt_gold_embroidery',
+            )
+        }),
+        ("2-oyna: Xalqaro hamkorlik va xalqaro loyihalar (Oylik hisobot)", {
+            'fields': (
+                'intl_countries_count',
+                'intl_countries_list',
+                'intl_organizations_count',
+                'intl_organizations_list',
+                'intl_projects_count',
+                'intl_projects_list',
+            )
+        }),
+    )
 
     def has_add_permission(self, request):
         # Only allow one instance

@@ -161,6 +161,23 @@ export interface Statistics {
   potential: number;
   studentsCount: { year: string; count: number; retraining: number }[];
   retrainingCount: { year: string; count: number }[];
+  reportDetails?: {
+    moTotal: number;
+    moHigherEdu: number;
+    moCultureMinistry: number;
+    moArtAcademy: number;
+    moShortCourses: number;
+    qtTotal: number;
+    qtPainting: number;
+    qtEmbroidery: number;
+    qtGoldEmbroidery: number;
+    intlCountriesCount: number;
+    intlCountriesList: string;
+    intlOrganizationsCount: number;
+    intlOrganizationsList: string;
+    intlProjectsCount: number;
+    intlProjectsList: string;
+  };
 }
 
 export interface AppContent {

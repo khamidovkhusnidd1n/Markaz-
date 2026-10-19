@@ -482,18 +482,23 @@ class YearlyStatisticsSerializer(serializers.ModelSerializer):
 class StatisticsSerializer(serializers.ModelSerializer):
     """Serializer for Statistics model."""
     yearly_data = serializers.SerializerMethodField()
+    report_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Statistics
         fields = [
             'id', 'total_pedagogs', 'professors', 'dotsents', 'academics', 'potential',
-            'yearly_data', 'created_at', 'updated_at'
+            'yearly_data', 'report_details', 'created_at', 'updated_at'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at']
 
     def get_yearly_data(self, obj):
         yearly_stats = YearlyStatistics.objects.all()
         return YearlyStatisticsSerializer(yearly_stats, many=True).data
+
+    def get_report_details(self, obj):
+        from .stats_report import get_stats_report
+        return get_stats_report()
 
 
 class AllDataSerializer(serializers.Serializer):
