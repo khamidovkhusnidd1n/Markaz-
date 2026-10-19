@@ -204,8 +204,10 @@ const Home: React.FC = () => {
     : customProjectsArray.length;
 
   const safeStudentsCount = stats?.studentsCount || [];
-  const totalMalaka = safeStudentsCount.reduce((sum, item) => sum + (item.count || 0), 0);
-  const totalQayta = safeStudentsCount.reduce((sum, item) => sum + (item.retraining || 0), 0);
+  const sumMalaka = safeStudentsCount.reduce((sum, item) => sum + (item.count || 0), 0);
+  const sumQayta = safeStudentsCount.reduce((sum, item) => sum + (item.retraining || 0), 0);
+  const totalMalaka = reportDetails.moTotal > 0 ? reportDetails.moTotal : sumMalaka;
+  const totalQayta = reportDetails.qtTotal > 0 ? reportDetails.qtTotal : sumQayta;
   const totalOverall = totalMalaka + totalQayta;
 
   const distributionData = [
@@ -518,61 +520,7 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* Original Diagrammalar: Umumiy taqsimot va Yillar kesimida */}
-      <section 
-        ref={chartsReveal.ref}
-        className={`container mx-auto px-6 pt-16 pb-10 transition-all duration-1000 ${
-          chartsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
-            <h3 className="text-xl font-black text-slate-900 mb-6">{t('home.charts_distribution')}</h3>
-            <div className="relative h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={distributionData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={5} dataKey="value">
-                    {distributionData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
-                <span className="text-4xl font-black text-slate-900">{totalOverall}</span>
-                <span className="text-sm text-slate-500">{t('home.charts_total')}</span>
-              </div>
-            </div>
-            <div className="flex justify-center gap-8 mt-4">
-              {distributionData.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                  <span className="text-sm font-medium text-slate-600">{item.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
-            <h3 className="text-xl font-black text-slate-900 mb-6">{t('home.charts_by_years')}</h3>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={yearlyData}>
-                  <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e2e8f0" />
-                  <XAxis dataKey="name" stroke="#94a3b8" />
-                  <YAxis stroke="#94a3b8" />
-                  <Tooltip 
-                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.1)' }}
-                  />
-                  <Bar name="Malaka oshirish" dataKey="malaka" fill="#10b981" radius={[4,4,0,0]} />
-                  <Bar name="Qayta tayyorlash" dataKey="qayta" fill="#3b82f6" radius={[4,4,0,0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ALOHIDA BO'LIM: Markaz faoliyati statistikasi va xalqaro aloqalar */}
+      {/* ALOHIDA BO'LIM: Markaz faoliyati statistikasi va xalqaro aloqalar (Umumiy taqsimotdan yuqorida) */}
       <section className="py-16 bg-gradient-to-b from-slate-50 via-white to-slate-50/70 border-y border-slate-200/60">
         <div className="container mx-auto px-6">
           {/* Bo'lim sarlavhasi */}
@@ -896,6 +844,60 @@ const Home: React.FC = () => {
                   <ChevronRight size={16} />
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Diagrammalar: Umumiy taqsimot va Yillar kesimida */}
+      <section 
+        ref={chartsReveal.ref}
+        className={`container mx-auto px-6 py-16 transition-all duration-1000 ${
+          chartsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        }`}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
+            <h3 className="text-xl font-black text-slate-900 mb-6">{t('home.charts_distribution')}</h3>
+            <div className="relative h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={distributionData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={5} dataKey="value">
+                    {distributionData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex items-center justify-center flex-col pointer-events-none">
+                <span className="text-4xl font-black text-slate-900">{totalOverall}</span>
+                <span className="text-sm text-slate-500">{t('home.charts_total')}</span>
+              </div>
+            </div>
+            <div className="flex justify-center gap-8 mt-4">
+              {distributionData.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
+                  <span className="text-sm font-medium text-slate-600">{item.name}: <strong>{item.value}</strong></span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
+            <h3 className="text-xl font-black text-slate-900 mb-6">{t('home.charts_by_years')}</h3>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={yearlyData}>
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="name" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
+                  <Tooltip 
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.1)' }}
+                  />
+                  <Bar name="Malaka oshirish" dataKey="malaka" fill="#10b981" radius={[4,4,0,0]} />
+                  <Bar name="Qayta tayyorlash" dataKey="qayta" fill="#3b82f6" radius={[4,4,0,0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </div>
         </div>
