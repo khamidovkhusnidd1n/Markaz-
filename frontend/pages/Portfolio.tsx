@@ -8,6 +8,7 @@ import { getImageUrl } from '../utils';
 
 // Helper component for Image Carousel
 const ImageCarousel = ({ images, containerClassName = "h-48 bg-gray-100 rounded-t-xl" }: { images: any[], containerClassName?: string }) => {
+  const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
 
   if (!images || images.length === 0) {
@@ -32,7 +33,7 @@ const ImageCarousel = ({ images, containerClassName = "h-48 bg-gray-100 rounded-
     <div className={`relative w-full group overflow-hidden ${containerClassName}`}>
       <img
         src={getImageUrl(images[currentIndex].image)}
-        alt="Loyiha rasmi"
+        alt={t('common.project_image_alt')}
         className="w-full h-full object-contain transition-opacity duration-300"
       />
       

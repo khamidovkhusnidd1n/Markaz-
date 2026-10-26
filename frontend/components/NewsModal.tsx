@@ -71,7 +71,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({ newsItem, onClose }) => {
   const handleShare = () => {
     const shareUrl = `https://uzbamalaka.uz/api/s/news/${newsItem.id}/`;
     navigator.clipboard.writeText(shareUrl)
-      .then(() => alert("Maxsus link nusxalandi! \nEndi uni Telegramga tashlasangiz sarlavhasi va rasmi bilan chiroyli chiqadi."))
+      .then(() => alert(t('news.share_copied')))
       .catch(err => console.error('Xatolik:', err));
   };
 
@@ -158,13 +158,13 @@ export const NewsModal: React.FC<NewsModalProps> = ({ newsItem, onClose }) => {
                 <div className="pt-2 border-t border-slate-100">
                   <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-2">
                     <Eye size={14} />{t('news.views')}</p>
-                  <p className="text-slate-800 font-bold">{newsItem.views_count || 0} marta o'qildi</p>
+                  <p className="text-slate-800 font-bold">{newsItem.views_count || 0} {t('news.views_count_suffix')}</p>
                 </div>
 
                 <div className="pt-2">
-                  <button onClick={handleShare} className="flex items-center justify-center gap-2 w-full hover:bg-blue-600 hover:text-white transition-colors bg-blue-50 px-4 py-2.5 rounded-xl text-blue-700 font-bold cursor-pointer" title="Ulashish">
+                  <button onClick={handleShare} className="flex items-center justify-center gap-2 w-full hover:bg-blue-600 hover:text-white transition-colors bg-blue-50 px-4 py-2.5 rounded-xl text-blue-700 font-bold cursor-pointer" title={t('common.share')}>
                     <Share2 size={18} />
-                    <span>Ulashish</span>
+                    <span>{t('common.share')}</span>
                   </button>
                 </div>
               </div>

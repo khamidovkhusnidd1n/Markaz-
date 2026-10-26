@@ -209,6 +209,9 @@ function transformDepartment(item: any): Department {
       department_tasks: (item.department_tasks || []).map((t: any) => ({
       id: t.id,
       department: t.department,
+      title: t.title || '',
+      title_ru: t.title_ru || '',
+      title_en: t.title_en || '',
       task_text: t.task_text || '',
       task_text_ru: t.task_text_ru || '',
       task_text_en: t.task_text_en || '',
@@ -516,9 +519,9 @@ function transformAppContent(data: any): AppContent {
 
 function transformJournalSettings(data: any): JournalSettings {
   return {
-    articleRulesText: data?.article_rules_text || '',
+    articleRulesText: data?.article_rules_text_translated || data?.article_rules_text || '',
     articleRulesPdfUrl: data?.article_rules_pdf_url || '',
-    aboutJournal: data?.about_journal || '',
+    aboutJournal: data?.about_journal_translated || data?.about_journal || '',
     phone: data?.phone || '',
     editorialAddress: data?.editorial_address || '',
     email: data?.email || '',

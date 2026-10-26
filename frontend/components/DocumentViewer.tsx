@@ -27,9 +27,9 @@ const DocumentViewer: React.FC<Props> = ({ url, onClose }) => {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 bg-slate-900/80 backdrop-blur-sm" onClick={onClose}>
       <div className="bg-white w-full max-w-6xl h-[95vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
         <div className="flex justify-between items-center p-3 border-b border-slate-200 bg-slate-50">
-          <h3 className="font-bold text-slate-800 ml-2">Hujjatni ko'rish</h3>
+          <h3 className="font-bold text-slate-800 ml-2">{t('common.view_document')}</h3>
           <div className="flex items-center gap-2">
-            <a href={url} target="_blank" rel="noopener noreferrer" download className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-600" title="Yuklab olish">
+            <a href={url} target="_blank" rel="noopener noreferrer" download className="p-2 hover:bg-slate-200 rounded-full transition-colors text-slate-600" title={t('open_data.download')}>
               <ExternalLink size={20} />
             </a>
             <button onClick={onClose} className="p-2 hover:bg-red-100 hover:text-red-600 rounded-full transition-colors text-slate-600">

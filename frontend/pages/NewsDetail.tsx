@@ -98,7 +98,7 @@ const NewsDetail: React.FC = () => {
               <div className="pt-2 border-t border-slate-100">
                 <p className="text-xs text-slate-400 font-bold uppercase tracking-wider mb-1 flex items-center gap-2">
                   <Eye size={14} />{t('news.views')}</p>
-                <p className="text-slate-800 font-bold">{newsItem.id ? Math.floor(Math.random() * 50) + 10 : 0} marta o'qildi</p>
+                <p className="text-slate-800 font-bold">{newsItem.views_count || 0} {t('news.views_count_suffix')}</p>
               </div>
             </div>
           </div>

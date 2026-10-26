@@ -7,21 +7,21 @@ import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
 
 const UZ_REGIONS = [
-  "Barchasi",
-  "Toshkent shahri",
-  "Toshkent viloyati",
-  "Sirdaryo viloyati",
-  "Jizzax viloyati",
-  "Samarqand viloyati",
-  "Qashqadaryo viloyati",
-  "Surxondaryo viloyati",
-  "Buxoro viloyati",
-  "Navoiy viloyati",
-  "Xorazm viloyati",
-  "Andijon viloyati",
-  "Namangan viloyati",
-  "Farg'ona viloyati",
-  "Qoraqalpog'iston Respublikasi"
+  { value: "Barchasi", key: "all" },
+  { value: "Toshkent shahri", key: "tashkent_city" },
+  { value: "Toshkent viloyati", key: "tashkent_region" },
+  { value: "Sirdaryo viloyati", key: "sirdaryo" },
+  { value: "Jizzax viloyati", key: "jizzakh" },
+  { value: "Samarqand viloyati", key: "samarkand" },
+  { value: "Qashqadaryo viloyati", key: "kashkadarya" },
+  { value: "Surxondaryo viloyati", key: "surkhandarya" },
+  { value: "Buxoro viloyati", key: "bukhara" },
+  { value: "Navoiy viloyati", key: "navoi" },
+  { value: "Xorazm viloyati", key: "khorezm" },
+  { value: "Andijon viloyati", key: "andijan" },
+  { value: "Namangan viloyati", key: "namangan" },
+  { value: "Farg'ona viloyati", key: "fergana" },
+  { value: "Qoraqalpog'iston Respublikasi", key: "karakalpakstan" }
 ];
 
 const TrainingPlan: React.FC = () => {
@@ -110,7 +110,9 @@ const TrainingPlan: React.FC = () => {
                   className="rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                   {UZ_REGIONS.map(region => (
-                    <option key={region} value={region}>{region}</option>
+                    <option key={region.value} value={region.value}>
+                      {t(`training_plan.regions.${region.key}`, region.value)}
+                    </option>
                   ))}
                 </select>
                 <button type="submit" className="rounded-xl bg-emerald-700 px-8 py-3 font-bold text-white transition-colors hover:bg-emerald-800 whitespace-nowrap">
@@ -125,7 +127,7 @@ const TrainingPlan: React.FC = () => {
                       <thead className="bg-gray-50 uppercase text-gray-500 rounded-t-xl">
                         <tr>
                           <th className="border-b px-4 py-3">{t('training_plan.col_name')}</th>
-                          <th className="border-b px-4 py-3">Viloyat</th>
+                          <th className="border-b px-4 py-3">{t('training_plan.col_region')}</th>
                           <th className="border-b px-4 py-3">{t('training_plan.col_workplace')}</th>
                           <th className="border-b px-4 py-3">{t('training_plan.col_course')}</th>
                           <th className="border-b px-4 py-3">{t('training_plan.col_duration')}</th>
@@ -172,7 +174,7 @@ const TrainingPlan: React.FC = () => {
                         <p className="text-xs text-gray-500">{formatDate(doc.date, i18n.language)} {t('students.uploaded_suffix')}</p>
                       </div>
                     </div>
-                    <button onClick={() => setViewDoc(doc.fileUrl)} className="text-blue-600 hover:text-blue-800" title="Ko'rish"><Eye size={20} /></button>
+                    <button onClick={() => setViewDoc(doc.fileUrl)} className="text-blue-600 hover:text-blue-800" title={t('common.view')}><Eye size={20} /></button>
                   </div>
                 )) : (
                   <div className="rounded-xl border-2 border-dashed py-10 text-center text-gray-500">

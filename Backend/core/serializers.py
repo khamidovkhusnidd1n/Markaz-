@@ -611,12 +611,17 @@ class AppContentSerializer(serializers.ModelSerializer):
 class JournalSettingsSerializer(serializers.ModelSerializer):
     """Serializer for JournalSettings singleton model."""
     article_rules_pdf_url = serializers.SerializerMethodField()
+    article_rules_text_translated = serializers.SerializerMethodField()
+    about_journal_translated = serializers.SerializerMethodField()
 
     class Meta:
         model = JournalSettings
         fields = [
-            'id', 'article_rules_text', 'article_rules_pdf', 'article_rules_pdf_url',
-            'about_journal', 'phone', 'editorial_address', 'email',
+            'id',
+            'article_rules_text', 'article_rules_text_ru', 'article_rules_text_en', 'article_rules_text_translated',
+            'article_rules_pdf', 'article_rules_pdf_url',
+            'about_journal', 'about_journal_ru', 'about_journal_en', 'about_journal_translated',
+            'phone', 'editorial_address', 'email',
             'telegram_primary', 'telegram_secondary', 'instagram', 'facebook',
             'created_at', 'updated_at'
         ]
@@ -629,6 +634,12 @@ class JournalSettingsSerializer(serializers.ModelSerializer):
                 return request.build_absolute_uri(obj.article_rules_pdf.url)
             return obj.article_rules_pdf.url
         return None
+
+    def get_article_rules_text_translated(self, obj):
+        return get_translated(obj, 'article_rules_text', self.context.get('lang', 'uz'))
+
+    def get_about_journal_translated(self, obj):
+        return get_translated(obj, 'about_journal', self.context.get('lang', 'uz'))
 
 
 class InternationalSettingsSerializer(serializers.ModelSerializer):

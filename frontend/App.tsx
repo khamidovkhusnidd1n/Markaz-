@@ -31,13 +31,14 @@ const ArtGallery = React.lazy(() => import('./pages/ArtGallery'));
 const ScientificPotential = React.lazy(() => import('./pages/ScientificPotential'));
 
 const DjangoAdminRedirect: React.FC = () => {
+  const { t } = useTranslation();
   React.useEffect(() => {
     window.location.href = '/admin/';
   }, []);
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] gap-3">
       <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-900"></div>
-      <p className="text-slate-600 font-medium">Boshqaruv paneliga o'tilmoqda...</p>
+      <p className="text-slate-600 font-medium">{t('common.redirecting_admin')}</p>
     </div>
   );
 };

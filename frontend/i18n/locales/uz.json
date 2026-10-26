@@ -118,7 +118,45 @@
     "contact_emails": "Elektron pochta",
     "contact_telegrams": "Telegram kanallar",
     "contact_work_hours": "Ish tartibi",
-    "contact_work_hours_value": "Dushanba - Juma: 09:00 - 18:00"
+    "contact_work_hours_value": "Dushanba - Juma: 09:00 - 18:00",
+    "stats_report": {
+      "section_badge": "KO'RSATKICHLAR VA HISOBOT",
+      "section_title": "Markaz faoliyati statistikasi",
+      "card1_badge": "O'quv faoliyati",
+      "card1_title": "Qayta tayyorlash va malaka oshirish faoliyati",
+      "card1_summary": "Mazkur markazda faoliyat davrida O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligining 284 nafar, Madaniyat vazirligining 740 nafar, Badiiy akademiya tasarrufidagi ta'lim muassasalaridan 578 nafar, kasbni rivojlantirishga yo'naltirilgan qisqa kurslarda 141 nafar, jami 1743 nafar pedagog va mutaxassis kadrlar malaka oshirishdi hamda 389 nafar pedagog kadrlar qayta tayyorlovdan o'tkazildi.",
+      "mo_total_label": "Jami malaka oshirganlar",
+      "mo_higher_edu_label": "Oliy ta'lim muassasalaridan",
+      "mo_culture_ministry_label": "O'zbekiston Respublikasi Madaniyat vazirligi tasarrufidagi ta'lim muassasalaridan",
+      "mo_art_academy_label": "O'zbekiston Badiiy akademiyasi tasarrufidagi ta'lim muassasalaridan",
+      "mo_short_courses_label": "Qisqa malaka oshirish kurslarida",
+      "qt_total_label": "Jami qayta tayyorlash kurslarida",
+      "qt_painting_label": "Rangtasvir (turlari bo'yicha)",
+      "qt_embroidery_label": "Badiiy kashtachilik usta-rassomi",
+      "qt_gold_embroidery_label": "Badiiy zardo'zlik usta-rassomi",
+      "card2_badge": "Xalqaro aloqalar",
+      "card2_title": "Xalqaro hamkorlik va xalqaro loyihalar",
+      "card2_summary": "Bugungi kunda Markaz tomonidan 10 ta xorijiy (Italiya, Xitoy, Gruziya, Belarus, Turkiya, Rossiya, Hindiston, Qozog'iston, Koreya, Ozarbayjon) mamlakatlarning 15 ta badiiy ta'limga ixtisoslashgan muassasalari bilan memorandumlar imzolandi va hamkorlik aloqalari yo'lga qo'yildi.",
+      "intl_countries_label": "Xorijiy mamlakatlar",
+      "intl_organizations_label": "Hamkor xorijiy tashkilotlar",
+      "intl_projects_label": "Xalqaro ilmiy-ijodiy loyihalar",
+      "unit_person": "nafar",
+      "unit_count": "ta",
+      "unit_countries": "ta davlat",
+      "detail_modal_btn": "Batafsil oyna",
+      "direction_1": "1-yo'nalish",
+      "direction_2": "2-yo'nalish",
+      "by_directions": "Yo'nalishlar kesimida:",
+      "total_coverage": "Jami qamrov (MO + QT):",
+      "open_all_directions": "Barcha yo'nalishlar bo'yicha batafsil ma'lumotni ochish",
+      "view_countries_list": "Davlatlar ro'yxatini ko'rish",
+      "memorandum_institutions": "Memorandum imzolangan muassasalar",
+      "view_projects_list": "Loyihalar ro'yxatini ko'rish",
+      "partner_countries": "Hamkor davlatlar:",
+      "open_intl_modal": "Xalqaro hamkorlik oynasini ochish",
+      "including": "Shundan:",
+      "no_data_zero": "Ma'lumot kiritilmagan (0 ta)"
+    }
   },
   "about": {
     "title": "Markaz haqida",
@@ -194,7 +232,8 @@
     "subtitle": "Yuqori malakali mutaxassislar va tajribali pedagoglar jamoasi",
     "degree_label": "Ilmiy darajasi",
     "title_label": "Unvoni",
-    "no_data": "Hozircha ustozlar haqida ma'lumot kiritilmagan"
+    "no_data": "Hozircha ustozlar haqida ma'lumot kiritilmagan",
+    "view_details": "Batafsil / Biografiya"
   },
   "international": {
     "badge": "Xalqaro hamkorlik",
@@ -369,7 +408,25 @@
     "col_workplace": "Ish joyi",
     "col_course": "Kurs",
     "col_duration": "Muddat",
-    "no_results": "Kechirasiz, bunday ma'lumot topilmadi."
+    "no_results": "Kechirasiz, bunday ma'lumot topilmadi.",
+    "col_region": "Viloyat",
+    "regions": {
+      "all": "Barchasi",
+      "tashkent_city": "Toshkent shahri",
+      "tashkent_region": "Toshkent viloyati",
+      "sirdaryo": "Sirdaryo viloyati",
+      "jizzakh": "Jizzax viloyati",
+      "samarkand": "Samarqand viloyati",
+      "kashkadarya": "Qashqadaryo viloyati",
+      "surkhandarya": "Surxondaryo viloyati",
+      "bukhara": "Buxoro viloyati",
+      "navoi": "Navoiy viloyati",
+      "khorezm": "Xorazm viloyati",
+      "andijan": "Andijon viloyati",
+      "namangan": "Namangan viloyati",
+      "fergana": "Farg'ona viloyati",
+      "karakalpakstan": "Qoraqalpog'iston Respublikasi"
+    }
   },
   "virtual_reception": {
     "badge": "Qabul",
@@ -426,7 +483,8 @@
     "position": "Lavozimi",
     "academic_degree": "Ilmiy darajasi",
     "biography": "Biografiyasi",
-    "no_biography": "Biografiya kiritilmagan."
+    "no_biography": "Biografiya kiritilmagan.",
+    "view_details": "Batafsil / Biografiya"
   },
   "social": {
     "phone": "Telefon",
@@ -445,10 +503,18 @@
     "views": "Ko'rishlar",
     "more_info": "Batafsil ma'lumot",
     "no_info": "Ma'lumot kiritilmagan.",
-    "additional_images": "Qo'shimcha rasmlar"
+    "additional_images": "Qo'shimcha rasmlar",
+    "views_count_suffix": "marta o'qildi",
+    "share_copied": "Maxsus link nusxalandi!\nEndi uni Telegramga tashlasangiz sarlavhasi va rasmi bilan chiroyli chiqadi.",
+    "journal_share_copied": "Jurnal uchun maxsus link nusxalandi!\nEndi uni Telegramga tashlasangiz rasmi va sarlavhasi bilan chiroyli chiqadi."
   },
   "common": {
-    "no_image": "Rasm yo'q"
+    "no_image": "Rasm yo'q",
+    "view": "Ko'rish",
+    "share": "Ulashish",
+    "view_document": "Hujjatni ko'rish",
+    "redirecting_admin": "Boshqaruv paneliga o'tilmoqda...",
+    "project_image_alt": "Loyiha rasmi"
   },
   "department": {
     "works_and_partnerships": "Qilingan ishlar / Hamkorliklar"

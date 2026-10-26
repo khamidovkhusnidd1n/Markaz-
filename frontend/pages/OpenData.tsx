@@ -103,7 +103,7 @@ const OpenData: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       {doc.fileUrl && (
-                        <button onClick={() => setViewDoc(doc.fileUrl)} className="flex items-center gap-2 text-sm font-bold text-white bg-blue-600 px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors"><Eye size={18} /> Ko'rish</button>
+                        <button onClick={() => setViewDoc(doc.fileUrl)} className="flex items-center gap-2 text-sm font-bold text-white bg-blue-600 px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors"><Eye size={18} /> {t('common.view')}</button>
                       )}
                     </div>
                   </div>

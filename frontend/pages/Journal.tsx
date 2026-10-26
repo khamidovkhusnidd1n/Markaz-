@@ -23,7 +23,7 @@ const Journal: React.FC = () => {
   const handleShare = (issueId: number) => {
     const shareUrl = `https://uzbamalaka.uz/api/s/journal/${issueId}/`;
     navigator.clipboard.writeText(shareUrl)
-      .then(() => alert("Jurnal uchun maxsus link nusxalandi! \nEndi uni Telegramga tashlasangiz rasmi va sarlavhasi bilan chiroyli chiqadi."))
+      .then(() => alert(t('news.journal_share_copied')))
       .catch(err => console.error('Xatolik:', err));
   };
 
@@ -59,8 +59,8 @@ const Journal: React.FC = () => {
                     <button onClick={() => {
                       setViewDoc(issue.pdfUrl);
                       window.location.hash = `#/journal?id=${issue.id}`;
-                    }} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Eye size={14} /> Ko'rish</button>
-                    <button onClick={(e) => { e.stopPropagation(); handleShare(issue.id); }} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Share2 size={14} /> Ulashish</button>
+                    }} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Eye size={14} /> {t('common.view')}</button>
+                    <button onClick={(e) => { e.stopPropagation(); handleShare(issue.id); }} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Share2 size={14} /> {t('common.share')}</button>
                   </div>
                 </div>
               </div>
@@ -93,7 +93,7 @@ const Journal: React.FC = () => {
                 dangerouslySetInnerHTML={{ __html: journalSettings.articleRulesText || t('journal.for_authors_fallback') }}
               />
             {journalSettings.articleRulesPdfUrl && (
-              <button onClick={() => setViewDoc(journalSettings.articleRulesPdfUrl)} className="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2.5 text-xs md:text-sm font-semibold text-white transition-colors hover:bg-amber-700 shadow-sm"><Eye size={16} /> Ko'rish</button>
+              <button onClick={() => setViewDoc(journalSettings.articleRulesPdfUrl)} className="inline-flex items-center gap-2 rounded-lg bg-amber-600 px-4 py-2.5 text-xs md:text-sm font-semibold text-white transition-colors hover:bg-amber-700 shadow-sm"><Eye size={16} /> {t('common.view')}</button>
             )}
           </div>
         </div>

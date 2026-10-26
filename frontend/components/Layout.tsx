@@ -395,7 +395,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-sm">
                   <Globe size={24} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">Masofaviy ta'lim</span>
+                <span className="text-xs font-bold text-slate-700">{t('home.links_distance_edu')}</span>
               </a>
 
               {/* Badiiy akademiya */}
@@ -403,7 +403,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 text-blue-600 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
                   <Landmark size={24} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">Badiiy akademiya</span>
+                <span className="text-xs font-bold text-slate-700">{t('home.links_art_academy')}</span>
               </a>
 
               {/* MY.BIMM.UZ */}
@@ -427,7 +427,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 <div className="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-sm">
                   <ClipboardList size={24} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">Form uchun arizalar</span>
+                <span className="text-xs font-bold text-slate-700">{t('home.links_forms')}</span>
               </a>
 
               {/* Davomat */}
@@ -435,7 +435,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 <div className="w-12 h-12 rounded-2xl bg-green-600 text-white flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
                   <UserCheck size={24} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">Davomat</span>
+                <span className="text-xs font-bold text-slate-700">{t('menu.attendance')}</span>
               </a>
             </div>
           </div>

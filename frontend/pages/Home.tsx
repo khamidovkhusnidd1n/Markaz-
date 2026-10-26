@@ -109,41 +109,110 @@ const Home: React.FC = () => {
     return () => clearInterval(interval);
   }, [heroImages.length]);
 
+  const defaultUzReportTexts: Record<string, string> = {
+    section_badge: "KO'RSATKICHLAR VA HISOBOT",
+    section_title: "Markaz faoliyati statistikasi",
+    card1_badge: "O'quv faoliyati",
+    card1_title: "Qayta tayyorlash va malaka oshirish faoliyati",
+    card1_summary: "Mazkur markazda faoliyat davrida O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligining 284 nafar, Madaniyat vazirligining 740 nafar, Badiiy akademiya tasarrufidagi ta'lim muassasalaridan 578 nafar, kasbni rivojlantirishga yo'naltirilgan qisqa kurslarda 141 nafar, jami 1743 nafar pedagog va mutaxassis kadrlar malaka oshirishdi hamda 389 nafar pedagog kadrlar qayta tayyorlovdan o'tkazildi.",
+    mo_total_label: "Jami malaka oshirganlar",
+    mo_higher_edu_label: "Oliy ta'lim muassasalaridan",
+    mo_culture_ministry_label: "O'zbekiston Respublikasi Madaniyat vazirligi tasarrufidagi ta'lim muassasalaridan",
+    mo_art_academy_label: "O'zbekiston Badiiy akademiyasi tasarrufidagi ta'lim muassasalaridan",
+    mo_short_courses_label: "Qisqa malaka oshirish kurslarida",
+    qt_total_label: "Jami qayta tayyorlash kurslarida",
+    qt_painting_label: "Rangtasvir (turlari bo'yicha)",
+    qt_embroidery_label: "Badiiy kashtachilik usta-rassomi",
+    qt_gold_embroidery_label: "Badiiy zardo'zlik usta-rassomi",
+    card2_badge: "Xalqaro aloqalar",
+    card2_title: "Xalqaro hamkorlik va xalqaro loyihalar",
+    card2_summary: "Bugungi kunda Markaz tomonidan 10 ta xorijiy (Italiya, Xitoy, Gruziya, Belarus, Turkiya, Rossiya, Hindiston, Qozog'iston, Koreya, Ozarbayjon) mamlakatlarning 15 ta badiiy ta'limga ixtisoslashgan muassasalari bilan memorandumlar imzolandi va hamkorlik aloqalari yo'lga qo'yildi.",
+    intl_countries_label: "Xorijiy mamlakatlar",
+    intl_organizations_label: "Hamkor xorijiy tashkilotlar",
+    intl_projects_label: "Xalqaro ilmiy-ijodiy loyihalar",
+  };
+
+  const resolveReportText = (backendVal: string | undefined, key: string): string => {
+    const defUz = defaultUzReportTexts[key] || '';
+    if (!backendVal || backendVal.trim() === '' || backendVal.trim() === defUz.trim()) {
+      return t(`home.stats_report.${key}`, defUz);
+    }
+    return backendVal;
+  };
+
+  const translateCountryName = (countryName: string): string => {
+    const lang = (i18n.language || 'uz').substring(0, 2);
+    if (lang === 'uz') return countryName;
+    const c = countryName.toLowerCase().trim();
+    const translations: Record<string, { ru: string; en: string }> = {
+      'italiya': { ru: 'Италия', en: 'Italy' },
+      'xitoy': { ru: 'Китай', en: 'China' },
+      'gruziya': { ru: 'Грузия', en: 'Georgia' },
+      'belarus': { ru: 'Беларусь', en: 'Belarus' },
+      'turkiya': { ru: 'Турция', en: 'Turkey' },
+      'rossiya': { ru: 'Россия', en: 'Russia' },
+      'hindiston': { ru: 'Индия', en: 'India' },
+      "qozog'iston": { ru: 'Казахстан', en: 'Kazakhstan' },
+      'qozogiston': { ru: 'Казахстан', en: 'Kazakhstan' },
+      'koreya': { ru: 'Корея', en: 'South Korea' },
+      'janubiy koreya': { ru: 'Южная Корея', en: 'South Korea' },
+      'ozarbayjon': { ru: 'Азербайджан', en: 'Azerbaijan' },
+      "o'zbekiston": { ru: 'Узбекистан', en: 'Uzbekistan' },
+      'aqsh': { ru: 'США', en: 'USA' },
+      'germaniya': { ru: 'Германия', en: 'Germany' },
+      'fransiya': { ru: 'Франция', en: 'France' },
+      'yaponiya': { ru: 'Япония', en: 'Japan' },
+      'buyuk britaniya': { ru: 'Великобритания', en: 'United Kingdom' },
+      'angliya': { ru: 'Англия', en: 'England' },
+      'ispaniya': { ru: 'Испания', en: 'Spain' },
+      "qirg'iziston": { ru: 'Кыргызстан', en: 'Kyrgyzstan' },
+      'tojikiston': { ru: 'Таджикистан', en: 'Tajikistan' },
+      'turkmaniston': { ru: 'Туркменистан', en: 'Turkmenistan' },
+      'eron': { ru: 'Иран', en: 'Iran' },
+      'misr': { ru: 'Египет', en: 'Egypt' },
+      'malayziya': { ru: 'Малайзия', en: 'Malaysia' },
+      'polsha': { ru: 'Польша', en: 'Poland' },
+    };
+    const match = translations[c];
+    if (match) return lang === 'ru' ? match.ru : match.en;
+    return countryName;
+  };
+
   const reportDetails = {
-    sectionBadge: stats?.reportDetails?.sectionBadge || "KO'RSATKICHLAR VA HISOBOT",
-    sectionTitle: stats?.reportDetails?.sectionTitle || "Markaz faoliyati statistikasi",
-    card1Badge: stats?.reportDetails?.card1Badge || "O'quv faoliyati",
-    card1Title: stats?.reportDetails?.card1Title || "Qayta tayyorlash va malaka oshirish faoliyati",
-    card1Summary: stats?.reportDetails?.card1Summary || "Mazkur markazda faoliyat davrida O'zbekiston Respublikasi Oliy ta'lim, fan va innovatsiyalar vazirligining 284 nafar, Madaniyat vazirligining 740 nafar, Badiiy akademiya tasarrufidagi ta'lim muassasalaridan 578 nafar, kasbni rivojlantirishga yo'naltirilgan qisqa kurslarda 141 nafar, jami 1743 nafar pedagog va mutaxassis kadrlar malaka oshirishdi hamda 389 nafar pedagog kadrlar qayta tayyorlovdan o'tkazildi.",
-    moTotalLabel: stats?.reportDetails?.moTotalLabel || "Jami malaka oshirganlar",
+    sectionBadge: resolveReportText(stats?.reportDetails?.sectionBadge, 'section_badge'),
+    sectionTitle: resolveReportText(stats?.reportDetails?.sectionTitle, 'section_title'),
+    card1Badge: resolveReportText(stats?.reportDetails?.card1Badge, 'card1_badge'),
+    card1Title: resolveReportText(stats?.reportDetails?.card1Title, 'card1_title'),
+    card1Summary: resolveReportText(stats?.reportDetails?.card1Summary, 'card1_summary'),
+    moTotalLabel: resolveReportText(stats?.reportDetails?.moTotalLabel, 'mo_total_label'),
     moTotal: stats?.reportDetails?.moTotal ?? 1743,
-    moHigherEduLabel: stats?.reportDetails?.moHigherEduLabel || "Oliy ta'lim muassasalaridan",
+    moHigherEduLabel: resolveReportText(stats?.reportDetails?.moHigherEduLabel, 'mo_higher_edu_label'),
     moHigherEdu: stats?.reportDetails?.moHigherEdu ?? 284,
-    moCultureMinistryLabel: stats?.reportDetails?.moCultureMinistryLabel || "O'zbekiston Respublikasi Madaniyat vazirligi tasarrufidagi ta'lim muassasalaridan",
+    moCultureMinistryLabel: resolveReportText(stats?.reportDetails?.moCultureMinistryLabel, 'mo_culture_ministry_label'),
     moCultureMinistry: stats?.reportDetails?.moCultureMinistry ?? 740,
-    moArtAcademyLabel: stats?.reportDetails?.moArtAcademyLabel || "O'zbekiston Badiiy akademiyasi tasarrufidagi ta'lim muassasalaridan",
+    moArtAcademyLabel: resolveReportText(stats?.reportDetails?.moArtAcademyLabel, 'mo_art_academy_label'),
     moArtAcademy: stats?.reportDetails?.moArtAcademy ?? 578,
-    moShortCoursesLabel: stats?.reportDetails?.moShortCoursesLabel || "Qisqa malaka oshirish kurslarida",
+    moShortCoursesLabel: resolveReportText(stats?.reportDetails?.moShortCoursesLabel, 'mo_short_courses_label'),
     moShortCourses: stats?.reportDetails?.moShortCourses ?? 141,
-    qtTotalLabel: stats?.reportDetails?.qtTotalLabel || "Jami qayta tayyorlash kurslarida",
+    qtTotalLabel: resolveReportText(stats?.reportDetails?.qtTotalLabel, 'qt_total_label'),
     qtTotal: stats?.reportDetails?.qtTotal ?? 389,
-    qtPaintingLabel: stats?.reportDetails?.qtPaintingLabel || "Rangtasvir (turlari bo'yicha)",
+    qtPaintingLabel: resolveReportText(stats?.reportDetails?.qtPaintingLabel, 'qt_painting_label'),
     qtPainting: stats?.reportDetails?.qtPainting ?? 0,
-    qtEmbroideryLabel: stats?.reportDetails?.qtEmbroideryLabel || "Badiiy kashtachilik usta-rassomi",
+    qtEmbroideryLabel: resolveReportText(stats?.reportDetails?.qtEmbroideryLabel, 'qt_embroidery_label'),
     qtEmbroidery: stats?.reportDetails?.qtEmbroidery ?? 0,
-    qtGoldEmbroideryLabel: stats?.reportDetails?.qtGoldEmbroideryLabel || "Badiiy zardo'zlik usta-rassomi",
+    qtGoldEmbroideryLabel: resolveReportText(stats?.reportDetails?.qtGoldEmbroideryLabel, 'qt_gold_embroidery_label'),
     qtGoldEmbroidery: stats?.reportDetails?.qtGoldEmbroidery ?? 0,
-    card2Badge: stats?.reportDetails?.card2Badge || "Xalqaro aloqalar",
-    card2Title: stats?.reportDetails?.card2Title || "Xalqaro hamkorlik va xalqaro loyihalar",
-    card2Summary: stats?.reportDetails?.card2Summary || "Bugungi kunda Markaz tomonidan 10 ta xorijiy (Italiya, Xitoy, Gruziya, Belarus, Turkiya, Rossiya, Hindiston, Qozog'iston, Koreya, Ozarbayjon) mamlakatlarning 15 ta badiiy ta'limga ixtisoslashgan muassasalari bilan memorandumlar imzolandi va hamkorlik aloqalari yo'lga qo'yildi.",
-    intlCountriesLabel: stats?.reportDetails?.intlCountriesLabel || "Xorijiy mamlakatlar",
+    card2Badge: resolveReportText(stats?.reportDetails?.card2Badge, 'card2_badge'),
+    card2Title: resolveReportText(stats?.reportDetails?.card2Title, 'card2_title'),
+    card2Summary: resolveReportText(stats?.reportDetails?.card2Summary, 'card2_summary'),
+    intlCountriesLabel: resolveReportText(stats?.reportDetails?.intlCountriesLabel, 'intl_countries_label'),
     intlCountriesCount: stats?.reportDetails?.intlCountriesCount ?? 10,
     intlCountriesList: stats?.reportDetails?.intlCountriesList || "Italiya\nXitoy\nGruziya\nBelarus\nTurkiya\nRossiya\nHindiston\nQozog'iston\nKoreya\nOzarbayjon",
-    intlOrganizationsLabel: stats?.reportDetails?.intlOrganizationsLabel || "Hamkor xorijiy tashkilotlar",
+    intlOrganizationsLabel: resolveReportText(stats?.reportDetails?.intlOrganizationsLabel, 'intl_organizations_label'),
     intlOrganizationsCount: stats?.reportDetails?.intlOrganizationsCount ?? 0,
     intlOrganizationsSummary: stats?.reportDetails?.intlOrganizationsSummary || "",
     intlOrganizationsList: stats?.reportDetails?.intlOrganizationsList || "",
-    intlProjectsLabel: stats?.reportDetails?.intlProjectsLabel || "Xalqaro ilmiy-ijodiy loyihalar",
+    intlProjectsLabel: resolveReportText(stats?.reportDetails?.intlProjectsLabel, 'intl_projects_label'),
     intlProjectsCount: stats?.reportDetails?.intlProjectsCount ?? 0,
     intlProjectsList: stats?.reportDetails?.intlProjectsList || "",
   };
@@ -219,8 +288,8 @@ const Home: React.FC = () => {
   const totalOverall = totalMalaka + totalQayta;
 
   const distributionData = [
-    { name: 'Malaka oshirish', value: totalMalaka, color: '#10b981' },
-    { name: 'Qayta tayyorlash', value: totalQayta, color: '#3b82f6' },
+    { name: t('home.charts_mo'), value: totalMalaka, color: '#10b981' },
+    { name: t('home.charts_qt'), value: totalQayta, color: '#3b82f6' },
   ];
 
   const yearlyData = safeStudentsCount.map(item => ({
@@ -274,7 +343,7 @@ const Home: React.FC = () => {
     { name: "MY.BIMM.UZ", url: "https://my.bimm.uz/home", image: "/logos/mybimm.png", cover: true },
     { name: "LEX.UZ", url: "https://lex.uz/uz/", image: "/logos/lexuz.png" },
     { name: t('home.links_forms'), url: "https://form.uzbamalaka.uz", icon: <ClipboardList size={32} />, color: "bg-gradient-to-br from-violet-500 to-purple-700" },
-    { name: "Davomat", url: "https://davomat.uzbamalaka.uz/", icon: <UserCheck size={32} />, color: "bg-gradient-to-br from-emerald-500 to-green-700" },
+    { name: t('menu.attendance'), url: "https://davomat.uzbamalaka.uz/", icon: <UserCheck size={32} />, color: "bg-gradient-to-br from-emerald-500 to-green-700" },
   ];
 
   // Scroll reveal sections
@@ -353,11 +422,11 @@ const Home: React.FC = () => {
       >
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           {[
-            { label: 'Umumiy pedagoglar', value: stats?.totalPedagogs || 0, icon: <Users size={24} />, gradient: 'from-slate-700 to-slate-900' },
-            { label: 'Professorlar', value: stats?.professors || 0, icon: <GraduationCap size={24} />, gradient: 'from-blue-500 to-indigo-600' },
-            { label: 'Dotsentlar', value: stats?.dotsents || 0, icon: <Users size={24} />, gradient: 'from-emerald-500 to-teal-600' },
-            { label: 'Akademiklar', value: stats?.academics || 0, icon: <Award size={24} />, gradient: 'from-amber-500 to-orange-600' },
-            { label: 'Ilmiy salohiyat', value: `${stats?.potential || 0}%`, icon: <TrendingUp size={24} />, gradient: 'from-purple-500 to-pink-600' },
+            { label: t('home.stats_total_pedagogs'), value: stats?.totalPedagogs || 0, icon: <Users size={24} />, gradient: 'from-slate-700 to-slate-900' },
+            { label: t('home.stats_professors'), value: stats?.professors || 0, icon: <GraduationCap size={24} />, gradient: 'from-blue-500 to-indigo-600' },
+            { label: t('home.stats_dotsents'), value: stats?.dotsents || 0, icon: <Users size={24} />, gradient: 'from-emerald-500 to-teal-600' },
+            { label: t('home.stats_academics'), value: stats?.academics || 0, icon: <Award size={24} />, gradient: 'from-amber-500 to-orange-600' },
+            { label: t('home.stats_potential'), value: `${stats?.potential || 0}%`, icon: <TrendingUp size={24} />, gradient: 'from-purple-500 to-pink-600' },
           ].map((stat, idx) => (
             <div 
               key={idx} 
@@ -444,7 +513,7 @@ const Home: React.FC = () => {
               <div className="flex flex-col md:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
-                    {activeReestrTab === 'mo' ? 'Sertifikat' : 'Diplom'} raqami
+                    {activeReestrTab === 'mo' ? t('home.reestr_cert_number_label') : t('home.reestr_diplom_number_label')}
                   </label>
                   <div className="relative">
                     <span className={`absolute left-4 top-1/2 -translate-y-1/2 font-black text-lg ${
@@ -494,11 +563,11 @@ const Home: React.FC = () => {
                         </div>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                           {[
-                            { label: 'Hujjat turi', value: searchResult.data.recordType === 'QT' ? 'Qayta tayyorlash diplomi' : 'Malaka oshirish sertifikati' },
-                            { label: 'Seriya va raqam', value: `${searchResult.data.series} ${searchResult.data.number}` },
-                            { label: 'Ish joyi', value: searchResult.data.workplace || '-' },
-                            { label: "Yo'nalishi", value: searchResult.data.courseType || '-' },
-                            { label: "O'qish muddati", value: searchResult.data.duration || '-' },
+                            { label: t('home.result_doc_type'), value: searchResult.data.recordType === 'QT' ? t('home.result_qt_diploma') : t('home.result_mo_certificate') },
+                            { label: t('home.result_series_number'), value: `${searchResult.data.series} ${searchResult.data.number}` },
+                            { label: t('home.result_workplace'), value: searchResult.data.workplace || '-' },
+                            { label: t('home.result_direction'), value: searchResult.data.courseType || '-' },
+                            { label: t('home.result_duration'), value: searchResult.data.duration || '-' },
                           ].map((item, idx) => (
                             <div key={idx}>
                               <p className="text-xs font-bold text-slate-400 uppercase mb-1">{item.label}</p>
@@ -550,16 +619,16 @@ const Home: React.FC = () => {
                 onClick={() => setActiveStatsModal('training')}
                 className="px-4 py-3 rounded-2xl bg-white hover:bg-emerald-50/60 border border-emerald-200/80 shadow-sm text-left transition-all group"
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-700">Malaka oshirish</p>
-                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-0.5">{reportDetails.moTotal} <small className="text-xs font-bold text-slate-500">nafar</small></p>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-700">{t('home.charts_mo')}</p>
+                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-0.5">{reportDetails.moTotal} <small className="text-xs font-bold text-slate-500">{t('home.stats_report.unit_person')}</small></p>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveStatsModal('training')}
                 className="px-4 py-3 rounded-2xl bg-white hover:bg-teal-50/60 border border-teal-200/80 shadow-sm text-left transition-all group"
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-teal-700">Qayta tayyorlash</p>
-                <p className="text-xl md:text-2xl font-black text-teal-600 mt-0.5">{reportDetails.qtTotal} <small className="text-xs font-bold text-slate-500">nafar</small></p>
+                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-teal-700">{t('home.charts_qt')}</p>
+                <p className="text-xl md:text-2xl font-black text-teal-600 mt-0.5">{reportDetails.qtTotal} <small className="text-xs font-bold text-slate-500">{t('home.stats_report.unit_person')}</small></p>
               </button>
               <button
                 type="button"
@@ -567,7 +636,7 @@ const Home: React.FC = () => {
                 className="px-4 py-3 rounded-2xl bg-white hover:bg-blue-50/60 border border-blue-200/80 shadow-sm text-left transition-all group"
               >
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-blue-700">{reportDetails.intlCountriesLabel}</p>
-                <p className="text-xl md:text-2xl font-black text-blue-600 mt-0.5">{displayedCountriesCount} <small className="text-xs font-bold text-slate-500">ta</small></p>
+                <p className="text-xl md:text-2xl font-black text-blue-600 mt-0.5">{displayedCountriesCount} <small className="text-xs font-bold text-slate-500">{t('home.stats_report.unit_count')}</small></p>
               </button>
               <button
                 type="button"
@@ -575,7 +644,7 @@ const Home: React.FC = () => {
                 className="px-4 py-3 rounded-2xl bg-white hover:bg-indigo-50/60 border border-indigo-200/80 shadow-sm text-left transition-all group"
               >
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-indigo-700">{reportDetails.intlOrganizationsLabel}</p>
-                <p className="text-xl md:text-2xl font-black text-indigo-600 mt-0.5">{displayedOrgsCount} <small className="text-xs font-bold text-slate-500">ta</small></p>
+                <p className="text-xl md:text-2xl font-black text-indigo-600 mt-0.5">{displayedOrgsCount} <small className="text-xs font-bold text-slate-500">{t('home.stats_report.unit_count')}</small></p>
               </button>
             </div>
           </div>
@@ -598,7 +667,7 @@ const Home: React.FC = () => {
                       {reportDetails.card1Badge}
                     </span>
                     <span className="px-3 py-1 rounded-full bg-slate-100 group-hover:bg-emerald-600 text-slate-700 group-hover:text-white text-xs font-bold flex items-center gap-1 transition-colors">
-                      Batafsil oyna <ArrowUpRight size={14} />
+                      {t('home.stats_report.detail_modal_btn')} <ArrowUpRight size={14} />
                     </span>
                   </div>
 
@@ -622,13 +691,13 @@ const Home: React.FC = () => {
                             <GraduationCap size={18} />
                           </div>
                           <div>
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">1-yo'nalish</p>
+                            <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">{t('home.stats_report.direction_1')}</p>
                             <h4 className="font-black text-slate-900 text-sm md:text-base leading-tight">{reportDetails.moTotalLabel}</h4>
                           </div>
                         </div>
                         <div className="text-right shrink-0">
                           <span className="text-2xl font-black text-emerald-600">{reportDetails.moTotal}</span>
-                          <span className="block text-[11px] font-bold text-slate-500">nafar</span>
+                          <span className="block text-[11px] font-bold text-slate-500">{t('home.stats_report.unit_person')}</span>
                         </div>
                       </div>
 
@@ -645,7 +714,7 @@ const Home: React.FC = () => {
                               <div className="flex items-center justify-between gap-2 text-xs mb-1.5">
                                 <span className="font-semibold text-slate-700 leading-snug">{row.label}</span>
                                 <span className="font-black text-slate-900 shrink-0 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800">
-                                  {row.val} nafar
+                                  {row.val} {t('home.stats_report.unit_person')}
                                 </span>
                               </div>
                               <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
@@ -666,17 +735,17 @@ const Home: React.FC = () => {
                               <Award size={18} />
                             </div>
                             <div>
-                              <p className="text-[11px] font-bold uppercase tracking-wider text-blue-700">2-yo'nalish</p>
+                              <p className="text-[11px] font-bold uppercase tracking-wider text-blue-700">{t('home.stats_report.direction_2')}</p>
                               <h4 className="font-black text-slate-900 text-sm md:text-base leading-tight">{reportDetails.qtTotalLabel}</h4>
                             </div>
                           </div>
                           <div className="text-right shrink-0">
                             <span className="text-2xl font-black text-blue-600">{reportDetails.qtTotal}</span>
-                            <span className="block text-[11px] font-bold text-slate-500">nafar</span>
+                            <span className="block text-[11px] font-bold text-slate-500">{t('home.stats_report.unit_person')}</span>
                           </div>
                         </div>
 
-                        <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2.5">Yo'nalishlar kesimida:</p>
+                        <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2.5">{t('home.stats_report.by_directions')}</p>
                         <div className="space-y-2">
                           {[
                             { label: reportDetails.qtPaintingLabel, val: reportDetails.qtPainting },
@@ -687,7 +756,7 @@ const Home: React.FC = () => {
                               <span className="font-semibold text-slate-700 leading-snug">• {qtRow.label}</span>
                               {qtRow.val > 0 && (
                                 <span className="font-black text-blue-700 shrink-0 px-2 py-0.5 rounded-md bg-blue-50">
-                                  {qtRow.val} nafar
+                                  {qtRow.val} {t('home.stats_report.unit_person')}
                                 </span>
                               )}
                             </div>
@@ -697,15 +766,15 @@ const Home: React.FC = () => {
 
                       {/* Umumiy Jami Tinglovchilar xulosasi */}
                       <div className="mt-4 pt-3 border-t border-blue-200/60 flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-600">Jami qamrov (MO + QT):</span>
-                        <span className="text-base font-black text-slate-900">{reportDetails.moTotal + reportDetails.qtTotal} nafar</span>
+                        <span className="text-xs font-bold text-slate-600">{t('home.stats_report.total_coverage')}</span>
+                        <span className="text-base font-black text-slate-900">{reportDetails.moTotal + reportDetails.qtTotal} {t('home.stats_report.unit_person')}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
-                  <span>Barcha yo'nalishlar bo'yicha batafsil ma'lumotni ochish</span>
+                  <span>{t('home.stats_report.open_all_directions')}</span>
                   <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
@@ -729,7 +798,7 @@ const Home: React.FC = () => {
                       onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
                       className="px-3 py-1 rounded-full bg-slate-100 hover:bg-blue-600 text-slate-700 hover:text-white text-xs font-bold flex items-center gap-1 transition-colors"
                     >
-                      Batafsil oyna <ArrowUpRight size={14} />
+                      {t('home.stats_report.detail_modal_btn')} <ArrowUpRight size={14} />
                     </button>
                   </div>
 
@@ -758,11 +827,11 @@ const Home: React.FC = () => {
                           <p className="text-sm font-black text-slate-900 group-hover/btn:text-blue-700 transition-colors">
                             {reportDetails.intlCountriesLabel}
                           </p>
-                          <p className="text-[11px] text-slate-500">Davlatlar ro'yxatini ko'rish</p>
+                          <p className="text-[11px] text-slate-500">{t('home.stats_report.view_countries_list')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-2xl font-black text-blue-700">{displayedCountriesCount} <small className="text-xs font-bold">ta</small></span>
+                        <span className="text-2xl font-black text-blue-700">{displayedCountriesCount} <small className="text-xs font-bold">{t('home.stats_report.unit_count')}</small></span>
                         <ChevronRight size={18} className="text-blue-600 group-hover/btn:translate-x-1 transition-transform" />
                       </div>
                     </button>
@@ -780,11 +849,11 @@ const Home: React.FC = () => {
                           <p className="text-sm font-black text-slate-900 group-hover/btn:text-indigo-700 transition-colors">
                             {reportDetails.intlOrganizationsLabel}
                           </p>
-                          <p className="text-[11px] text-slate-500">Memorandum imzolangan muassasalar</p>
+                          <p className="text-[11px] text-slate-500">{t('home.stats_report.memorandum_institutions')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-2xl font-black text-indigo-700">{displayedOrgsCount} <small className="text-xs font-bold">ta</small></span>
+                        <span className="text-2xl font-black text-indigo-700">{displayedOrgsCount} <small className="text-xs font-bold">{t('home.stats_report.unit_count')}</small></span>
                         <ChevronRight size={18} className="text-indigo-600 group-hover/btn:translate-x-1 transition-transform" />
                       </div>
                     </button>
@@ -802,11 +871,11 @@ const Home: React.FC = () => {
                           <p className="text-sm font-black text-slate-900 group-hover/btn:text-purple-700 transition-colors">
                             {reportDetails.intlProjectsLabel}
                           </p>
-                          <p className="text-[11px] text-slate-500">Loyihalar ro'yxatini ko'rish</p>
+                          <p className="text-[11px] text-slate-500">{t('home.stats_report.view_projects_list')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-2xl font-black text-purple-700">{displayedProjectsCount} <small className="text-xs font-bold">ta</small></span>
+                        <span className="text-2xl font-black text-purple-700">{displayedProjectsCount} <small className="text-xs font-bold">{t('home.stats_report.unit_count')}</small></span>
                         <ChevronRight size={18} className="text-purple-600 group-hover/btn:translate-x-1 transition-transform" />
                       </div>
                     </button>
@@ -815,8 +884,8 @@ const Home: React.FC = () => {
                   {/* Davlatlar bayroqlari bilan chiroyli grid */}
                   <div className="mt-5 pt-4 border-t border-slate-100">
                     <div className="flex items-center justify-between mb-3">
-                      <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400">Hamkor davlatlar:</p>
-                      <span className="text-xs font-bold text-blue-600">{displayedCountriesCount} ta davlat</span>
+                      <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400">{t('home.stats_report.partner_countries')}</p>
+                      <span className="text-xs font-bold text-blue-600">{displayedCountriesCount} {t('home.stats_report.unit_countries')}</span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {countriesArray.map((country, i) => {
@@ -833,7 +902,7 @@ const Home: React.FC = () => {
                             ) : (
                               <Globe size={13} className="text-blue-600 shrink-0" />
                             )}
-                            <span className="truncate">{country}</span>
+                            <span className="truncate">{translateCountryName(country)}</span>
                           </button>
                         );
                       })}
@@ -846,7 +915,7 @@ const Home: React.FC = () => {
                   onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
                   className="mt-6 pt-4 border-t border-slate-100 w-full flex items-center justify-between text-xs font-bold text-blue-700 hover:text-blue-800"
                 >
-                  <span>Xalqaro hamkorlik oynasini ochish</span>
+                  <span>{t('home.stats_report.open_intl_modal')}</span>
                   <ChevronRight size={16} />
                 </button>
               </div>
@@ -900,8 +969,8 @@ const Home: React.FC = () => {
                   <Tooltip 
                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 40px rgba(0,0,0,0.1)' }}
                   />
-                  <Bar name="Malaka oshirish" dataKey="malaka" fill="#10b981" radius={[4,4,0,0]} />
-                  <Bar name="Qayta tayyorlash" dataKey="qayta" fill="#3b82f6" radius={[4,4,0,0]} />
+                  <Bar name={t('home.charts_mo')} dataKey="malaka" fill="#10b981" radius={[4,4,0,0]} />
+                  <Bar name={t('home.charts_qt')} dataKey="qayta" fill="#3b82f6" radius={[4,4,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -948,9 +1017,9 @@ const Home: React.FC = () => {
               <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/80">
                 <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
                   <span className="text-lg md:text-xl font-black text-slate-900">{reportDetails.moTotalLabel}:</span>
-                  <span className="text-2xl md:text-3xl font-black text-emerald-600">{reportDetails.moTotal} nafar</span>
+                  <span className="text-2xl md:text-3xl font-black text-emerald-600">{reportDetails.moTotal} {t('home.stats_report.unit_person')}</span>
                 </div>
-                <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">Shundan:</p>
+                <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">{t('home.stats_report.including')}</p>
                 <div className="space-y-3">
                   {[
                     { label: reportDetails.moHigherEduLabel, val: reportDetails.moHigherEdu, color: "bg-emerald-500" },
@@ -963,7 +1032,7 @@ const Home: React.FC = () => {
                       <div key={idx} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
                         <div className="flex items-center justify-between gap-4 mb-2">
                           <span className="text-sm md:text-base font-semibold text-slate-800">- {item.label}</span>
-                          <span className="text-base md:text-lg font-black text-slate-900 shrink-0">{item.val} nafar</span>
+                          <span className="text-base md:text-lg font-black text-slate-900 shrink-0">{item.val} {t('home.stats_report.unit_person')}</span>
                         </div>
                         <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                           <div className={`h-full ${item.color} rounded-full`} style={{ width: `${Math.min(100, pct)}%` }} />
@@ -978,9 +1047,9 @@ const Home: React.FC = () => {
               <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200/80">
                 <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
                   <span className="text-lg md:text-xl font-black text-slate-900">{reportDetails.qtTotalLabel}:</span>
-                  <span className="text-2xl md:text-3xl font-black text-blue-600">{reportDetails.qtTotal} nafar</span>
+                  <span className="text-2xl md:text-3xl font-black text-blue-600">{reportDetails.qtTotal} {t('home.stats_report.unit_person')}</span>
                 </div>
-                <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">Shundan:</p>
+                <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-3">{t('home.stats_report.including')}</p>
                 <div className="space-y-3">
                   {[
                     { label: reportDetails.qtPaintingLabel, val: reportDetails.qtPainting },
@@ -990,7 +1059,7 @@ const Home: React.FC = () => {
                     <div key={idx} className="bg-white p-4 rounded-xl border border-slate-100 shadow-sm flex items-center justify-between gap-4">
                       <span className="text-sm md:text-base font-semibold text-slate-800">- {item.label}</span>
                       <span className="text-base md:text-lg font-black text-blue-700 shrink-0">
-                        {item.val > 0 ? `${item.val} nafar` : '—'}
+                        {item.val > 0 ? `${item.val} ${t('home.stats_report.unit_person')}` : '—'}
                       </span>
                     </div>
                   ))}
@@ -1040,7 +1109,7 @@ const Home: React.FC = () => {
                     : 'bg-white text-slate-700 hover:bg-blue-50 border border-slate-200'
                 }`}
               >
-                <span>{displayedCountriesCount} ta {reportDetails.intlCountriesLabel.toLowerCase()}</span>
+                <span>{displayedCountriesCount} {t('home.stats_report.unit_count')} {reportDetails.intlCountriesLabel.toLowerCase()}</span>
               </button>
               <button
                 type="button"
@@ -1051,7 +1120,7 @@ const Home: React.FC = () => {
                     : 'bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200'
                 }`}
               >
-                <span>{displayedOrgsCount} ta {reportDetails.intlOrganizationsLabel.toLowerCase()}</span>
+                <span>{displayedOrgsCount} {t('home.stats_report.unit_count')} {reportDetails.intlOrganizationsLabel.toLowerCase()}</span>
               </button>
               <button
                 type="button"
@@ -1062,7 +1131,7 @@ const Home: React.FC = () => {
                     : 'bg-white text-slate-700 hover:bg-purple-50 border border-slate-200'
                 }`}
               >
-                <span>{displayedProjectsCount} ta {reportDetails.intlProjectsLabel.toLowerCase()}</span>
+                <span>{displayedProjectsCount} {t('home.stats_report.unit_count')} {reportDetails.intlProjectsLabel.toLowerCase()}</span>
               </button>
             </div>
 
@@ -1070,7 +1139,7 @@ const Home: React.FC = () => {
               {intlModalTab === 'countries' && (
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-4">
-                    {reportDetails.intlCountriesLabel} ({displayedCountriesCount} ta):
+                    {reportDetails.intlCountriesLabel} ({displayedCountriesCount} {t('home.stats_report.unit_count')}):
                   </h4>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {countriesArray.map((country, idx) => {
@@ -1087,7 +1156,7 @@ const Home: React.FC = () => {
                               {idx + 1}
                             </span>
                           )}
-                          <span className="text-sm md:text-base">{country}</span>
+                          <span className="text-sm md:text-base">{translateCountryName(country)}</span>
                         </div>
                       );
                     })}
@@ -1098,7 +1167,7 @@ const Home: React.FC = () => {
               {intlModalTab === 'organizations' && (
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-4">
-                    {reportDetails.intlOrganizationsLabel} ({displayedOrgsCount} ta):
+                    {reportDetails.intlOrganizationsLabel} ({displayedOrgsCount} {t('home.stats_report.unit_count')}):
                   </h4>
                   {reportDetails.intlOrganizationsSummary && (
                     <p className="text-sm text-slate-600 mb-4 bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 whitespace-pre-line">
@@ -1117,7 +1186,7 @@ const Home: React.FC = () => {
                       ))
                     ) : (
                       <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
-                        Ma'lumot kiritilmagan (0 ta)
+                        {t('home.stats_report.no_data_zero')}
                       </div>
                     )}
                   </div>
@@ -1127,7 +1196,7 @@ const Home: React.FC = () => {
               {intlModalTab === 'projects' && (
                 <div>
                   <h4 className="text-lg font-black text-slate-900 mb-4">
-                    {reportDetails.intlProjectsLabel} ({displayedProjectsCount} ta):
+                    {reportDetails.intlProjectsLabel} ({displayedProjectsCount} {t('home.stats_report.unit_count')}):
                   </h4>
                   <div className="space-y-3">
                     {customProjectsArray.length > 0 ? (
@@ -1141,7 +1210,7 @@ const Home: React.FC = () => {
                       ))
                     ) : (
                       <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
-                        Ma'lumot kiritilmagan (0 ta)
+                        {t('home.stats_report.no_data_zero')}
                       </div>
                     )}
                   </div>
@@ -1316,7 +1385,7 @@ const Home: React.FC = () => {
           <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 min-h-[400px]">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000.2224424363363!2d69.18002367657989!3d41.279141071286395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae895563fd58cd%3A0x2cf0b7618d787b0f!2sO&#39;zBA%20huzuridagi%20Markaz!5e0!3m2!1suz!2s!4v1711200000000!5m2!1suz!2s"
-              title="Google xarita"
+              title={t('home.contact_map_title')}
               className="h-full min-h-[400px] w-full border-0"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -1334,7 +1403,7 @@ const Home: React.FC = () => {
                   <div>
                     <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">{t('home.contact_our_address')}</h4>
                     <p className="mt-1 text-sm text-slate-200 leading-relaxed">
-                      {aboutContent?.address || "Toshkent shahri, Uchtepa tumani, Chilonzor 26-daha, Shirin ko'cha, 1A"}
+                      {aboutContent?.address || t('layout.address_fallback')}
                     </p>
                   </div>
                 </div>

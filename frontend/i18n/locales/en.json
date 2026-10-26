@@ -118,7 +118,45 @@
     "contact_emails": "Email addresses",
     "contact_telegrams": "Telegram channels",
     "contact_work_hours": "Working hours",
-    "contact_work_hours_value": "Monday - Friday: 09:00 - 18:00"
+    "contact_work_hours_value": "Monday - Friday: 09:00 - 18:00",
+    "stats_report": {
+      "section_badge": "INDICATORS AND REPORT",
+      "section_title": "Center Activity Statistics",
+      "card1_badge": "Educational Activity",
+      "card1_title": "Retraining and Professional Development Activity",
+      "card1_summary": "During its operation, the Center provided professional development for 284 staff from the Ministry of Higher Education, Science and Innovations of the Republic of Uzbekistan, 740 from the Ministry of Culture, 578 from educational institutions under the Academy of Arts, and 141 in short-term career development courses — totaling 1,743 educators and specialists, while 389 educators completed retraining.",
+      "mo_total_label": "Total Completed Professional Development",
+      "mo_higher_edu_label": "From higher education institutions",
+      "mo_culture_ministry_label": "From educational institutions under the Ministry of Culture of the Republic of Uzbekistan",
+      "mo_art_academy_label": "From educational institutions under the Academy of Arts of Uzbekistan",
+      "mo_short_courses_label": "In short-term professional development courses",
+      "qt_total_label": "Total in Retraining Courses",
+      "qt_painting_label": "Painting (by types)",
+      "qt_embroidery_label": "Master Artist of Artistic Embroidery",
+      "qt_gold_embroidery_label": "Master Artist of Gold Embroidery",
+      "card2_badge": "International Relations",
+      "card2_title": "International Cooperation and International Projects",
+      "card2_summary": "To date, the Center has signed memorandums and established cooperation with 15 specialized art education institutions across 10 foreign countries (Italy, China, Georgia, Belarus, Turkey, Russia, India, Kazakhstan, Korea, Azerbaijan).",
+      "intl_countries_label": "Foreign Countries",
+      "intl_organizations_label": "Partner Foreign Organizations",
+      "intl_projects_label": "International Scientific & Creative Projects",
+      "unit_person": "people",
+      "unit_count": "pcs",
+      "unit_countries": "countries",
+      "detail_modal_btn": "Details",
+      "direction_1": "Direction 1",
+      "direction_2": "Direction 2",
+      "by_directions": "By directions:",
+      "total_coverage": "Total coverage (PD + RT):",
+      "open_all_directions": "Open detailed information for all directions",
+      "view_countries_list": "View list of countries",
+      "memorandum_institutions": "Institutions with signed memorandums",
+      "view_projects_list": "View list of projects",
+      "partner_countries": "Partner countries:",
+      "open_intl_modal": "Open international cooperation window",
+      "including": "Including:",
+      "no_data_zero": "No data entered (0)"
+    }
   },
   "about": {
     "title": "About the Center",
@@ -194,7 +232,8 @@
     "subtitle": "A team of highly qualified specialists and experienced pedagogues",
     "degree_label": "Academic degree",
     "title_label": "Academic title",
-    "no_data": "No information about teachers has been entered yet"
+    "no_data": "No information about teachers has been entered yet",
+    "view_details": "Details / Biography"
   },
   "international": {
     "badge": "International cooperation",
@@ -369,7 +408,25 @@
     "col_workplace": "Workplace",
     "col_course": "Course",
     "col_duration": "Duration",
-    "no_results": "Sorry, no such data was found."
+    "no_results": "Sorry, no such data was found.",
+    "col_region": "Region",
+    "regions": {
+      "all": "All regions",
+      "tashkent_city": "Tashkent city",
+      "tashkent_region": "Tashkent region",
+      "sirdaryo": "Sirdaryo region",
+      "jizzakh": "Jizzakh region",
+      "samarkand": "Samarkand region",
+      "kashkadarya": "Kashkadarya region",
+      "surkhandarya": "Surkhandarya region",
+      "bukhara": "Bukhara region",
+      "navoi": "Navoi region",
+      "khorezm": "Khorezm region",
+      "andijan": "Andijan region",
+      "namangan": "Namangan region",
+      "fergana": "Fergana region",
+      "karakalpakstan": "Republic of Karakalpakstan"
+    }
   },
   "virtual_reception": {
     "badge": "Reception",
@@ -426,7 +483,8 @@
     "position": "Position",
     "academic_degree": "Academic Degree",
     "biography": "Biography",
-    "no_biography": "Biography not provided."
+    "no_biography": "Biography not provided.",
+    "view_details": "Details / Biography"
   },
   "social": {
     "phone": "Phone",
@@ -445,10 +503,18 @@
     "views": "Views",
     "more_info": "Detailed information",
     "no_info": "No information provided.",
-    "additional_images": "Additional images"
+    "additional_images": "Additional images",
+    "views_count_suffix": "views",
+    "share_copied": "Special link copied!\nNow when you share it on Telegram, it will appear with its title and image.",
+    "journal_share_copied": "Special journal link copied!\nNow when you share it on Telegram, it will appear with its cover and title."
   },
   "common": {
-    "no_image": "No image"
+    "no_image": "No image",
+    "view": "View",
+    "share": "Share",
+    "view_document": "View Document",
+    "redirecting_admin": "Redirecting to admin panel...",
+    "project_image_alt": "Project image"
   },
   "department": {
     "works_and_partnerships": "Completed Works / Partnerships"
