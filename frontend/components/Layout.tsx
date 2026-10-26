@@ -32,10 +32,10 @@ const DesktopMenuItem = ({ item, level = 0 }: { item: MenuItemType, level?: numb
   };
   const isActive = checkActive(item);
 
-  const linkClasses = `desktop-nav-link flex items-center justify-between gap-1 text-sm transition-colors whitespace-nowrap ${
+  const linkClasses = `desktop-nav-link flex items-center justify-between gap-1 transition-colors whitespace-nowrap ${
     level === 0 
-      ? `font-medium px-2 xl:px-3 py-2 ${isActive ? 'text-blue-900 border-b-2 border-amber-500' : 'text-gray-600 hover:text-blue-700'}`
-      : `w-full px-3 py-2 my-0.5 rounded-md ${isActive ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 font-medium hover:bg-gray-100 hover:text-blue-700'}`
+      ? `font-medium px-1.5 min-[1750px]:px-2 min-[1950px]:px-2.5 py-2 text-[11px] min-[1750px]:text-xs min-[1950px]:text-[13px] ${isActive ? 'text-blue-900 border-b-2 border-amber-500' : 'text-gray-600 hover:text-blue-700'}`
+      : `w-full px-3 py-2 my-0.5 rounded-md text-sm ${isActive ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 font-medium hover:bg-gray-100 hover:text-blue-700'}`
   }`;
 
   const label = item.i18nKey ? t(item.i18nKey) : item.label;
@@ -45,9 +45,9 @@ const DesktopMenuItem = ({ item, level = 0 }: { item: MenuItemType, level?: numb
       <span className="flex items-center gap-1">
         {level === 0 && item.icon} {label}
       </span>
-      {isExternal && <ExternalLink size={14} className="ml-1" />}
-      {hasChildren && level === 0 && <ChevronDown size={14} className="ml-1" />}
-      {hasChildren && level > 0 && <ChevronRight size={14} className="ml-auto" />}
+      {isExternal && <ExternalLink size={13} className="ml-0.5 shrink-0" />}
+      {hasChildren && level === 0 && <ChevronDown size={13} className="ml-0.5 shrink-0" />}
+      {hasChildren && level > 0 && <ChevronRight size={14} className="ml-auto shrink-0" />}
     </>
   );
 
@@ -195,7 +195,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-clip">
       <style>{`
         @keyframes seamless-marquee {
           0% { transform: translateX(0); }
@@ -207,7 +207,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           animation: seamless-marquee 25s linear infinite;
         }
       `}</style>
-      <header className="bg-white shadow-md sticky top-0 z-50 flex flex-col">
+      <header className="bg-white shadow-md sticky top-0 z-50 flex flex-col w-full">
         <div className="bg-blue-600 text-white py-2 border-b border-blue-700 flex items-center w-full overflow-hidden">
           <div className="animate-seamless text-[10px] md:text-xs font-bold tracking-wider uppercase">
             {[...Array(20)].map((_, i) => (
@@ -215,34 +215,34 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             ))}
           </div>
         </div>
-        <div className="w-full max-w-[1920px] mx-auto px-4 lg:px-8 py-4 flex justify-between items-center gap-4">
-          <Link to="/" className="flex items-center gap-3 shrink-0 min-w-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center overflow-hidden shrink-0">
+        <div className="w-full max-w-[1920px] mx-auto px-3 lg:px-5 min-[1950px]:px-8 py-3.5 flex justify-between items-center gap-2 min-[1850px]:gap-3">
+          <Link to="/" className="flex items-center gap-2.5 shrink-0 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 2xl:w-11 2xl:h-11 min-[1850px]:w-12 min-[1850px]:h-12 rounded-full flex items-center justify-center overflow-hidden shrink-0">
               <img src={headerLogo} alt={t('layout.logo_alt', { name: siteName })} className="w-full h-full object-contain" />
             </div>
-            <div className="min-w-0 max-w-[200px] sm:max-w-[280px] md:max-w-[320px] max-[1850px]:max-w-[180px]">
-              <h1 className="text-[9px] sm:text-[11px] md:text-[12px] max-[1850px]:text-[10px] font-bold leading-tight text-blue-900 text-left">{siteName}</h1>
+            <div className="min-w-0 max-w-[200px] sm:max-w-[280px] md:max-w-[320px] 2xl:max-w-[165px] min-[1750px]:max-w-[195px] min-[1950px]:max-w-[240px]">
+              <h1 className="text-[9px] sm:text-[11px] md:text-[12px] 2xl:text-[9.5px] min-[1750px]:text-[10px] min-[1950px]:text-[11px] font-bold leading-tight text-blue-900 text-left line-clamp-4">{siteName}</h1>
             </div>
           </Link>
 
-          <nav className="hidden 2xl:flex items-center gap-1 min-w-0">
-            <div className="desktop-nav-container flex items-center gap-1">
+          <nav className="hidden 2xl:flex items-center justify-end gap-1 min-w-0 flex-1">
+            <div className="desktop-nav-container flex items-center gap-0.5 min-[1750px]:gap-1 min-w-0">
               {MENU_ITEMS.map((item, idx) => (
                 <DesktopMenuItem key={idx} item={item} />
               ))}
             </div>
             
-            <div className="flex items-center gap-1 ml-2 shrink-0">
+            <div className="flex items-center gap-1 ml-1.5 min-[1850px]:ml-2 shrink-0">
               <button 
                 onClick={() => setIsUsefulLinksOpen(true)}
                 title={t('layout.useful_links', "Foydali havolalar")}
-                className="relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 p-2 min-[1850px]:p-2.5 font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] flex items-center justify-center group mr-1 shrink-0"
+                className="relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 p-2 min-[1850px]:p-2.5 font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] flex items-center justify-center group mr-0.5 shrink-0"
               >
-                <LayoutGrid size={20} className="relative z-10 group-hover:rotate-90 transition-transform duration-500" />
+                <LayoutGrid size={18} className="relative z-10 group-hover:rotate-90 transition-transform duration-500" />
                 <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
               </button>
               
-              <div className="desktop-nav-lang-container flex items-center gap-0.5 min-[1850px]:gap-1 border-l pl-1 min-[1850px]:pl-2 border-gray-200 shrink-0">
+              <div className="desktop-nav-lang-container flex items-center gap-0.5 min-[1850px]:gap-1 border-l pl-1.5 min-[1850px]:pl-2 border-gray-200 shrink-0">
                 <LangButton lang="uz" label="UZB" />
                 <LangButton lang="ru" label="RUS" />
                 <LangButton lang="en" label="ENG" />
@@ -342,23 +342,23 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       </div>
 
       <style>{`
-        @media (min-width: 1536px) and (max-width: 1850px) {
+        .desktop-nav-link svg {
+          width: 14px;
+          height: 14px;
+          flex-shrink: 0;
+        }
+        @media (min-width: 1536px) and (max-width: 1750px) {
           .desktop-nav-link {
-            font-size: 11px !important;
+            font-size: 10.5px !important;
             padding-left: 4px !important;
             padding-right: 4px !important;
             gap: 2px !important;
           }
           .desktop-nav-link svg {
-            width: 14px !important;
-            height: 14px !important;
+            width: 13px !important;
+            height: 13px !important;
           }
           .desktop-nav-container {
-            gap: 4px !important;
-          }
-          .desktop-nav-lang-container {
-            margin-left: 6px !important;
-            padding-left: 6px !important;
             gap: 2px !important;
           }
         }
