@@ -1271,7 +1271,10 @@ class ApplicationAdmin(admin.ModelAdmin):
         ('🎓 Ta\'lim, Yo\'nalish va Yuklangan Hujjatlar (Diplom / Ilova / Portfolio)', {
             'fields': (
                 'application_type', 'direction', 'diploma_specialty',
-                'diploma_file', 'diploma_supplement_file', 'portfolio_file'
+                'diploma_preview', 'diploma_file',
+                'diploma_supplement_preview', 'diploma_supplement_file',
+                'portfolio_preview', 'portfolio_file',
+                'status', 'admin_note',
             )
         }),
         ('📊 Ekspert komissiyasi baholash varaqasi (I-116 buyruq, 4-ilova — 100 ballik tizim)', {
@@ -1291,10 +1294,8 @@ class ApplicationAdmin(admin.ModelAdmin):
                 'score_experience',
                 'score_portfolio',
                 'total_score',
+                'decision_type',
             )
-        }),
-        ('⚖️ Jarayon bosqichi va Komissiya xulosasi (5-ilova)', {
-            'fields': ('status', 'decision_type', 'admin_note')
         }),
         ('🕐 Yuborilgan vaqt', {
             'fields': ('created_at', 'updated_at'),
@@ -1319,7 +1320,41 @@ class ApplicationAdmin(admin.ModelAdmin):
             'score_portfolio',
             'admin_note',
         }
-        return [f.name for f in self.model._meta.fields if f.name not in editable]
+        base_readonly = [f.name for f in self.model._meta.fields if f.name not in editable]
+        return base_readonly + ['diploma_preview', 'diploma_supplement_preview', 'portfolio_preview']
+
+    def _render_file_preview(self, file_field, title):
+        from django.utils.html import format_html
+        from django.utils.safestring import mark_safe
+        if not file_field:
+            return mark_safe('<span style="color:#94a3b8;font-style:italic;">Yuklanmagan</span>')
+        url = file_field.url
+        lower = url.lower()
+        open_btn = (
+            f'<div style="margin-bottom:8px;display:flex;gap:8px;align-items:center;">'
+            f'<a href="{url}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#1e40af;color:#fff;padding:6px 14px;border-radius:6px;font-weight:600;font-size:12px;text-decoration:none;">🔎 Yangi oynada to\'liq ochish ({title})</a>'
+            f'<a href="{url}" download style="display:inline-flex;align-items:center;gap:6px;background:#f1f5f9;color:#334155;border:1px solid #cbd5e1;padding:6px 12px;border-radius:6px;font-weight:600;font-size:12px;text-decoration:none;">⬇️ Yuklab olish</a>'
+            f'</div>'
+        )
+        if lower.endswith('.pdf'):
+            preview = f'<iframe src="{url}" style="width:100%;max-width:780px;height:420px;border:1px solid #cbd5e1;border-radius:8px;background:#f8fafc;"></iframe>'
+        elif lower.endswith(('.jpg', '.jpeg', '.png', '.webp', '.gif')):
+            preview = f'<a href="{url}" target="_blank"><img src="{url}" style="max-width:520px;max-height:380px;border:1px solid #cbd5e1;border-radius:8px;object-fit:contain;background:#fff;padding:4px;" /></a>'
+        else:
+            preview = '<div style="padding:10px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;color:#92400e;font-size:12px;max-width:520px;">📦 Arxiv fayl (ZIP/RAR) — ko\'rish uchun yuqoridagi <b>Yuklab olish</b> tugmasini bosing.</div>'
+        return format_html('{}{}', mark_safe(open_btn), mark_safe(preview))
+
+    def diploma_preview(self, obj):
+        return self._render_file_preview(obj.diploma_file, "Diplom nusxasi")
+    diploma_preview.short_description = "📄 Diplom nusxasini ko'rish"
+
+    def diploma_supplement_preview(self, obj):
+        return self._render_file_preview(obj.diploma_supplement_file, "Diplom ilovasi")
+    diploma_supplement_preview.short_description = "📑 Diplom ilovasini ko'rish"
+
+    def portfolio_preview(self, obj):
+        return self._render_file_preview(obj.portfolio_file, "Ijodiy portfolio")
+    portfolio_preview.short_description = "🎨 Ijodiy portfolioni ko'rish"
 
     def files_badge(self, obj):
         from django.utils.html import format_html

@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
-import { Search, CheckCircle2, Clock, AlertCircle, XCircle, FileText, Copy, Check, Upload, ExternalLink, Loader2, Trash2 } from 'lucide-react';
+import { Search, CheckCircle2, Clock, AlertCircle, XCircle, FileText, Copy, Check, Upload, ExternalLink, Loader2, Trash2, Eye, Download } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { BackendAPI } from '../services/backend';
 import { Application } from '../types';
+import DocumentViewer from '../components/DocumentViewer';
 
 const formatFileSize = (bytes: number) => {
   if (!bytes) return '0 KB';
@@ -82,6 +83,17 @@ const VirtualQabulxona: React.FC = () => {
   const [trackLoading, setTrackLoading] = useState(false);
   const [trackError, setTrackError] = useState('');
   const [trackResults, setTrackResults] = useState<Application[] | null>(null);
+  const [previewDocUrl, setPreviewDocUrl] = useState<string | null>(null);
+
+  const openFilePreview = (url?: string) => {
+    if (!url) return;
+    const lower = url.toLowerCase();
+    if (lower.endsWith('.zip') || lower.endsWith('.rar')) {
+      window.open(url, '_blank');
+      return;
+    }
+    setPreviewDocUrl(url);
+  };
 
   const triggerFileSelectAnimation = (key: 'diploma' | 'supplement' | 'portfolio', file: File | null) => {
     if (!file) {
@@ -869,43 +881,57 @@ const VirtualQabulxona: React.FC = () => {
                                   {labels.uploadedFilesLabel}
                                 </span>
                                 {app.diplomaFileUrl && (
-                                  <a
-                                    href={app.diplomaFileUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-800 transition-colors"
+                                  <button
+                                    type="button"
+                                    onClick={() => openFilePreview(app.diplomaFileUrl)}
+                                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:bg-blue-50 hover:border-blue-300 px-3 py-1.5 text-xs font-semibold text-slate-800 transition-colors cursor-pointer"
                                   >
-                                    <FileText size={13} className="text-blue-800" />
+                                    <Eye size={13} className="text-blue-800" />
                                     {labels.diplomaShort}
-                                    <ExternalLink size={12} className="text-slate-400" />
-                                  </a>
+                                  </button>
                                 )}
                                 {app.diplomaSupplementFileUrl && (
-                                  <a
-                                    href={app.diplomaSupplementFileUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-800 transition-colors"
+                                  <button
+                                    type="button"
+                                    onClick={() => openFilePreview(app.diplomaSupplementFileUrl)}
+                                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:bg-emerald-50 hover:border-emerald-300 px-3 py-1.5 text-xs font-semibold text-slate-800 transition-colors cursor-pointer"
                                   >
-                                    <FileText size={13} className="text-emerald-700" />
+                                    <Eye size={13} className="text-emerald-700" />
                                     {labels.supplementShort}
-                                    <ExternalLink size={12} className="text-slate-400" />
-                                  </a>
+                                  </button>
                                 )}
                                 {app.portfolioFileUrl && (
-                                  <a
-                                    href={app.portfolioFileUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-800 transition-colors"
+                                  <button
+                                    type="button"
+                                    onClick={() => openFilePreview(app.portfolioFileUrl)}
+                                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:bg-amber-50 hover:border-amber-300 px-3 py-1.5 text-xs font-semibold text-slate-800 transition-colors cursor-pointer"
                                   >
-                                    <FileText size={13} className="text-amber-700" />
+                                    {app.portfolioFileUrl.toLowerCase().match(/\.(zip|rar)$/) ? (
+                                      <Download size={13} className="text-amber-700" />
+                                    ) : (
+                                      <Eye size={13} className="text-amber-700" />
+                                    )}
                                     {labels.portfolioShort}
-                                    <ExternalLink size={12} className="text-slate-400" />
-                                  </a>
+                                  </button>
                                 )}
                               </div>
                             )}
+
+                            {/* Admin / Komissiya tomonidan talabgorga izoh (har doim ko'rinadi) */}
+                            <div className={`rounded-xl border p-4 ${app.adminNote ? 'border-blue-200 bg-blue-50/60' : 'border-slate-200 bg-slate-50/70'}`}>
+                              <p className="text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">
+                                {labels.commissionNoteLabel}
+                              </p>
+                              <p className={`text-sm whitespace-pre-line leading-relaxed ${app.adminNote ? 'text-slate-900 font-medium' : 'text-slate-500 italic'}`}>
+                                {app.adminNote || (
+                                  lang === 'ru'
+                                    ? 'Пока комментариев от комиссии нет. После проверки ваших документов здесь появится заключение или комментарий.'
+                                    : lang === 'en'
+                                    ? 'No comments from the commission yet. Once your documents are reviewed, the conclusion or feedback will appear here.'
+                                    : "Hozircha komissiya tomonidan qo'shimcha izoh kiritilmagan. Hujjatlaringiz o'rganilgach, izoh yoki ko'rsatma shu yerda aks etadi."
+                                )}
+                              </p>
+                            </div>
 
                             {/* 4-bosqichli Progress stepper */}
                             <div>
@@ -984,18 +1010,6 @@ const VirtualQabulxona: React.FC = () => {
                               </div>
                             )}
 
-                            {/* Komissiya izohi */}
-                            {app.adminNote && (
-                              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                                <p className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-                                  {labels.commissionNoteLabel}
-                                </p>
-                                <p className="text-sm text-slate-800 whitespace-pre-line leading-relaxed">
-                                  {app.adminNote}
-                                </p>
-                              </div>
-                            )}
-
                             {/* Apellyatsiya eslatmasi */}
                             <p className="text-xs text-slate-500 leading-relaxed border-t border-slate-100 pt-3">
                               {labels.appealRightNote}
@@ -1010,6 +1024,7 @@ const VirtualQabulxona: React.FC = () => {
             </div>
           )}
         </div>
+        {previewDocUrl && <DocumentViewer url={previewDocUrl} onClose={() => setPreviewDocUrl(null)} />}
 
         {/* Muvaffaqiyatli yoki xatolik xabari */}
         <div ref={feedbackRef}>
