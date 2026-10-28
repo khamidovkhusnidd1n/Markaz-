@@ -156,9 +156,14 @@ const VirtualQabulxona: React.FC = () => {
       en: "Ready",
     }[lang],
     uploadingText: {
-      uz: "Hujjatlar va ariza serverga yuklanmoqda...",
-      ru: "Загрузка документов и отправка заявки...",
-      en: "Uploading documents and submitting application...",
+      uz: "Ariza yuborilmoqda...",
+      ru: "Отправка заявки...",
+      en: "Submitting application...",
+    }[lang],
+    emptyFileWarning: {
+      uz: "Tanlangan fayl bo'sh (0 KB). Iltimos, boshqa fayl tanlang.",
+      ru: "Выбранный файл пуст (0 KB). Пожалуйста, выберите другой файл.",
+      en: "Selected file is empty (0 KB). Please choose another file.",
     }[lang],
     uploadedFilesLabel: {
       uz: "Yuklangan hujjatlar:",
@@ -308,6 +313,12 @@ const VirtualQabulxona: React.FC = () => {
                 className="hidden"
                 onChange={(e) => {
                   const chosen = e.target.files?.[0] || null;
+                  if (chosen && chosen.size === 0) {
+                    setSubmissionError(labels.emptyFileWarning);
+                    e.target.value = '';
+                    return;
+                  }
+                  setSubmissionError('');
                   setFile(chosen);
                   triggerFileSelectAnimation(key, chosen);
                 }}
@@ -730,32 +741,13 @@ const VirtualQabulxona: React.FC = () => {
                 <input required className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.phone} onChange={(e) => setApplicationForm((p) => ({ ...p, phone: e.target.value }))} placeholder={t('virtual_reception.phone_placeholder')} />
                 <input className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.telegram_link} onChange={(e) => setApplicationForm((p) => ({ ...p, telegram_link: e.target.value }))} placeholder={t('virtual_reception.telegram_placeholder')} />
 
-                {/* Live upload progress bar while submitting */}
-                {isSubmitting && (
-                  <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 space-y-2">
-                    <div className="flex items-center justify-between text-xs font-bold text-blue-900">
-                      <span className="flex items-center gap-2">
-                        <Loader2 size={15} className="animate-spin text-blue-700" />
-                        {labels.uploadingText}
-                      </span>
-                      <span className="tabular-nums">{uploadPercent}%</span>
-                    </div>
-                    <div className="h-2 w-full overflow-hidden rounded-full bg-blue-200/70">
-                      <div
-                        className="h-full rounded-full bg-blue-700 transition-all duration-200 ease-out"
-                        style={{ width: `${uploadPercent}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-
                 <button
                   type="submit"
                   disabled={isSubmitting}
                   className="rounded-xl bg-blue-800 hover:bg-blue-900 disabled:opacity-60 transition-colors px-6 py-4 mt-1 font-bold text-white flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isSubmitting && <Loader2 size={18} className="animate-spin" />}
-                  {isSubmitting ? `${uploadPercent}%` : t('virtual_reception.application_submit')}
+                  {isSubmitting ? labels.uploadingText : t('virtual_reception.application_submit')}
                 </button>
               </form>
             </div>

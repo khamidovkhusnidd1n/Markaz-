@@ -617,6 +617,9 @@ function toFormData(payload: Record<string, string | Blob | number | boolean | u
   const formData = new FormData();
   Object.entries(payload).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
+      if (value instanceof Blob && value.size === 0) {
+        return;
+      }
       formData.append(key, typeof value === 'boolean' ? String(value) : (value as string | Blob));
     }
   });
