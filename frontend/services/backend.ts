@@ -76,10 +76,9 @@ function resolveApiBaseUrls() {
   const candidates = new Set<string>();
   const cached = safeStorageGet(API_URL_CACHE_KEY)?.trim();
 
-  if (configured) candidates.add(configured);
-  if (cached && cached !== configured) candidates.add(cached);
-
   if (isLocalHost) {
+    if (configured) candidates.add(configured);
+    if (cached && cached !== configured) candidates.add(cached);
     candidates.add(`${origin}/api`);
     candidates.add(`${protocol}//127.0.0.1:8000/api`);
     candidates.add(`${protocol}//127.0.0.1:8001/api`);
@@ -88,7 +87,11 @@ function resolveApiBaseUrls() {
     return Array.from(candidates);
   }
 
+  // Always prefer same-origin first on production to avoid www vs non-www CORS preflight failures
   candidates.add(`${origin}/api`);
+  if (configured) candidates.add(configured);
+  if (cached && cached !== configured) candidates.add(cached);
+
   const altHostnames = new Set([hostname]);
   if (hostname.startsWith('www.')) altHostnames.add(hostname.replace(/^www\./, ''));
   else altHostnames.add(`www.${hostname}`);
@@ -967,21 +970,18 @@ export const BackendAPI = {
     return apiRequest('/appeals/', { method: 'POST', body: JSON.stringify(payload) });
   },
 
-  async createApplication(
-    payload: {
-      full_name: string;
-      application_type: 'professional_development' | 'retraining';
-      workplace: string;
-      direction: string;
-      diploma_specialty?: string;
-      diploma_file?: File | null;
-      diploma_supplement_file?: File | null;
-      portfolio_file?: File | null;
-      phone: string;
-      telegram_link?: string;
-    },
-    onProgress?: (percent: number) => void
-  ): Promise<Application> {
+  async createApplication(payload: {
+    full_name: string;
+    application_type: 'professional_development' | 'retraining';
+    workplace: string;
+    direction: string;
+    diploma_specialty?: string;
+    diploma_file?: File | null;
+    diploma_supplement_file?: File | null;
+    portfolio_file?: File | null;
+    phone: string;
+    telegram_link?: string;
+  }): Promise<Application> {
     if (payload.telegram_link) {
       const t = payload.telegram_link.trim();
       if (!t.startsWith('http')) {
@@ -1000,65 +1000,6 @@ export const BackendAPI = {
       diploma_supplement_file: payload.diploma_supplement_file || null,
       portfolio_file: payload.portfolio_file || null,
     });
-
-    if (onProgress && typeof XMLHttpRequest !== 'undefined') {
-      const lang = (i18n.language || 'uz').substring(0, 2);
-      const baseUrls = getApiBaseUrls();
-
-      for (const baseUrl of baseUrls) {
-        try {
-          const result = await new Promise<any>((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', `${baseUrl}/applications/?lang=${lang}`, true);
-            xhr.upload.onprogress = (evt) => {
-              if (evt.lengthComputable && evt.total > 0) {
-                const pct = Math.min(99, Math.round((evt.loaded / evt.total) * 100));
-                onProgress(pct);
-              }
-            };
-            xhr.onload = () => {
-              if (xhr.status === 404) {
-                reject(new Error('__404__'));
-                return;
-              }
-              if (xhr.status >= 200 && xhr.status < 300) {
-                safeStorageSet(API_URL_CACHE_KEY, baseUrl);
-                onProgress(100);
-                try {
-                  resolve(xhr.responseText ? JSON.parse(xhr.responseText) : {});
-                } catch {
-                  resolve({});
-                }
-              } else {
-                let errMsg = `HTTP ${xhr.status}`;
-                if (xhr.status === 413) {
-                  errMsg = "Yuklangan fayllar hajmi juda katta (server 413 cheklovi). Iltimos, kichikroq hajmdagi fayl yuklang.";
-                }
-                try {
-                  const errData = JSON.parse(xhr.responseText || '{}');
-                  errMsg =
-                    errData.message ||
-                    errData.detail ||
-                    Object.entries(errData)
-                      .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : String(v)}`)
-                      .join(' | ') ||
-                    errMsg;
-                } catch {}
-                reject(new Error(errMsg));
-              }
-            };
-            xhr.onerror = () => reject(new Error("Fayl yuklashda tarmoq yoki server hajm cheklovi xatosi yuz berdi."));
-            xhr.send(formData);
-          });
-          return transformApplication(result);
-        } catch (err: any) {
-          if (err?.message === '__404__') {
-            continue;
-          }
-          throw err;
-        }
-      }
-    }
 
     const res = await apiRequest<any>('/applications/', { method: 'POST', body: formData });
     return transformApplication(res);

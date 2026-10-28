@@ -668,16 +668,12 @@ const VirtualQabulxona: React.FC = () => {
                   setSubmissionMessage('');
                   setSubmissionError('');
                   try {
-                    const created = await BackendAPI.createApplication(
-                      {
-                        ...applicationForm,
-                        diploma_file: diplomaFile,
-                        diploma_supplement_file: diplomaSupplementFile,
-                        portfolio_file: portfolioFile,
-                      },
-                      (pct) => setUploadPercent(pct)
-                    );
-                    setUploadPercent(100);
+                    const created = await BackendAPI.createApplication({
+                      ...applicationForm,
+                      diploma_file: diplomaFile,
+                      diploma_supplement_file: diplomaSupplementFile,
+                      portfolio_file: portfolioFile,
+                    });
                     const appNum = created.applicationNumber || `QT-2026-${String(created.id || 1).padStart(4, '0')}`;
                     setCreatedAppNumber(appNum);
                     setSubmissionMessage(t('virtual_reception.application_success'));
