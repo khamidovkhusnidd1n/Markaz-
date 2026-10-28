@@ -61,7 +61,8 @@ const Home: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.hash === '#contact') {
+    const params = new URLSearchParams(location.search);
+    if (location.hash === '#contact' || params.get('section') === 'contact') {
       const element = document.getElementById('contact');
       if (element) {
         setTimeout(() => {
@@ -69,7 +70,7 @@ const Home: React.FC = () => {
         }, 100);
       }
     }
-  }, [location.hash]);
+  }, [location.hash, location.search]);
   
   // Reestr state
   const [activeReestrTab, setActiveReestrTab] = useState<'mo' | 'qt'>('mo');

@@ -34,8 +34,8 @@ export const MENU_ITEMS: MenuItemType[] = [
       { label: 'Markaz tuzilmasi', path: '/about/structure', i18nKey: 'menu.structure' },
       { label: 'Rahbariyat', path: '/about/leadership', i18nKey: 'menu.leadership' },
       { label: 'Markaziy apparat', path: '/about/staff', i18nKey: 'menu.staff' },
-      { label: 'Virtual qabulxona', path: '/virtual-qabulxona#murojaat', i18nKey: 'menu.virtual_reception' },
-      { label: 'Ariza yuborish', path: '/virtual-qabulxona#ariza', i18nKey: 'menu.submit_app' }
+      { label: 'Virtual qabulxona', path: '/virtual-qabulxona/murojaat', i18nKey: 'menu.virtual_reception' },
+      { label: 'Ariza yuborish', path: '/virtual-qabulxona/ariza', i18nKey: 'menu.submit_app' }
     ]
   },
   {
@@ -83,7 +83,7 @@ export const MENU_ITEMS: MenuItemType[] = [
       { label: "E'lonlar", path: '/news?category=elonlar', i18nKey: 'menu.announcements' },
       { label: 'Fotogalereya', path: '/photo-gallery', i18nKey: 'menu.gallery' },
       { label: 'Art Galereya', path: '/art-gallery', i18nKey: 'menu.art_gallery' },
-      { label: "Bog'lanish uchun", path: '/#contact', i18nKey: 'menu.contact' }
+      { label: "Bog'lanish uchun", path: '/?section=contact', i18nKey: 'menu.contact' }
     ]
   },
   {

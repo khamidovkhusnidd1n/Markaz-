@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { BackendAPI } from '../services/backend';
@@ -8,18 +8,20 @@ const VirtualQabulxona: React.FC = () => {
   const { t } = useTranslation();
   const { refreshData } = useApp();
   const location = useLocation();
+  const navigate = useNavigate();
+  const { tab: routeTab } = useParams<{ tab?: string }>();
   const [activeTab, setActiveTab] = useState<'murojaat' | 'ariza'>('murojaat');
 
   useEffect(() => {
-    // Both hash (#ariza) and query (?tab=ariza) support for backwards compatibility
+    // Support /virtual-qabulxona/:tab, ?tab=ariza, and legacy #ariza
     const hash = location.hash?.replace('#', '');
     const params = new URLSearchParams(location.search);
-    const tab = params.get('tab') || hash;
+    const tab = routeTab || params.get('tab') || hash;
     
     if (tab === 'ariza' || tab === 'murojaat') {
       setActiveTab(tab as 'murojaat' | 'ariza');
     }
-  }, [location.hash, location.search]);
+  }, [routeTab, location.hash, location.search]);
   
   const [appealForm, setAppealForm] = useState({
     full_name: '',
@@ -55,13 +57,13 @@ const VirtualQabulxona: React.FC = () => {
         <div className="flex justify-center mb-8">
           <div className="bg-white rounded-xl shadow-sm p-1 flex flex-col sm:flex-row w-full sm:w-auto">
             <button
-              onClick={() => setActiveTab('murojaat')}
+              onClick={() => { setActiveTab('murojaat'); navigate('/virtual-qabulxona/murojaat', { replace: true }); }}
               className={`px-6 py-3 rounded-lg font-bold transition-colors w-full sm:w-auto ${activeTab === 'murojaat' ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100'}`}
             >
               {t('virtual_reception.tab_appeal')}
             </button>
             <button
-              onClick={() => setActiveTab('ariza')}
+              onClick={() => { setActiveTab('ariza'); navigate('/virtual-qabulxona/ariza', { replace: true }); }}
               className={`px-6 py-3 rounded-lg font-bold transition-colors w-full sm:w-auto ${activeTab === 'ariza' ? 'bg-blue-700 text-white' : 'text-slate-600 hover:bg-slate-100'}`}
             >
               {t('virtual_reception.tab_application')}

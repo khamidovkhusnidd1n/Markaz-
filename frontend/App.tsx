@@ -67,6 +67,7 @@ const App: React.FC = () => {
               <Route path="/news" element={<NewsList />} />
               <Route path="/news/:id" element={<NewsDetail />} />
               <Route path="/virtual-qabulxona" element={<VirtualQabulxona />} />
+              <Route path="/virtual-qabulxona/:tab" element={<VirtualQabulxona />} />
               <Route path="/departments" element={<Departments />} />
               <Route path="/departments/:slug" element={<DepartmentPage />} />
               <Route path="/library" element={<Library />} />
