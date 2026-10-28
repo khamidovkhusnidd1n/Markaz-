@@ -178,6 +178,17 @@ const Home: React.FC = () => {
     return countryName;
   };
 
+  const rawMoHigherEdu = Number(stats?.reportDetails?.moHigherEdu ?? 284);
+  const rawMoCultureMinistry = Number(stats?.reportDetails?.moCultureMinistry ?? 740);
+  const rawMoArtAcademy = Number(stats?.reportDetails?.moArtAcademy ?? 578);
+  const rawMoShortCourses = Number(stats?.reportDetails?.moShortCourses ?? 141);
+  const computedMoSum = rawMoHigherEdu + rawMoCultureMinistry + rawMoArtAcademy + rawMoShortCourses;
+
+  const rawQtPainting = Number(stats?.reportDetails?.qtPainting ?? 0);
+  const rawQtEmbroidery = Number(stats?.reportDetails?.qtEmbroidery ?? 0);
+  const rawQtGoldEmbroidery = Number(stats?.reportDetails?.qtGoldEmbroidery ?? 0);
+  const computedQtSum = rawQtPainting + rawQtEmbroidery + rawQtGoldEmbroidery;
+
   const reportDetails = {
     sectionBadge: resolveReportText(stats?.reportDetails?.sectionBadge, 'section_badge'),
     sectionTitle: resolveReportText(stats?.reportDetails?.sectionTitle, 'section_title'),
@@ -185,23 +196,23 @@ const Home: React.FC = () => {
     card1Title: resolveReportText(stats?.reportDetails?.card1Title, 'card1_title'),
     card1Summary: resolveReportText(stats?.reportDetails?.card1Summary, 'card1_summary'),
     moTotalLabel: resolveReportText(stats?.reportDetails?.moTotalLabel, 'mo_total_label'),
-    moTotal: stats?.reportDetails?.moTotal ?? 1743,
+    moTotal: computedMoSum > 0 ? computedMoSum : Number(stats?.reportDetails?.moTotal ?? 1743),
     moHigherEduLabel: resolveReportText(stats?.reportDetails?.moHigherEduLabel, 'mo_higher_edu_label'),
-    moHigherEdu: stats?.reportDetails?.moHigherEdu ?? 284,
+    moHigherEdu: rawMoHigherEdu,
     moCultureMinistryLabel: resolveReportText(stats?.reportDetails?.moCultureMinistryLabel, 'mo_culture_ministry_label'),
-    moCultureMinistry: stats?.reportDetails?.moCultureMinistry ?? 740,
+    moCultureMinistry: rawMoCultureMinistry,
     moArtAcademyLabel: resolveReportText(stats?.reportDetails?.moArtAcademyLabel, 'mo_art_academy_label'),
-    moArtAcademy: stats?.reportDetails?.moArtAcademy ?? 578,
+    moArtAcademy: rawMoArtAcademy,
     moShortCoursesLabel: resolveReportText(stats?.reportDetails?.moShortCoursesLabel, 'mo_short_courses_label'),
-    moShortCourses: stats?.reportDetails?.moShortCourses ?? 141,
+    moShortCourses: rawMoShortCourses,
     qtTotalLabel: resolveReportText(stats?.reportDetails?.qtTotalLabel, 'qt_total_label'),
-    qtTotal: stats?.reportDetails?.qtTotal ?? 389,
+    qtTotal: computedQtSum > 0 ? computedQtSum : Number(stats?.reportDetails?.qtTotal ?? 389),
     qtPaintingLabel: resolveReportText(stats?.reportDetails?.qtPaintingLabel, 'qt_painting_label'),
-    qtPainting: stats?.reportDetails?.qtPainting ?? 0,
+    qtPainting: rawQtPainting,
     qtEmbroideryLabel: resolveReportText(stats?.reportDetails?.qtEmbroideryLabel, 'qt_embroidery_label'),
-    qtEmbroidery: stats?.reportDetails?.qtEmbroidery ?? 0,
+    qtEmbroidery: rawQtEmbroidery,
     qtGoldEmbroideryLabel: resolveReportText(stats?.reportDetails?.qtGoldEmbroideryLabel, 'qt_gold_embroidery_label'),
-    qtGoldEmbroidery: stats?.reportDetails?.qtGoldEmbroidery ?? 0,
+    qtGoldEmbroidery: rawQtGoldEmbroidery,
     card2Badge: resolveReportText(stats?.reportDetails?.card2Badge, 'card2_badge'),
     card2Title: resolveReportText(stats?.reportDetails?.card2Title, 'card2_title'),
     card2Summary: resolveReportText(stats?.reportDetails?.card2Summary, 'card2_summary'),
@@ -268,23 +279,15 @@ const Home: React.FC = () => {
     .map(s => s.trim())
     .filter(Boolean);
 
-  const displayedCountriesCount = countriesArray.length > 0
-    ? (reportDetails.intlCountriesCount > 0 ? reportDetails.intlCountriesCount : countriesArray.length)
-    : 0;
-
-  const displayedOrgsCount = customOrgsArray.length > 0
-    ? (reportDetails.intlOrganizationsCount > 0 ? reportDetails.intlOrganizationsCount : customOrgsArray.length)
-    : 0;
-
-  const displayedProjectsCount = customProjectsArray.length > 0
-    ? (reportDetails.intlProjectsCount > 0 ? reportDetails.intlProjectsCount : customProjectsArray.length)
-    : 0;
+  const displayedCountriesCount = countriesArray.length;
+  const displayedOrgsCount = customOrgsArray.length;
+  const displayedProjectsCount = customProjectsArray.length;
 
   const safeStudentsCount = stats?.studentsCount || [];
-  const sumMalaka = safeStudentsCount.reduce((sum, item) => sum + (item.count || 0), 0);
-  const sumQayta = safeStudentsCount.reduce((sum, item) => sum + (item.retraining || 0), 0);
-  const totalMalaka = reportDetails.moTotal > 0 ? reportDetails.moTotal : sumMalaka;
-  const totalQayta = reportDetails.qtTotal > 0 ? reportDetails.qtTotal : sumQayta;
+  const sumMalaka = safeStudentsCount.reduce((sum, item) => sum + (Number(item.count) || 0), 0);
+  const sumQayta = safeStudentsCount.reduce((sum, item) => sum + (Number(item.retraining) || 0), 0);
+  const totalMalaka = sumMalaka > 0 ? sumMalaka : reportDetails.moTotal;
+  const totalQayta = sumQayta > 0 ? sumQayta : reportDetails.qtTotal;
   const totalOverall = totalMalaka + totalQayta;
 
   const distributionData = [
@@ -598,127 +601,126 @@ const Home: React.FC = () => {
       </section>
 
       {/* ALOHIDA BO'LIM: Markaz faoliyati statistikasi va xalqaro aloqalar (Umumiy taqsimotdan yuqorida) */}
-      <section className="py-16 bg-gradient-to-b from-slate-50 via-white to-slate-50/70 border-y border-slate-200/60">
+      <section className="py-16 bg-slate-50/70 border-y border-slate-200/80">
         <div className="container mx-auto px-6">
           {/* Bo'lim sarlavhasi */}
-          <div className="mb-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="mb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-slate-200">
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-xs font-extrabold uppercase tracking-wider mb-3">
-                <TrendingUp size={14} />
-                <span>{reportDetails.sectionBadge}</span>
-              </div>
-              <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-blue-800 mb-2">
+                {reportDetails.sectionBadge}
+              </p>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
                 {reportDetails.sectionTitle}
               </h2>
             </div>
 
-            {/* Yuqori tezkor ko'rsatkichlar (Summary KPI Pills) */}
+            {/* Yuqori tezkor ko'rsatkichlar */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <button
                 type="button"
                 onClick={() => setActiveStatsModal('training')}
-                className="px-4 py-3 rounded-2xl bg-white hover:bg-emerald-50/60 border border-emerald-200/80 shadow-sm text-left transition-all group"
+                className="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 border-l-4 border-l-emerald-600 shadow-sm text-left transition-colors"
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-emerald-700">{t('home.charts_mo')}</p>
-                <p className="text-xl md:text-2xl font-black text-emerald-600 mt-0.5">{reportDetails.moTotal} <small className="text-xs font-bold text-slate-500">{t('home.stats_report.unit_person')}</small></p>
+                <p className="text-[11px] font-semibold text-slate-500">{t('home.charts_mo')}</p>
+                <p className="text-xl font-bold text-slate-900 mt-0.5 tabular-nums">
+                  {reportDetails.moTotal} <span className="text-xs font-normal text-slate-500">{t('home.stats_report.unit_person')}</span>
+                </p>
               </button>
               <button
                 type="button"
                 onClick={() => setActiveStatsModal('training')}
-                className="px-4 py-3 rounded-2xl bg-white hover:bg-teal-50/60 border border-teal-200/80 shadow-sm text-left transition-all group"
+                className="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 border-l-4 border-l-blue-600 shadow-sm text-left transition-colors"
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-teal-700">{t('home.charts_qt')}</p>
-                <p className="text-xl md:text-2xl font-black text-teal-600 mt-0.5">{reportDetails.qtTotal} <small className="text-xs font-bold text-slate-500">{t('home.stats_report.unit_person')}</small></p>
+                <p className="text-[11px] font-semibold text-slate-500">{t('home.charts_qt')}</p>
+                <p className="text-xl font-bold text-slate-900 mt-0.5 tabular-nums">
+                  {reportDetails.qtTotal} <span className="text-xs font-normal text-slate-500">{t('home.stats_report.unit_person')}</span>
+                </p>
               </button>
               <button
                 type="button"
                 onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                className="px-4 py-3 rounded-2xl bg-white hover:bg-blue-50/60 border border-blue-200/80 shadow-sm text-left transition-all group"
+                className="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 border-l-4 border-l-indigo-600 shadow-sm text-left transition-colors"
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-blue-700">{reportDetails.intlCountriesLabel}</p>
-                <p className="text-xl md:text-2xl font-black text-blue-600 mt-0.5">{displayedCountriesCount} <small className="text-xs font-bold text-slate-500">{t('home.stats_report.unit_count')}</small></p>
+                <p className="text-[11px] font-semibold text-slate-500">{reportDetails.intlCountriesLabel}</p>
+                <p className="text-xl font-bold text-slate-900 mt-0.5 tabular-nums">
+                  {displayedCountriesCount} <span className="text-xs font-normal text-slate-500">{t('home.stats_report.unit_count')}</span>
+                </p>
               </button>
               <button
                 type="button"
                 onClick={() => { setIntlModalTab('organizations'); setActiveStatsModal('international'); }}
-                className="px-4 py-3 rounded-2xl bg-white hover:bg-indigo-50/60 border border-indigo-200/80 shadow-sm text-left transition-all group"
+                className="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 border-l-4 border-l-slate-700 shadow-sm text-left transition-colors"
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 group-hover:text-indigo-700">{reportDetails.intlOrganizationsLabel}</p>
-                <p className="text-xl md:text-2xl font-black text-indigo-600 mt-0.5">{displayedOrgsCount} <small className="text-xs font-bold text-slate-500">{t('home.stats_report.unit_count')}</small></p>
+                <p className="text-[11px] font-semibold text-slate-500">{reportDetails.intlOrganizationsLabel}</p>
+                <p className="text-xl font-bold text-slate-900 mt-0.5 tabular-nums">
+                  {displayedOrgsCount} <span className="text-xs font-normal text-slate-500">{t('home.stats_report.unit_count')}</span>
+                </p>
               </button>
             </div>
           </div>
 
-          {/* 2 ta Asosiy Karta: O'quv faoliyati va Xalqaro aloqalar */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-            {/* Chap karta (7 ustun): O'quv faoliyati — Malaka oshirish va Qayta tayyorlash alohida ustunlarda */}
+          {/* 2 ta Asosiy Panel: O'quv faoliyati va Xalqaro aloqalar */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            {/* Chap panel (7 ustun): O'quv faoliyati */}
             <div
               onClick={() => setActiveStatsModal('training')}
-              className="lg:col-span-7 group cursor-pointer bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200/80 hover:border-emerald-400 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between overflow-hidden"
+              className="lg:col-span-7 group cursor-pointer bg-white rounded-2xl shadow-sm hover:shadow-md border border-slate-200 transition-all duration-200 flex flex-col justify-between"
             >
-              {/* Karta yuqori chizig'i */}
-              <div className="h-2 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-blue-600" />
-
               <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-emerald-100/80 text-emerald-800 text-xs font-extrabold uppercase tracking-wider">
-                      <GraduationCap size={14} />
-                      {reportDetails.card1Badge}
-                    </span>
-                    <span className="px-3 py-1 rounded-full bg-slate-100 group-hover:bg-emerald-600 text-slate-700 group-hover:text-white text-xs font-bold flex items-center gap-1 transition-colors">
+                  <div className="flex items-start justify-between gap-4 pb-4 mb-5 border-b border-slate-100">
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 block mb-1">
+                        {reportDetails.card1Badge}
+                      </span>
+                      <h3 className="text-xl md:text-2xl font-bold text-slate-900 group-hover:text-blue-900 transition-colors">
+                        {reportDetails.card1Title}
+                      </h3>
+                    </div>
+                    <span className="px-3 py-1.5 rounded-lg bg-slate-50 group-hover:bg-slate-900 text-slate-700 group-hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-slate-200 group-hover:border-slate-900 transition-colors shrink-0">
                       {t('home.stats_report.detail_modal_btn')} <ArrowUpRight size={14} />
                     </span>
                   </div>
 
-                  <h3 className="text-2xl font-black text-slate-900 mb-3 group-hover:text-emerald-700 transition-colors">
-                    {reportDetails.card1Title}
-                  </h3>
-
                   {reportDetails.card1Summary && (
-                    <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-emerald-50/70 via-slate-50 to-blue-50/40 border border-emerald-100/80 text-slate-700 text-xs md:text-sm leading-relaxed whitespace-pre-line">
+                    <p className="mb-6 text-slate-600 text-sm leading-relaxed pl-4 border-l-2 border-slate-300 whitespace-pre-line">
                       {reportDetails.card1Summary}
-                    </div>
+                    </p>
                   )}
 
-                  {/* Ikki alohida blok: 1) Malaka oshirish  2) Qayta tayyorlash */}
-                  <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
-                    {/* 1-Blok: Malaka oshirish (1743 nafar) */}
-                    <div className="md:col-span-7 bg-slate-50/80 rounded-2xl p-5 border border-slate-200/70">
-                      <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-slate-200">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shadow-sm shadow-emerald-600/20 shrink-0">
-                            <GraduationCap size={18} />
-                          </div>
-                          <div>
-                            <p className="text-[11px] font-bold uppercase tracking-wider text-emerald-700">{t('home.stats_report.direction_1')}</p>
-                            <h4 className="font-black text-slate-900 text-sm md:text-base leading-tight">{reportDetails.moTotalLabel}</h4>
-                          </div>
+                  {/* Ikki ustunli jadval ko'rinishidagi taqsimot */}
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                    {/* 1-ustun: Malaka oshirish */}
+                    <div className="md:col-span-7 bg-slate-50/70 rounded-xl p-5 border border-slate-200/80">
+                      <div className="flex items-baseline justify-between pb-3 mb-3 border-b border-slate-200">
+                        <div>
+                          <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">{t('home.stats_report.direction_1')}</span>
+                          <h4 className="font-bold text-slate-900 text-base">{reportDetails.moTotalLabel}</h4>
                         </div>
                         <div className="text-right shrink-0">
-                          <span className="text-2xl font-black text-emerald-600">{reportDetails.moTotal}</span>
-                          <span className="block text-[11px] font-bold text-slate-500">{t('home.stats_report.unit_person')}</span>
+                          <span className="text-2xl font-bold text-emerald-700 tabular-nums">{reportDetails.moTotal}</span>
+                          <span className="ml-1 text-xs text-slate-500">{t('home.stats_report.unit_person')}</span>
                         </div>
                       </div>
 
-                      <div className="space-y-2.5">
+                      <div className="divide-y divide-slate-200/70">
                         {[
-                          { label: reportDetails.moHigherEduLabel, val: reportDetails.moHigherEdu, bar: 'bg-emerald-500' },
-                          { label: reportDetails.moCultureMinistryLabel, val: reportDetails.moCultureMinistry, bar: 'bg-teal-500' },
-                          { label: reportDetails.moArtAcademyLabel, val: reportDetails.moArtAcademy, bar: 'bg-cyan-600' },
-                          { label: reportDetails.moShortCoursesLabel, val: reportDetails.moShortCourses, bar: 'bg-blue-500' },
+                          { label: reportDetails.moHigherEduLabel, val: reportDetails.moHigherEdu },
+                          { label: reportDetails.moCultureMinistryLabel, val: reportDetails.moCultureMinistry },
+                          { label: reportDetails.moArtAcademyLabel, val: reportDetails.moArtAcademy },
+                          { label: reportDetails.moShortCoursesLabel, val: reportDetails.moShortCourses },
                         ].map((row, idx) => {
                           const pct = reportDetails.moTotal > 0 ? Math.round((row.val / reportDetails.moTotal) * 100) : 0;
                           return (
-                            <div key={idx} className="bg-white p-3 rounded-xl border border-slate-200/60 shadow-sm">
-                              <div className="flex items-center justify-between gap-2 text-xs mb-1.5">
-                                <span className="font-semibold text-slate-700 leading-snug">{row.label}</span>
-                                <span className="font-black text-slate-900 shrink-0 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-800">
-                                  {row.val} {t('home.stats_report.unit_person')}
+                            <div key={idx} className="py-2.5 first:pt-1 last:pb-0">
+                              <div className="flex items-center justify-between gap-3 text-xs md:text-sm">
+                                <span className="text-slate-700 leading-snug">{row.label}</span>
+                                <span className="font-bold text-slate-900 shrink-0 tabular-nums">
+                                  {row.val} <span className="font-normal text-slate-500 text-xs">{t('home.stats_report.unit_person')}</span>
                                 </span>
                               </div>
-                              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                                <div className={`h-full ${row.bar} rounded-full`} style={{ width: `${Math.min(100, pct)}%` }} />
+                              <div className="w-full h-1 bg-slate-200/80 rounded-full overflow-hidden mt-1.5">
+                                <div className="h-full bg-emerald-600 rounded-full" style={{ width: `${Math.min(100, pct)}%` }} />
                               </div>
                             </div>
                           );
@@ -726,37 +728,32 @@ const Home: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* 2-Blok: Qayta tayyorlash (389 nafar) */}
-                    <div className="md:col-span-5 bg-blue-50/40 rounded-2xl p-5 border border-blue-200/60 flex flex-col justify-between">
+                    {/* 2-ustun: Qayta tayyorlash */}
+                    <div className="md:col-span-5 bg-slate-50/70 rounded-xl p-5 border border-slate-200/80 flex flex-col justify-between">
                       <div>
-                        <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-blue-200/60">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-sm shadow-blue-600/20 shrink-0">
-                              <Award size={18} />
-                            </div>
-                            <div>
-                              <p className="text-[11px] font-bold uppercase tracking-wider text-blue-700">{t('home.stats_report.direction_2')}</p>
-                              <h4 className="font-black text-slate-900 text-sm md:text-base leading-tight">{reportDetails.qtTotalLabel}</h4>
-                            </div>
+                        <div className="flex items-baseline justify-between pb-3 mb-3 border-b border-slate-200">
+                          <div>
+                            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">{t('home.stats_report.direction_2')}</span>
+                            <h4 className="font-bold text-slate-900 text-base">{reportDetails.qtTotalLabel}</h4>
                           </div>
                           <div className="text-right shrink-0">
-                            <span className="text-2xl font-black text-blue-600">{reportDetails.qtTotal}</span>
-                            <span className="block text-[11px] font-bold text-slate-500">{t('home.stats_report.unit_person')}</span>
+                            <span className="text-2xl font-bold text-blue-700 tabular-nums">{reportDetails.qtTotal}</span>
+                            <span className="ml-1 text-xs text-slate-500">{t('home.stats_report.unit_person')}</span>
                           </div>
                         </div>
 
-                        <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2.5">{t('home.stats_report.by_directions')}</p>
-                        <div className="space-y-2">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">{t('home.stats_report.by_directions')}</p>
+                        <div className="divide-y divide-slate-200/70">
                           {[
                             { label: reportDetails.qtPaintingLabel, val: reportDetails.qtPainting },
                             { label: reportDetails.qtEmbroideryLabel, val: reportDetails.qtEmbroidery },
                             { label: reportDetails.qtGoldEmbroideryLabel, val: reportDetails.qtGoldEmbroidery },
                           ].map((qtRow, idx) => (
-                            <div key={idx} className="bg-white p-3 rounded-xl border border-blue-100 shadow-sm flex items-center justify-between gap-2 text-xs">
-                              <span className="font-semibold text-slate-700 leading-snug">• {qtRow.label}</span>
+                            <div key={idx} className="py-2.5 flex items-center justify-between gap-2 text-xs md:text-sm">
+                              <span className="text-slate-700 leading-snug">{qtRow.label}</span>
                               {qtRow.val > 0 && (
-                                <span className="font-black text-blue-700 shrink-0 px-2 py-0.5 rounded-md bg-blue-50">
-                                  {qtRow.val} {t('home.stats_report.unit_person')}
+                                <span className="font-bold text-slate-900 shrink-0 tabular-nums">
+                                  {qtRow.val} <span className="font-normal text-slate-500 text-xs">{t('home.stats_report.unit_person')}</span>
                                 </span>
                               )}
                             </div>
@@ -764,128 +761,131 @@ const Home: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Umumiy Jami Tinglovchilar xulosasi */}
-                      <div className="mt-4 pt-3 border-t border-blue-200/60 flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-600">{t('home.stats_report.total_coverage')}</span>
-                        <span className="text-base font-black text-slate-900">{reportDetails.moTotal + reportDetails.qtTotal} {t('home.stats_report.unit_person')}</span>
+                      <div className="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between">
+                        <span className="text-xs font-medium text-slate-500">{t('home.stats_report.total_coverage')}</span>
+                        <span className="text-base font-bold text-slate-900 tabular-nums">
+                          {reportDetails.moTotal + reportDetails.qtTotal} {t('home.stats_report.unit_person')}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-emerald-700">
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-slate-600 group-hover:text-slate-900">
                   <span>{t('home.stats_report.open_all_directions')}</span>
                   <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </div>
               </div>
             </div>
 
-            {/* O'ng karta (5 ustun): Xalqaro aloqalar va davlat bayroqlari */}
-            <div
-              className="lg:col-span-5 bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-200/80 hover:border-blue-400 hover:shadow-2xl transition-all duration-300 flex flex-col justify-between overflow-hidden"
-            >
-              <div className="h-2 w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600" />
-
+            {/* O'ng panel (5 ustun): Xalqaro aloqalar */}
+            <div className="lg:col-span-5 bg-white rounded-2xl shadow-sm hover:shadow-md border border-slate-200 transition-all duration-200 flex flex-col justify-between">
               <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-blue-100/80 text-blue-800 text-xs font-extrabold uppercase tracking-wider">
-                      <Globe size={14} />
-                      {reportDetails.card2Badge}
-                    </span>
+                  <div className="flex items-start justify-between gap-4 pb-4 mb-5 border-b border-slate-100">
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-wider text-blue-800 block mb-1">
+                        {reportDetails.card2Badge}
+                      </span>
+                      <h3 className="text-xl md:text-2xl font-bold text-slate-900">
+                        {reportDetails.card2Title}
+                      </h3>
+                    </div>
                     <button
                       type="button"
                       onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                      className="px-3 py-1 rounded-full bg-slate-100 hover:bg-blue-600 text-slate-700 hover:text-white text-xs font-bold flex items-center gap-1 transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-900 text-slate-700 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-slate-200 hover:border-slate-900 transition-colors shrink-0"
                     >
                       {t('home.stats_report.detail_modal_btn')} <ArrowUpRight size={14} />
                     </button>
                   </div>
 
-                  <h3 className="text-2xl font-black text-slate-900 mb-3">
-                    {reportDetails.card2Title}
-                  </h3>
-
                   {reportDetails.card2Summary && (
-                    <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-50/70 via-slate-50 to-indigo-50/40 border border-blue-100/80 text-slate-700 text-xs md:text-sm leading-relaxed whitespace-pre-line">
+                    <p className="mb-6 text-slate-600 text-sm leading-relaxed pl-4 border-l-2 border-slate-300 whitespace-pre-line">
                       {reportDetails.card2Summary}
-                    </div>
+                    </p>
                   )}
 
-                  {/* 3 ta Interaktiv tugma */}
-                  <div className="space-y-3">
+                  {/* 3 ta Ko'rsatkich qatori */}
+                  <div className="divide-y divide-slate-200 border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50">
                     <button
                       type="button"
                       onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                      className="w-full text-left group/btn flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/90 to-indigo-50/40 hover:from-blue-100 hover:to-indigo-100/70 border border-blue-200/80 transition-all shadow-sm"
+                      className="w-full text-left group/btn flex items-center justify-between px-4 py-3.5 hover:bg-white transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
-                          <Globe size={20} />
+                        <div className="w-9 h-9 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center shrink-0">
+                          <Globe size={18} />
                         </div>
                         <div>
-                          <p className="text-sm font-black text-slate-900 group-hover/btn:text-blue-700 transition-colors">
+                          <p className="text-sm font-bold text-slate-900 group-hover/btn:text-blue-800 transition-colors">
                             {reportDetails.intlCountriesLabel}
                           </p>
-                          <p className="text-[11px] text-slate-500">{t('home.stats_report.view_countries_list')}</p>
+                          <p className="text-xs text-slate-500">{t('home.stats_report.view_countries_list')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-2xl font-black text-blue-700">{displayedCountriesCount} <small className="text-xs font-bold">{t('home.stats_report.unit_count')}</small></span>
-                        <ChevronRight size={18} className="text-blue-600 group-hover/btn:translate-x-1 transition-transform" />
+                        <span className="text-xl font-bold text-slate-900 tabular-nums">
+                          {displayedCountriesCount} <span className="text-xs font-normal text-slate-500">{t('home.stats_report.unit_count')}</span>
+                        </span>
+                        <ChevronRight size={16} className="text-slate-400 group-hover/btn:translate-x-0.5 transition-transform" />
                       </div>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => { setIntlModalTab('organizations'); setActiveStatsModal('international'); }}
-                      className="w-full text-left group/btn flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-indigo-50/90 to-purple-50/40 hover:from-indigo-100 hover:to-purple-100/70 border border-indigo-200/80 transition-all shadow-sm"
+                      className="w-full text-left group/btn flex items-center justify-between px-4 py-3.5 hover:bg-white transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-500/20 shrink-0">
-                          <Briefcase size={20} />
+                        <div className="w-9 h-9 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 flex items-center justify-center shrink-0">
+                          <Briefcase size={18} />
                         </div>
                         <div>
-                          <p className="text-sm font-black text-slate-900 group-hover/btn:text-indigo-700 transition-colors">
+                          <p className="text-sm font-bold text-slate-900 group-hover/btn:text-blue-800 transition-colors">
                             {reportDetails.intlOrganizationsLabel}
                           </p>
-                          <p className="text-[11px] text-slate-500">{t('home.stats_report.memorandum_institutions')}</p>
+                          <p className="text-xs text-slate-500">{t('home.stats_report.memorandum_institutions')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-2xl font-black text-indigo-700">{displayedOrgsCount} <small className="text-xs font-bold">{t('home.stats_report.unit_count')}</small></span>
-                        <ChevronRight size={18} className="text-indigo-600 group-hover/btn:translate-x-1 transition-transform" />
+                        <span className="text-xl font-bold text-slate-900 tabular-nums">
+                          {displayedOrgsCount} <span className="text-xs font-normal text-slate-500">{t('home.stats_report.unit_count')}</span>
+                        </span>
+                        <ChevronRight size={16} className="text-slate-400 group-hover/btn:translate-x-0.5 transition-transform" />
                       </div>
                     </button>
 
                     <button
                       type="button"
                       onClick={() => { setIntlModalTab('projects'); setActiveStatsModal('international'); }}
-                      className="w-full text-left group/btn flex items-center justify-between p-3.5 rounded-2xl bg-gradient-to-r from-purple-50/90 to-pink-50/40 hover:from-purple-100 hover:to-pink-100/70 border border-purple-200/80 transition-all shadow-sm"
+                      className="w-full text-left group/btn flex items-center justify-between px-4 py-3.5 hover:bg-white transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-500/20 shrink-0">
-                          <Trophy size={20} />
+                        <div className="w-9 h-9 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center shrink-0">
+                          <Trophy size={18} />
                         </div>
                         <div>
-                          <p className="text-sm font-black text-slate-900 group-hover/btn:text-purple-700 transition-colors">
+                          <p className="text-sm font-bold text-slate-900 group-hover/btn:text-blue-800 transition-colors">
                             {reportDetails.intlProjectsLabel}
                           </p>
-                          <p className="text-[11px] text-slate-500">{t('home.stats_report.view_projects_list')}</p>
+                          <p className="text-xs text-slate-500">{t('home.stats_report.view_projects_list')}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-2xl font-black text-purple-700">{displayedProjectsCount} <small className="text-xs font-bold">{t('home.stats_report.unit_count')}</small></span>
-                        <ChevronRight size={18} className="text-purple-600 group-hover/btn:translate-x-1 transition-transform" />
+                        <span className="text-xl font-bold text-slate-900 tabular-nums">
+                          {displayedProjectsCount} <span className="text-xs font-normal text-slate-500">{t('home.stats_report.unit_count')}</span>
+                        </span>
+                        <ChevronRight size={16} className="text-slate-400 group-hover/btn:translate-x-0.5 transition-transform" />
                       </div>
                     </button>
                   </div>
 
-                  {/* Davlatlar bayroqlari bilan chiroyli grid */}
+                  {/* Davlatlar bayroqlari ro'yxati */}
                   <div className="mt-5 pt-4 border-t border-slate-100">
                     <div className="flex items-center justify-between mb-3">
-                      <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400">{t('home.stats_report.partner_countries')}</p>
-                      <span className="text-xs font-bold text-blue-600">{displayedCountriesCount} {t('home.stats_report.unit_countries')}</span>
+                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{t('home.stats_report.partner_countries')}</p>
+                      <span className="text-xs font-semibold text-slate-600">{displayedCountriesCount} {t('home.stats_report.unit_countries')}</span>
                     </div>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                       {countriesArray.map((country, i) => {
@@ -895,12 +895,12 @@ const Home: React.FC = () => {
                             key={i}
                             type="button"
                             onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                            className="px-3 py-2 rounded-xl bg-slate-50 hover:bg-blue-50 text-slate-800 hover:text-blue-800 text-xs font-bold transition-all flex items-center gap-2 border border-slate-200/80 hover:border-blue-300 shadow-sm"
+                            className="px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-medium transition-colors flex items-center gap-2 border border-slate-200/80"
                           >
                             {flagUrl ? (
-                              <img src={flagUrl} alt={country} className="w-5 h-3.5 object-cover rounded-[2px] shadow-sm shrink-0 border border-slate-200" />
+                              <img src={flagUrl} alt={country} className="w-5 h-3.5 object-cover rounded-[2px] shrink-0 border border-slate-200" />
                             ) : (
-                              <Globe size={13} className="text-blue-600 shrink-0" />
+                              <Globe size={13} className="text-slate-500 shrink-0" />
                             )}
                             <span className="truncate">{translateCountryName(country)}</span>
                           </button>
@@ -913,7 +913,7 @@ const Home: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                  className="mt-6 pt-4 border-t border-slate-100 w-full flex items-center justify-between text-xs font-bold text-blue-700 hover:text-blue-800"
+                  className="mt-6 pt-4 border-t border-slate-100 w-full flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-slate-900"
                 >
                   <span>{t('home.stats_report.open_intl_modal')}</span>
                   <ChevronRight size={16} />

@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from django.conf import settings
 
 DEFAULT_STATS_REPORT = {
@@ -60,6 +61,46 @@ DEFAULT_STATS_REPORT = {
 }
 
 
+def compute_auto_totals(data):
+    """Automatically compute totals from sub-items and lists."""
+    def to_int(val):
+        try:
+            return int(val or 0)
+        except (ValueError, TypeError):
+            return 0
+
+    mo_sum = (
+        to_int(data.get("mo_higher_edu"))
+        + to_int(data.get("mo_culture_ministry"))
+        + to_int(data.get("mo_art_academy"))
+        + to_int(data.get("mo_short_courses"))
+    )
+    if mo_sum > 0:
+        data["mo_total"] = mo_sum
+
+    qt_sum = (
+        to_int(data.get("qt_painting"))
+        + to_int(data.get("qt_embroidery"))
+        + to_int(data.get("qt_gold_embroidery"))
+    )
+    if qt_sum > 0:
+        data["qt_total"] = qt_sum
+
+    countries_raw = str(data.get("intl_countries_list") or "")
+    countries_list = [s.strip() for s in re.split(r"[\n,;]+", countries_raw) if s.strip()]
+    data["intl_countries_count"] = len(countries_list)
+
+    orgs_raw = str(data.get("intl_organizations_list") or "")
+    orgs_list = [s.strip() for s in re.split(r"\n+", orgs_raw) if s.strip()]
+    data["intl_organizations_count"] = len(orgs_list)
+
+    projs_raw = str(data.get("intl_projects_list") or "")
+    projs_list = [s.strip() for s in re.split(r"\n+", projs_raw) if s.strip()]
+    data["intl_projects_count"] = len(projs_list)
+
+    return data
+
+
 def get_report_file_path():
     media_root = getattr(settings, 'MEDIA_ROOT', None)
     if media_root:
@@ -79,7 +120,7 @@ def get_stats_report():
                     data.update(saved)
         except Exception:
             pass
-    return data
+    return compute_auto_totals(data)
 
 
 def save_stats_report(new_data):
@@ -87,6 +128,7 @@ def save_stats_report(new_data):
     for key in DEFAULT_STATS_REPORT.keys():
         if key in new_data and new_data[key] is not None:
             data[key] = new_data[key]
+    data = compute_auto_totals(data)
     path = get_report_file_path()
     try:
         with open(path, 'w', encoding='utf-8') as f:

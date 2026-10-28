@@ -1010,6 +1010,77 @@ class StatisticsAdmin(admin.ModelAdmin):
         }),
     )
 
+    def render_change_form(self, request, context, *args, **kwargs):
+        from django.utils.safestring import mark_safe
+        response = super().render_change_form(request, context, *args, **kwargs)
+        script = """
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function parseIntVal(id) {
+                var el = document.getElementById(id);
+                if (!el) return 0;
+                var v = parseInt(el.value, 10);
+                return isNaN(v) ? 0 : v;
+            }
+            function countLines(id, splitPattern) {
+                var el = document.getElementById(id);
+                if (!el || !el.value) return 0;
+                return el.value.split(splitPattern).map(function(s) { return s.trim(); }).filter(Boolean).length;
+            }
+            function recalcStats() {
+                var moSum = parseIntVal('id_mo_higher_edu') +
+                            parseIntVal('id_mo_culture_ministry') +
+                            parseIntVal('id_mo_art_academy') +
+                            parseIntVal('id_mo_short_courses');
+                var moTotalEl = document.getElementById('id_mo_total');
+                if (moTotalEl && moSum > 0) {
+                    moTotalEl.value = moSum;
+                }
+
+                var qtSum = parseIntVal('id_qt_painting') +
+                            parseIntVal('id_qt_embroidery') +
+                            parseIntVal('id_qt_gold_embroidery');
+                var qtTotalEl = document.getElementById('id_qt_total');
+                if (qtTotalEl && qtSum > 0) {
+                    qtTotalEl.value = qtSum;
+                }
+
+                var cCountEl = document.getElementById('id_intl_countries_count');
+                if (cCountEl && document.getElementById('id_intl_countries_list')) {
+                    cCountEl.value = countLines('id_intl_countries_list', /[\n,;]+/);
+                }
+
+                var oCountEl = document.getElementById('id_intl_organizations_count');
+                if (oCountEl && document.getElementById('id_intl_organizations_list')) {
+                    oCountEl.value = countLines('id_intl_organizations_list', /\n+/);
+                }
+
+                var pCountEl = document.getElementById('id_intl_projects_count');
+                if (pCountEl && document.getElementById('id_intl_projects_list')) {
+                    pCountEl.value = countLines('id_intl_projects_list', /\n+/);
+                }
+            }
+
+            var watchedIds = [
+                'id_mo_higher_edu', 'id_mo_culture_ministry', 'id_mo_art_academy', 'id_mo_short_courses',
+                'id_qt_painting', 'id_qt_embroidery', 'id_qt_gold_embroidery',
+                'id_intl_countries_list', 'id_intl_organizations_list', 'id_intl_projects_list'
+            ];
+            watchedIds.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', recalcStats);
+                    el.addEventListener('change', recalcStats);
+                }
+            });
+            recalcStats();
+        });
+        </script>
+        """
+        if hasattr(response, 'render'):
+            response.add_post_render_callback(lambda r: setattr(r, 'content', r.content.replace(b'</body>', script.encode('utf-8') + b'</body>')))
+        return response
+
     def has_add_permission(self, request):
         # Only allow one instance
         return not Statistics.objects.exists()
