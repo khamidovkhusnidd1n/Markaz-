@@ -220,8 +220,8 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <div className="w-10 h-10 sm:w-12 sm:h-12 2xl:w-11 2xl:h-11 min-[1850px]:w-12 min-[1850px]:h-12 rounded-full flex items-center justify-center overflow-hidden shrink-0">
               <img src={headerLogo} alt={t('layout.logo_alt', { name: siteName })} className="w-full h-full object-contain" />
             </div>
-            <div className="min-w-0 max-w-[200px] sm:max-w-[280px] md:max-w-[320px] 2xl:max-w-[165px] min-[1750px]:max-w-[195px] min-[1950px]:max-w-[240px]">
-              <h1 className="text-[9px] sm:text-[11px] md:text-[12px] 2xl:text-[9.5px] min-[1750px]:text-[10px] min-[1950px]:text-[11px] font-bold leading-tight text-blue-900 text-left line-clamp-4">{siteName}</h1>
+            <div className="min-w-0 max-w-[210px] sm:max-w-[290px] md:max-w-[340px] 2xl:max-w-[190px] min-[1750px]:max-w-[230px] min-[1950px]:max-w-[270px]">
+              <h1 className="text-[9px] sm:text-[11px] md:text-[12px] 2xl:text-[9.5px] min-[1750px]:text-[10.5px] min-[1950px]:text-[11.5px] font-bold leading-snug text-blue-900 text-left">{siteName}</h1>
             </div>
           </Link>
 
