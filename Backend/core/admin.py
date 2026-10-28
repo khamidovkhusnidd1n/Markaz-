@@ -1271,9 +1271,9 @@ class ApplicationAdmin(admin.ModelAdmin):
         ('🎓 Ta\'lim, Yo\'nalish va Yuklangan Hujjatlar (Diplom / Ilova / Portfolio)', {
             'fields': (
                 'application_type', 'direction', 'diploma_specialty',
-                'diploma_preview', 'diploma_file',
-                'diploma_supplement_preview', 'diploma_supplement_file',
-                'portfolio_preview', 'portfolio_file',
+                'diploma_preview',
+                'diploma_supplement_preview',
+                'portfolio_preview',
                 'status', 'admin_note',
             )
         }),
@@ -1305,10 +1305,6 @@ class ApplicationAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         editable = {
-            'diploma_specialty',
-            'diploma_file',
-            'diploma_supplement_file',
-            'portfolio_file',
             'status',
             'decision_type',
             'score_subjects',
