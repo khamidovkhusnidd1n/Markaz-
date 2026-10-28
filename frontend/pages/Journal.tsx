@@ -6,10 +6,34 @@ import { useTranslation } from 'react-i18next';
 
 interface BoardMember {
   name: string;
+  roleUz?: string;
+  roleRu?: string;
+  roleEn?: string;
   titleUz: string;
   titleRu: string;
   titleEn: string;
 }
+
+const CHIEF_EDITORS: BoardMember[] = [
+  {
+    name: "Davronbek Shukurov",
+    roleUz: "Bosh muharrir",
+    roleRu: "Главный редактор",
+    roleEn: "Editor-in-Chief",
+    titleUz: "San'atshunoslik fanlari falsafa doktori (PhD)",
+    titleRu: "Доктор философии (PhD) по искусствоведению",
+    titleEn: "PhD in Art Studies",
+  },
+  {
+    name: "Nodira Xasanova",
+    roleUz: "Bosh muharrir o'rinbosari",
+    roleRu: "Заместитель главного редактора",
+    roleEn: "Deputy Editor-in-Chief",
+    titleUz: "",
+    titleRu: "",
+    titleEn: "",
+  },
+];
 
 const EDITORIAL_BOARD: BoardMember[] = [
   {
@@ -229,6 +253,12 @@ const Journal: React.FC = () => {
     return m.titleUz;
   };
 
+  const getMemberRole = (m: BoardMember) => {
+    if (lang === 'ru') return m.roleRu;
+    if (lang === 'en') return m.roleEn;
+    return m.roleUz;
+  };
+
   const localizeCountryInName = (name: string) => {
     if (lang === 'uz') return name;
     const map: Record<string, { ru: string; en: string }> = {
@@ -306,6 +336,32 @@ const Journal: React.FC = () => {
         </div>
 
         <div className="space-y-8">
+          {/* Asosiy 1-2: Bosh muharrir va Bosh muharrir o'rinbosari */}
+          <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <div className="divide-y divide-slate-200">
+              {CHIEF_EDITORS.map((editor, idx) => (
+                <div key={idx} className="px-5 py-4 bg-white">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-900">
+                      {getMemberRole(editor)}
+                    </span>
+                    <span className="text-xs font-semibold text-slate-400 tabular-nums">
+                      0{idx + 1}
+                    </span>
+                  </div>
+                  <p className="text-base font-bold text-slate-900 leading-snug">
+                    {editor.name}
+                  </p>
+                  {getMemberTitle(editor) && (
+                    <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                      {getMemberTitle(editor)}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Tahrir hay'ati va Jamoatchilik kengashi */}
           <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
             <div className="grid grid-cols-2 border-b border-slate-200 bg-slate-50">
