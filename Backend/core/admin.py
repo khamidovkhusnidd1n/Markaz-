@@ -1257,7 +1257,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     """Admin configuration for Application model - I-116 buyruq asosida baholash va progress."""
     list_display = [
         'application_number_badge', 'full_name', 'application_type_display',
-        'direction', 'status', 'total_score_badge', 'decision_type', 'phone_link', 'created_at'
+        'direction', 'files_badge', 'status', 'total_score_badge', 'decision_type', 'phone_link', 'created_at'
     ]
     list_filter = ['application_type', 'status', 'decision_type', 'created_at']
     search_fields = ['application_number', 'full_name', 'workplace', 'direction', 'diploma_specialty', 'phone']
@@ -1268,8 +1268,11 @@ class ApplicationAdmin(admin.ModelAdmin):
         ('📱 Ariza beruvchi ma\'lumotlari', {
             'fields': ('application_number', 'full_name', 'workplace', 'phone', 'telegram_link')
         }),
-        ('🎓 Ta\'lim va Yo\'nalish tafsilotlari', {
-            'fields': ('application_type', 'direction', 'diploma_specialty')
+        ('🎓 Ta\'lim, Yo\'nalish va Yuklangan Hujjatlar (Diplom / Ilova / Portfolio)', {
+            'fields': (
+                'application_type', 'direction', 'diploma_specialty',
+                'diploma_file', 'diploma_supplement_file', 'portfolio_file'
+            )
         }),
         ('📊 Ekspert komissiyasi baholash varaqasi (I-116 buyruq, 4-ilova — 100 ballik tizim)', {
             'description': (
@@ -1302,6 +1305,9 @@ class ApplicationAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         editable = {
             'diploma_specialty',
+            'diploma_file',
+            'diploma_supplement_file',
+            'portfolio_file',
             'status',
             'decision_type',
             'score_subjects',
@@ -1314,6 +1320,20 @@ class ApplicationAdmin(admin.ModelAdmin):
             'admin_note',
         }
         return [f.name for f in self.model._meta.fields if f.name not in editable]
+
+    def files_badge(self, obj):
+        from django.utils.html import format_html
+        links = []
+        if obj.diploma_file:
+            links.append(f'<a href="{obj.diploma_file.url}" target="_blank" style="background:#eff6ff;color:#1d4ed8;padding:2px 6px;border-radius:4px;font-weight:600;text-decoration:none;margin-right:4px;">📄 Diplom</a>')
+        if obj.diploma_supplement_file:
+            links.append(f'<a href="{obj.diploma_supplement_file.url}" target="_blank" style="background:#f0fdf4;color:#15803d;padding:2px 6px;border-radius:4px;font-weight:600;text-decoration:none;margin-right:4px;">📑 Ilova</a>')
+        if obj.portfolio_file:
+            links.append(f'<a href="{obj.portfolio_file.url}" target="_blank" style="background:#fef3c7;color:#b45309;padding:2px 6px;border-radius:4px;font-weight:600;text-decoration:none;">🎨 Portfolio</a>')
+        if not links:
+            return '-'
+        return format_html(''.join(links))
+    files_badge.short_description = 'Hujjatlar'
 
     def has_add_permission(self, request):
         return True

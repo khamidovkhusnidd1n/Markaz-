@@ -72,6 +72,9 @@ export interface Application {
   workplace: string;
   direction: string;
   diplomaSpecialty?: string;
+  diplomaFileUrl?: string;
+  diplomaSupplementFileUrl?: string;
+  portfolioFileUrl?: string;
   phone: string;
   telegramLink?: string;
   status?: 'pending' | 'in_progress' | 'commission_review' | 'creative_exam' | 'resolved' | 'conditional_accepted' | 'rejected' | 'appeal';

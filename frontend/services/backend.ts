@@ -340,6 +340,9 @@ function transformApplication(item: any): Application {
     workplace: item.workplace || '',
     direction: item.direction || '',
     diplomaSpecialty: item.diploma_specialty || '',
+    diplomaFileUrl: item.diploma_file_url || '',
+    diplomaSupplementFileUrl: item.diploma_supplement_file_url || '',
+    portfolioFileUrl: item.portfolio_file_url || '',
     phone: item.phone || '',
     telegramLink: item.telegram_link || '',
     status: item.status || 'pending',
@@ -954,14 +957,37 @@ export const BackendAPI = {
     return apiRequest('/appeals/', { method: 'POST', body: JSON.stringify(payload) });
   },
 
-  async createApplication(payload: { full_name: string; application_type: 'professional_development' | 'retraining'; workplace: string; direction: string; diploma_specialty?: string; phone: string; telegram_link?: string }): Promise<Application> {
+  async createApplication(payload: {
+    full_name: string;
+    application_type: 'professional_development' | 'retraining';
+    workplace: string;
+    direction: string;
+    diploma_specialty?: string;
+    diploma_file?: File | null;
+    diploma_supplement_file?: File | null;
+    portfolio_file?: File | null;
+    phone: string;
+    telegram_link?: string;
+  }): Promise<Application> {
     if (payload.telegram_link) {
       const t = payload.telegram_link.trim();
       if (!t.startsWith('http')) {
         payload.telegram_link = t.startsWith('@') ? `https://t.me/${t.substring(1)}` : `https://t.me/${t}`;
       }
     }
-    const res = await apiRequest<any>('/applications/', { method: 'POST', body: JSON.stringify(payload) });
+    const formData = toFormData({
+      full_name: payload.full_name,
+      application_type: payload.application_type,
+      workplace: payload.workplace,
+      direction: payload.direction,
+      diploma_specialty: payload.diploma_specialty || '',
+      phone: payload.phone,
+      telegram_link: payload.telegram_link || '',
+      diploma_file: payload.diploma_file || null,
+      diploma_supplement_file: payload.diploma_supplement_file || null,
+      portfolio_file: payload.portfolio_file || null,
+    });
+    const res = await apiRequest<any>('/applications/', { method: 'POST', body: formData });
     return transformApplication(res);
   },
 

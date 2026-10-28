@@ -457,13 +457,20 @@ class ApplicationSerializer(serializers.ModelSerializer):
     status_display = serializers.CharField(source='get_status_display', read_only=True)
     decision_type_display = serializers.CharField(source='get_decision_type_display', read_only=True)
     application_number_display = serializers.SerializerMethodField()
+    diploma_file_url = serializers.SerializerMethodField()
+    diploma_supplement_file_url = serializers.SerializerMethodField()
+    portfolio_file_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
         fields = [
             'id', 'application_number', 'application_number_display',
             'full_name', 'application_type', 'application_type_display',
-            'workplace', 'direction', 'diploma_specialty', 'phone', 'telegram_link',
+            'workplace', 'direction', 'diploma_specialty',
+            'diploma_file', 'diploma_file_url',
+            'diploma_supplement_file', 'diploma_supplement_file_url',
+            'portfolio_file', 'portfolio_file_url',
+            'phone', 'telegram_link',
             'status', 'status_display',
             'decision_type', 'decision_type_display',
             'score_subjects', 'score_competencies', 'score_creative',
@@ -474,12 +481,30 @@ class ApplicationSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             'id', 'application_number', 'application_number_display',
+            'diploma_file_url', 'diploma_supplement_file_url', 'portfolio_file_url',
             'status', 'decision_type',
             'score_subjects', 'score_competencies', 'score_creative',
             'score_qualification', 'score_credits', 'score_experience',
             'score_portfolio', 'total_score',
             'admin_note', 'created_at', 'updated_at'
         ]
+
+    def _file_url(self, file_field):
+        if not file_field:
+            return None
+        request = self.context.get('request')
+        if request:
+            return request.build_absolute_uri(file_field.url)
+        return file_field.url
+
+    def get_diploma_file_url(self, obj):
+        return self._file_url(obj.diploma_file)
+
+    def get_diploma_supplement_file_url(self, obj):
+        return self._file_url(obj.diploma_supplement_file)
+
+    def get_portfolio_file_url(self, obj):
+        return self._file_url(obj.portfolio_file)
 
     def get_application_number_display(self, obj):
         if obj.application_number:

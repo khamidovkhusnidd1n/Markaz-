@@ -329,6 +329,24 @@ class Application(BaseModel):
         default='',
         verbose_name="Diplom bo'yicha ma'lumoti va mutaxassisligi"
     )
+    diploma_file = models.FileField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Diplom nusxasi (PDF / Rasm)"
+    )
+    diploma_supplement_file = models.FileField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Diplom ilovasi — fanlar va soatlar (PDF / Rasm)"
+    )
+    portfolio_file = models.FileField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Ijodiy portfolio (5–10 ta ijodiy ish, PDF / ZIP / Rasm)"
+    )
     phone = models.CharField(max_length=50, verbose_name="Telefon raqami")
     telegram_link = models.URLField(blank=True, verbose_name="Telegram link")
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending', verbose_name="Jarayon bosqichi (Holati)")

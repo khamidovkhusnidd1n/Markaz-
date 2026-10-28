@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
-import { Search, CheckCircle2, Clock, AlertCircle, XCircle, FileText, Copy, Check } from 'lucide-react';
+import { Search, CheckCircle2, Clock, AlertCircle, XCircle, FileText, Copy, Check, Upload, ExternalLink } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { BackendAPI } from '../services/backend';
@@ -51,6 +51,10 @@ const VirtualQabulxona: React.FC = () => {
     telegram_link: '',
   });
 
+  const [diplomaFile, setDiplomaFile] = useState<File | null>(null);
+  const [diplomaSupplementFile, setDiplomaSupplementFile] = useState<File | null>(null);
+  const [portfolioFile, setPortfolioFile] = useState<File | null>(null);
+
   const [submissionMessage, setSubmissionMessage] = useState('');
   const [createdAppNumber, setCreatedAppNumber] = useState('');
   const [copiedAppNum, setCopiedAppNum] = useState(false);
@@ -84,9 +88,54 @@ const VirtualQabulxona: React.FC = () => {
       en: "Check Application Status",
     }[lang],
     diplomaPlaceholder: {
-      uz: "Diplom bo'yicha ma'lumotingiz va mutaxassisligingiz (ixtiyoriy)",
-      ru: "Образование и специальность по диплому (необязательно)",
-      en: "Education & specialty according to diploma (optional)",
+      uz: "Diplom bo'yicha ma'lumotingiz va mutaxassisligingiz (masalan: 60210500 - Rangtasvir)",
+      ru: "Образование и специальность по диплому (например: 60210500 - Живопись)",
+      en: "Education & specialty according to diploma (e.g., 60210500 - Painting)",
+    }[lang],
+    docsSectionTitle: {
+      uz: "Hujjatlarni biriktirish (I-116-sonli buyruq bo'yicha)",
+      ru: "Прикрепление документов (согласно приказу № I-116)",
+      en: "Attach Documents (pursuant to Order No. I-116)",
+    }[lang],
+    diplomaFileLabel: {
+      uz: "1. Diplom nusxasi (PDF yoki rasm)",
+      ru: "1. Копия диплома (PDF или фото)",
+      en: "1. Copy of Diploma (PDF or image)",
+    }[lang],
+    supplementFileLabel: {
+      uz: "2. Diplom ilovasi — o'quv rejasidagi fanlar va soatlar (PDF yoki rasm)",
+      ru: "2. Приложение к диплому — дисциплины и часы (PDF или фото)",
+      en: "2. Diploma Supplement / Transcript — subjects & hours (PDF or image)",
+    }[lang],
+    portfolioFileLabel: {
+      uz: "3. Ijodiy portfolio — 5–10 ta mualliflik ijodiy ishi (PDF, ZIP yoki rasm — turdosh/qisman turdosh yo'nalishlar uchun)",
+      ru: "3. Творческое портфолио — 5–10 авторских работ (PDF, ZIP или фото — для смежных направлений)",
+      en: "3. Creative Portfolio — 5–10 original works (PDF, ZIP or image — for related fields)",
+    }[lang],
+    chooseFile: {
+      uz: "Fayl tanlash",
+      ru: "Выбрать файл",
+      en: "Choose file",
+    }[lang],
+    uploadedFilesLabel: {
+      uz: "Yuklangan hujjatlar:",
+      ru: "Загруженные документы:",
+      en: "Uploaded documents:",
+    }[lang],
+    diplomaShort: {
+      uz: "Diplom nusxasi",
+      ru: "Копия диплома",
+      en: "Diploma copy",
+    }[lang],
+    supplementShort: {
+      uz: "Diplom ilovasi",
+      ru: "Приложение к диплому",
+      en: "Diploma supplement",
+    }[lang],
+    portfolioShort: {
+      uz: "Ijodiy portfolio",
+      ru: "Творческое портфолио",
+      en: "Creative portfolio",
     }[lang],
     trackTitle: {
       uz: "Ariza holati va baholash natijalarini tekshirish",
@@ -157,7 +206,6 @@ const VirtualQabulxona: React.FC = () => {
 
   const getSteps = (app: Application) => {
     const st = app.status || 'pending';
-    // Determine active step index (0..3)
     let currentStep = 0;
     if (st === 'pending') currentStep = 0;
     else if (st === 'in_progress') currentStep = 1;
@@ -185,9 +233,9 @@ const VirtualQabulxona: React.FC = () => {
             en: "1. Application & Documents Received",
           }[lang],
           desc: {
-            uz: "Talabgorning arizasi ro'yxatga olindi",
-            ru: "Заявка кандидата зарегистрирована",
-            en: "Applicant's submission is registered",
+            uz: "Talabgorning arizasi va biriktirilgan hujjatlari ro'yxatga olindi",
+            ru: "Заявка и прикреплённые документы зарегистрированы",
+            en: "Applicant's submission and attached documents are registered",
           }[lang],
         },
         {
@@ -452,7 +500,12 @@ const VirtualQabulxona: React.FC = () => {
                 onSubmit={async (e) => {
                   e.preventDefault();
                   try {
-                    const created = await BackendAPI.createApplication(applicationForm);
+                    const created = await BackendAPI.createApplication({
+                      ...applicationForm,
+                      diploma_file: diplomaFile,
+                      diploma_supplement_file: diplomaSupplementFile,
+                      portfolio_file: portfolioFile,
+                    });
                     await refreshData();
                     setCreatedAppNumber(created.applicationNumber || `QT-2026-${String(created.id).padStart(4, '0')}`);
                     setSubmissionMessage(t('virtual_reception.application_success'));
@@ -465,6 +518,9 @@ const VirtualQabulxona: React.FC = () => {
                       phone: '',
                       telegram_link: '',
                     });
+                    setDiplomaFile(null);
+                    setDiplomaSupplementFile(null);
+                    setPortfolioFile(null);
                   } catch (error) {
                     setCreatedAppNumber('');
                     setSubmissionMessage(error instanceof Error ? error.message : t('virtual_reception.error'));
@@ -480,6 +536,82 @@ const VirtualQabulxona: React.FC = () => {
                 <input required className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.workplace} onChange={(e) => setApplicationForm((p) => ({ ...p, workplace: e.target.value }))} placeholder={t('virtual_reception.workplace_placeholder')} />
                 <input required className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.direction} onChange={(e) => setApplicationForm((p) => ({ ...p, direction: e.target.value }))} placeholder={t('virtual_reception.direction_placeholder')} />
                 <input className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.diploma_specialty} onChange={(e) => setApplicationForm((p) => ({ ...p, diploma_specialty: e.target.value }))} placeholder={labels.diplomaPlaceholder} />
+
+                {/* Hujjatlarni yuklash bloki (Diplom, Diplom ilovasi, Ijodiy portfolio) */}
+                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                    {labels.docsSectionTitle}
+                  </p>
+
+                  <div className="grid gap-3">
+                    {/* 1. Diplom */}
+                    <div className="rounded-lg border border-slate-200 bg-white p-3">
+                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        {labels.diplomaFileLabel}
+                      </label>
+                      <label className="flex items-center justify-between gap-3 cursor-pointer text-xs text-slate-600">
+                        <span className="truncate">
+                          {diplomaFile ? diplomaFile.name : 'PDF, JPG, PNG'}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-3 py-1.5 shrink-0 transition-colors">
+                          <Upload size={14} />
+                          {labels.chooseFile}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png,.webp"
+                          className="hidden"
+                          onChange={(e) => setDiplomaFile(e.target.files?.[0] || null)}
+                        />
+                      </label>
+                    </div>
+
+                    {/* 2. Diplom ilovasi */}
+                    <div className="rounded-lg border border-slate-200 bg-white p-3">
+                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        {labels.supplementFileLabel}
+                      </label>
+                      <label className="flex items-center justify-between gap-3 cursor-pointer text-xs text-slate-600">
+                        <span className="truncate">
+                          {diplomaSupplementFile ? diplomaSupplementFile.name : 'PDF, JPG, PNG'}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-3 py-1.5 shrink-0 transition-colors">
+                          <Upload size={14} />
+                          {labels.chooseFile}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf,.jpg,.jpeg,.png,.webp"
+                          className="hidden"
+                          onChange={(e) => setDiplomaSupplementFile(e.target.files?.[0] || null)}
+                        />
+                      </label>
+                    </div>
+
+                    {/* 3. Ijodiy portfolio */}
+                    <div className="rounded-lg border border-slate-200 bg-white p-3">
+                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        {labels.portfolioFileLabel}
+                      </label>
+                      <label className="flex items-center justify-between gap-3 cursor-pointer text-xs text-slate-600">
+                        <span className="truncate">
+                          {portfolioFile ? portfolioFile.name : 'PDF, ZIP, RAR, JPG, PNG'}
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-3 py-1.5 shrink-0 transition-colors">
+                          <Upload size={14} />
+                          {labels.chooseFile}
+                        </span>
+                        <input
+                          type="file"
+                          accept=".pdf,.zip,.rar,.jpg,.jpeg,.png,.webp"
+                          className="hidden"
+                          onChange={(e) => setPortfolioFile(e.target.files?.[0] || null)}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
                 <input required className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.phone} onChange={(e) => setApplicationForm((p) => ({ ...p, phone: e.target.value }))} placeholder={t('virtual_reception.phone_placeholder')} />
                 <input className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.telegram_link} onChange={(e) => setApplicationForm((p) => ({ ...p, telegram_link: e.target.value }))} placeholder={t('virtual_reception.telegram_placeholder')} />
                 <button className="rounded-xl bg-blue-800 hover:bg-blue-900 transition-colors px-6 py-4 mt-2 font-bold text-white">
@@ -548,6 +680,7 @@ const VirtualQabulxona: React.FC = () => {
                       const criteria = getCriteriaList(app);
                       const badge = getDecisionBadge(app);
                       const hasScores = (app.totalScore || 0) > 0 || app.status === 'commission_review' || app.status === 'resolved' || app.status === 'conditional_accepted' || app.status === 'rejected';
+                      const hasFiles = Boolean(app.diplomaFileUrl || app.diplomaSupplementFileUrl || app.portfolioFileUrl);
 
                       return (
                         <div key={app.id} className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
@@ -596,6 +729,51 @@ const VirtualQabulxona: React.FC = () => {
                                 {badge.text}
                               </div>
                             </div>
+
+                            {/* Biriktirilgan hujjatlar */}
+                            {hasFiles && (
+                              <div className="rounded-xl border border-slate-200 bg-slate-50 p-3.5 flex flex-wrap items-center gap-2">
+                                <span className="text-xs font-bold text-slate-600 mr-1">
+                                  {labels.uploadedFilesLabel}
+                                </span>
+                                {app.diplomaFileUrl && (
+                                  <a
+                                    href={app.diplomaFileUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-800 transition-colors"
+                                  >
+                                    <FileText size={13} className="text-blue-800" />
+                                    {labels.diplomaShort}
+                                    <ExternalLink size={12} className="text-slate-400" />
+                                  </a>
+                                )}
+                                {app.diplomaSupplementFileUrl && (
+                                  <a
+                                    href={app.diplomaSupplementFileUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-800 transition-colors"
+                                  >
+                                    <FileText size={13} className="text-emerald-700" />
+                                    {labels.supplementShort}
+                                    <ExternalLink size={12} className="text-slate-400" />
+                                  </a>
+                                )}
+                                {app.portfolioFileUrl && (
+                                  <a
+                                    href={app.portfolioFileUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-800 transition-colors"
+                                  >
+                                    <FileText size={13} className="text-amber-700" />
+                                    {labels.portfolioShort}
+                                    <ExternalLink size={12} className="text-slate-400" />
+                                  </a>
+                                )}
+                              </div>
+                            )}
 
                             {/* 4-bosqichli Progress stepper */}
                             <div>
