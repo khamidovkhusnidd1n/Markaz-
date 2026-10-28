@@ -1280,10 +1280,10 @@ class ApplicationAdmin(admin.ModelAdmin):
         ('📊 Ekspert komissiyasi baholash varaqasi (I-116 buyruq, 4-ilova — 100 ballik tizim)', {
             'description': (
                 "Komissiya a'zolari tomonidan 7 ta mezon bo'yicha berilgan ballarni kiriting. "
-                "<b>Jami ball</b> avtomatik hisoblanadi: "
-                "<b>80–100 ball</b> — Mos/Turdosh (to'g'ridan-to'g'ri qabul); "
-                "<b>60–79 ball</b> — Shartli mos (suhbat yoki ijodiy sinov sharti bilan); "
-                "<b>0–59 ball</b> — Mos emas (rad etiladi)."
+                "Jami ball avtomatik hisoblanadi: "
+                "80–100 ball — Mos/Turdosh (to'g'ridan-to'g'ri qabul); "
+                "60–79 ball — Shartli mos (suhbat yoki ijodiy sinov sharti bilan); "
+                "0–59 ball — Mos emas (rad etiladi)."
             ),
             'fields': (
                 'score_subjects',
