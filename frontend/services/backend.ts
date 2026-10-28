@@ -331,15 +331,32 @@ function transformAppeal(item: any): Appeal {
 
 function transformApplication(item: any): Application {
   return {
-    id: item.id,
+    id: String(item.id || ''),
+    applicationNumber: item.application_number_display || item.application_number || '',
     fullName: item.full_name || '',
+    region: item.region || '',
     applicationType: item.application_type,
     applicationTypeDisplay: item.application_type_display || '',
     workplace: item.workplace || '',
     direction: item.direction || '',
+    diplomaSpecialty: item.diploma_specialty || '',
     phone: item.phone || '',
     telegramLink: item.telegram_link || '',
+    status: item.status || 'pending',
+    statusDisplay: item.status_display || '',
+    decisionType: item.decision_type || 'pending',
+    decisionTypeDisplay: item.decision_type_display || '',
+    scoreSubjects: Number(item.score_subjects || 0),
+    scoreCompetencies: Number(item.score_competencies || 0),
+    scoreCreative: Number(item.score_creative || 0),
+    scoreQualification: Number(item.score_qualification || 0),
+    scoreCredits: Number(item.score_credits || 0),
+    scoreExperience: Number(item.score_experience || 0),
+    scorePortfolio: Number(item.score_portfolio || 0),
+    totalScore: Number(item.total_score || 0),
+    adminNote: item.admin_note || '',
     createdAt: item.created_at || '',
+    updatedAt: item.updated_at || '',
   };
 }
 
@@ -937,14 +954,21 @@ export const BackendAPI = {
     return apiRequest('/appeals/', { method: 'POST', body: JSON.stringify(payload) });
   },
 
-  async createApplication(payload: { full_name: string; application_type: 'professional_development' | 'retraining'; workplace: string; direction: string; phone: string; telegram_link?: string }) {
+  async createApplication(payload: { full_name: string; application_type: 'professional_development' | 'retraining'; workplace: string; direction: string; diploma_specialty?: string; phone: string; telegram_link?: string }): Promise<Application> {
     if (payload.telegram_link) {
       const t = payload.telegram_link.trim();
       if (!t.startsWith('http')) {
         payload.telegram_link = t.startsWith('@') ? `https://t.me/${t.substring(1)}` : `https://t.me/${t}`;
       }
     }
-    return apiRequest('/applications/', { method: 'POST', body: JSON.stringify(payload) });
+    const res = await apiRequest<any>('/applications/', { method: 'POST', body: JSON.stringify(payload) });
+    return transformApplication(res);
+  },
+
+  async trackApplication(query: string): Promise<Application[]> {
+    const encoded = encodeURIComponent(query.trim());
+    const res = await apiRequest<any[]>(`/applications/track/?q=${encoded}`);
+    return (Array.isArray(res) ? res : []).map(transformApplication);
   },
 
   async createTeacher(payload: { full_name: string; position: string; degree: string; title: string; awards?: string; order: number; photo?: File | null }) {

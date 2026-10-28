@@ -64,15 +64,31 @@ export interface Appeal {
 
 export interface Application {
   id: string;
+  applicationNumber?: string;
   fullName: string;
   region: string;
   applicationType: 'professional_development' | 'retraining';
   applicationTypeDisplay?: string;
   workplace: string;
   direction: string;
+  diplomaSpecialty?: string;
   phone: string;
   telegramLink?: string;
+  status?: 'pending' | 'in_progress' | 'commission_review' | 'creative_exam' | 'resolved' | 'conditional_accepted' | 'rejected' | 'appeal';
+  statusDisplay?: string;
+  decisionType?: 'pending' | 'direct_match' | 'compatible' | 'conditional' | 'incompatible';
+  decisionTypeDisplay?: string;
+  scoreSubjects?: number;
+  scoreCompetencies?: number;
+  scoreCreative?: number;
+  scoreQualification?: number;
+  scoreCredits?: number;
+  scoreExperience?: number;
+  scorePortfolio?: number;
+  totalScore?: number;
+  adminNote?: string;
   createdAt?: string;
+  updatedAt?: string;
 }
 
 // Teacher without URL fields

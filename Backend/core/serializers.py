@@ -455,16 +455,38 @@ class AppealSerializer(serializers.ModelSerializer):
 class ApplicationSerializer(serializers.ModelSerializer):
     application_type_display = serializers.CharField(source='get_application_type_display', read_only=True)
     status_display = serializers.CharField(source='get_status_display', read_only=True)
+    decision_type_display = serializers.CharField(source='get_decision_type_display', read_only=True)
+    application_number_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Application
         fields = [
-            'id', 'full_name', 'application_type', 'application_type_display',
-            'workplace', 'direction', 'phone', 'telegram_link',
-            'status', 'status_display', 'admin_note',
+            'id', 'application_number', 'application_number_display',
+            'full_name', 'application_type', 'application_type_display',
+            'workplace', 'direction', 'diploma_specialty', 'phone', 'telegram_link',
+            'status', 'status_display',
+            'decision_type', 'decision_type_display',
+            'score_subjects', 'score_competencies', 'score_creative',
+            'score_qualification', 'score_credits', 'score_experience',
+            'score_portfolio', 'total_score',
+            'admin_note',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['id', 'status', 'admin_note', 'created_at', 'updated_at']
+        read_only_fields = [
+            'id', 'application_number', 'application_number_display',
+            'status', 'decision_type',
+            'score_subjects', 'score_competencies', 'score_creative',
+            'score_qualification', 'score_credits', 'score_experience',
+            'score_portfolio', 'total_score',
+            'admin_note', 'created_at', 'updated_at'
+        ]
+
+    def get_application_number_display(self, obj):
+        if obj.application_number:
+            return obj.application_number
+        prefix = 'QT' if obj.application_type == 'retraining' else 'MO'
+        year = obj.created_at.year if obj.created_at else 2026
+        return f"{prefix}-{year}-{obj.pk:04d}"
 
 
 class YearlyStatisticsSerializer(serializers.ModelSerializer):

@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronLeft, Mail, Phone, Send, Globe, Instagram, Facebook } from 'lucide-react';
+import { ChevronLeft, Phone, Send, Globe, Instagram, Facebook, FileText, Search } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 
 const CourseDetail: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const { courses } = useApp();
   const course = courses.find((item) => String(item.id) === id);
+  const lang = (i18n.language || 'uz').substring(0, 2);
 
   if (!course) {
     return (
@@ -53,7 +54,25 @@ const CourseDetail: React.FC = () => {
           </div>
         </div>
 
-        <aside className="h-fit rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+        <aside className="h-fit space-y-6">
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm space-y-3">
+            <Link
+              to="/virtual-qabulxona/ariza"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-800 hover:bg-blue-900 px-5 py-3.5 text-sm font-bold text-white transition-colors"
+            >
+              <FileText size={18} />
+              {lang === 'ru' ? 'Подать заявку на курс' : lang === 'en' ? 'Apply for Course' : 'Kursga ariza topshirish'}
+            </Link>
+            <Link
+              to="/virtual-qabulxona/holat"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 px-5 py-3 text-sm font-bold text-slate-800 transition-colors"
+            >
+              <Search size={16} />
+              {lang === 'ru' ? 'Проверить статус заявки' : lang === 'en' ? 'Check Application Status' : 'Ariza holatini tekshirish'}
+            </Link>
+          </div>
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
           <p className="mb-6 text-xs font-bold uppercase tracking-[0.3em] text-slate-400">
             {t('course_detail.contact_info', "ALOQA MA'LUMOTLARI")}
           </p>
@@ -113,6 +132,7 @@ const CourseDetail: React.FC = () => {
               </div>
             </a>
             
+          </div>
           </div>
         </aside>
       </section>

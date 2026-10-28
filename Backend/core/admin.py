@@ -1254,37 +1254,98 @@ class AppealAdmin(admin.ModelAdmin):
 
 @admin.register(Application)
 class ApplicationAdmin(admin.ModelAdmin):
-    """Admin configuration for Application model - read only inbox."""
-    list_display = ['full_name', 'application_type_display', 'direction', 'status', 'phone_link', 'created_at']
-    list_filter = ['application_type', 'created_at']
-    search_fields = ['full_name', 'workplace', 'direction', 'phone']
+    """Admin configuration for Application model - I-116 buyruq asosida baholash va progress."""
+    list_display = [
+        'application_number_badge', 'full_name', 'application_type_display',
+        'direction', 'status', 'total_score_badge', 'decision_type', 'phone_link', 'created_at'
+    ]
+    list_filter = ['application_type', 'status', 'decision_type', 'created_at']
+    search_fields = ['application_number', 'full_name', 'workplace', 'direction', 'diploma_specialty', 'phone']
+    list_editable = ['status', 'decision_type']
     ordering = ['-created_at']
 
-
     fieldsets = (
-        ('📱 Ariza beruvchi', {
-            'fields': ('full_name', 'workplace', 'phone', 'telegram_link')
+        ('📱 Ariza beruvchi ma\'lumotlari', {
+            'fields': ('application_number', 'full_name', 'workplace', 'phone', 'telegram_link')
         }),
-        ('Ariza tafsilotlari', {
-            'fields': ('application_type', 'direction')
+        ('🎓 Ta\'lim va Yo\'nalish tafsilotlari', {
+            'fields': ('application_type', 'direction', 'diploma_specialty')
         }),
-        ('Holat va Natija', {
-            'fields': ('status', 'admin_note')
+        ('📊 Ekspert komissiyasi baholash varaqasi (I-116 buyruq, 4-ilova — 100 ballik tizim)', {
+            'description': (
+                "Komissiya a'zolari tomonidan 7 ta mezon bo'yicha berilgan ballarni kiriting. "
+                "<b>Jami ball</b> avtomatik hisoblanadi: "
+                "<b>80–100 ball</b> — Mos/Turdosh (to'g'ridan-to'g'ri qabul); "
+                "<b>60–79 ball</b> — Shartli mos (suhbat yoki ijodiy sinov sharti bilan); "
+                "<b>0–59 ball</b> — Mos emas (rad etiladi)."
+            ),
+            'fields': (
+                'score_subjects',
+                'score_competencies',
+                'score_creative',
+                'score_qualification',
+                'score_credits',
+                'score_experience',
+                'score_portfolio',
+                'total_score',
+            )
+        }),
+        ('⚖️ Jarayon bosqichi va Komissiya xulosasi (5-ilova)', {
+            'fields': ('status', 'decision_type', 'admin_note')
         }),
         ('🕐 Yuborilgan vaqt', {
-            'fields': ('created_at',),
+            'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',),
         }),
     )
 
     def get_readonly_fields(self, request, obj=None):
-        return [f.name for f in self.model._meta.fields if f.name not in ['status', 'admin_note']]
+        editable = {
+            'diploma_specialty',
+            'status',
+            'decision_type',
+            'score_subjects',
+            'score_competencies',
+            'score_creative',
+            'score_qualification',
+            'score_credits',
+            'score_experience',
+            'score_portfolio',
+            'admin_note',
+        }
+        return [f.name for f in self.model._meta.fields if f.name not in editable]
 
     def has_add_permission(self, request):
-        return False
+        return True
 
     def has_change_permission(self, request, obj=None):
         return True
+
+    def application_number_badge(self, obj):
+        from django.utils.html import format_html
+        num = obj.application_number or f"{'QT' if obj.application_type == 'retraining' else 'MO'}-{obj.created_at.year if obj.created_at else 2026}-{obj.pk:04d}"
+        return format_html(
+            '<span style="font-family:monospace;font-weight:700;background:#eff6ff;color:#1e40af;padding:3px 8px;border-radius:6px;border:1px solid #bfdbfe;">{}</span>',
+            num
+        )
+    application_number_badge.short_description = 'Ariza raqami'
+
+    def total_score_badge(self, obj):
+        from django.utils.html import format_html
+        score = obj.total_score or 0
+        if score >= 80:
+            bg, fg = '#ecfdf5', '#065f46'
+        elif score >= 60:
+            bg, fg = '#fffbeb', '#92400e'
+        elif score > 0:
+            bg, fg = '#fef2f2', '#991b1b'
+        else:
+            bg, fg = '#f8fafc', '#64748b'
+        return format_html(
+            '<span style="font-weight:700;background:{};color:{};padding:3px 8px;border-radius:6px;">{} / 100</span>',
+            bg, fg, score
+        )
+    total_score_badge.short_description = 'Jami ball'
 
     def phone_link(self, obj):
         from django.utils.html import format_html
@@ -1299,6 +1360,56 @@ class ApplicationAdmin(admin.ModelAdmin):
         icon = icons.get(obj.application_type, '📋')
         return f"{icon} {obj.get_application_type_display()}"
     application_type_display.short_description = 'Ariza turi'
+
+    def render_change_form(self, request, context, *args, **kwargs):
+        from django.utils.safestring import mark_safe
+        response = super().render_change_form(request, context, *args, **kwargs)
+        auto_sum_js = mark_safe("""
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var scoreFields = [
+                'id_score_subjects',
+                'id_score_competencies',
+                'id_score_creative',
+                'id_score_qualification',
+                'id_score_credits',
+                'id_score_experience',
+                'id_score_portfolio'
+            ];
+            function updateTotal() {
+                var sum = 0;
+                scoreFields.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) {
+                        var v = parseInt(el.value || '0', 10);
+                        if (!isNaN(v)) sum += v;
+                    }
+                });
+                if (sum > 100) sum = 100;
+                var totalRow = document.querySelector('.field-total_score .readonly');
+                if (totalRow) {
+                    var label = sum >= 80 ? ' (Mos / Turdosh — 80–100 ball)' :
+                                sum >= 60 ? ' (Shartli mos / Qisman turdosh — 60–79 ball)' :
+                                sum > 0 ? ' (Mos emas — 0–59 ball)' : '';
+                    totalRow.innerHTML = '<strong style="font-size:1.15em;color:#1e3a8a;">' + sum + ' / 100 ball</strong>' + label;
+                }
+            }
+            scoreFields.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', updateTotal);
+                    el.addEventListener('change', updateTotal);
+                }
+            });
+            updateTotal();
+        });
+        </script>
+        """)
+        if hasattr(response, 'render') and callable(response.render):
+            response.add_post_render_callback(
+                lambda r: setattr(r, 'content', r.content.replace(b'</body>', auto_sum_js.encode('utf-8') + b'</body>'))
+            )
+        return response
 
 
 @admin.register(InternationalSettings)

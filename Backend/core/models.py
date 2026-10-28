@@ -289,34 +289,137 @@ class Appeal(BaseModel):
 
 
 class Application(BaseModel):
-    """Ariza yuborish yozuvlari."""
+    """Ariza yuborish yozuvlari (I-116-sonli buyruq bo'yicha baholash va progress bilan)."""
     TYPE_CHOICES = [
         ('professional_development', 'Malaka oshirish'),
         ('retraining', 'Qayta tayyorlash'),
     ]
     STATUS_CHOICES = [
-        ('pending', 'Kutilmoqda'),
-        ('in_progress', 'Jarayonda'),
-        ('resolved', 'Ko\'rib chiqildi'),
-        ('rejected', 'Rad etildi'),
+        ('pending', '1-bosqich: Hujjatlar qabul qilindi (Kutilmoqda)'),
+        ('in_progress', '2-bosqich: Dastlabki tekshiruv (Muvofiqlik jadvali bo\'yicha)'),
+        ('commission_review', '3-bosqich: Ekspert komissiyasi baholashida (100 ballik tizim)'),
+        ('creative_exam', '3.1-bosqich: Qo\'shimcha suhbat / Ijodiy sinov jarayonida'),
+        ('resolved', '4-bosqich: Qabul qilindi (Mos / Turdosh)'),
+        ('conditional_accepted', '4-bosqich: Shartli qabul qilindi (Qisman turdosh)'),
+        ('rejected', '4-bosqich: Rad etildi (Mos emas)'),
+        ('appeal', 'Apellyatsiya ko\'rib chiqilmoqda'),
+    ]
+    DECISION_CHOICES = [
+        ('pending', 'Ko\'rib chiqilmoqda'),
+        ('direct_match', 'To\'g\'ridan-to\'g\'ri mos (Komissiyasiz qabul)'),
+        ('compatible', 'Mos / Turdosh (80–100 ball) — Qabul qilindi'),
+        ('conditional', 'Shartli mos / Qisman turdosh (60–79 ball) — Suhbat/ijodiy sinov sharti bilan'),
+        ('incompatible', 'Mos emas (0–59 ball) — Rad etildi'),
     ]
 
+    application_number = models.CharField(
+        max_length=30,
+        blank=True,
+        default='',
+        db_index=True,
+        verbose_name="Ariza raqami"
+    )
     full_name = models.CharField(max_length=300, verbose_name="F.I.SH")
     application_type = models.CharField(max_length=40, choices=TYPE_CHOICES, verbose_name="Ariza turi")
     workplace = models.CharField(max_length=500, verbose_name="Asosiy ish joyi")
     direction = models.CharField(max_length=300, verbose_name="Yo'nalish")
+    diploma_specialty = models.CharField(
+        max_length=400,
+        blank=True,
+        default='',
+        verbose_name="Diplom bo'yicha ma'lumoti va mutaxassisligi"
+    )
     phone = models.CharField(max_length=50, verbose_name="Telefon raqami")
     telegram_link = models.URLField(blank=True, verbose_name="Telegram link")
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name="Holati")
-    admin_note = models.TextField(blank=True, verbose_name="Admin izohi / Rezolyutsiya")
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending', verbose_name="Jarayon bosqichi (Holati)")
+    decision_type = models.CharField(
+        max_length=30,
+        choices=DECISION_CHOICES,
+        default='pending',
+        verbose_name="Ekspert komissiyasi yakuniy xulosasi"
+    )
+
+    # 100 ballik baholash mezonlari (I-116 buyruq 4-ilova)
+    score_subjects = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(30)],
+        verbose_name="1. O'quv rejasidagi fanlarning yaqinligi va mosligi (maks. 30 ball)"
+    )
+    score_competencies = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        verbose_name="2. Kasbiy kompetensiyalarning umumiyligi (maks. 20 ball)"
+    )
+    score_creative = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(20)],
+        verbose_name="3. Ijodiy kompetensiyalar va mahorat darajasi (maks. 20 ball)"
+    )
+    score_qualification = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(10)],
+        verbose_name="4. Diplomda ko'rsatilgan kvalifikatsiya nomi (maks. 10 ball)"
+    )
+    score_credits = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(10)],
+        verbose_name="5. O'zlashtirilgan kreditlar (o'quv soatlari) hajmi (maks. 10 ball)"
+    )
+    score_experience = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
+        verbose_name="6. Tegishli soha bo'yicha kasbiy ish staji (maks. 5 ball)"
+    )
+    score_portfolio = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
+        verbose_name="7. Ijodiy portfolio sifati (maks. 5 ball)"
+    )
+    total_score = models.PositiveIntegerField(
+        default=0,
+        validators=[MinValueValidator(0), MaxValueValidator(100)],
+        verbose_name="Jami ball (100 ballik tizimda)"
+    )
+    admin_note = models.TextField(blank=True, verbose_name="Komissiya xulosasi / Izoh (Foydalanuvchiga ko'rinadi)")
 
     class Meta:
         verbose_name = "Ariza"
         verbose_name_plural = "Arizalar"
         ordering = ['-created_at']
 
+    def save(self, *args, **kwargs):
+        # Avtomatik jami ballni hisoblash
+        calculated_total = (
+            (self.score_subjects or 0) +
+            (self.score_competencies or 0) +
+            (self.score_creative or 0) +
+            (self.score_qualification or 0) +
+            (self.score_credits or 0) +
+            (self.score_experience or 0) +
+            (self.score_portfolio or 0)
+        )
+        self.total_score = min(100, calculated_total)
+
+        # Agar ball kiritilgan bo'lsa va xulosa hali 'pending' bo'lsa, 3.3-band bo'yicha avtomatik xulosa belgilash
+        if self.total_score > 0 and self.decision_type == 'pending':
+            if self.total_score >= 80:
+                self.decision_type = 'compatible'
+            elif self.total_score >= 60:
+                self.decision_type = 'conditional'
+            else:
+                self.decision_type = 'incompatible'
+
+        super().save(*args, **kwargs)
+
+        if not self.application_number and self.pk:
+            prefix = 'QT' if self.application_type == 'retraining' else 'MO'
+            year = self.created_at.year if self.created_at else timezone.now().year
+            self.application_number = f"{prefix}-{year}-{self.pk:04d}"
+            Application.objects.filter(pk=self.pk).update(application_number=self.application_number)
+
     def __str__(self):
-        return f"{self.full_name} - {self.application_type}"
+        num = self.application_number or f"#{self.pk}"
+        return f"{num} | {self.full_name} - {self.get_application_type_display()}"
 
 
 class Listener(BaseModel):
