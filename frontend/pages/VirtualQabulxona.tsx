@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
-import { Search, CheckCircle2, Clock, AlertCircle, XCircle, FileText, Copy, Check, Upload, ExternalLink } from 'lucide-react';
+import { Search, CheckCircle2, Clock, AlertCircle, XCircle, FileText, Copy, Check, Upload, ExternalLink, Loader2, Trash2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { BackendAPI } from '../services/backend';
 import { Application } from '../types';
+
+const formatFileSize = (bytes: number) => {
+  if (!bytes) return '0 KB';
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
 
 const VirtualQabulxona: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -13,6 +19,7 @@ const VirtualQabulxona: React.FC = () => {
   const navigate = useNavigate();
   const { tab: routeTab } = useParams<{ tab?: string }>();
   const [activeTab, setActiveTab] = useState<'murojaat' | 'ariza' | 'holat'>('murojaat');
+  const feedbackRef = useRef<HTMLDivElement | null>(null);
 
   const lang = (i18n.language || 'uz').substring(0, 2) as 'uz' | 'ru' | 'en';
 
@@ -55,7 +62,18 @@ const VirtualQabulxona: React.FC = () => {
   const [diplomaSupplementFile, setDiplomaSupplementFile] = useState<File | null>(null);
   const [portfolioFile, setPortfolioFile] = useState<File | null>(null);
 
+  // Per-file selection animation states (0..100)
+  const [fileProgress, setFileProgress] = useState<{ diploma: number; supplement: number; portfolio: number }>({
+    diploma: 0,
+    supplement: 0,
+    portfolio: 0,
+  });
+
+  // Form submit state & upload progress
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadPercent, setUploadPercent] = useState(0);
   const [submissionMessage, setSubmissionMessage] = useState('');
+  const [submissionError, setSubmissionError] = useState('');
   const [createdAppNumber, setCreatedAppNumber] = useState('');
   const [copiedAppNum, setCopiedAppNum] = useState(false);
 
@@ -64,6 +82,16 @@ const VirtualQabulxona: React.FC = () => {
   const [trackLoading, setTrackLoading] = useState(false);
   const [trackError, setTrackError] = useState('');
   const [trackResults, setTrackResults] = useState<Application[] | null>(null);
+
+  const triggerFileSelectAnimation = (key: 'diploma' | 'supplement' | 'portfolio', file: File | null) => {
+    if (!file) {
+      setFileProgress((prev) => ({ ...prev, [key]: 0 }));
+      return;
+    }
+    setFileProgress((prev) => ({ ...prev, [key]: 20 }));
+    setTimeout(() => setFileProgress((prev) => ({ ...prev, [key]: 65 })), 120);
+    setTimeout(() => setFileProgress((prev) => ({ ...prev, [key]: 100 })), 280);
+  };
 
   const handleTrackSearch = async (overrideQuery?: string) => {
     const q = (overrideQuery !== undefined ? overrideQuery : trackQuery).trim();
@@ -116,6 +144,21 @@ const VirtualQabulxona: React.FC = () => {
       uz: "Fayl tanlash",
       ru: "Выбрать файл",
       en: "Choose file",
+    }[lang],
+    replaceFile: {
+      uz: "Almashtirish",
+      ru: "Заменить",
+      en: "Replace",
+    }[lang],
+    fileReady: {
+      uz: "Tayyor",
+      ru: "Готово",
+      en: "Ready",
+    }[lang],
+    uploadingText: {
+      uz: "Hujjatlar va ariza serverga yuklanmoqda...",
+      ru: "Загрузка документов и отправка заявки...",
+      en: "Uploading documents and submitting application...",
     }[lang],
     uploadedFilesLabel: {
       uz: "Yuklangan hujjatlar:",
@@ -202,6 +245,88 @@ const VirtualQabulxona: React.FC = () => {
       ru: "Заключение комиссии / Примечание:",
       en: "Commission Conclusion / Note:",
     }[lang],
+  };
+
+  const renderAnimatedFileBox = (
+    key: 'diploma' | 'supplement' | 'portfolio',
+    labelText: string,
+    file: File | null,
+    setFile: (f: File | null) => void,
+    accept: string,
+    hint: string
+  ) => {
+    const pct = fileProgress[key];
+    return (
+      <div
+        className={`rounded-xl border p-3.5 transition-all duration-300 ${
+          file
+            ? 'border-emerald-300 bg-emerald-50/40 shadow-sm'
+            : 'border-slate-200 bg-white hover:border-blue-300'
+        }`}
+      >
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <label className="block text-xs font-bold text-slate-800 leading-snug">
+            {labelText}
+          </label>
+          {file && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-[11px] font-bold text-emerald-800 shrink-0 animate-fade-in">
+              <CheckCircle2 size={12} className="text-emerald-600" />
+              {labels.fileReady} ({formatFileSize(file.size)})
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            {file ? (
+              <p className="text-xs font-semibold text-slate-900 truncate">{file.name}</p>
+            ) : (
+              <p className="text-xs text-slate-400">{hint}</p>
+            )}
+          </div>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            {file && (
+              <button
+                type="button"
+                onClick={() => {
+                  setFile(null);
+                  triggerFileSelectAnimation(key, null);
+                }}
+                className="rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 p-1.5 text-rose-600 transition-colors"
+                title="O'chirish"
+              >
+                <Trash2 size={14} />
+              </button>
+            )}
+            <label className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 hover:bg-blue-50 hover:text-blue-800 border border-slate-200 text-slate-800 text-xs font-bold px-3 py-1.5 cursor-pointer transition-colors">
+              <Upload size={14} />
+              {file ? labels.replaceFile : labels.chooseFile}
+              <input
+                type="file"
+                accept={accept}
+                className="hidden"
+                onChange={(e) => {
+                  const chosen = e.target.files?.[0] || null;
+                  setFile(chosen);
+                  triggerFileSelectAnimation(key, chosen);
+                }}
+              />
+            </label>
+          </div>
+        </div>
+
+        {/* Animated file progress bar */}
+        {file && (
+          <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-emerald-100">
+            <div
+              className="h-full rounded-full bg-emerald-600 transition-all duration-300 ease-out"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+        )}
+      </div>
+    );
   };
 
   const getSteps = (app: Application) => {
@@ -413,6 +538,7 @@ const VirtualQabulxona: React.FC = () => {
               onClick={() => {
                 setActiveTab('murojaat');
                 setSubmissionMessage('');
+                setSubmissionError('');
                 navigate('/virtual-qabulxona/murojaat', { replace: true });
               }}
               className={`px-5 py-3 rounded-lg text-sm font-bold transition-colors w-full sm:w-auto ${
@@ -426,6 +552,7 @@ const VirtualQabulxona: React.FC = () => {
               onClick={() => {
                 setActiveTab('ariza');
                 setSubmissionMessage('');
+                setSubmissionError('');
                 navigate('/virtual-qabulxona/ariza', { replace: true });
               }}
               className={`px-5 py-3 rounded-lg text-sm font-bold transition-colors w-full sm:w-auto ${
@@ -439,6 +566,7 @@ const VirtualQabulxona: React.FC = () => {
               onClick={() => {
                 setActiveTab('holat');
                 setSubmissionMessage('');
+                setSubmissionError('');
                 navigate('/virtual-qabulxona/holat', { replace: true });
               }}
               className={`px-5 py-3 rounded-lg text-sm font-bold transition-colors w-full sm:w-auto flex items-center justify-center gap-2 ${
@@ -461,14 +589,21 @@ const VirtualQabulxona: React.FC = () => {
               <form
                 onSubmit={async (e) => {
                   e.preventDefault();
+                  setIsSubmitting(true);
+                  setSubmissionError('');
+                  setSubmissionMessage('');
                   try {
                     await BackendAPI.createAppeal(appealForm);
                     await refreshData();
                     setCreatedAppNumber('');
                     setSubmissionMessage(t('virtual_reception.appeal_success'));
                     setAppealForm({ full_name: '', appeal_type: 'murojaat', description: '', phone: '', email: '', telegram_link: '' });
+                    setTimeout(() => feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
                   } catch (error) {
-                    setSubmissionMessage(error instanceof Error ? error.message : t('virtual_reception.error'));
+                    setSubmissionError(error instanceof Error ? error.message : t('virtual_reception.error'));
+                    setTimeout(() => feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                  } finally {
+                    setIsSubmitting(false);
                   }
                 }}
                 className="grid gap-5"
@@ -483,7 +618,12 @@ const VirtualQabulxona: React.FC = () => {
                 <input required className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-slate-900" value={appealForm.phone} onChange={(e) => setAppealForm((p) => ({ ...p, phone: e.target.value }))} placeholder={t('virtual_reception.phone_placeholder')} />
                 <input type="email" className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-slate-900" value={appealForm.email} onChange={(e) => setAppealForm((p) => ({ ...p, email: e.target.value }))} placeholder={t('virtual_reception.email_placeholder')} />
                 <input className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-slate-900" value={appealForm.telegram_link} onChange={(e) => setAppealForm((p) => ({ ...p, telegram_link: e.target.value }))} placeholder={t('virtual_reception.telegram_placeholder')} />
-                <button className="rounded-xl bg-slate-900 hover:bg-slate-800 transition-colors px-6 py-4 mt-2 font-bold text-white">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-60 transition-colors px-6 py-4 mt-2 font-bold text-white flex items-center justify-center gap-2"
+                >
+                  {isSubmitting && <Loader2 size={18} className="animate-spin" />}
                   {t('virtual_reception.appeal_submit')}
                 </button>
               </form>
@@ -499,15 +639,25 @@ const VirtualQabulxona: React.FC = () => {
               <form
                 onSubmit={async (e) => {
                   e.preventDefault();
+                  if (isSubmitting) return;
+                  setIsSubmitting(true);
+                  setUploadPercent(10);
+                  setSubmissionMessage('');
+                  setSubmissionError('');
                   try {
-                    const created = await BackendAPI.createApplication({
-                      ...applicationForm,
-                      diploma_file: diplomaFile,
-                      diploma_supplement_file: diplomaSupplementFile,
-                      portfolio_file: portfolioFile,
-                    });
+                    const created = await BackendAPI.createApplication(
+                      {
+                        ...applicationForm,
+                        diploma_file: diplomaFile,
+                        diploma_supplement_file: diplomaSupplementFile,
+                        portfolio_file: portfolioFile,
+                      },
+                      (pct) => setUploadPercent(pct)
+                    );
+                    setUploadPercent(100);
                     await refreshData();
-                    setCreatedAppNumber(created.applicationNumber || `QT-2026-${String(created.id).padStart(4, '0')}`);
+                    const appNum = created.applicationNumber || `QT-2026-${String(created.id || 1).padStart(4, '0')}`;
+                    setCreatedAppNumber(appNum);
                     setSubmissionMessage(t('virtual_reception.application_success'));
                     setApplicationForm({
                       full_name: '',
@@ -521,9 +671,15 @@ const VirtualQabulxona: React.FC = () => {
                     setDiplomaFile(null);
                     setDiplomaSupplementFile(null);
                     setPortfolioFile(null);
+                    setFileProgress({ diploma: 0, supplement: 0, portfolio: 0 });
+                    setTimeout(() => feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
                   } catch (error) {
                     setCreatedAppNumber('');
-                    setSubmissionMessage(error instanceof Error ? error.message : t('virtual_reception.error'));
+                    setSubmissionError(error instanceof Error ? error.message : t('virtual_reception.error'));
+                    setTimeout(() => feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+                  } finally {
+                    setIsSubmitting(false);
+                    setTimeout(() => setUploadPercent(0), 600);
                   }
                 }}
                 className="grid gap-5"
@@ -538,84 +694,68 @@ const VirtualQabulxona: React.FC = () => {
                 <input className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.diploma_specialty} onChange={(e) => setApplicationForm((p) => ({ ...p, diploma_specialty: e.target.value }))} placeholder={labels.diplomaPlaceholder} />
 
                 {/* Hujjatlarni yuklash bloki (Diplom, Diplom ilovasi, Ijodiy portfolio) */}
-                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-4">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-3.5">
                   <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
                     {labels.docsSectionTitle}
                   </p>
 
                   <div className="grid gap-3">
-                    {/* 1. Diplom */}
-                    <div className="rounded-lg border border-slate-200 bg-white p-3">
-                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                        {labels.diplomaFileLabel}
-                      </label>
-                      <label className="flex items-center justify-between gap-3 cursor-pointer text-xs text-slate-600">
-                        <span className="truncate">
-                          {diplomaFile ? diplomaFile.name : 'PDF, JPG, PNG'}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-3 py-1.5 shrink-0 transition-colors">
-                          <Upload size={14} />
-                          {labels.chooseFile}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png,.webp"
-                          className="hidden"
-                          onChange={(e) => setDiplomaFile(e.target.files?.[0] || null)}
-                        />
-                      </label>
-                    </div>
-
-                    {/* 2. Diplom ilovasi */}
-                    <div className="rounded-lg border border-slate-200 bg-white p-3">
-                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                        {labels.supplementFileLabel}
-                      </label>
-                      <label className="flex items-center justify-between gap-3 cursor-pointer text-xs text-slate-600">
-                        <span className="truncate">
-                          {diplomaSupplementFile ? diplomaSupplementFile.name : 'PDF, JPG, PNG'}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-3 py-1.5 shrink-0 transition-colors">
-                          <Upload size={14} />
-                          {labels.chooseFile}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf,.jpg,.jpeg,.png,.webp"
-                          className="hidden"
-                          onChange={(e) => setDiplomaSupplementFile(e.target.files?.[0] || null)}
-                        />
-                      </label>
-                    </div>
-
-                    {/* 3. Ijodiy portfolio */}
-                    <div className="rounded-lg border border-slate-200 bg-white p-3">
-                      <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                        {labels.portfolioFileLabel}
-                      </label>
-                      <label className="flex items-center justify-between gap-3 cursor-pointer text-xs text-slate-600">
-                        <span className="truncate">
-                          {portfolioFile ? portfolioFile.name : 'PDF, ZIP, RAR, JPG, PNG'}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold px-3 py-1.5 shrink-0 transition-colors">
-                          <Upload size={14} />
-                          {labels.chooseFile}
-                        </span>
-                        <input
-                          type="file"
-                          accept=".pdf,.zip,.rar,.jpg,.jpeg,.png,.webp"
-                          className="hidden"
-                          onChange={(e) => setPortfolioFile(e.target.files?.[0] || null)}
-                        />
-                      </label>
-                    </div>
+                    {renderAnimatedFileBox(
+                      'diploma',
+                      labels.diplomaFileLabel,
+                      diplomaFile,
+                      setDiplomaFile,
+                      '.pdf,.jpg,.jpeg,.png,.webp',
+                      'PDF, JPG, PNG'
+                    )}
+                    {renderAnimatedFileBox(
+                      'supplement',
+                      labels.supplementFileLabel,
+                      diplomaSupplementFile,
+                      setDiplomaSupplementFile,
+                      '.pdf,.jpg,.jpeg,.png,.webp',
+                      'PDF, JPG, PNG'
+                    )}
+                    {renderAnimatedFileBox(
+                      'portfolio',
+                      labels.portfolioFileLabel,
+                      portfolioFile,
+                      setPortfolioFile,
+                      '.pdf,.zip,.rar,.jpg,.jpeg,.png,.webp',
+                      'PDF, ZIP, RAR, JPG, PNG'
+                    )}
                   </div>
                 </div>
 
                 <input required className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.phone} onChange={(e) => setApplicationForm((p) => ({ ...p, phone: e.target.value }))} placeholder={t('virtual_reception.phone_placeholder')} />
                 <input className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.telegram_link} onChange={(e) => setApplicationForm((p) => ({ ...p, telegram_link: e.target.value }))} placeholder={t('virtual_reception.telegram_placeholder')} />
-                <button className="rounded-xl bg-blue-800 hover:bg-blue-900 transition-colors px-6 py-4 mt-2 font-bold text-white">
-                  {t('virtual_reception.application_submit')}
+
+                {/* Live upload progress bar while submitting */}
+                {isSubmitting && (
+                  <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 space-y-2">
+                    <div className="flex items-center justify-between text-xs font-bold text-blue-900">
+                      <span className="flex items-center gap-2">
+                        <Loader2 size={15} className="animate-spin text-blue-700" />
+                        {labels.uploadingText}
+                      </span>
+                      <span className="tabular-nums">{uploadPercent}%</span>
+                    </div>
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-blue-200/70">
+                      <div
+                        className="h-full rounded-full bg-blue-700 transition-all duration-200 ease-out"
+                        style={{ width: `${uploadPercent}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="rounded-xl bg-blue-800 hover:bg-blue-900 disabled:opacity-60 transition-colors px-6 py-4 mt-1 font-bold text-white flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {isSubmitting && <Loader2 size={18} className="animate-spin" />}
+                  {isSubmitting ? `${uploadPercent}%` : t('virtual_reception.application_submit')}
                 </button>
               </form>
             </div>
@@ -656,7 +796,7 @@ const VirtualQabulxona: React.FC = () => {
                     disabled={trackLoading}
                     className="rounded-xl bg-blue-900 hover:bg-blue-950 disabled:opacity-60 transition-colors px-6 py-3.5 font-bold text-white flex items-center justify-center gap-2 shrink-0"
                   >
-                    <Search size={18} />
+                    {trackLoading ? <Loader2 size={18} className="animate-spin" /> : <Search size={18} />}
                     {trackLoading ? '...' : labels.trackButton}
                   </button>
                 </form>
@@ -879,55 +1019,64 @@ const VirtualQabulxona: React.FC = () => {
           )}
         </div>
 
-        {/* Muvaffaqiyatli yuborilganda chiqadigan xabar va Ariza raqami */}
-        {submissionMessage && (
-          <div className="mt-8 max-w-2xl mx-auto rounded-2xl bg-emerald-50 border border-emerald-200 p-6 text-center shadow-sm">
-            <p className="text-lg font-bold text-emerald-900">{submissionMessage}</p>
-            {createdAppNumber && (
-              <div className="mt-4 pt-4 border-t border-emerald-200/80 space-y-3">
-                <p className="text-xs font-bold uppercase tracking-wider text-emerald-800">
-                  {labels.appNumberLabel}
-                </p>
-                <div className="inline-flex items-center gap-2 bg-white border border-emerald-300 rounded-xl px-4 py-2.5">
-                  <span className="font-mono text-xl font-black text-slate-900 tracking-wide">
-                    {createdAppNumber}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      navigator.clipboard.writeText(createdAppNumber);
-                      setCopiedAppNum(true);
-                      setTimeout(() => setCopiedAppNum(false), 2000);
-                    }}
-                    className="p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                    title="Nusxa olish"
-                  >
-                    {copiedAppNum ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
-                  </button>
+        {/* Muvaffaqiyatli yoki xatolik xabari */}
+        <div ref={feedbackRef}>
+          {submissionError && (
+            <div className="mt-8 max-w-2xl mx-auto rounded-2xl bg-rose-50 border border-rose-200 p-5 text-center shadow-sm flex items-center justify-center gap-3 text-rose-900 font-semibold">
+              <AlertCircle size={20} className="text-rose-600 shrink-0" />
+              <span>{submissionError}</span>
+            </div>
+          )}
+
+          {submissionMessage && (
+            <div className="mt-8 max-w-2xl mx-auto rounded-2xl bg-emerald-50 border border-emerald-200 p-6 text-center shadow-sm">
+              <p className="text-lg font-bold text-emerald-900">{submissionMessage}</p>
+              {createdAppNumber && (
+                <div className="mt-4 pt-4 border-t border-emerald-200/80 space-y-3">
+                  <p className="text-xs font-bold uppercase tracking-wider text-emerald-800">
+                    {labels.appNumberLabel}
+                  </p>
+                  <div className="inline-flex items-center gap-2 bg-white border border-emerald-300 rounded-xl px-4 py-2.5">
+                    <span className="font-mono text-xl font-black text-slate-900 tracking-wide">
+                      {createdAppNumber}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(createdAppNumber);
+                        setCopiedAppNum(true);
+                        setTimeout(() => setCopiedAppNum(false), 2000);
+                      }}
+                      className="p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+                      title="Nusxa olish"
+                    >
+                      {copiedAppNum ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-emerald-800 max-w-lg mx-auto leading-relaxed">
+                    {labels.saveAppNumberNote}
+                  </p>
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveTab('holat');
+                        setTrackQuery(createdAppNumber);
+                        setSubmissionMessage('');
+                        navigate('/virtual-qabulxona/holat', { replace: true });
+                        handleTrackSearch(createdAppNumber);
+                      }}
+                      className="mt-1 inline-flex items-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-4 py-2.5 transition-colors"
+                    >
+                      <Search size={14} />
+                      {labels.checkNowBtn}
+                    </button>
+                  </div>
                 </div>
-                <p className="text-xs text-emerald-800 max-w-lg mx-auto leading-relaxed">
-                  {labels.saveAppNumberNote}
-                </p>
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveTab('holat');
-                      setTrackQuery(createdAppNumber);
-                      setSubmissionMessage('');
-                      navigate('/virtual-qabulxona/holat', { replace: true });
-                      handleTrackSearch(createdAppNumber);
-                    }}
-                    className="mt-1 inline-flex items-center gap-2 rounded-xl bg-emerald-800 hover:bg-emerald-900 text-white text-xs font-bold px-4 py-2.5 transition-colors"
-                  >
-                    <Search size={14} />
-                    {labels.checkNowBtn}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </section>
     </div>
   );

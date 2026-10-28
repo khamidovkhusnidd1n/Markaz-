@@ -170,7 +170,14 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}, retrie
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(errorData.message || errorData.detail || `HTTP ${response.status}`);
+    let detailMsg = errorData.message || errorData.detail;
+    if (!detailMsg && errorData && typeof errorData === 'object') {
+      const fieldErrors = Object.entries(errorData)
+        .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : String(v)}`)
+        .join(' | ');
+      if (fieldErrors) detailMsg = fieldErrors;
+    }
+    throw new Error(detailMsg || `HTTP ${response.status}`);
   }
 
   const text = await response.text();
@@ -957,18 +964,21 @@ export const BackendAPI = {
     return apiRequest('/appeals/', { method: 'POST', body: JSON.stringify(payload) });
   },
 
-  async createApplication(payload: {
-    full_name: string;
-    application_type: 'professional_development' | 'retraining';
-    workplace: string;
-    direction: string;
-    diploma_specialty?: string;
-    diploma_file?: File | null;
-    diploma_supplement_file?: File | null;
-    portfolio_file?: File | null;
-    phone: string;
-    telegram_link?: string;
-  }): Promise<Application> {
+  async createApplication(
+    payload: {
+      full_name: string;
+      application_type: 'professional_development' | 'retraining';
+      workplace: string;
+      direction: string;
+      diploma_specialty?: string;
+      diploma_file?: File | null;
+      diploma_supplement_file?: File | null;
+      portfolio_file?: File | null;
+      phone: string;
+      telegram_link?: string;
+    },
+    onProgress?: (percent: number) => void
+  ): Promise<Application> {
     if (payload.telegram_link) {
       const t = payload.telegram_link.trim();
       if (!t.startsWith('http')) {
@@ -987,6 +997,63 @@ export const BackendAPI = {
       diploma_supplement_file: payload.diploma_supplement_file || null,
       portfolio_file: payload.portfolio_file || null,
     });
+
+    if (onProgress && typeof XMLHttpRequest !== 'undefined') {
+      const lang = (i18n.language || 'uz').substring(0, 2);
+      const baseUrls = getApiBaseUrls();
+
+      for (const baseUrl of baseUrls) {
+        try {
+          const result = await new Promise<any>((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', `${baseUrl}/applications/?lang=${lang}`, true);
+            xhr.upload.onprogress = (evt) => {
+              if (evt.lengthComputable && evt.total > 0) {
+                const pct = Math.min(99, Math.round((evt.loaded / evt.total) * 100));
+                onProgress(pct);
+              }
+            };
+            xhr.onload = () => {
+              if (xhr.status === 404) {
+                reject(new Error('__404__'));
+                return;
+              }
+              if (xhr.status >= 200 && xhr.status < 300) {
+                safeStorageSet(API_URL_CACHE_KEY, baseUrl);
+                onProgress(100);
+                try {
+                  resolve(xhr.responseText ? JSON.parse(xhr.responseText) : {});
+                } catch {
+                  resolve({});
+                }
+              } else {
+                let errMsg = `HTTP ${xhr.status}`;
+                try {
+                  const errData = JSON.parse(xhr.responseText || '{}');
+                  errMsg =
+                    errData.message ||
+                    errData.detail ||
+                    Object.entries(errData)
+                      .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : String(v)}`)
+                      .join(' | ') ||
+                    errMsg;
+                } catch {}
+                reject(new Error(errMsg));
+              }
+            };
+            xhr.onerror = () => reject(new Error('__NET__'));
+            xhr.send(formData);
+          });
+          return transformApplication(result);
+        } catch (err: any) {
+          if (err?.message === '__404__' || err?.message === '__NET__') {
+            continue;
+          }
+          throw err;
+        }
+      }
+    }
+
     const res = await apiRequest<any>('/applications/', { method: 'POST', body: formData });
     return transformApplication(res);
   },

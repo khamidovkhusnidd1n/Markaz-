@@ -790,6 +790,11 @@ class AppealViewSet(viewsets.ModelViewSet):
     serializer_class = AppealSerializer
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
+    def get_authenticators(self):
+        if getattr(self, 'action', None) == 'create' or self.request.method == 'POST':
+            return []
+        return super().get_authenticators()
+
     def get_permissions(self):
         if self.action in ['create']:
             return [permissions.AllowAny()]
@@ -800,6 +805,11 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     queryset = Application.objects.all().order_by('-created_at')
     serializer_class = ApplicationSerializer
     parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_authenticators(self):
+        if getattr(self, 'action', None) in ['create', 'track'] or self.request.method in ['POST', 'GET']:
+            return []
+        return super().get_authenticators()
 
     def get_permissions(self):
         if self.action in ['create', 'track']:

@@ -87,6 +87,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='application',
+            name='telegram_link',
+            field=models.CharField(blank=True, default='', max_length=300, verbose_name='Telegram link'),
+        ),
+        migrations.AlterField(
+            model_name='application',
             name='status',
             field=models.CharField(choices=[('pending', '1-bosqich: Hujjatlar qabul qilindi (Kutilmoqda)'), ('in_progress', "2-bosqich: Dastlabki tekshiruv (Muvofiqlik jadvali bo'yicha)"), ('commission_review', '3-bosqich: Ekspert komissiyasi baholashida (100 ballik tizim)'), ('creative_exam', "3.1-bosqich: Qo'shimcha suhbat / Ijodiy sinov jarayonida"), ('resolved', '4-bosqich: Qabul qilindi (Mos / Turdosh)'), ('conditional_accepted', '4-bosqich: Shartli qabul qilindi (Qisman turdosh)'), ('rejected', '4-bosqich: Rad etildi (Mos emas)'), ('appeal', "Apellyatsiya ko'rib chiqilmoqda")], default='pending', max_length=30, verbose_name='Jarayon bosqichi (Holati)'),
         ),

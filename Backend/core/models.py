@@ -348,7 +348,7 @@ class Application(BaseModel):
         verbose_name="Ijodiy portfolio (5–10 ta ijodiy ish, PDF / ZIP / Rasm)"
     )
     phone = models.CharField(max_length=50, verbose_name="Telefon raqami")
-    telegram_link = models.URLField(blank=True, verbose_name="Telegram link")
+    telegram_link = models.CharField(max_length=300, blank=True, default='', verbose_name="Telegram link")
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending', verbose_name="Jarayon bosqichi (Holati)")
     decision_type = models.CharField(
         max_length=30,
