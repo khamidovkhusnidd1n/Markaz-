@@ -286,8 +286,8 @@ const Home: React.FC = () => {
   const safeStudentsCount = stats?.studentsCount || [];
   const sumMalaka = safeStudentsCount.reduce((sum, item) => sum + (Number(item.count) || 0), 0);
   const sumQayta = safeStudentsCount.reduce((sum, item) => sum + (Number(item.retraining) || 0), 0);
-  const totalMalaka = sumMalaka > 0 ? sumMalaka : reportDetails.moTotal;
-  const totalQayta = sumQayta > 0 ? sumQayta : reportDetails.qtTotal;
+  const totalMalaka = reportDetails.moTotal > 0 ? reportDetails.moTotal : sumMalaka;
+  const totalQayta = reportDetails.qtTotal > 0 ? reportDetails.qtTotal : sumQayta;
   const totalOverall = totalMalaka + totalQayta;
 
   const distributionData = [
@@ -921,19 +921,16 @@ const Home: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Diagrammalar: Umumiy taqsimot va Yillar kesimida */}
-      <section 
-        ref={chartsReveal.ref}
-        className={`container mx-auto px-6 py-16 transition-all duration-1000 ${
-          chartsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
-            <h3 className="text-xl font-black text-slate-900 mb-6">{t('home.charts_distribution')}</h3>
+          {/* Diagrammalar: Umumiy taqsimot va Yillar kesimida (yuqoridagi ko'rsatkichlar bilan bir-biriga bog'langan) */}
+          <div 
+            ref={chartsReveal.ref}
+            className={`mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6 transition-all duration-1000 ${
+              chartsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            }`}
+          >
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+            <h3 className="text-xl font-bold text-slate-900 mb-6">{t('home.charts_distribution')}</h3>
             <div className="relative h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -958,8 +955,8 @@ const Home: React.FC = () => {
             </div>
           </div>
           
-          <div className="bg-white p-8 rounded-3xl shadow-xl shadow-slate-200/40 border border-slate-100">
-            <h3 className="text-xl font-black text-slate-900 mb-6">{t('home.charts_by_years')}</h3>
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+            <h3 className="text-xl font-bold text-slate-900 mb-6">{t('home.charts_by_years')}</h3>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={yearlyData}>
@@ -974,6 +971,7 @@ const Home: React.FC = () => {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+          </div>
           </div>
         </div>
       </section>
