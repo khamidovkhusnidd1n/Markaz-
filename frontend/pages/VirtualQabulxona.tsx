@@ -605,10 +605,10 @@ const VirtualQabulxona: React.FC = () => {
                   setSubmissionMessage('');
                   try {
                     await BackendAPI.createAppeal(appealForm);
-                    await refreshData();
                     setCreatedAppNumber('');
                     setSubmissionMessage(t('virtual_reception.appeal_success'));
                     setAppealForm({ full_name: '', appeal_type: 'murojaat', description: '', phone: '', email: '', telegram_link: '' });
+                    refreshData().catch(() => {});
                     setTimeout(() => feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
                   } catch (error) {
                     setSubmissionError(error instanceof Error ? error.message : t('virtual_reception.error'));
@@ -666,7 +666,6 @@ const VirtualQabulxona: React.FC = () => {
                       (pct) => setUploadPercent(pct)
                     );
                     setUploadPercent(100);
-                    await refreshData();
                     const appNum = created.applicationNumber || `QT-2026-${String(created.id || 1).padStart(4, '0')}`;
                     setCreatedAppNumber(appNum);
                     setSubmissionMessage(t('virtual_reception.application_success'));
@@ -683,6 +682,7 @@ const VirtualQabulxona: React.FC = () => {
                     setDiplomaSupplementFile(null);
                     setPortfolioFile(null);
                     setFileProgress({ diploma: 0, supplement: 0, portfolio: 0 });
+                    refreshData().catch(() => {});
                     setTimeout(() => feedbackRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
                   } catch (error) {
                     setCreatedAppNumber('');

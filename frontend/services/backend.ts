@@ -1031,6 +1031,9 @@ export const BackendAPI = {
                 }
               } else {
                 let errMsg = `HTTP ${xhr.status}`;
+                if (xhr.status === 413) {
+                  errMsg = "Yuklangan fayllar hajmi juda katta (server 413 cheklovi). Iltimos, kichikroq hajmdagi fayl yuklang.";
+                }
                 try {
                   const errData = JSON.parse(xhr.responseText || '{}');
                   errMsg =
@@ -1044,12 +1047,12 @@ export const BackendAPI = {
                 reject(new Error(errMsg));
               }
             };
-            xhr.onerror = () => reject(new Error('__NET__'));
+            xhr.onerror = () => reject(new Error("Fayl yuklashda tarmoq yoki server hajm cheklovi xatosi yuz berdi."));
             xhr.send(formData);
           });
           return transformApplication(result);
         } catch (err: any) {
-          if (err?.message === '__404__' || err?.message === '__NET__') {
+          if (err?.message === '__404__') {
             continue;
           }
           throw err;

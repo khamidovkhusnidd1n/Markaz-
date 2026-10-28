@@ -1257,11 +1257,11 @@ class ApplicationAdmin(admin.ModelAdmin):
     """Admin configuration for Application model - I-116 buyruq asosida baholash va progress."""
     list_display = [
         'application_number_badge', 'full_name', 'application_type_display',
-        'direction', 'files_badge', 'status', 'total_score_badge', 'decision_type', 'phone_link', 'created_at'
+        'direction', 'files_badge', 'status_badge', 'total_score_badge', 'decision_badge', 'phone_link', 'created_at'
     ]
+    list_display_links = ['application_number_badge', 'full_name']
     list_filter = ['application_type', 'status', 'decision_type', 'created_at']
     search_fields = ['application_number', 'full_name', 'workplace', 'direction', 'diploma_specialty', 'phone']
-    list_editable = ['status', 'decision_type']
     ordering = ['-created_at']
 
     fieldsets = (
@@ -1325,14 +1325,14 @@ class ApplicationAdmin(admin.ModelAdmin):
         from django.utils.html import format_html
         links = []
         if obj.diploma_file:
-            links.append(f'<a href="{obj.diploma_file.url}" target="_blank" style="background:#eff6ff;color:#1d4ed8;padding:2px 6px;border-radius:4px;font-weight:600;text-decoration:none;margin-right:4px;">📄 Diplom</a>')
+            links.append(f'<a href="{obj.diploma_file.url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;white-space:nowrap;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;">📄 Diplom</a>')
         if obj.diploma_supplement_file:
-            links.append(f'<a href="{obj.diploma_supplement_file.url}" target="_blank" style="background:#f0fdf4;color:#15803d;padding:2px 6px;border-radius:4px;font-weight:600;text-decoration:none;margin-right:4px;">📑 Ilova</a>')
+            links.append(f'<a href="{obj.diploma_supplement_file.url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;white-space:nowrap;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;">📑 Ilova</a>')
         if obj.portfolio_file:
-            links.append(f'<a href="{obj.portfolio_file.url}" target="_blank" style="background:#fef3c7;color:#b45309;padding:2px 6px;border-radius:4px;font-weight:600;text-decoration:none;">🎨 Portfolio</a>')
+            links.append(f'<a href="{obj.portfolio_file.url}" target="_blank" style="display:inline-flex;align-items:center;gap:4px;white-space:nowrap;background:#fffbeb;color:#b45309;border:1px solid #fde68a;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;">🎨 Portfolio</a>')
         if not links:
             return '-'
-        return format_html(''.join(links))
+        return format_html('<div style="display:flex;flex-wrap:wrap;gap:4px;min-width:160px;">{}</div>', format_html(''.join(links)))
     files_badge.short_description = 'Hujjatlar'
 
     def has_add_permission(self, request):
@@ -1345,10 +1345,45 @@ class ApplicationAdmin(admin.ModelAdmin):
         from django.utils.html import format_html
         num = obj.application_number or f"{'QT' if obj.application_type == 'retraining' else 'MO'}-{obj.created_at.year if obj.created_at else 2026}-{obj.pk:04d}"
         return format_html(
-            '<span style="font-family:monospace;font-weight:700;background:#eff6ff;color:#1e40af;padding:3px 8px;border-radius:6px;border:1px solid #bfdbfe;">{}</span>',
+            '<span style="display:inline-block;white-space:nowrap;font-family:monospace;font-weight:700;background:#eff6ff;color:#1e40af;padding:4px 10px;border-radius:6px;border:1px solid #bfdbfe;">{}</span>',
             num
         )
     application_number_badge.short_description = 'Ariza raqami'
+
+    def status_badge(self, obj):
+        from django.utils.html import format_html
+        short_labels = {
+            'pending': ('1-bosqich: Qabul qilindi', '#f1f5f9', '#334155'),
+            'in_progress': ('2-bosqich: Dastlabki tekshiruv', '#eff6ff', '#1e40af'),
+            'commission_review': ('3-bosqich: Komissiya baholashi', '#eef2ff', '#3730a3'),
+            'creative_exam': ('3.1-bosqich: Suhbat / Ijodiy sinov', '#fffbeb', '#92400e'),
+            'resolved': ('4-bosqich: Qabul qilindi', '#ecfdf5', '#065f46'),
+            'conditional_accepted': ('4-bosqich: Shartli qabul', '#fef3c7', '#92400e'),
+            'rejected': ('4-bosqich: Rad etildi', '#fef2f2', '#991b1b'),
+            'appeal': ('Apellyatsiyada', '#faf5ff', '#6b21a8'),
+        }
+        label, bg, fg = short_labels.get(obj.status, (obj.get_status_display(), '#f8fafc', '#475569'))
+        return format_html(
+            '<span style="display:inline-block;white-space:nowrap;font-size:12px;font-weight:600;background:{};color:{};padding:4px 10px;border-radius:6px;">{}</span>',
+            bg, fg, label
+        )
+    status_badge.short_description = 'Jarayon bosqichi'
+
+    def decision_badge(self, obj):
+        from django.utils.html import format_html
+        short_decisions = {
+            'pending': ("Ko'rib chiqilmoqda", '#f8fafc', '#64748b'),
+            'direct_match': ("To'g'ridan-to'g'ri mos", '#ecfdf5', '#065f46'),
+            'compatible': ('Mos / Turdosh (80–100)', '#ecfdf5', '#065f46'),
+            'conditional': ('Shartli mos (60–79)', '#fffbeb', '#92400e'),
+            'incompatible': ('Mos emas (0–59)', '#fef2f2', '#991b1b'),
+        }
+        label, bg, fg = short_decisions.get(obj.decision_type, (obj.get_decision_type_display(), '#f8fafc', '#64748b'))
+        return format_html(
+            '<span style="display:inline-block;white-space:nowrap;font-size:12px;font-weight:600;background:{};color:{};padding:4px 10px;border-radius:6px;">{}</span>',
+            bg, fg, label
+        )
+    decision_badge.short_description = 'Komissiya xulosasi'
 
     def total_score_badge(self, obj):
         from django.utils.html import format_html
@@ -1362,7 +1397,7 @@ class ApplicationAdmin(admin.ModelAdmin):
         else:
             bg, fg = '#f8fafc', '#64748b'
         return format_html(
-            '<span style="font-weight:700;background:{};color:{};padding:3px 8px;border-radius:6px;">{} / 100</span>',
+            '<span style="display:inline-block;white-space:nowrap;font-weight:700;background:{};color:{};padding:4px 10px;border-radius:6px;">{} / 100</span>',
             bg, fg, score
         )
     total_score_badge.short_description = 'Jami ball'
@@ -1370,15 +1405,16 @@ class ApplicationAdmin(admin.ModelAdmin):
     def phone_link(self, obj):
         from django.utils.html import format_html
         if obj.phone:
-            return format_html('<a href="tel:{}" style="font-weight:bold;color:#1a73e8;font-size:1.05em;">📞 {}</a>', obj.phone, obj.phone)
+            return format_html('<a href="tel:{}" style="display:inline-block;white-space:nowrap;font-weight:bold;color:#1a73e8;">📞 {}</a>', obj.phone, obj.phone)
         return '-'
     phone_link.short_description = 'Telefon'
     phone_link.allow_tags = True
 
     def application_type_display(self, obj):
+        from django.utils.html import format_html
         icons = {'professional_development': '🎓', 'retraining': '🔄'}
         icon = icons.get(obj.application_type, '📋')
-        return f"{icon} {obj.get_application_type_display()}"
+        return format_html('<span style="white-space:nowrap;">{} {}</span>', icon, obj.get_application_type_display())
     application_type_display.short_description = 'Ariza turi'
 
     def render_change_form(self, request, context, *args, **kwargs):
