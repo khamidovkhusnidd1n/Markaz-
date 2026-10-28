@@ -73,7 +73,7 @@ export const MENU_ITEMS: MenuItemType[] = [
       { label: "Davomat tizimi", path: 'external', url: 'https://t.me/uzbadavomatbot', i18nKey: 'menu.attendance' }
     ]
   },
-  { label: "Ochiq ma'lumotlar", path: '/open-data?category=open_data', icon: <Database size={18} />, i18nKey: 'menu.open_data' },
+  { label: "Ochiq ma'lumotlar", path: '/open-data', icon: <Database size={18} />, i18nKey: 'menu.open_data' },
   {
     label: 'Media',
     i18nKey: 'menu.media',

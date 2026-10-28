@@ -51,12 +51,22 @@ const DesktopMenuItem = ({ item, level = 0 }: { item: MenuItemType, level?: numb
     </>
   );
 
+  const isDummyPath = !item.path || item.path === '#';
+
   const AnchorOrLink = isExternal ? (
     <a href={item.url} target="_blank" rel="noopener noreferrer" className={linkClasses}>
       {content}
     </a>
+  ) : isDummyPath ? (
+    <button
+      type="button"
+      onClick={(e) => e.preventDefault()}
+      className={`${linkClasses} cursor-pointer bg-transparent border-0`}
+    >
+      {content}
+    </button>
   ) : (
-    <Link to={item.path || '#'} className={linkClasses}>
+    <Link to={item.path!} className={linkClasses}>
       {content}
     </Link>
   );
