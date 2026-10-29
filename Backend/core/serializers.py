@@ -514,6 +514,27 @@ class ApplicationSerializer(serializers.ModelSerializer):
         return f"{prefix}-{year}-{obj.pk:04d}"
 
 
+class ApplicationTrackSerializer(ApplicationSerializer):
+    """
+    Sanitized serializer for public tracking endpoint.
+    Masks applicant's phone number and strips private telegram handle.
+    """
+    phone = serializers.SerializerMethodField()
+    telegram_link = serializers.SerializerMethodField()
+
+    def get_phone(self, obj):
+        if not obj.phone:
+            return ''
+        import re
+        digits = re.sub(r'\D', '', obj.phone)
+        if len(digits) >= 9:
+            return f"+998 {digits[-9:-7]} *** ** {digits[-2:]}"
+        return "***"
+
+    def get_telegram_link(self, obj):
+        return ''
+
+
 class YearlyStatisticsSerializer(serializers.ModelSerializer):
     """Serializer for YearlyStatistics model."""
 

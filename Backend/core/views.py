@@ -24,7 +24,7 @@ from .models import (
 )
 from .serializers import (
     NewsSerializer, NewsCreateSerializer, NewsImageSerializer, NewsCategorySerializer,
-    GalleryItemSerializer, ArtGalleryItemSerializer, AppealSerializer, ApplicationSerializer, ListenerSerializer, ListenerBulkImportSerializer,
+    GalleryItemSerializer, ArtGalleryItemSerializer, AppealSerializer, ApplicationSerializer, ApplicationTrackSerializer, ListenerSerializer, ListenerBulkImportSerializer,
     TrainingPlanRecordSerializer,
     TeacherSerializer, PersonnelSerializer, CourseSerializer,
     JournalIssueSerializer, DocumentSerializer, StatisticsSerializer,
@@ -58,6 +58,13 @@ class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
+        return has_admin_access(request)
+
+
+class IsAdminOnly(permissions.BasePermission):
+    """Custom permission: access only for authenticated admins/staff."""
+
+    def has_permission(self, request, view):
         return has_admin_access(request)
 
 
@@ -791,14 +798,14 @@ class AppealViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_authenticators(self):
-        if getattr(self, 'action', None) == 'create' or self.request.method == 'POST':
+        if getattr(self, 'action', None) == 'create':
             return []
         return super().get_authenticators()
 
     def get_permissions(self):
         if self.action in ['create']:
             return [permissions.AllowAny()]
-        return [IsAdminOrReadOnly()]
+        return [IsAdminOnly()]
 
 
 class ApplicationViewSet(viewsets.ModelViewSet):
@@ -807,59 +814,59 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_authenticators(self):
-        if getattr(self, 'action', None) in ['create', 'track'] or self.request.method in ['POST', 'GET']:
+        if getattr(self, 'action', None) in ['create', 'track']:
             return []
         return super().get_authenticators()
 
     def get_permissions(self):
         if self.action in ['create', 'track']:
             return [permissions.AllowAny()]
-        return [IsAdminOrReadOnly()]
+        return [IsAdminOnly()]
 
     @action(detail=False, methods=['get'], permission_classes=[permissions.AllowAny])
     def track(self, request):
         """
-        Ariza holatini telefon raqami yoki ariza raqami orqali tekshirish.
+        Ariza holatini ariza raqami yoki to'liq 9-xonali telefon raqami orqali tekshirish.
         GET /api/applications/track/?q=...
         """
         import re
         from django.db.models import Q
 
         query = (request.query_params.get('q') or request.query_params.get('query') or '').strip()
-        if not query or len(query) < 2:
+        if not query:
             return Response(
-                {'detail': "Iltimos, ariza raqami yoki telefon raqamingizni kiriting."},
+                {'detail': "Iltimos, to'liq ariza raqami yoki telefon raqamingizni kiriting."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         clean_upper = query.upper().replace(' ', '')
         digits = re.sub(r'\D', '', query)
 
-        filters = Q(application_number__iexact=clean_upper) | Q(application_number__icontains=clean_upper)
+        # 1. Exact match on application number (e.g. QT-2026-0012, MO-2026-0005)
+        filters = Q(application_number__iexact=clean_upper)
 
-        # Match formats like QT-2026-0012, MO-2026-12, #12, or pure ID if short
-        m = re.match(r'^(?:QT|MO)?[-/\s]*(?:\d{4}[-/\s]*)?0*(\d+)$', clean_upper)
-        if m and len(digits) <= 6:
+        # 2. Match formats like #3, #0012, QT-2026-0003, or pure numeric ID
+        id_match = re.match(r'^(?:(?:QT|MO)[-/\s#]*)?(?:(?:\d{4})[-/\s#]+)?(?:#)?0*(\d{1,6})$', clean_upper)
+        if id_match:
             try:
-                pk_val = int(m.group(1))
+                pk_val = int(id_match.group(1))
                 filters |= Q(pk=pk_val)
             except ValueError:
                 pass
 
-        # Match phone number (last 7 or 9 digits so +998 90 123-45-67, 901234567, 998901234567 all match)
-        queryset = Application.objects.filter(filters).order_by('-created_at')
-
-        if len(digits) >= 7:
-            last_digits = digits[-9:] if len(digits) >= 9 else digits[-7:]
-            all_apps = Application.objects.all().order_by('-created_at')
-            matched_ids = set(queryset.values_list('id', flat=True))
-            for app in all_apps:
+        # 3. Match by full phone number: require at least 9 digits (Uzbekistan mobile standard)
+        if len(digits) >= 9:
+            last_9 = digits[-9:]
+            phone_matched_ids = []
+            for app in Application.objects.only('id', 'phone'):
                 app_digits = re.sub(r'\D', '', app.phone or '')
-                if app_digits and (app_digits.endswith(last_digits) or last_digits in app_digits):
-                    matched_ids.add(app.id)
-            queryset = Application.objects.filter(id__in=matched_ids).order_by('-created_at')
+                if app_digits.endswith(last_9):
+                    phone_matched_ids.append(app.id)
+            if phone_matched_ids:
+                filters |= Q(id__in=phone_matched_ids)
 
-        serializer = ApplicationSerializer(queryset[:20], many=True, context={'request': request})
+        queryset = Application.objects.filter(filters).order_by('-created_at')[:5]
+        serializer = ApplicationTrackSerializer(queryset, many=True, context={'request': request})
         return Response(serializer.data)
 
 
