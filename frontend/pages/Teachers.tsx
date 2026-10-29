@@ -4,6 +4,7 @@ import { ArrowLeft, Users, X, ZoomIn } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ImageModal } from '../components/ImageModal';
+import { sanitizeHtml } from '../utils';
 
 const Teachers: React.FC = () => {
   const { t } = useTranslation();
@@ -156,7 +157,7 @@ const Teachers: React.FC = () => {
                       const bio = selectedTeacher.biography_translated || selectedTeacher.biography;
                       const hasHtml = /<[a-z][\s\S]*>/i.test(bio);
                       return hasHtml ? (
-                        <div className="[&>ul]:list-disc [&>ul]:pl-5 [&>ul>li]:mb-2 [&>p]:mb-3 leading-relaxed text-slate-700 text-base" dangerouslySetInnerHTML={{ __html: bio }} />
+                        <div className="[&>ul]:list-disc [&>ul]:pl-5 [&>ul>li]:mb-2 [&>p]:mb-3 leading-relaxed text-slate-700 text-base" dangerouslySetInnerHTML={{ __html: sanitizeHtml(bio) }} />
                       ) : (
                         <div className="whitespace-pre-line text-slate-700 leading-relaxed text-base">{bio}</div>
                       );

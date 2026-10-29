@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
 import { X, Calendar, User, Eye, ZoomIn, Share2 } from 'lucide-react';
-import { getImageUrl } from '../utils';
+import { getImageUrl, sanitizeHtml } from '../utils';
 import { NewsItem } from '../types';
 import { MediaItem, ImageModal } from './ImageModal';
 
@@ -175,7 +175,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({ newsItem, onClose }) => {
               <h4 className="text-xl font-bold text-slate-900 mb-6 pb-3 border-b border-slate-100">{t('news.more_info')}</h4>
               <div className="prose prose-slate prose-blue max-w-none prose-img:rounded-xl">
                 {(newsItem.content_translated || newsItem.content) ? (
-                  <div dangerouslySetInnerHTML={{ __html: (newsItem.content_translated || newsItem.content) }} />
+                  <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(newsItem.content_translated || newsItem.content) }} />
                 ) : (
                   <p className="text-slate-400 italic">{t('news.no_info')}</p>
                 )}

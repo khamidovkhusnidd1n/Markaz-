@@ -489,6 +489,33 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'admin_note', 'created_at', 'updated_at'
         ]
 
+    ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip', 'rar'}
+    MAX_FILE_SIZE = 25 * 1024 * 1024  # 25 MB
+
+    def _validate_uploaded_file(self, file_obj, field_name):
+        if not file_obj:
+            return file_obj
+        if hasattr(file_obj, 'size') and file_obj.size > self.MAX_FILE_SIZE:
+            raise serializers.ValidationError(f"{field_name} hajmi 25 MB dan oshmasligi kerak.")
+        name = getattr(file_obj, 'name', '')
+        if '.' in name:
+            ext = name.rsplit('.', 1)[-1].lower()
+            if ext not in self.ALLOWED_EXTENSIONS:
+                allowed_str = ', '.join(sorted(self.ALLOWED_EXTENSIONS))
+                raise serializers.ValidationError(
+                    f"{field_name} uchun ruxsat etilmagan format (.{ext}). Faqat ruxsat etilgan formatlar: {allowed_str}"
+                )
+        return file_obj
+
+    def validate_diploma_file(self, value):
+        return self._validate_uploaded_file(value, "Diplom fayli")
+
+    def validate_diploma_supplement_file(self, value):
+        return self._validate_uploaded_file(value, "Diplom ilovasi fayli")
+
+    def validate_portfolio_file(self, value):
+        return self._validate_uploaded_file(value, "Portfolio fayli")
+
     def _file_url(self, file_field):
         if not file_field:
             return None

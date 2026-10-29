@@ -90,16 +90,30 @@ class PedagogueProjectViewSet(viewsets.ReadOnlyModelViewSet):
 
     @action(detail=True, methods=['post'])
     def view(self, request, pk=None):
+        from django.core.cache import cache
         project = self.get_object()
-        project.views_count += 1
-        project.save(update_fields=['views_count'])
+        ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+        cache_key = f"view_proj_lock_{project.pk}_{ip}"
+        if not cache.get(cache_key):
+            project.views_count += 1
+            project.save(update_fields=['views_count'])
+            cache.set(cache_key, True, timeout=300)
         return Response({'views_count': project.views_count})
 
     @action(detail=True, methods=['post'])
     def vote(self, request, pk=None):
+        from django.core.cache import cache
         project = self.get_object()
+        ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+        cache_key = f"vote_lock_{project.pk}_{ip}"
+        if cache.get(cache_key):
+            return Response(
+                {'detail': "Siz ushbu loyihaga allaqachon ovoz bergansiz. Har bir foydalanuvchi sutkasiga 1 marta ovoz berishi mumkin."},
+                status=status.HTTP_429_TOO_MANY_REQUESTS
+            )
         project.votes_count += 1
         project.save(update_fields=['votes_count'])
+        cache.set(cache_key, True, timeout=86400)
         return Response({'votes_count': project.votes_count})
 
 class NewsViewSet(viewsets.ModelViewSet):
@@ -842,11 +856,24 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         clean_upper = query.upper().replace(' ', '')
         digits = re.sub(r'\D', '', query)
 
+        # Security check (Anti-BOLA/IDOR): Require either:
+        # a) Full 9+ digits phone number, OR
+        # b) Valid formatted application number (e.g. QT-2026-0001, MO-2026-0002) of at least 8 characters.
+        # Single digit lookups (like ?q=1, ?q=2) or broad keywords (like ?q=2026) are strictly rejected.
+        is_phone_query = len(digits) >= 9
+        is_app_num_query = bool(re.match(r'^(?:QT|MO)[-/\s#]?\d{4}[-/\s#]?\d{1,6}$', clean_upper)) or (clean_upper.startswith(('QT', 'MO')) and len(clean_upper) >= 8)
+
+        if not is_phone_query and not is_app_num_query:
+            return Response(
+                {'detail': "Iltimos, to'liq ariza raqami (masalan: QT-2026-0001) yoki 9 xonali telefon raqamingizni kiriting."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         # 1. Exact match on application number (e.g. QT-2026-0012, MO-2026-0005)
         filters = Q(application_number__iexact=clean_upper)
 
-        # 2. Match formats like #3, #0012, QT-2026-0003, or pure numeric ID
-        id_match = re.match(r'^(?:(?:QT|MO)[-/\s#]*)?(?:(?:\d{4})[-/\s#]+)?(?:#)?0*(\d{1,6})$', clean_upper)
+        # 2. Match exact formatted number: QT-2026-0003 or MO-2026-0005
+        id_match = re.match(r'^(?:QT|MO)[-/\s#]?(?:\d{4})[-/\s#]?0*(\d{1,6})$', clean_upper)
         if id_match:
             try:
                 pk_val = int(id_match.group(1))
@@ -854,8 +881,8 @@ class ApplicationViewSet(viewsets.ModelViewSet):
             except ValueError:
                 pass
 
-        # 3. Match by full phone number: require at least 9 digits (Uzbekistan mobile standard)
-        if len(digits) >= 9:
+        # 3. Match by full phone number
+        if is_phone_query:
             last_9 = digits[-9:]
             phone_matched_ids = []
             for app in Application.objects.only('id', 'phone'):
@@ -997,12 +1024,24 @@ def get_all_data(request):
 @permission_classes([permissions.AllowAny])
 def custom_login(request):
     """
-    Custom login endpoint for backward compatibility.
+    Custom login endpoint for backward compatibility with brute-force lockout.
     """
+    from django.core.cache import cache
+
+    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    failed_attempts_key = f"login_failed_count_{ip}"
+    lockout_key = f"login_lockout_{ip}"
+
+    if cache.get(lockout_key):
+        return Response(
+            {'success': False, 'message': "Ko'p marotaba xato login kiritildi. Xavfsizlik yuzasidan tizim 15 daqiqaga bloklandi."},
+            status=status.HTTP_429_TOO_MANY_REQUESTS
+        )
+
     username = request.data.get('username')
     password = request.data.get('password')
 
-    logger.info("Login attempt for username=%s from ip=%s", username, request.META.get('REMOTE_ADDR'))
+    logger.info("Login attempt for username=%s from ip=%s", username, ip)
 
     from django.conf import settings
 
@@ -1014,6 +1053,8 @@ def custom_login(request):
     )
     if allow_static and username == settings.STATIC_ADMIN_USERNAME and password == settings.STATIC_ADMIN_PASSWORD:
         logger.info("Static admin login succeeded for username=%s", username)
+        cache.delete(failed_attempts_key)
+        cache.delete(lockout_key)
         return Response({
             'success': True,
             'token': settings.STATIC_ADMIN_TOKEN,
@@ -1027,16 +1068,30 @@ def custom_login(request):
         from rest_framework_simplejwt.tokens import RefreshToken
         refresh = RefreshToken.for_user(user)
         logger.info("Django admin login succeeded for username=%s", username)
+        cache.delete(failed_attempts_key)
+        cache.delete(lockout_key)
         return Response({
             'success': True,
             'token': str(refresh.access_token),
             'refresh': str(refresh),
         })
 
-    logger.warning("Login failed for username=%s", username)
+    failed_count = (cache.get(failed_attempts_key) or 0) + 1
+    if failed_count >= 5:
+        cache.set(lockout_key, True, timeout=900)
+        cache.delete(failed_attempts_key)
+        logger.warning("IP %s locked out due to multiple failed login attempts", ip)
+        return Response(
+            {'success': False, 'message': "Ko'p marotaba xato login kiritildi. Tizim 15 daqiqaga bloklandi."},
+            status=status.HTTP_429_TOO_MANY_REQUESTS
+        )
+    else:
+        cache.set(failed_attempts_key, failed_count, timeout=900)
+
+    logger.warning("Login failed for username=%s (attempt %d/5)", username, failed_count)
 
     return Response(
-        {'success': False, 'message': "Login yoki parol noto'g'ri!"},
+        {'success': False, 'message': f"Login yoki parol noto'g'ri! (Qolgan urinishlar: {5 - failed_count})"},
         status=status.HTTP_401_UNAUTHORIZED
     )
 
@@ -1109,6 +1164,7 @@ def increment_project_vote(request, pk):
 
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
+from django.utils.html import escape
 from .models import News
 import re
 
@@ -1117,15 +1173,16 @@ import re
 def share_news_preview(request, pk):
     news = get_object_or_404(News, pk=pk)
     
-    title = news.title.replace('"', '&quot;')
-    description = re.sub(r'<[^>]+>', '', news.content)[:200] + '...' if news.content else ''
+    title = escape(news.title or '')
+    raw_desc = re.sub(r'<[^>]+>', '', news.content)[:200] + '...' if news.content else ''
+    description = escape(raw_desc)
     
     image_url = ""
     first_image = news.images.first()
     if first_image and first_image.image:
-        image_url = request.build_absolute_uri(first_image.image.url)
+        image_url = escape(request.build_absolute_uri(first_image.image.url))
         
-    frontend_url = f"https://uzbamalaka.uz/#/news?id={pk}"
+    frontend_url = escape(f"https://uzbamalaka.uz/#/news?id={pk}")
     
     html = f"""
     <!DOCTYPE html>
@@ -1155,14 +1212,14 @@ def share_journal_preview(request, pk):
     from .models import JournalIssue
     issue = get_object_or_404(JournalIssue, pk=pk)
     
-    title = f"Jurnal {issue.year} - {issue.issue_number if issue.issue_number else ''}".replace('"', '&quot;')
-    description = f"O'zBA Malaka oshirish markazi ilmiy jurnali. {issue.year}-yilgi soni."
+    title = escape(f"Jurnal {issue.year} - {issue.issue_number if issue.issue_number else ''}")
+    description = escape(f"O'zBA Malaka oshirish markazi ilmiy jurnali. {issue.year}-yilgi soni.")
     
     image_url = ""
     if issue.thumbnail:
-        image_url = request.build_absolute_uri(issue.thumbnail.url)
+        image_url = escape(request.build_absolute_uri(issue.thumbnail.url))
         
-    frontend_url = f"https://uzbamalaka.uz/#/journal?id={pk}"
+    frontend_url = escape(f"https://uzbamalaka.uz/#/journal?id={pk}")
     
     html = f"""
     <!DOCTYPE html>

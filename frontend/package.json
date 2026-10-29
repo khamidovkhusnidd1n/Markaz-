@@ -10,6 +10,8 @@
     "test:i18n": "node scripts/verify-i18n.js"
   },
   "dependencies": {
+    "@types/dompurify": "^3.0.5",
+    "dompurify": "^3.4.17",
     "i18next": "^23.7.6",
     "i18next-browser-languagedetector": "^7.2.1",
     "lucide-react": "^0.563.0",

@@ -1,0 +1,16 @@
+# Disable script execution in uploads/media directory (OWASP Defense-in-Depth)
+Options -ExecCGI -Indexes
+RemoveHandler .cgi .pl .py .pyc .pyo .phtml .php .php3 .php4 .php5 .php6 .pcgi .inc
+RemoveType .cgi .pl .py .pyc .pyo .phtml .php .php3 .php4 .php5 .php6 .pcgi .inc
+
+<FilesMatch "(?i)\.(php|phtml|php3|php4|php5|phps|py|pl|sh|cgi|bash)$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>

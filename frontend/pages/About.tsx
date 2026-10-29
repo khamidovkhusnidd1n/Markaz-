@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { Phone, Clock, Calendar, Mail, Image as ImageIcon } from 'lucide-react';
+import { sanitizeHtml } from '../utils';
 
 const About: React.FC = () => {
   const { t } = useTranslation();
@@ -55,7 +56,7 @@ const About: React.FC = () => {
               <h2 className="text-3xl font-black mb-8 text-slate-900 border-l-4 border-blue-600 pl-4">{t('about.history_title')}</h2>
               <div className="text-slate-700 leading-relaxed space-y-6 text-lg prose prose-lg max-w-none">
                 {aboutContent.history ? (
-                  <div dangerouslySetInnerHTML={{ __html: aboutContent.history }} />
+                  <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(aboutContent.history) }} />
                 ) : (
                   <div className="py-10 text-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                     <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs italic">{t('about.no_data')}</p>

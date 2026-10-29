@@ -1,3 +1,10 @@
+import DOMPurify from 'dompurify';
+
+export const sanitizeHtml = (html: string | null | undefined): string => {
+  if (!html) return '';
+  return DOMPurify.sanitize(html);
+};
+
 export const getImageUrl = (url: string | null | undefined): string => {
   if (!url) return '';
   if (url.startsWith('http://') || url.startsWith('https://')) {

@@ -3,6 +3,7 @@ import { useParams, Link, Navigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { Phone, Clock, Mail, Image as ImageIcon, ArrowLeft, Building2, Users, UserCheck, X } from 'lucide-react';
+import { sanitizeHtml } from '../utils';
 
 type AboutSection = 'info' | 'structure' | 'leadership' | 'staff';
 
@@ -68,7 +69,7 @@ const AboutPage: React.FC = () => {
               </h2>
               <div className="text-slate-700 leading-relaxed space-y-6 text-lg prose prose-lg max-w-none">
                 {aboutContent.history ? (
-                  <div dangerouslySetInnerHTML={{ __html: aboutContent.history }} />
+                  <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(aboutContent.history) }} />
                 ) : (
                   <div className="py-10 text-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
                     <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs italic">{t('about.no_data')}</p>
@@ -134,7 +135,7 @@ const AboutPage: React.FC = () => {
                     <div className="p-4 sm:p-5 flex-1 flex flex-col items-center text-center bg-white z-10">
                       <h3 className="text-lg font-bold text-slate-900 mb-1 leading-tight">{person.fullName}</h3>
                       <p className="text-blue-600 font-medium text-xs sm:text-sm mb-3">{person.position}</p>
-                      {person.duties && <div className="text-xs sm:text-sm leading-relaxed text-slate-500 line-clamp-3 [&>p]:inline [&>ul]:inline [&>li]:inline" dangerouslySetInnerHTML={{ __html: person.duties }} />}
+                      {person.duties && <div className="text-xs sm:text-sm leading-relaxed text-slate-500 line-clamp-3 [&>p]:inline [&>ul]:inline [&>li]:inline" dangerouslySetInnerHTML={{ __html: sanitizeHtml(person.duties) }} />}
 
                     </div>
                   </div>
@@ -206,7 +207,7 @@ const AboutPage: React.FC = () => {
                       {t('about.duties', i18n.language === 'en' ? 'Job Duties' : i18n.language === 'ru' ? 'Должностные обязанности' : 'Lavozim vazifasi')}
                     </h4>
                     <div className="prose prose-slate max-w-none">
-                      <div className="[&>ul]:list-disc [&>ul]:pl-5 [&>ul>li]:mb-2 [&>p]:mb-2" dangerouslySetInnerHTML={{ __html: selectedPerson.duties }} />
+                      <div className="[&>ul]:list-disc [&>ul]:pl-5 [&>ul>li]:mb-2 [&>p]:mb-2" dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedPerson.duties) }} />
                     </div>
                   </div>
                 )}

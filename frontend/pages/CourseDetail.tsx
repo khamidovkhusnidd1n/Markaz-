@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ChevronLeft, Phone, Send, Globe, Instagram, Facebook, FileText, Search } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
+import { sanitizeHtml } from '../utils';
 
 const CourseDetail: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -48,7 +49,7 @@ const CourseDetail: React.FC = () => {
               <h2 className="text-xl font-black text-slate-900">{t('course_detail.details_title')}</h2>
               <div 
                 className="mt-3 leading-7 text-slate-600 prose prose-slate max-w-none"
-                dangerouslySetInnerHTML={{ __html: course.description || t('course_detail.no_details') }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.description || t('course_detail.no_details')) }}
               />
             </div>
           </div>

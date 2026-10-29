@@ -5,3 +5,5 @@ deployment:
     - /bin/cp -R frontend/dist/* $DEPLOYPATH/public_html/
     - /bin/mkdir -p $DEPLOYPATH/uzbamalaka_backend
     - /bin/cp -R Backend/* $DEPLOYPATH/uzbamalaka_backend/
+    - /bin/mkdir -p $DEPLOYPATH/public_html/media
+    - /bin/cp deploy/media.htaccess $DEPLOYPATH/public_html/media/.htaccess

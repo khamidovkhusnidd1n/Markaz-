@@ -3,6 +3,7 @@ import { Eye, Share2 } from 'lucide-react';
 import DocumentViewer from '../components/DocumentViewer';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
+import { sanitizeHtml } from '../utils';
 
 interface BoardMember {
   name: string;
@@ -298,7 +299,7 @@ const Journal: React.FC = () => {
             <h1 className="mb-6 text-3xl md:text-5xl font-bold">{t('journal.title')}</h1>
             <div 
               className="text-base md:text-lg leading-relaxed text-blue-100 text-justify space-y-4 [&>p]:mb-4"
-              dangerouslySetInnerHTML={{ __html: journalSettings.aboutJournal || t('journal.about_fallback') }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(journalSettings.aboutJournal || t('journal.about_fallback')) }}
             />
           </div>
         </div>
@@ -421,7 +422,7 @@ const Journal: React.FC = () => {
             <h3 className="mb-4 text-xl font-bold text-amber-900">{t('journal.for_authors_title')}</h3>
               <div 
                 className="text-sm text-amber-950 mb-4 space-y-2 [&>p]:mb-2 [&>ul]:list-disc [&>ul]:pl-5 [&>ol]:list-decimal [&>ol]:pl-5 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: journalSettings.articleRulesText || t('journal.for_authors_fallback') }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(journalSettings.articleRulesText || t('journal.for_authors_fallback')) }}
               />
             {journalSettings.articleRulesPdfUrl && (
               <button onClick={() => setViewDoc(journalSettings.articleRulesPdfUrl)} className="inline-flex items-center gap-2 rounded-lg bg-amber-700 px-4 py-2.5 text-xs md:text-sm font-semibold text-white transition-colors hover:bg-amber-800 shadow-sm"><Eye size={16} /> {t('common.view')}</button>

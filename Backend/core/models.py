@@ -6,12 +6,14 @@ import os
 import uuid
 from django.db import models
 from django.utils import timezone
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
 
 
 def generate_unique_filename(instance, filename):
-    """Generate unique filename for uploaded files."""
-    ext = filename.split('.')[-1]
+    """Generate unique filename for uploaded files with sanitized extension."""
+    import re
+    ext = filename.split('.')[-1].lower() if '.' in filename else 'bin'
+    ext = re.sub(r'[^a-z0-9]', '', ext)[:10] or 'bin'
     unique_name = f"{uuid.uuid4().hex}.{ext}"
     model_name = instance.__class__.__name__.lower()
     return os.path.join(f'uploads/{model_name}/', unique_name)
@@ -329,22 +331,27 @@ class Application(BaseModel):
         default='',
         verbose_name="Diplom bo'yicha ma'lumoti va mutaxassisligi"
     )
+    APPLICATION_FILE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip', 'rar']
+
     diploma_file = models.FileField(
         upload_to=generate_unique_filename,
         blank=True,
         null=True,
+        validators=[FileExtensionValidator(allowed_extensions=APPLICATION_FILE_EXTENSIONS)],
         verbose_name="Diplom nusxasi (PDF / Rasm)"
     )
     diploma_supplement_file = models.FileField(
         upload_to=generate_unique_filename,
         blank=True,
         null=True,
+        validators=[FileExtensionValidator(allowed_extensions=APPLICATION_FILE_EXTENSIONS)],
         verbose_name="Diplom ilovasi — fanlar va soatlar (PDF / Rasm)"
     )
     portfolio_file = models.FileField(
         upload_to=generate_unique_filename,
         blank=True,
         null=True,
+        validators=[FileExtensionValidator(allowed_extensions=APPLICATION_FILE_EXTENSIONS)],
         verbose_name="Ijodiy portfolio (5–10 ta ijodiy ish, PDF / ZIP / Rasm)"
     )
     phone = models.CharField(max_length=50, verbose_name="Telefon raqami")

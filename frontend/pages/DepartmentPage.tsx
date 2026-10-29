@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { NewsModal } from '../components/NewsModal';
 import { ImageModal } from '../components/ImageModal';
 import { useApp } from '../context/AppContext';
-import { getImageUrl } from '../utils';
+import { getImageUrl, sanitizeHtml } from '../utils';
 import { BackendAPI } from '../services/backend';
 
 const DepartmentPage: React.FC = () => {
@@ -141,7 +141,7 @@ const DepartmentPage: React.FC = () => {
                       <div className={`w-8 h-8 bg-gradient-to-r ${dept.color_classes || 'from-blue-600 to-blue-800'} rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0 group-hover:scale-110 transition-transform`}>
                         {idx + 1}
                       </div>
-                      <div className="text-gray-700 leading-relaxed font-medium prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: taskText }} />
+                      <div className="text-gray-700 leading-relaxed font-medium prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(taskText) }} />
                     </div>
                   );
                 })
@@ -156,7 +156,7 @@ const DepartmentPage: React.FC = () => {
                       <div className={`w-8 h-8 bg-gradient-to-r ${dept.color_classes || 'from-blue-600 to-blue-800'} rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0 group-hover:scale-110 transition-transform`}>
                         {idx + 1}
                       </div>
-                      <div className="text-gray-700 leading-relaxed font-medium prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: task }} />
+                      <div className="text-gray-700 leading-relaxed font-medium prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(task) }} />
                     </div>
                   );
                 })
@@ -197,7 +197,7 @@ const DepartmentPage: React.FC = () => {
                     {/* Detail Text & Accordion */}
                     <div className={hasMedia ? "lg:col-span-3 space-y-4" : "w-full"}>
                       {detailText && (
-                        <div className="prose prose-blue max-w-none text-gray-700 mb-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm" dangerouslySetInnerHTML={{ __html: detailText }} />
+                        <div className="prose prose-blue max-w-none text-gray-700 mb-8 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm" dangerouslySetInnerHTML={{ __html: sanitizeHtml(detailText) }} />
                       )}
 
                       {dept.department_tasks && dept.department_tasks.filter((t: any) => getLocalizedField(t, 'title')).length > 0 && (
@@ -221,7 +221,7 @@ const DepartmentPage: React.FC = () => {
                                 </button>
                                 {isOpen && (
                                   <div className="p-6 bg-white prose prose-blue max-w-none text-slate-600 leading-relaxed font-normal">
-                                    <div dangerouslySetInnerHTML={{ __html: getLocalizedField(task, 'task_text') }} />
+                                    <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(getLocalizedField(task, 'task_text')) }} />
                                   </div>
                                 )}
                               </div>
@@ -339,7 +339,7 @@ const DepartmentPage: React.FC = () => {
                     {getLocalizedField(post, 'title')}
                   </h3>
                   <div className="mt-3 text-sm text-slate-600 line-clamp-3 flex-1 prose prose-sm" 
-                       dangerouslySetInnerHTML={{ __html: getLocalizedField(post, 'content') }} />
+                       dangerouslySetInnerHTML={{ __html: sanitizeHtml(getLocalizedField(post, 'content')) }} />
                     <div className="mt-4 font-bold text-blue-600 text-sm">
                       {t('news_list.read_more')} &rarr;
                     </div>
