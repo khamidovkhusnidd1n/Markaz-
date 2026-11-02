@@ -1245,6 +1245,8 @@ const Home: React.FC = () => {
                       <img 
                         src={mainItem.images?.[0]?.imageUrl || mainItem.image || '/placeholder.jpg'} 
                         alt={mainItem.title} 
+                        loading="lazy" 
+                        decoding="async" 
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
@@ -1274,6 +1276,8 @@ const Home: React.FC = () => {
                       <img
                         src={secondaryItem.images?.[0]?.imageUrl || secondaryItem.image || '/placeholder.jpg'}
                         alt={secondaryItem.title}
+                        loading="lazy"
+                        decoding="async"
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>

@@ -92,6 +92,8 @@ const NewsList: React.FC = () => {
                   <img
                     src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'}
                     alt={item.title_translated || item.title}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>

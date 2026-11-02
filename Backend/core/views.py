@@ -901,7 +901,7 @@ from django.views.decorators.cache import cache_page
 
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
-@cache_page(60 * 5) # Cache for 5 minutes to handle massive traffic
+@cache_page(60 * 2) # Cache for 2 minutes to handle massive traffic, invalidated automatically on admin save
 def get_all_data(request):
     """
     Get all data for initial frontend load.
@@ -913,12 +913,12 @@ def get_all_data(request):
     try:
         data = {
             'news': NewsSerializer(
-                News.objects.filter(is_active=True).order_by('-created_at'),
+                News.objects.filter(is_active=True).select_related('category').prefetch_related('images').order_by('-created_at'),
                 many=True,
                 context=ctx
             ).data,
             'gallery': GalleryItemSerializer(
-                GalleryItem.objects.filter(is_active=True).order_by('order', '-created_at'),
+                GalleryItem.objects.filter(is_active=True).prefetch_related('images').order_by('order', '-created_at'),
                 many=True,
                 context=ctx
             ).data,
@@ -986,7 +986,7 @@ def get_all_data(request):
                 context=ctx
             ).data,
             'internationalProjects': InternationalProjectSerializer(
-                InternationalProject.objects.filter(is_active=True).order_by('order', '-start_date'),
+                InternationalProject.objects.filter(is_active=True).prefetch_related('images').order_by('order', '-start_date'),
                 many=True,
                 context=ctx
             ).data,
@@ -1001,7 +1001,7 @@ def get_all_data(request):
                 context=ctx
             ).data,
             'pedagogueProjects': PedagogueProjectSerializer(
-                PedagogueProject.objects.all().order_by('-votes_count', '-created_at'),
+                PedagogueProject.objects.all().prefetch_related('images').order_by('-votes_count', '-created_at'),
                 many=True,
                 context=ctx
             ).data,

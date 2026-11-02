@@ -106,6 +106,17 @@ class NewsImage(BaseModel):
         verbose_name_plural = "Rasmlar"
         ordering = ['order']
 
+    def save(self, *args, **kwargs):
+        if self.image:
+            try:
+                from .image_utils import compress_image
+                from django.core.files.uploadedfile import UploadedFile
+                if hasattr(self.image, 'file') and isinstance(self.image.file, UploadedFile):
+                    self.image = compress_image(self.image)
+            except Exception:
+                pass
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Rasm #{self.order} - {self.news.title[:30]}"
 
@@ -178,6 +189,17 @@ class GalleryItem(BaseModel):
         verbose_name_plural = "Galereya"
         ordering = ['order', '-created_at']
 
+    def save(self, *args, **kwargs):
+        if self.cover_image:
+            try:
+                from .image_utils import compress_image
+                from django.core.files.uploadedfile import UploadedFile
+                if hasattr(self.cover_image, 'file') and isinstance(self.cover_image.file, UploadedFile):
+                    self.cover_image = compress_image(self.cover_image)
+            except Exception:
+                pass
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.title or f"Albom #{self.pk}"
 
@@ -192,6 +214,17 @@ class GalleryImage(BaseModel):
         verbose_name = "Galereya rasmi"
         verbose_name_plural = "Galereya rasmlari"
         ordering = ['order', '-created_at']
+
+    def save(self, *args, **kwargs):
+        if self.image:
+            try:
+                from .image_utils import compress_image
+                from django.core.files.uploadedfile import UploadedFile
+                if hasattr(self.image, 'file') and isinstance(self.image.file, UploadedFile):
+                    self.image = compress_image(self.image)
+            except Exception:
+                pass
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Rasm #{self.order} - {self.gallery}"
