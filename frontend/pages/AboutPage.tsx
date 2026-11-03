@@ -9,11 +9,61 @@ type AboutSection = 'info' | 'structure' | 'leadership' | 'staff';
 
 const VALID_SECTIONS: AboutSection[] = ['info', 'structure', 'leadership', 'staff'];
 
+const getLocalizedPersonnel = (person: any, lang: string) => {
+  if (!person) return null;
+  const isEn = lang?.startsWith('en');
+  const isRu = lang?.startsWith('ru');
+
+  let position = person.position || '';
+  if (isEn && person.position_en?.trim()) {
+    position = person.position_en;
+  } else if (isRu && person.position_ru?.trim()) {
+    position = person.position_ru;
+  } else if (person.position_translated?.trim()) {
+    position = person.position_translated;
+  }
+
+  let duties = person.duties || '';
+  if (isEn && person.duties_en?.trim()) {
+    duties = person.duties_en;
+  } else if (isRu && person.duties_ru?.trim()) {
+    duties = person.duties_ru;
+  } else if (person.duties_translated?.trim()) {
+    duties = person.duties_translated;
+  }
+
+  let biography = person.biography || '';
+  if (isEn && person.biography_en?.trim()) {
+    biography = person.biography_en;
+  } else if (isRu && person.biography_ru?.trim()) {
+    biography = person.biography_ru;
+  } else if (person.biography_translated?.trim()) {
+    biography = person.biography_translated;
+  }
+
+  let receptionHours = person.receptionHours || '';
+  if (receptionHours === 'Dushanbadan-Jumagacha' || receptionHours.toLowerCase().includes('dushanba')) {
+    if (isEn) receptionHours = 'Monday - Friday';
+    else if (isRu) receptionHours = 'Понедельник - Пятница';
+    else receptionHours = 'Dushanbadan-Jumagacha';
+  }
+
+  return {
+    ...person,
+    position,
+    duties,
+    biography,
+    receptionHours,
+  };
+};
+
 const AboutPage: React.FC = () => {
   const { section } = useParams<{ section?: string }>();
   const { t, i18n } = useTranslation();
   const { personnel, aboutContent } = useApp();
-  const [selectedPerson, setSelectedPerson] = useState<any | null>(null);
+  const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
+  const selectedPersonRaw = personnel.find(p => String(p.id) === String(selectedPersonId));
+  const selectedPerson = selectedPersonRaw ? getLocalizedPersonnel(selectedPersonRaw, i18n.language) : null;
 
   // Default to 'info' if no section
   const activeSection: AboutSection = VALID_SECTIONS.includes(section as AboutSection)
@@ -107,11 +157,13 @@ const AboutPage: React.FC = () => {
               'lg:grid-cols-4 max-w-7xl'
             } gap-6 pt-10 mx-auto`}>
               {(activeSection === 'leadership' ? leadership : staff).length > 0
-                ? (activeSection === 'leadership' ? leadership : staff).map(person => (
+                ? (activeSection === 'leadership' ? leadership : staff).map(rawPerson => {
+                  const person = getLocalizedPersonnel(rawPerson, i18n.language)!;
+                  return (
                   <div 
                     key={person.id} 
                     className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-500 flex flex-col h-full animate-in fade-in slide-in-from-bottom-6 cursor-pointer"
-                    onClick={() => setSelectedPerson(person)}
+                    onClick={() => setSelectedPersonId(String(person.id))}
                   >
                     {/* Image Container with Overlay */}
                     <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full overflow-hidden shrink-0">
@@ -139,7 +191,8 @@ const AboutPage: React.FC = () => {
 
                     </div>
                   </div>
-                ))
+                )
+                })
                 : (
                   <div className="col-span-full py-32 text-center bg-slate-50 rounded-[2.5rem] border-2 border-dashed border-slate-200">
                     <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs italic">{t('about.no_data')}</p>
@@ -152,7 +205,7 @@ const AboutPage: React.FC = () => {
 
       {/* Person Biography Modal */}
       {selectedPerson && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedPerson(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedPersonId(null)}>
           <div 
             className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300"
             onClick={e => e.stopPropagation()}
@@ -161,7 +214,7 @@ const AboutPage: React.FC = () => {
             <div className="flex justify-between items-center p-6 border-b border-slate-100">
               <h3 className="text-2xl font-black text-slate-900">{selectedPerson.fullName}</h3>
               <button 
-                onClick={() => setSelectedPerson(null)}
+                onClick={() => setSelectedPersonId(null)}
                 className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors"
               >
                 <X size={20} />
@@ -204,10 +257,21 @@ const AboutPage: React.FC = () => {
                 {selectedPerson.duties && (
                   <div>
                     <h4 className="text-xl font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">
-                      {t('about.duties', i18n.language === 'en' ? 'Job Duties' : i18n.language === 'ru' ? 'Должностные обязанности' : 'Lavozim vazifasi')}
+                      {t('about.duties', i18n.language.startsWith('en') ? 'Job Duties' : i18n.language.startsWith('ru') ? 'Обязанности' : 'Lavozim vazifasi')}
                     </h4>
-                    <div className="prose prose-slate max-w-none">
+                    <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed">
                       <div className="[&>ul]:list-disc [&>ul]:pl-5 [&>ul>li]:mb-2 [&>p]:mb-2" dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedPerson.duties) }} />
+                    </div>
+                  </div>
+                )}
+
+                {selectedPerson.biography && (
+                  <div>
+                    <h4 className="text-xl font-bold text-slate-900 mb-3 pb-2 border-b border-slate-100">
+                      {t('about.biography', i18n.language.startsWith('en') ? 'Biography' : i18n.language.startsWith('ru') ? 'Биография' : 'Biografiyasi')}
+                    </h4>
+                    <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed">
+                      <div className="[&>p]:mb-3" dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedPerson.biography) }} />
                     </div>
                   </div>
                 )}

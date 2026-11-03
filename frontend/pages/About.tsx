@@ -6,8 +6,48 @@ import { useTranslation } from 'react-i18next';
 import { Phone, Clock, Calendar, Mail, Image as ImageIcon } from 'lucide-react';
 import { sanitizeHtml } from '../utils';
 
+const getLocalizedPersonnel = (person: any, lang: string) => {
+  if (!person) return null;
+  const isEn = lang?.startsWith('en');
+  const isRu = lang?.startsWith('ru');
+
+  let position = person.position || '';
+  if (isEn && person.position_en?.trim()) {
+    position = person.position_en;
+  } else if (isRu && person.position_ru?.trim()) {
+    position = person.position_ru;
+  } else if (person.position_translated?.trim()) {
+    position = person.position_translated;
+  }
+
+  let duties = person.duties || '';
+  if (isEn && person.duties_en?.trim()) {
+    duties = person.duties_en;
+  } else if (isRu && person.duties_ru?.trim()) {
+    duties = person.duties_ru;
+  } else if (person.duties_translated?.trim()) {
+    duties = person.duties_translated;
+  }
+
+  let biography = person.biography || '';
+  if (isEn && person.biography_en?.trim()) {
+    biography = person.biography_en;
+  } else if (isRu && person.biography_ru?.trim()) {
+    biography = person.biography_ru;
+  } else if (person.biography_translated?.trim()) {
+    biography = person.biography_translated;
+  }
+
+  return {
+    ...person,
+    position,
+    duties,
+    biography,
+  };
+};
+
 const About: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { personnel, aboutContent } = useApp();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState<'info' | 'structure' | 'leadership' | 'staff'>('info');
@@ -94,7 +134,9 @@ const About: React.FC = () => {
 
           {(activeTab === 'leadership' || activeTab === 'staff') && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-16 gap-x-8 pt-10 max-w-6xl mx-auto justify-center">
-              {(activeTab === 'leadership' ? leadership : staff).length > 0 ? (activeTab === 'leadership' ? leadership : staff).map(person => (
+              {(activeTab === 'leadership' ? leadership : staff).length > 0 ? (activeTab === 'leadership' ? leadership : staff).map(rawPerson => {
+                const person = getLocalizedPersonnel(rawPerson, i18n.language)!;
+                return (
                 <div key={person.id} className="flex flex-col items-center text-center animate-in fade-in slide-in-from-bottom-6 duration-700">
                   <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden mb-8 shadow-2xl border-4 sm:border-8 border-white ring-1 ring-slate-100 shrink-0">
                     <img 
@@ -133,7 +175,8 @@ const About: React.FC = () => {
                     
                   </div>
                 </div>
-              )) : (
+                )
+              }) : (
                 <div className="col-span-full py-32 text-center bg-slate-50 rounded-[2.5rem] border-2 border-dashed border-slate-200">
                   <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs italic">{t('about.no_data')}</p>
                 </div>

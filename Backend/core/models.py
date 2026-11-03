@@ -661,6 +661,16 @@ class Personnel(BaseModel):
         ordering = ['order', 'full_name']
 
     def save(self, *args, **kwargs):
+        # Clean Cyrillic HTML tags
+        for f in ['duties', 'duties_ru', 'duties_en', 'biography', 'biography_ru', 'biography_en']:
+            v = getattr(self, f, '')
+            if v:
+                v_clean = (v.replace('<ул>', '<ul>').replace('</ул>', '</ul>')
+                            .replace('<ли>', '<li>').replace('</ли>', '</li>')
+                            .replace('<п>', '<p>').replace('</п>', '</p>'))
+                if v_clean != v:
+                    setattr(self, f, v_clean)
+
         if not getattr(self, 'position_ru', '') or not getattr(self, 'position_en', '') or not getattr(self, 'duties_ru', '') or not getattr(self, 'duties_en', '') or not getattr(self, 'biography_ru', '') or not getattr(self, 'biography_en', ''):
             try:
                 import urllib.request
@@ -686,7 +696,7 @@ class Personnel(BaseModel):
                         print("Direct translation error:", e)
                         return ''
 
-                fields = []
+                fields = ['position', 'duties', 'biography']
                 for f in fields:
                     val = getattr(self, f, '')
                     if val:

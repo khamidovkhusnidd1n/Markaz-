@@ -128,15 +128,24 @@ export interface Course {
 export interface Personnel {
   id: string;
   fullName: string;
-  region: string;
+  region?: string;
   position: string;
+  position_ru?: string;
+  position_en?: string;
+  position_translated?: string;
   phone: string;
   email?: string;
   receptionHours: string;
   photoUrl?: string;
   category: 'leadership' | 'staff';
   duties?: string;
+  duties_ru?: string;
+  duties_en?: string;
+  duties_translated?: string;
   biography?: string;
+  biography_ru?: string;
+  biography_en?: string;
+  biography_translated?: string;
 }
 
 // Journal without title and description

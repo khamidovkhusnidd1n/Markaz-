@@ -1,8 +1,19 @@
 import DOMPurify from 'dompurify';
 
+export const cleanCyrillicHtmlTags = (html: string | null | undefined): string => {
+  if (!html) return '';
+  return html
+    .replace(/<ул>/gi, '<ul>')
+    .replace(/<\/ул>/gi, '</ul>')
+    .replace(/<ли>/gi, '<li>')
+    .replace(/<\/ли>/gi, '</li>')
+    .replace(/<п>/gi, '<p>')
+    .replace(/<\/п>/gi, '</p>');
+};
+
 export const sanitizeHtml = (html: string | null | undefined): string => {
   if (!html) return '';
-  return DOMPurify.sanitize(html);
+  return DOMPurify.sanitize(cleanCyrillicHtmlTags(html));
 };
 
 export const getImageUrl = (url: string | null | undefined): string => {

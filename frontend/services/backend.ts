@@ -394,16 +394,25 @@ function transformTeacher(item: any): Teacher {
 
 function transformPersonnel(item: any): Personnel {
   return {
-    id: item.id,
+    id: String(item.id),
     fullName: item.full_name || '',
-    position: item.position_translated || item.position || '',
+    position: item.position || '',
+    position_ru: item.position_ru || '',
+    position_en: item.position_en || '',
+    position_translated: item.position_translated,
     phone: item.phone || '',
     email: item.email || '',
-    receptionHours: item.reception_hours === 'Dushanbadan-Jumagacha' ? (localStorage.getItem('i18nextLng')?.startsWith('en') ? 'Monday - Friday' : localStorage.getItem('i18nextLng')?.startsWith('ru') ? 'С Понедельника по Пятницу' : 'Dushanbadan-Jumagacha') : (item.reception_hours || ''),
+    receptionHours: item.reception_hours || '',
     photoUrl: item.photo_url || '',
     category: item.category,
-    duties: item.duties_translated || item.duties || '',
-    biography: item.biography_translated || item.biography || '',
+    duties: item.duties || '',
+    duties_ru: item.duties_ru || '',
+    duties_en: item.duties_en || '',
+    duties_translated: item.duties_translated,
+    biography: item.biography || '',
+    biography_ru: item.biography_ru || '',
+    biography_en: item.biography_en || '',
+    biography_translated: item.biography_translated,
   };
 }
 

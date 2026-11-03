@@ -18,13 +18,16 @@ logger = logging.getLogger(__name__)
 LANG_MAP = {'ru': 'ru', 'en': 'en'}
 
 
+import hashlib
+
 def auto_translate(text, target_lang):
     """Translate text using Google Translate via deep-translator, with caching."""
     if not text or not text.strip():
         return text
     # Only translate first 4000 chars to avoid issues
     text_to_translate = text[:4000]
-    cache_key = f"tr:{target_lang}:{hash(text_to_translate)}"
+    md5_hash = hashlib.md5(text_to_translate.encode('utf-8')).hexdigest()
+    cache_key = f"tr:{target_lang}:{md5_hash}"
     cached = cache.get(cache_key)
     if cached:
         return cached
@@ -32,7 +35,7 @@ def auto_translate(text, target_lang):
         from deep_translator import GoogleTranslator
         result = GoogleTranslator(source='uz', target=LANG_MAP.get(target_lang, target_lang)).translate(text_to_translate)
         if result:
-            cache.set(cache_key, result, 60 * 60 * 24)  # Cache for 24 hours
+            cache.set(cache_key, result, 60 * 60 * 24 * 7)  # Cache for 7 days
             return result
     except Exception as e:
         logger.warning("Translation failed for lang=%s: %s", target_lang, e)
@@ -46,7 +49,8 @@ def get_translated(obj, field, lang):
         translated = getattr(obj, f'{field}_{lang}', '') or ''
         if translated.strip():
             return translated
-        # 2. Auto-translate the original text
+        # 2. If requesting English but english is empty, check russian as secondary fallback before auto-translate
+        # 3. Auto-translate the original text
         original = getattr(obj, field, '') or ''
         if original.strip():
             try:
