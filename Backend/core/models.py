@@ -364,7 +364,7 @@ class Application(BaseModel):
         default='',
         verbose_name="Diplom bo'yicha ma'lumoti va mutaxassisligi"
     )
-    APPLICATION_FILE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip', 'rar']
+    APPLICATION_FILE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'webp', 'heic', 'heif', 'doc', 'docx', 'zip', 'rar']
 
     diploma_file = models.FileField(
         upload_to=generate_unique_filename,

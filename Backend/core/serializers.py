@@ -493,8 +493,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'admin_note', 'created_at', 'updated_at'
         ]
 
-    ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx', 'zip', 'rar'}
-    MAX_FILE_SIZE = 25 * 1024 * 1024  # 25 MB
+    ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'jpeg', 'png', 'webp', 'heic', 'heif', 'doc', 'docx', 'zip', 'rar'}
+    MAX_FILE_SIZE = 35 * 1024 * 1024  # 35 MB
 
     def _validate_uploaded_file(self, file_obj, field_name):
         if not file_obj:

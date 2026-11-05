@@ -330,6 +330,11 @@ const VirtualQabulxona: React.FC = () => {
                     e.target.value = '';
                     return;
                   }
+                  if (chosen && chosen.size > 35 * 1024 * 1024) {
+                    setSubmissionError(lang === 'en' ? 'File size exceeds 35 MB limit. Please upload a smaller file.' : lang === 'ru' ? 'Razmer fayla prevyshaet 35 MB. Pozhaluysta, zagruzite fayl menshego razmera.' : 'Fayl hajmi 35 MB dan oshmasligi kerak. Iltimos, fayl hajmini kichikroq qilib yuklang.');
+                    e.target.value = '';
+                    return;
+                  }
                   setSubmissionError('');
                   setFile(chosen);
                   triggerFileSelectAnimation(key, chosen);
@@ -724,30 +729,37 @@ const VirtualQabulxona: React.FC = () => {
                       labels.diplomaFileLabel,
                       diplomaFile,
                       setDiplomaFile,
-                      '.pdf,.jpg,.jpeg,.png,.webp',
-                      'PDF, JPG, PNG'
+                      '.pdf,.jpg,.jpeg,.png,.webp,.heic,.heif,.doc,.docx',
+                      'PDF, JPG, PNG, WEBP, HEIC'
                     )}
                     {renderAnimatedFileBox(
                       'supplement',
                       labels.supplementFileLabel,
                       diplomaSupplementFile,
                       setDiplomaSupplementFile,
-                      '.pdf,.jpg,.jpeg,.png,.webp',
-                      'PDF, JPG, PNG'
+                      '.pdf,.jpg,.jpeg,.png,.webp,.heic,.heif,.doc,.docx',
+                      'PDF, JPG, PNG, WEBP, HEIC'
                     )}
                     {renderAnimatedFileBox(
                       'portfolio',
                       labels.portfolioFileLabel,
                       portfolioFile,
                       setPortfolioFile,
-                      '.pdf,.zip,.rar,.jpg,.jpeg,.png,.webp',
-                      'PDF, ZIP, RAR, JPG, PNG'
+                      '.pdf,.zip,.rar,.jpg,.jpeg,.png,.webp,.heic,.heif',
+                      'PDF, ZIP, RAR, JPG, PNG, WEBP'
                     )}
                   </div>
                 </div>
 
                 <input required className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.phone} onChange={(e) => setApplicationForm((p) => ({ ...p, phone: e.target.value }))} placeholder={t('virtual_reception.phone_placeholder')} />
                 <input className="rounded-xl border border-slate-300 px-4 py-3 bg-slate-50 focus:bg-white outline-none focus:border-blue-800" value={applicationForm.telegram_link} onChange={(e) => setApplicationForm((p) => ({ ...p, telegram_link: e.target.value }))} placeholder={t('virtual_reception.telegram_placeholder')} />
+
+                {submissionError && (
+                  <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-center text-sm text-rose-900 font-semibold flex items-center justify-center gap-2">
+                    <AlertCircle size={18} className="text-rose-600 shrink-0" />
+                    <span>{submissionError}</span>
+                  </div>
+                )}
 
                 <button
                   type="submit"
