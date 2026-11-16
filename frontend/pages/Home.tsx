@@ -1271,8 +1271,8 @@ const Home: React.FC = () => {
               {news.length > 1 && (() => {
                 const secondaryItem = news[(newsCarouselIndex + 1) % news.length];
                 return (
-                  <button onClick={() => handleNewsClick(secondaryItem)} className="group flex flex-col md:flex-row overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-md transition-all duration-500 hover:shadow-xl text-left w-full">
-                    <div className="relative w-full h-64 md:h-auto md:min-h-[250px] md:w-2/5 shrink-0 overflow-hidden">
+                  <button onClick={() => handleNewsClick(secondaryItem)} className="group flex flex-col overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-md transition-all duration-500 hover:shadow-xl text-left w-full">
+                    <div className="relative w-full aspect-video overflow-hidden shrink-0">
                       <img
                         src={secondaryItem.images?.[0]?.imageUrl || secondaryItem.image || '/placeholder.jpg'}
                         alt={secondaryItem.title}
@@ -1281,7 +1281,7 @@ const Home: React.FC = () => {
                         className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
-                    <div className="p-6 md:w-3/5 flex flex-col justify-center">
+                    <div className="p-6 flex flex-col flex-1 justify-center">
                       <span className="text-sm font-medium text-slate-400">{formatDate(secondaryItem.date, i18n.language)}</span>
                       <h3 className="mt-3 text-2xl font-black text-slate-900 transition-colors group-hover:text-blue-600">
                         {secondaryItem.title}
