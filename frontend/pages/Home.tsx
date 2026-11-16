@@ -1278,7 +1278,7 @@ const Home: React.FC = () => {
                         alt={secondaryItem.title}
                         loading="lazy"
                         decoding="async"
-                        className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] transition-transform duration-700 group-hover:scale-105"
+                        className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
                     <div className="p-6 md:w-3/5 flex flex-col justify-center">
@@ -1309,7 +1309,7 @@ const Home: React.FC = () => {
                       <img 
                         src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'} 
                         alt={item.title} 
-                        className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] group-hover:scale-105 transition-transform duration-700" 
+                        className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
                     </div>

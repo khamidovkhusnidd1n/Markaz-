@@ -2,6 +2,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import './global.css';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Normalize malformed double-hash URLs (e.g. #/virtual-qabulxona#ariza -> #/virtual-qabulxona?tab=ariza)
