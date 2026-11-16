@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, Share2 } from 'lucide-react';
+import { Eye, Share2, Download } from 'lucide-react';
 import DocumentViewer from '../components/DocumentViewer';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -403,12 +403,13 @@ const Journal: React.FC = () => {
                     <h3 className="font-bold text-gray-900 group-hover:text-blue-700 transition-colors leading-snug">{formatIssueTitle(issue)}</h3>
                     <p className="text-sm font-semibold text-blue-600 mt-1">{formatIssueNumber(issue)}</p>
                   </div>
-                  <div className="flex gap-4 mt-2">
+                  <div className="flex flex-wrap items-center gap-3 mt-2">
                     <button onClick={() => {
                       setViewDoc(issue.pdfUrl);
                       window.location.hash = `#/journal?id=${issue.id}`;
                     }} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Eye size={14} /> {t('common.view')}</button>
-                    <button onClick={(e) => { e.stopPropagation(); handleShare(issue.id); }} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Share2 size={14} /> {t('common.share')}</button>
+                    <a href={issue.pdfUrl} target="_blank" rel="noopener noreferrer" download className="flex items-center gap-1 text-sm font-bold text-slate-600 hover:text-blue-600 hover:underline"><Download size={14} /> {t('open_data.download') || 'Yuklab olish'}</a>
+                    <button onClick={(e) => { e.stopPropagation(); handleShare(issue.id); }} className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-blue-600 hover:underline"><Share2 size={14} /> {t('common.share')}</button>
                   </div>
                 </div>
               </div>
