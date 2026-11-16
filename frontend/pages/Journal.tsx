@@ -227,6 +227,59 @@ const Journal: React.FC = () => {
   const { journalIssues, journalSettings } = useApp();
   const [viewDoc, setViewDoc] = useState<string | null>(null);
   const [boardTab, setBoardTab] = useState<'editorial' | 'council'>('editorial');
+  const [selectedYear, setSelectedYear] = useState<string>('all');
+
+  const getCleanYear = (yearStr?: string) => {
+    const match = (yearStr || '').match(/\d{4}/);
+    return match ? match[0] : (yearStr || '').replace(/-?\s*yil/gi, '').trim();
+  };
+
+  const formatIssueTitle = (issue: any) => {
+    const cleanYear = getCleanYear(issue.year);
+    if (lang === 'ru') return `${t('journal.issue_label')} ${cleanYear} г.`;
+    if (lang === 'en') return `${t('journal.issue_label')} ${cleanYear}`;
+    return `${t('journal.issue_label')} ${cleanYear}-yil`;
+  };
+
+  const formatIssueNumber = (issue: any) => {
+    const match = (issue.issueNumber || '').match(/\d+/);
+    if (match) {
+      const num = match[0];
+      if (lang === 'ru') return `№ ${num} ${t('journal.issue_number_suffix')}`;
+      if (lang === 'en') return `${t('journal.issue_number_suffix')} ${num}`;
+      return `${num}-son`;
+    }
+    return issue.issueNumber || issue.year;
+  };
+
+  const availableYears = React.useMemo(() => {
+    const years = new Set<string>();
+    journalIssues.forEach(item => {
+      const y = getCleanYear(item.year);
+      if (y) years.add(y);
+    });
+    return Array.from(years).sort((a, b) => parseInt(b, 10) - parseInt(a, 10));
+  }, [journalIssues]);
+
+  const sortedAndFilteredIssues = React.useMemo(() => {
+    let list = [...journalIssues];
+    if (selectedYear !== 'all') {
+      list = list.filter(item => getCleanYear(item.year) === selectedYear);
+    }
+    return list.sort((a, b) => {
+      const aYear = parseInt(getCleanYear(a.year), 10) || 0;
+      const bYear = parseInt(getCleanYear(b.year), 10) || 0;
+      if (bYear !== aYear) return bYear - aYear;
+
+      const aIssueMatch = (a.issueNumber || '').match(/\d+/);
+      const bIssueMatch = (b.issueNumber || '').match(/\d+/);
+      const aIssue = aIssueMatch ? parseInt(aIssueMatch[0], 10) : 0;
+      const bIssue = bIssueMatch ? parseInt(bIssueMatch[0], 10) : 0;
+      if (bIssue !== aIssue) return bIssue - aIssue;
+
+      return Number(b.id) - Number(a.id);
+    });
+  }, [journalIssues, selectedYear]);
 
   const lang = (i18n.language || 'uz').substring(0, 2);
 
@@ -307,17 +360,48 @@ const Journal: React.FC = () => {
 
       <div className="container mx-auto grid grid-cols-1 gap-10 px-4 py-16 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">
-          <h2 className="border-b pb-4 text-3xl font-bold text-gray-900">{t('journal.issues_title')}</h2>
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-4">
+            <h2 className="text-3xl font-bold text-gray-900">{t('journal.issues_title')}</h2>
+            {availableYears.length > 1 && (
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedYear('all')}
+                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    selectedYear === 'all'
+                      ? 'bg-blue-900 text-white shadow-sm'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                  }`}
+                >
+                  {lang === 'ru' ? 'Все' : lang === 'en' ? 'All' : 'Barchasi'}
+                </button>
+                {availableYears.map(yr => (
+                  <button
+                    key={yr}
+                    type="button"
+                    onClick={() => setSelectedYear(yr)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+                      selectedYear === yr
+                        ? 'bg-blue-900 text-white shadow-sm'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                    }`}
+                  >
+                    {yr}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {journalIssues.length > 0 ? journalIssues.map((issue) => (
-              <div key={issue.id} className="group flex gap-4 rounded-xl border bg-white p-4 shadow-sm transition-colors hover:border-blue-300">
-                <div className="h-32 w-24 shrink-0 overflow-hidden rounded bg-gray-100">
-                  <img src={issue.thumbnailUrl || 'https://picsum.photos/seed/doc/100/140'} alt={`${t('journal.issue_alt')} ${issue.year}`} className="h-full w-full object-cover" />
+            {sortedAndFilteredIssues.length > 0 ? sortedAndFilteredIssues.map((issue) => (
+              <div key={issue.id} className="group flex gap-4 rounded-xl border bg-white p-4 shadow-sm transition-all hover:border-blue-400 hover:shadow-md">
+                <div className="h-32 w-24 shrink-0 overflow-hidden rounded-lg bg-gray-100 border border-slate-100">
+                  <img src={issue.thumbnailUrl || 'https://picsum.photos/seed/doc/100/140'} alt={`${formatIssueTitle(issue)} ${formatIssueNumber(issue)}`} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
-                <div className="flex flex-col justify-between">
+                <div className="flex flex-col justify-between flex-1 min-w-0">
                   <div>
-                    <h3 className="font-bold text-gray-900 group-hover:text-blue-700">{t('journal.issue_label')} {issue.year}</h3>
-                    <p className="text-sm text-gray-500">{issue.issueNumber || issue.year}</p>
+                    <h3 className="font-bold text-gray-900 group-hover:text-blue-700 transition-colors leading-snug">{formatIssueTitle(issue)}</h3>
+                    <p className="text-sm font-semibold text-blue-600 mt-1">{formatIssueNumber(issue)}</p>
                   </div>
                   <div className="flex gap-4 mt-2">
                     <button onClick={() => {

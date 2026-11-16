@@ -816,6 +816,17 @@ class JournalIssue(BaseModel):
         verbose_name_plural = "Jurnal sonlari"
         ordering = ['-year', '-created_at']
 
+    def save(self, *args, **kwargs):
+        if self.year:
+            import re
+            m = re.search(r'\d{4}', str(self.year))
+            self.year = m.group(0) if m else str(self.year).strip()
+        if self.issue_number:
+            import re
+            m = re.search(r'\d+', str(self.issue_number))
+            self.issue_number = f"{m.group(0)}-son" if m else str(self.issue_number).strip()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Jurnal {self.year} #{self.issue_number}"
 

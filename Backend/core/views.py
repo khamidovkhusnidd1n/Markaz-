@@ -566,6 +566,19 @@ class CourseViewSet(viewsets.ModelViewSet):
         serializer.save(is_active=True)
 
 
+def sort_journal_issues(issues):
+    """Sort journal issues primarily by 4-digit year DESC, then issue number DESC, then created_at DESC."""
+    import re
+    def sort_key(issue):
+        y_match = re.search(r'\d{4}', str(issue.year or ''))
+        year = int(y_match.group(0)) if y_match else 0
+        i_match = re.search(r'\d+', str(issue.issue_number or ''))
+        issue_num = int(i_match.group(0)) if i_match else 0
+        created = issue.created_at.timestamp() if getattr(issue, 'created_at', None) else 0
+        return (year, issue_num, created)
+    return sorted(list(issues), key=sort_key, reverse=True)
+
+
 class JournalIssueViewSet(viewsets.ModelViewSet):
     """ViewSet for JournalIssue CRUD operations."""
     queryset = JournalIssue.objects.filter(is_active=True).order_by('-year', '-created_at')
@@ -578,6 +591,16 @@ class JournalIssueViewSet(viewsets.ModelViewSet):
         if has_admin_access(self.request):
             return queryset
         return queryset.filter(is_active=True)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        sorted_items = sort_journal_issues(queryset)
+        page = self.paginate_queryset(sorted_items)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(sorted_items, many=True)
+        return Response(serializer.data)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -964,7 +987,7 @@ def get_all_data(request):
                 context=ctx
             ).data,
             'journalIssues': JournalIssueSerializer(
-                JournalIssue.objects.filter(is_active=True).order_by('-year', '-created_at'),
+                sort_journal_issues(JournalIssue.objects.filter(is_active=True)),
                 many=True,
                 context=ctx
             ).data,
