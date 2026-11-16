@@ -88,13 +88,13 @@ const NewsList: React.FC = () => {
                 onClick={() => handleNewsClick(item)}
                 className="group overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm transition-transform hover:-translate-y-1 hover:shadow-xl text-left flex flex-col"
               >
-                <div className="h-40 overflow-hidden bg-slate-200 w-full">
+                <div className="relative aspect-video sm:h-52 overflow-hidden bg-slate-200 w-full">
                   <img
                     src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'}
                     alt={item.title_translated || item.title}
                     loading="lazy"
                     decoding="async"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="h-full w-full object-cover object-top sm:object-[center_15%] transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
                 <div className="p-6 flex-1 flex flex-col">

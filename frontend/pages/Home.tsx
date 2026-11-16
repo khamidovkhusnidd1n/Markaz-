@@ -1241,13 +1241,13 @@ const Home: React.FC = () => {
                 const mainItem = news[newsCarouselIndex];
                 return (
                   <button onClick={() => handleNewsClick(mainItem)} className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 w-full text-left flex flex-col">
-                    <div className="relative w-full overflow-hidden shrink-0 aspect-video md:aspect-[21/9]">
+                    <div className="relative w-full overflow-hidden shrink-0 aspect-video md:aspect-[16/9]">
                       <img 
                         src={mainItem.images?.[0]?.imageUrl || mainItem.image || '/placeholder.jpg'} 
                         alt={mainItem.title} 
                         loading="lazy" 
                         decoding="async" 
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                        className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] group-hover:scale-105 transition-transform duration-700" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
                       {mainItem.isImportant && (
@@ -1278,7 +1278,7 @@ const Home: React.FC = () => {
                         alt={secondaryItem.title}
                         loading="lazy"
                         decoding="async"
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] transition-transform duration-700 group-hover:scale-105"
                       />
                     </div>
                     <div className="p-6 md:w-3/5 flex flex-col justify-center">
@@ -1309,7 +1309,7 @@ const Home: React.FC = () => {
                       <img 
                         src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'} 
                         alt={item.title} 
-                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                        className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] group-hover:scale-105 transition-transform duration-700" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
                     </div>
