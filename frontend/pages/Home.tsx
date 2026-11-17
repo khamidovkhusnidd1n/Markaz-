@@ -1301,8 +1301,9 @@ const Home: React.FC = () => {
                 const smallCards = [
                   news[(newsCarouselIndex + 2) % news.length],
                   news[(newsCarouselIndex + 3) % news.length],
-                  news[(newsCarouselIndex + 4) % news.length]
-                ].filter((item, index, array) => array.findIndex((entry) => entry.id === item.id) === index);
+                  news[(newsCarouselIndex + 4) % news.length],
+                  news[(newsCarouselIndex + 5) % news.length]
+                ].filter((item, index, array) => Boolean(item) && array.findIndex((entry) => entry.id === item.id) === index);
                 return smallCards.map((item, idx) => (
                   <button onClick={() => handleNewsClick(item)} key={item.id} className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-slate-100 text-left w-full flex flex-col">
                     <div className="relative w-full aspect-video overflow-hidden">
