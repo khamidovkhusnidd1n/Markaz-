@@ -43,7 +43,9 @@ load_env_file(BASE_DIR / '.env')
 SECRET_KEY = env('DJANGO_SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG', False, cast=bool)
+# UZCERT & OWASP: cPanel production muhitida (/home/uzbamala) DEBUG majburiy False bo'ladi
+IS_CPANEL_PRODUCTION = os.path.exists('/home/uzbamala')
+DEBUG = False if IS_CPANEL_PRODUCTION else env('DEBUG', False, cast=bool)
 
 # Secure deployment settings
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', True, cast=bool)
@@ -209,6 +211,7 @@ JAZZMIN_UI_TWEAKS = {
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'core.middleware.SecurityHeadersMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
