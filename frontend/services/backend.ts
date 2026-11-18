@@ -1020,6 +1020,22 @@ export const BackendAPI = {
     return (Array.isArray(res) ? res : []).map(transformApplication);
   },
 
+  async searchTrainingPlan(query: string, region?: string): Promise<TrainingPlanItem[]> {
+    const params = new URLSearchParams();
+    if (query) params.set('q', query.trim());
+    if (region && region !== 'Barchasi') params.set('region', region.trim());
+    const res = await apiRequest<any[]>(`/training-plan/search/?${params.toString()}`);
+    return (Array.isArray(res) ? res : []).map((item: any) => ({
+      id: String(item.id),
+      fullName: item.full_name || '',
+      region: item.region || '',
+      workplace: item.workplace || '',
+      courseName: item.course_name || '',
+      lastTrainingDate: item.last_training_date || '',
+      status: item.status || '',
+    }));
+  },
+
   async createTeacher(payload: { full_name: string; position: string; degree: string; title: string; awards?: string; order: number; photo?: File | null }) {
     return apiRequest('/teachers/', { method: 'POST', body: toFormData(payload) });
   },
@@ -1100,3 +1116,6 @@ export const BackendAPI = {
     return apiRequest<T>(endpoint, { method, body: normalizedBody as BodyInit | undefined });
   },
 };
+
+export const backend = BackendAPI;
+export default BackendAPI;

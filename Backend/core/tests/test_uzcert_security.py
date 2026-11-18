@@ -140,3 +140,65 @@ class UZCERTSecurityTestSuite(TestCase):
         # 2-ovoz shu zahoti rad etilishi kerak (429)
         resp2 = self.client.post(f'/api/pedagogue-projects/{proj.id}/vote/')
         self.assertEqual(resp2.status_code, 429)
+
+    # 10. Anti-Spoofing Client IP Extraction
+    def test_11_xff_spoofing_resistance(self):
+        """Attacker cannot bypass rate limit/lockout by spoofing leftmost X-Forwarded-For."""
+        from core.client_ip import get_client_ip
+        from django.test import RequestFactory
+        rf = RequestFactory()
+
+        # Attacker injects fake IPs in X-Forwarded-For
+        req = rf.get('/api/login/', HTTP_X_FORWARDED_FOR='1.2.3.4, 5.6.7.8, 192.168.1.1', REMOTE_ADDR='10.0.0.1')
+        ip = get_client_ip(req)
+        self.assertNotEqual(ip, '1.2.3.4')
+
+    # 11. Strict CSP on API
+    def test_12_api_csp_strict(self):
+        """API endpoints must return strict CSP default-src 'none'."""
+        resp = self.client.get('/api/all-data/')
+        self.assertIn('Content-Security-Policy', resp.headers)
+        self.assertIn("default-src 'none'", resp.headers['Content-Security-Policy'])
+
+    # 12. PII Harvest Protection
+    def test_13_training_plan_pii_not_in_all_data(self):
+        """all-data must not leak complete training plan database."""
+        from core.models import TrainingPlanRecord
+        TrainingPlanRecord.objects.create(
+            full_name="Secret Trainee",
+            workplace="Sensitive School",
+            course_name="Fine Arts"
+        )
+        resp = self.client.get('/api/all-data/')
+        data = resp.json()
+        self.assertEqual(data.get('training_plan_records'), [])
+
+    # 13. Training Plan Search Query Validation
+    def test_14_training_plan_search_validation(self):
+        """Search query must be at least 3 characters."""
+        resp_short = self.client.get('/api/training-plan/search/?q=ab')
+        self.assertEqual(resp_short.status_code, 400)
+
+        resp_valid = self.client.get('/api/training-plan/search/?q=Secret')
+        self.assertEqual(resp_valid.status_code, 200)
+
+    # 14. File Upload Magic Bytes Validation
+    def test_15_disguised_file_upload_blocked(self):
+        """A text/script file disguised with .pdf extension must fail magic bytes validation."""
+        fake_pdf = SimpleUploadedFile(
+            "document.pdf",
+            b"Plain text payload without PDF header",
+            content_type="application/pdf"
+        )
+        app = Application(
+            application_type='retraining',
+            direction='Rangtasvir',
+            workplace='Toshkent',
+            full_name='Disguised Attacker',
+            phone='+998901234567',
+            diploma_file=fake_pdf
+        )
+        from django.core.exceptions import ValidationError
+        with self.assertRaises(ValidationError):
+            app.full_clean()
+

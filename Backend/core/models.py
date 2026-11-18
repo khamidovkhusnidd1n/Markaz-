@@ -7,6 +7,7 @@ import uuid
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator, FileExtensionValidator
+from core.validators import validate_safe_upload
 
 
 def generate_unique_filename(instance, filename):
@@ -370,21 +371,21 @@ class Application(BaseModel):
         upload_to=generate_unique_filename,
         blank=True,
         null=True,
-        validators=[FileExtensionValidator(allowed_extensions=APPLICATION_FILE_EXTENSIONS)],
+        validators=[FileExtensionValidator(allowed_extensions=APPLICATION_FILE_EXTENSIONS), validate_safe_upload],
         verbose_name="Diplom nusxasi (PDF / Rasm)"
     )
     diploma_supplement_file = models.FileField(
         upload_to=generate_unique_filename,
         blank=True,
         null=True,
-        validators=[FileExtensionValidator(allowed_extensions=APPLICATION_FILE_EXTENSIONS)],
+        validators=[FileExtensionValidator(allowed_extensions=APPLICATION_FILE_EXTENSIONS), validate_safe_upload],
         verbose_name="Diplom ilovasi — fanlar va soatlar (PDF / Rasm)"
     )
     portfolio_file = models.FileField(
         upload_to=generate_unique_filename,
         blank=True,
         null=True,
-        validators=[FileExtensionValidator(allowed_extensions=APPLICATION_FILE_EXTENSIONS)],
+        validators=[FileExtensionValidator(allowed_extensions=APPLICATION_FILE_EXTENSIONS), validate_safe_upload],
         verbose_name="Ijodiy portfolio (5–10 ta ijodiy ish, PDF / ZIP / Rasm)"
     )
     phone = models.CharField(max_length=50, verbose_name="Telefon raqami")
@@ -851,6 +852,7 @@ class Document(BaseModel):
     )
     file = models.FileField(
         upload_to=generate_unique_filename,
+        validators=[FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx', 'xls', 'xlsx', 'zip', 'rar']), validate_safe_upload],
         verbose_name="Fayl"
     )
     cover_image = models.ImageField(

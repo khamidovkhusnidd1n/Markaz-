@@ -32,6 +32,7 @@ router.register(r'international-settings', views.InternationalSettingsViewSet, b
 router.register(r'international-partners', views.InternationalPartnerViewSet, basename='international-partners')
 router.register(r'international-projects', views.InternationalProjectViewSet, basename='international-projects')
 router.register(r'international-media', views.InternationalMediaViewSet, basename='international-media')
+router.register(r'training-plan', views.TrainingPlanRecordViewSet, basename='training-plan')
 
 urlpatterns = [
     path('projects/<int:pk>/view/', views.increment_project_view, name='views.increment_project_view'),
@@ -40,6 +41,7 @@ urlpatterns = [
     path('s/journal/<int:pk>/', views.share_journal_preview, name='share_journal_preview'),
     path('department-posts/<int:pk>/view/', views.increment_department_post_view, name='views.increment_department_post_view'),
     path('projects/<int:pk>/vote/', views.increment_project_vote, name='views.increment_project_vote'),
+    path('training-plan/search/', views.search_training_plan, name='training-plan-search'),
     # Router URLs
     path('', include(router.urls)),
 

@@ -46,6 +46,9 @@
     # 6. Qurilma ruxsatlari siyosati
     Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
 
+    # 8. CSP (Content Security Policy - Report-Only / UZCERT)
+    Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://uzbamalaka.uz; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+
     # 7. Server va Passenger signaturalarini yashirish (Information Disclosure himoyasi)
     Header unset X-Powered-By
     Header unset X-Server-Powered-By

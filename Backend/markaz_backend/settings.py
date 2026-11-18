@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     
     # Local apps
@@ -350,8 +351,12 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '120/minute',
         'user': '600/minute',
+        'training_plan_search': '30/minute',
     },
+    'NUM_PROXIES': int(env('NUM_TRUSTED_PROXIES', 1)),
 }
+
+NUM_TRUSTED_PROXIES = int(env('NUM_TRUSTED_PROXIES', 1))
 
 # JWT Settings
 SIMPLE_JWT = {
@@ -359,6 +364,7 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
+    'UPDATE_LAST_LOGIN': True,
 }
 
 

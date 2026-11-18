@@ -36,4 +36,25 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
         if not response.has_header('Permissions-Policy'):
             response['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=(), payment=()'
 
+        # 8. Content-Security-Policy (OWASP & UZCERT)
+        # API endpoints: strict default-src 'none' (JSON API has no rendering need)
+        # Admin and other views: allow self + essential assets
+        if not response.has_header('Content-Security-Policy'):
+            if request.path.startswith('/api/'):
+                response['Content-Security-Policy'] = (
+                    "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+                )
+            else:
+                response['Content-Security-Policy'] = (
+                    "default-src 'self'; "
+                    "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; "
+                    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+                    "font-src 'self' https://fonts.gstatic.com data:; "
+                    "img-src 'self' data: https: blob:; "
+                    "connect-src 'self' https://uzbamalaka.uz; "
+                    "frame-ancestors 'self'; "
+                    "base-uri 'self'; "
+                    "form-action 'self'"
+                )
+
         return response

@@ -11,10 +11,14 @@ import logging
 from django.db import transaction
 from django.http import JsonResponse
 from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes, throttle_classes
+from rest_framework.throttling import AnonRateThrottle
+from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework_simplejwt.views import TokenObtainPairView
+
+from .client_ip import get_client_ip
 
 from .models import (
     News, NewsImage, NewsCategory, GalleryItem, GalleryImage, ArtGalleryItem, Appeal, Application, Listener, TrainingPlanRecord, Teacher, Personnel,
@@ -92,7 +96,7 @@ class PedagogueProjectViewSet(viewsets.ReadOnlyModelViewSet):
     def view(self, request, pk=None):
         from django.core.cache import cache
         project = self.get_object()
-        ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+        ip = get_client_ip(request)
         cache_key = f"view_proj_lock_{project.pk}_{ip}"
         if not cache.get(cache_key):
             project.views_count += 1
@@ -104,7 +108,7 @@ class PedagogueProjectViewSet(viewsets.ReadOnlyModelViewSet):
     def vote(self, request, pk=None):
         from django.core.cache import cache
         project = self.get_object()
-        ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+        ip = get_client_ip(request)
         cache_key = f"vote_lock_{project.pk}_{ip}"
         if cache.get(cache_key):
             return Response(
@@ -930,7 +934,7 @@ def get_all_data(request):
     Get all data for initial frontend load.
     Returns all active content in a single request.
     """
-    logger.info("All data requested from %s", request.META.get('REMOTE_ADDR'))
+    logger.info("All data requested from %s", get_client_ip(request))
     lang = request.query_params.get('lang', 'uz')
     ctx = {'request': request, 'lang': lang}
     try:
@@ -976,11 +980,9 @@ def get_all_data(request):
                 many=True,
                 context=ctx
             ).data,
-            'training_plan_records': TrainingPlanRecordSerializer(
-                TrainingPlanRecord.objects.all().order_by('-created_at'),
-                many=True,
-                context=ctx
-            ).data,
+            # UZCERT & OWASP A01:2025: Ommaviy PII sizib chiqishini to'xtatish uchun
+            # training_plan_records faqat /api/training-plan/search/ orqali qidiriladi.
+            'training_plan_records': [],
             'listeners': ListenerSerializer(
                 Listener.objects.all().order_by('-created_at'),
                 many=True,
@@ -1051,7 +1053,7 @@ def custom_login(request):
     """
     from django.core.cache import cache
 
-    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    ip = get_client_ip(request)
     failed_attempts_key = f"login_failed_count_{ip}"
     lockout_key = f"login_lockout_{ip}"
 
@@ -1123,7 +1125,7 @@ def custom_login(request):
 @permission_classes([permissions.AllowAny])
 def increment_project_view(request, pk):
     from django.core.cache import cache
-    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    ip = get_client_ip(request)
     cache_key = f"view_proj_lock_{pk}_{ip}"
     try:
         project = PedagogueProject.objects.get(pk=pk)
@@ -1139,7 +1141,7 @@ def increment_project_view(request, pk):
 @permission_classes([permissions.AllowAny])
 def increment_news_view(request, pk):
     from django.core.cache import cache
-    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    ip = get_client_ip(request)
     cache_key = f"view_news_lock_{pk}_{ip}"
     try:
         news = News.objects.get(pk=pk)
@@ -1155,7 +1157,7 @@ def increment_news_view(request, pk):
 @permission_classes([permissions.AllowAny])
 def increment_department_post_view(request, pk):
     from django.core.cache import cache
-    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    ip = get_client_ip(request)
     cache_key = f"view_dept_lock_{pk}_{ip}"
     try:
         post = DepartmentPost.objects.get(pk=pk)
@@ -1171,7 +1173,7 @@ def increment_department_post_view(request, pk):
 @permission_classes([permissions.AllowAny])
 def increment_project_vote(request, pk):
     from django.core.cache import cache
-    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'unknown')).split(',')[0].strip()
+    ip = get_client_ip(request)
     cache_key = f"vote_lock_{pk}_{ip}"
     if cache.get(cache_key):
         return Response({'detail': "Siz ushbu loyihaga allaqachon ovoz bergansiz. Har bir foydalanuvchi sutkasiga 1 marta ovoz berishi mumkin."}, status=status.HTTP_429_TOO_MANY_REQUESTS)
@@ -1265,3 +1267,51 @@ def share_journal_preview(request, pk):
     </html>
     """
     return HttpResponse(html)
+
+
+class TrainingPlanSearchThrottle(AnonRateThrottle):
+    scope = 'training_plan_search'
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+@throttle_classes([TrainingPlanSearchThrottle])
+def search_training_plan(request):
+    """
+    UZCERT & OWASP Top 10 A01:2025: Malaka oshirish rejasidan xavfsiz va cheklangan qidiruv.
+    Ommaviy shaxsiy ma'lumotlarni yuklab olish (scraping / PII harvest) xavfini to'xtatadi.
+    """
+    query = (request.query_params.get('q') or '').strip()
+    region = (request.query_params.get('region') or '').strip()
+
+    if not query or len(query) < 3:
+        return Response(
+            {'error': "Qidiruv so'rovi kamida 3 ta belgidan iborat bo'lishi kerak."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    qs = TrainingPlanRecord.objects.all()
+    q_filter = (
+        Q(full_name__icontains=query) |
+        Q(workplace__icontains=query) |
+        Q(course_name__icontains=query) |
+        Q(last_training_date__icontains=query)
+    )
+    qs = qs.filter(q_filter)
+
+    if region and region.lower() != 'barchasi':
+        qs = qs.filter(region__icontains=region)
+
+    results = qs.order_by('-created_at')[:20]
+    serializer = TrainingPlanRecordSerializer(results, many=True, context={'request': request})
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class TrainingPlanRecordViewSet(viewsets.ModelViewSet):
+    """
+    Malaka oshirish rejasini boshqarish.
+    Faqat autentifikatsiyadan o'tgan administratorlar uchun to'liq ro'yxat ruxsat etiladi.
+    """
+    queryset = TrainingPlanRecord.objects.all().order_by('-created_at')
+    serializer_class = TrainingPlanRecordSerializer
+    permission_classes = [permissions.IsAuthenticated]

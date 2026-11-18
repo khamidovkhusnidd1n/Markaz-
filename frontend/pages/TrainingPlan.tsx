@@ -5,6 +5,8 @@ import DocumentViewer from '../components/DocumentViewer';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
+import { backend } from '../services/backend';
+import { TrainingPlanItem } from '../types';
 
 const UZ_REGIONS = [
   { value: "Barchasi", key: "all" },
@@ -31,49 +33,50 @@ const TrainingPlan: React.FC = () => {
 
   const regDocs = documents.filter((doc) => doc.category === 'regulatory');
 
-  // PD Plans search state
+  // PD Plans search state (UZCERT & OWASP Top 10 PII Protection)
   const [searchTerm, setSearchTerm] = useState('');
   const [searchRegion, setSearchRegion] = useState('Barchasi');
-  const [pdSearchResults, setPdSearchResults] = useState<typeof trainingPlanRecords>([]);
+  const [pdSearchResults, setPdSearchResults] = useState<TrainingPlanItem[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [viewDoc, setViewDoc] = useState<string | null>(null);
+
+  const executeSearch = async (term: string, region: string) => {
+    const trimmed = term.trim();
+    if (trimmed.length < 3) {
+      setSearchError(t('training_plan.min_chars', "Qidiruv uchun kamida 3 ta belgi kiriting"));
+      setPdSearchResults([]);
+      setHasSearched(true);
+      return;
+    }
+    setSearchError(null);
+    setIsLoading(true);
+    setHasSearched(true);
+    try {
+      const results = await backend.searchTrainingPlan(trimmed, region);
+      setPdSearchResults(results);
+    } catch (err: any) {
+      console.error(err);
+      setSearchError(err?.message || t('common.error', "Xatolik yuz berdi"));
+      setPdSearchResults([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const query = params.get('q');
-    if (query) {
+    if (query && query.trim().length >= 3) {
       setSearchTerm(query);
-      const lowered = query.toLowerCase();
-      const results = trainingPlanRecords.filter((item) =>
-        item.fullName.toLowerCase().includes(lowered) ||
-        item.workplace.toLowerCase().includes(lowered) ||
-        item.courseName.toLowerCase().includes(lowered) ||
-        (item.lastTrainingDate && item.lastTrainingDate.toLowerCase().includes(lowered))
-      );
-      setPdSearchResults(results);
-      setHasSearched(true);
+      executeSearch(query, searchRegion);
     }
-  }, [location.search, trainingPlanRecords]);
+  }, [location.search]);
 
   const handlePdSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setHasSearched(true);
-    const lowered = searchTerm.trim().toLowerCase();
-    
-    setPdSearchResults(
-      trainingPlanRecords.filter((item) => {
-        const matchesTerm = !lowered || 
-          item.fullName.toLowerCase().includes(lowered) ||
-          item.workplace.toLowerCase().includes(lowered) ||
-          item.courseName.toLowerCase().includes(lowered) ||
-          (item.lastTrainingDate && item.lastTrainingDate.toLowerCase().includes(lowered));
-          
-        const matchesRegion = searchRegion === 'Barchasi' || 
-          (item.region && item.region.toLowerCase().includes(searchRegion.toLowerCase()));
-          
-        return matchesTerm && matchesRegion;
-      })
-    );
+    executeSearch(searchTerm, searchRegion);
   };
 
   return (
@@ -115,10 +118,15 @@ const TrainingPlan: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                <button type="submit" className="rounded-xl bg-emerald-700 px-8 py-3 font-bold text-white transition-colors hover:bg-emerald-800 whitespace-nowrap">
-                  {t('training_plan.search_btn')}
+                <button type="submit" disabled={isLoading} className="rounded-xl bg-emerald-700 px-8 py-3 font-bold text-white transition-colors hover:bg-emerald-800 whitespace-nowrap disabled:opacity-50">
+                  {isLoading ? t('common.loading', 'Yuklanmoqda...') : t('training_plan.search_btn')}
                 </button>
               </form>
+              {searchError && (
+                <div className="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-sm">
+                  {searchError}
+                </div>
+              )}
 
               {hasSearched && (
                 <div className="overflow-x-auto">
