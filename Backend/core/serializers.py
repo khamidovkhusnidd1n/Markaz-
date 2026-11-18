@@ -21,9 +21,14 @@ LANG_MAP = {'ru': 'ru', 'en': 'en'}
 import hashlib
 
 def auto_translate(text, target_lang):
-    """Translate text using Google Translate via deep-translator, with caching."""
+    """Translate text using Google Translate via deep-translator, with caching and circuit breaker."""
     if not text or not text.strip():
         return text
+    # If Google translation has failed recently, skip immediately to prevent HTTP timeouts
+    circuit_key = f"tr_circuit_open:{target_lang}"
+    if cache.get(circuit_key):
+        return text
+
     # Only translate first 4000 chars to avoid issues
     text_to_translate = text[:4000]
     md5_hash = hashlib.md5(text_to_translate.encode('utf-8')).hexdigest()
@@ -39,6 +44,8 @@ def auto_translate(text, target_lang):
             return result
     except Exception as e:
         logger.warning("Translation failed for lang=%s: %s", target_lang, e)
+        # Open circuit for 5 minutes so subsequent fields don't wait on Google Translate timeout
+        cache.set(circuit_key, True, 300)
     return text
 
 

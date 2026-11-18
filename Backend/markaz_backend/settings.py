@@ -40,7 +40,7 @@ def env(key, default=None, cast=None):
 load_env_file(BASE_DIR / '.env')
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY', '')
+SECRET_KEY = env('DJANGO_SECRET_KEY', '') or 'sayt-production-secret-key-9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1-fallback'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # UZCERT & OWASP: cPanel production muhitida (/home/uzbamala) DEBUG majburiy False bo'ladi
@@ -63,10 +63,13 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 ALLOWED_HOSTS = [
     'uzbamalaka.uz',
     'www.uzbamalaka.uz',
+    'localhost',
+    '127.0.0.1',
+    'testserver',
 ]
 
 if DEBUG:
-    ALLOWED_HOSTS += ['localhost', '127.0.0.1', '*']
+    ALLOWED_HOSTS += ['*']
 
 
 CSRF_TRUSTED_ORIGINS = [
@@ -97,7 +100,6 @@ INSTALLED_APPS = [
     # Third-party apps
     'rest_framework',
     'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     
     # Local apps
@@ -363,7 +365,7 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+    'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': True,
 }
 
