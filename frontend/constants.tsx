@@ -125,9 +125,9 @@ export const INITIAL_STATS = {
     qtGoldEmbroidery: 0,
     intlCountriesCount: 10,
     intlCountriesList: "Italiya\nXitoy\nGruziya\nBelarus\nTurkiya\nRossiya\nHindiston\nQozog'iston\nKoreya\nOzarbayjon",
-    intlOrganizationsCount: 15,
-    intlOrganizationsList: "",
-    intlProjectsCount: 0,
-    intlProjectsList: "",
+    intlOrganizationsCount: 17,
+    intlOrganizationsList: "Javoharlal Neru arxitektura va tasviriy san’at universiteti (Hindiston)\nKeimyung universiteti Tasviriy san’at kolleji (Janubiy Koreya)\nOzarbayjon davlat tasviriy san’at akademiyasi (Ozarbayjon)\nSan’at va restavratsiya instituti – Palazzo Spinelli (Italiya)\nTemirbek Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi (Qozog‘iston)\nToraygirov universiteti (Qozog‘iston)\nBatumi san’at ta’limi universiteti (Gruziya)\nA.L.Shtiglits nomidagi Sankt-Peterburg davlat san’at va sanoat akademiyasi (Rossiya)\nJanubiy Federal universiteti (Rossiya)\nErzinjan Binali Yildirim universiteti (Turkiya)\nRecep Tayyip Erdoğan universiteti (Turkiya)\nBelarus davlat san’at akademiyasi (Belarussiya)\nMarkaziy Osiyo savdo-iqtisodiyot Qo‘mitasi (Xitoy)\nXubey tasviriy san’at instituti (Xitoy)\nHebei tasviriy san’at akademiyasi (Xitoy)\nLanzhou universiteti Uels kolleji San’at maktabi (Xitoy)\nToshkent Kimyo xalqaro universiteti (O‘zbekiston)",
+    intlProjectsCount: 10,
+    intlProjectsList: "“Rangtasvir simfoniyasi” xalqaro qo‘shma ko‘rgazmasi va ilmiy seminar (Gruziya)\n“Yonma-yon” o‘zbek va turk ijodkorlarining yirik pleneri va qo‘shma ko‘rgazmasi (Turkiya)\n“Sharq san’ati va estetik ta’lim markazi” qo‘shma platformasi (Xitoy)\n“Rangtasvir” yo‘nalishida xalqaro qo‘shma malaka oshirish kursi (Xitoy)\n“NEW SILK ROAD ART JOURNEY” xalqaro konferensiyasi va malaka oshirish stajirovkasi (Xitoy)\n“O‘zbekiston milliy liboslar ko‘rgazmasi” (Xitoy)\nBadiiy ta’lim pedagoglari uchun xalqaro malaka oshirish stajirovkasi (Ozarbayjon)\nQozog‘istonlik pedagoglar uchun “Rangtasvir” malaka oshirish kursi (Qozog‘iston)\n“An’anaviy va zamonaviy kashtachilik san’ati” xalqaro ilmiy-amaliy seminari (Qozog‘iston)\n“An’anaviy va zamonaviy uslublarning uyg‘unligi” xalqaro konferensiyasi (Hindiston)",
   }
 };

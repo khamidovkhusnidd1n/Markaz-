@@ -281,8 +281,19 @@ const Home: React.FC = () => {
     .filter(Boolean);
 
   const displayedCountriesCount = countriesArray.length;
-  const displayedOrgsCount = customOrgsArray.length;
-  const displayedProjectsCount = customProjectsArray.length;
+  const orgsToDisplay = customOrgsArray.length > 0 
+    ? customOrgsArray 
+    : (internationalPartners.length > 0 
+        ? internationalPartners.map((p: any) => p.country ? `${p.name} (${p.country})` : p.name) 
+        : []);
+  const displayedOrgsCount = orgsToDisplay.length > 0 ? orgsToDisplay.length : reportDetails.intlOrganizationsCount;
+
+  const projectsToDisplay = customProjectsArray.length > 0 
+    ? customProjectsArray 
+    : (internationalProjects.length > 0 
+        ? internationalProjects.map((p: any) => p.partners_text ? `${p.title} (${p.partners_text})` : p.title) 
+        : []);
+  const displayedProjectsCount = projectsToDisplay.length > 0 ? projectsToDisplay.length : reportDetails.intlProjectsCount;
 
   const safeStudentsCount = stats?.studentsCount || [];
   const sumMalaka = safeStudentsCount.reduce((sum, item) => sum + (Number(item.count) || 0), 0);
@@ -1174,8 +1185,8 @@ const Home: React.FC = () => {
                     </p>
                   )}
                   <div className="space-y-3">
-                    {customOrgsArray.length > 0 ? (
-                      customOrgsArray.map((orgName, idx) => (
+                    {orgsToDisplay.length > 0 ? (
+                      orgsToDisplay.map((orgName: string, idx: number) => (
                         <div key={`custom-org-${idx}`} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
                           <span className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0">
                             {idx + 1}
@@ -1198,8 +1209,8 @@ const Home: React.FC = () => {
                     {reportDetails.intlProjectsLabel} ({displayedProjectsCount} {t('home.stats_report.unit_count')}):
                   </h4>
                   <div className="space-y-3">
-                    {customProjectsArray.length > 0 ? (
-                      customProjectsArray.map((projName, idx) => (
+                    {projectsToDisplay.length > 0 ? (
+                      projectsToDisplay.map((projName: string, idx: number) => (
                         <div key={`custom-proj-${idx}`} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
                           <span className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-black shrink-0">
                             {idx + 1}

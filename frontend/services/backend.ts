@@ -525,12 +525,12 @@ function transformStatistics(data: any): Statistics {
       intlCountriesCount: rd.intl_countries_count ?? rd.intlCountriesCount ?? 10,
       intlCountriesList: rd.intl_countries_list ?? rd.intlCountriesList ?? "Italiya\nXitoy\nGruziya\nBelarus\nTurkiya\nRossiya\nHindiston\nQozog'iston\nKoreya\nOzarbayjon",
       intlOrganizationsLabel: rd.intl_organizations_label ?? rd.intlOrganizationsLabel ?? "Hamkor xorijiy tashkilotlar",
-      intlOrganizationsCount: rd.intl_organizations_count ?? rd.intlOrganizationsCount ?? 15,
+      intlOrganizationsCount: rd.intl_organizations_count ?? rd.intlOrganizationsCount ?? INITIAL_STATS.reportDetails.intlOrganizationsCount,
       intlOrganizationsSummary: rd.intl_organizations_summary ?? rd.intlOrganizationsSummary ?? "",
-      intlOrganizationsList: rd.intl_organizations_list ?? rd.intlOrganizationsList ?? "",
+      intlOrganizationsList: rd.intl_organizations_list || rd.intlOrganizationsList || INITIAL_STATS.reportDetails.intlOrganizationsList,
       intlProjectsLabel: rd.intl_projects_label ?? rd.intlProjectsLabel ?? "Xalqaro ilmiy-ijodiy loyihalar",
-      intlProjectsCount: rd.intl_projects_count ?? rd.intlProjectsCount ?? 0,
-      intlProjectsList: rd.intl_projects_list ?? rd.intlProjectsList ?? "",
+      intlProjectsCount: rd.intl_projects_count ?? rd.intlProjectsCount ?? INITIAL_STATS.reportDetails.intlProjectsCount,
+      intlProjectsList: rd.intl_projects_list || rd.intlProjectsList || INITIAL_STATS.reportDetails.intlProjectsList,
     },
   };
 }
