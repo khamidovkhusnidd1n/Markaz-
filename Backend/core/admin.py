@@ -28,7 +28,8 @@ from .models import (
     AppContent, JournalSettings,
     NewsCategory, ArtGalleryItem, Appeal, Application, AppHeroImage,
     InternationalSettings, InternationalPartner, InternationalProject,
-    InternationalProjectImage, InternationalMedia
+    InternationalProjectImage, InternationalMedia,
+    AntiCorruptionContent, AntiCorruptionDocument
 )
 
 
@@ -1603,6 +1604,52 @@ class InternationalMediaAdmin(admin.ModelAdmin):
             'fields': ('order', 'is_active')
         }),
     )
+
+
+@admin.register(AntiCorruptionContent)
+class AntiCorruptionContentAdmin(admin.ModelAdmin):
+    list_display = ['title', 'hotline_phone', 'agency_hotline', 'officer_name', 'updated_at']
+
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('title', 'title_ru', 'title_en', 'intro_text', 'intro_text_ru', 'intro_text_en', 'policy_goals', 'policy_goals_ru', 'policy_goals_en')
+        }),
+        ('Aloqa va ishonch kanallari (Hotline)', {
+            'fields': ('hotline_phone', 'agency_hotline', 'telegram_bot', 'email')
+        }),
+        ('Komplayens-nazorat mas\'ul shaxsi', {
+            'fields': ('officer_name', 'officer_name_ru', 'officer_name_en', 'officer_position', 'officer_position_ru', 'officer_position_en', 'officer_phone', 'officer_photo', 'reception_hours')
+        }),
+    )
+
+    def has_add_permission(self, request):
+        return not AntiCorruptionContent.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(AntiCorruptionDocument)
+class AntiCorruptionDocumentAdmin(admin.ModelAdmin):
+    list_display = ['title', 'category', 'document_number', 'date', 'order', 'is_active']
+    list_filter = ['category', 'is_active', 'date']
+    search_fields = ['title', 'title_ru', 'title_en', 'document_number', 'description']
+    list_editable = ['order', 'is_active']
+    ordering = ['order', '-date']
+
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('title', 'title_ru', 'title_en', 'category', 'document_number', 'date', 'order', 'is_active')
+        }),
+        ('Fayl yoki havola', {
+            'fields': ('file', 'external_url'),
+            'description': 'PDF fayl yuklang yoki tashqi qonunchilik havolasini (masalan lex.uz) kiriting.'
+        }),
+        ('Tavsif', {
+            'fields': ('description', 'description_ru', 'description_en')
+        }),
+    )
+
 
 from django import forms
 from django.utils.safestring import mark_safe

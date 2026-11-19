@@ -22,6 +22,7 @@ import { TrainingPlanItem,
   Department,
   Pedagogue,
   PedagogueProject,
+  AntiCorruptionData,
 } from '../types';
 import { TrainingPlanItem, BackendAPI } from '../services/backend';
 import { TrainingPlanItem, INITIAL_STATS } from '../constants';
@@ -52,6 +53,7 @@ interface AppState {
   departments: Department[];
   pedagogues: Pedagogue[];
   pedagogueProjects: PedagogueProject[];
+  antiCorruption: AntiCorruptionData | null;
   refreshData: () => Promise<void>;
 }
 
@@ -111,6 +113,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [departments, setDepartments] = useState<Department[]>([]);
   const [pedagogues, setPedagogues] = useState<Pedagogue[]>([]);
   const [pedagogueProjects, setPedagogueProjects] = useState<PedagogueProject[]>([]);
+  const [antiCorruption, setAntiCorruption] = useState<AntiCorruptionData | null>(null);
 
   const refreshData = useCallback(async () => {
     setLoading(true);
@@ -142,6 +145,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setDepartments(data.departments || []);
       setPedagogues(data.pedagogues || []);
       setPedagogueProjects(data.pedagogueProjects || []);
+      if (data.antiCorruption) setAntiCorruption(data.antiCorruption);
     } catch (error) {
       const msg = error instanceof Error ? error.message : t('error.load_failed');
       console.error("Backend xatosi:", msg);
@@ -194,6 +198,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     departments,
     pedagogues,
     pedagogueProjects,
+    antiCorruption,
         loading,
         backendError,
         refreshData,

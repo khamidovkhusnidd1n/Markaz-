@@ -418,3 +418,53 @@ export interface TrainingPlanItem {
   lastTrainingDate: string;
   status: string;
 }
+
+export interface AntiCorruptionDocument {
+  id: number;
+  title: string;
+  title_ru?: string;
+  title_en?: string;
+  category: 'law' | 'internal' | 'report' | 'memo' | string;
+  document_number?: string;
+  date?: string;
+  file?: string;
+  file_url?: string;
+  external_url?: string;
+  description?: string;
+  description_ru?: string;
+  description_en?: string;
+  order?: number;
+  is_active?: boolean;
+}
+
+export interface AntiCorruptionContent {
+  id?: number;
+  title: string;
+  title_ru?: string;
+  title_en?: string;
+  intro_text: string;
+  intro_text_ru?: string;
+  intro_text_en?: string;
+  policy_goals?: string;
+  policy_goals_ru?: string;
+  policy_goals_en?: string;
+  hotline_phone: string;
+  agency_hotline: string;
+  telegram_bot?: string;
+  email?: string;
+  officer_name?: string;
+  officer_name_ru?: string;
+  officer_name_en?: string;
+  officer_position?: string;
+  officer_position_ru?: string;
+  officer_position_en?: string;
+  officer_phone?: string;
+  officer_photo?: string;
+  officer_photo_url?: string;
+  reception_hours?: string;
+}
+
+export interface AntiCorruptionData {
+  content: AntiCorruptionContent;
+  documents: AntiCorruptionDocument[];
+}

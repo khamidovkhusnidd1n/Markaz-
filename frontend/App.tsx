@@ -24,6 +24,7 @@ const DepartmentPage = React.lazy(() => import('./pages/DepartmentPage'));
 const Library = React.lazy(() => import('./pages/Library'));
 const TrainingPlan = React.lazy(() => import('./pages/TrainingPlan'));
 const Portfolio = React.lazy(() => import('./pages/Portfolio'));
+const AntiCorruption = React.lazy(() => import('./pages/AntiCorruption'));
 
 const Teachers = React.lazy(() => import('./pages/Teachers'));
 const PhotoGallery = React.lazy(() => import('./pages/PhotoGallery'));
@@ -66,6 +67,8 @@ const App: React.FC = () => {
               <Route path="/open-data" element={<OpenData />} />
               <Route path="/news" element={<NewsList />} />
               <Route path="/news/:id" element={<NewsDetail />} />
+              <Route path="/anti-corruption" element={<AntiCorruption />} />
+              <Route path="/about/anti-corruption" element={<AntiCorruption />} />
               <Route path="/virtual-qabulxona" element={<VirtualQabulxona />} />
               <Route path="/virtual-qabulxona/:tab" element={<VirtualQabulxona />} />
               <Route path="/departments" element={<Departments />} />

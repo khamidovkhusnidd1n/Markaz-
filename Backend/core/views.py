@@ -24,7 +24,8 @@ from .models import (
     News, NewsImage, NewsCategory, GalleryItem, GalleryImage, ArtGalleryItem, Appeal, Application, Listener, TrainingPlanRecord, Teacher, Personnel,
     Course, JournalIssue, Document, Statistics, YearlyStatistics,
     AppContent, AppHeroImage, JournalSettings, InternationalSettings, InternationalPartner,
-    InternationalProject, InternationalProjectImage, InternationalMedia
+    InternationalProject, InternationalProjectImage, InternationalMedia,
+    AntiCorruptionContent, AntiCorruptionDocument
 )
 from .serializers import (
     NewsSerializer, NewsCreateSerializer, NewsImageSerializer, NewsCategorySerializer,
@@ -34,7 +35,8 @@ from .serializers import (
     JournalIssueSerializer, DocumentSerializer, StatisticsSerializer,
     YearlyStatisticsSerializer, AppContentSerializer, JournalSettingsSerializer,
     InternationalSettingsSerializer, InternationalPartnerSerializer,
-    InternationalProjectSerializer, InternationalProjectImageSerializer, InternationalMediaSerializer
+    InternationalProjectSerializer, InternationalProjectImageSerializer, InternationalMediaSerializer,
+    AntiCorruptionContentSerializer, AntiCorruptionDocumentSerializer
 )
 
 logger = logging.getLogger('core')
@@ -804,6 +806,40 @@ class InternationalMediaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
+
+class AntiCorruptionContentViewSet(viewsets.ViewSet):
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def list(self, request):
+        obj = AntiCorruptionContent.get_instance()
+        serializer = AntiCorruptionContentSerializer(obj, context={'request': request})
+        return Response(serializer.data)
+
+    def create(self, request):
+        obj = AntiCorruptionContent.get_instance()
+        serializer = AntiCorruptionContentSerializer(obj, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AntiCorruptionDocumentViewSet(viewsets.ModelViewSet):
+    queryset = AntiCorruptionDocument.objects.filter(is_active=True).order_by('order', '-date')
+    serializer_class = AntiCorruptionDocumentSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
+    def get_queryset(self):
+        queryset = AntiCorruptionDocument.objects.all().order_by('order', '-date')
+        if not has_admin_access(self.request):
+            queryset = queryset.filter(is_active=True)
+        cat = self.request.query_params.get('category')
+        if cat:
+            queryset = queryset.filter(category=cat)
+        return queryset
+
     def get_queryset(self):
         queryset = InternationalMedia.objects.all().order_by('order', '-created_at')
         if has_admin_access(self.request):
@@ -1035,6 +1071,10 @@ def get_all_data(request):
                 many=True,
                 context=ctx
             ).data,
+            'antiCorruption': {
+                'content': AntiCorruptionContentSerializer(AntiCorruptionContent.get_instance(), context=ctx).data,
+                'documents': AntiCorruptionDocumentSerializer(AntiCorruptionDocument.objects.filter(is_active=True).order_by('order', '-date'), many=True, context=ctx).data
+            },
         }
         return Response(data)
     except Exception:

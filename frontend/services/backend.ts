@@ -696,6 +696,10 @@ export const BackendAPI = {
         departments: (data.departments || []).map(transformDepartment),
         pedagogues: (data.pedagogues || []).map(transformPedagogue),
         pedagogueProjects: (data.pedagogueProjects || data.pedagogue_projects || []).map(transformPedagogueProject),
+        antiCorruption: data.antiCorruption || {
+          content: null,
+          documents: []
+        },
       };
   },
 

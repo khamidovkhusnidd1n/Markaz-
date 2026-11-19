@@ -34,6 +34,7 @@ export const MENU_ITEMS: MenuItemType[] = [
       { label: 'Markaz tuzilmasi', path: '/about/structure', i18nKey: 'menu.structure' },
       { label: 'Rahbariyat', path: '/about/leadership', i18nKey: 'menu.leadership' },
       { label: 'Markaziy apparat', path: '/about/staff', i18nKey: 'menu.staff' },
+      { label: 'Korrupsiyaga qarshi kurash', path: '/anti-corruption', i18nKey: 'menu.anti_corruption' },
       { label: 'Virtual qabulxona', path: '/virtual-qabulxona/murojaat', i18nKey: 'menu.virtual_reception' },
       { label: 'Ariza yuborish', path: '/virtual-qabulxona/ariza', i18nKey: 'menu.submit_app' }
     ]

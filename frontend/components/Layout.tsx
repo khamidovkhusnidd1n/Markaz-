@@ -318,6 +318,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <h3 className="text-base font-bold mb-4 text-slate-100">{t('layout.useful_links', "Foydali havolalar")}</h3>
             <ul className="text-gray-400 text-sm space-y-2">
               <li><Link to="/journal" className="hover:text-amber-400 transition-colors">{t('menu.journal', 'Ilmiy jurnal')}</Link></li>
+              <li><Link to="/anti-corruption" className="hover:text-amber-400 transition-colors">{t('menu.anti_corruption', 'Korrupsiyaga qarshi kurash')}</Link></li>
               <li><a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="hover:text-amber-400 transition-colors">{t('menu.distance_edu', "Masofaviy ta'lim")}</a></li>
               <li><a href="https://reestr.uzbamalaka.uz" target="_blank" rel="noreferrer" className="hover:text-amber-400 transition-colors">{t('menu.registry', "Diplom va sertifikatlar yagona reestri")}</a></li>
             </ul>

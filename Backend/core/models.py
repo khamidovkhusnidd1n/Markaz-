@@ -1748,3 +1748,82 @@ class PedagogueProjectImage(BaseModel):
     def __str__(self):
         return f"Rasm: {self.project.title}"
 
+
+class AntiCorruptionContent(BaseModel):
+    """Korrupsiyaga qarshi kurash sahifasi asosiy matnlari va aloqa kanallari"""
+    title = models.CharField(max_length=300, default="Korrupsiyaga qarshi kurash", verbose_name="Asosiy sarlavha")
+    title_ru = models.CharField(max_length=300, blank=True, default="Противодействие коррупции", verbose_name="Asosiy sarlavha (RU)")
+    title_en = models.CharField(max_length=300, blank=True, default="Anti-Corruption Compliance", verbose_name="Asosiy sarlavha (EN)")
+
+    intro_text = models.TextField(verbose_name="Kirish matni / Siyosat bayoni")
+    intro_text_ru = models.TextField(blank=True, default='', verbose_name="Kirish matni (RU)")
+    intro_text_en = models.TextField(blank=True, default='', verbose_name="Kirish matni (EN)")
+
+    policy_goals = models.TextField(blank=True, default='', verbose_name="Asosiy maqsad va vazifalar")
+    policy_goals_ru = models.TextField(blank=True, default='', verbose_name="Asosiy maqsad va vazifalar (RU)")
+    policy_goals_en = models.TextField(blank=True, default='', verbose_name="Asosiy maqsad va vazifalar (EN)")
+
+    hotline_phone = models.CharField(max_length=100, default="+998 (71) 273-00-59", verbose_name="Ishonch telefoni (Hotline)")
+    agency_hotline = models.CharField(max_length=100, default="1253", verbose_name="Korrupsiyaga qarshi kurashish agentligi Call-markazi")
+    telegram_bot = models.CharField(max_length=200, blank=True, default="https://t.me/uzbadavomatbot", verbose_name="Telegram bot / kanal")
+    email = models.EmailField(blank=True, default="uzbamalaka@edu.uz", verbose_name="Murojaat uchun elektron pochta")
+
+    officer_name = models.CharField(max_length=200, blank=True, default="Komplayens nazorati mas'ul xodimi", verbose_name="Mas'ul shaxs F.I.Sh")
+    officer_name_ru = models.CharField(max_length=200, blank=True, default="", verbose_name="Mas'ul shaxs (RU)")
+    officer_name_en = models.CharField(max_length=200, blank=True, default="", verbose_name="Mas'ul shaxs (EN)")
+    officer_position = models.CharField(max_length=300, blank=True, default="Korrupsiyaga qarshi ichki nazorat (komplayens-nazorat) tuzilmasi mas'uli", verbose_name="Lavozimi")
+    officer_position_ru = models.CharField(max_length=300, blank=True, default="", verbose_name="Lavozimi (RU)")
+    officer_position_en = models.CharField(max_length=300, blank=True, default="", verbose_name="Lavozimi (EN)")
+    officer_phone = models.CharField(max_length=100, blank=True, default="+998 (71) 273-00-59", verbose_name="Mas'ul shaxs telefoni")
+    officer_photo = models.ImageField(upload_to=generate_unique_filename, blank=True, null=True, verbose_name="Mas'ul shaxs rasmi")
+    reception_hours = models.CharField(max_length=200, blank=True, default="Dushanba - Juma: 09:00 - 17:00", verbose_name="Qabul vaqti")
+
+    class Meta:
+        verbose_name = "Korrupsiyaga qarshi kurash: Asosiy ma'lumot va aloqa"
+        verbose_name_plural = "Korrupsiyaga qarshi kurash: Asosiy ma'lumot va aloqa"
+
+    def __str__(self):
+        return self.title
+
+    @classmethod
+    def get_instance(cls):
+        instance = cls.objects.first()
+        if not instance:
+            instance = cls.objects.create(
+                title="Korrupsiyaga qarshi kurash",
+                intro_text="O'zbekiston Badiiy akademiyasi huzuridagi Markazda korrupsiyaviy holatlarning har qanday ko'rinishiga nisbatan murosasiz munosabatni shakllantirish, ta'lim va qayta tayyorlash jarayonlarining ochiqligi hamda shaffofligini ta'minlash ustuvor vazifa hisoblanadi.",
+                policy_goals="• Markaz xodimlari va tinglovchilari o'rtasida korrupsiyaga qarshi huquqiy madaniyatni yuksaltirish;\n• Malaka oshirish va attestatsiya jarayonlarida inson omilini kamaytirish va raqamlashtirish;\n• Manfaatlar to'qnashuvi va korrupsiyaviy xavf-xatarlarni o'z vaqtida aniqlash hamda bartaraf etish;\n• Korrupsiya holatlari haqida xabar berish mexanizmlarining ochiqligi va murojaat qiluvchilarning huquqiy himoyasini ta'minlash."
+            )
+        return instance
+
+
+class AntiCorruptionDocument(BaseModel):
+    CATEGORY_CHOICES = [
+        ('law', 'Qonunchilik hujjatlari (Qonunlar, Farmonlar)'),
+        ('internal', 'Ichki idoraviy hujjatlar va nizomlar'),
+        ('report', 'Hisobotlar va monitoring natijalari'),
+        ('memo', 'Eslatmalar va profilaktik materiallar'),
+    ]
+
+    title = models.CharField(max_length=500, verbose_name="Hujjat nomi")
+    title_ru = models.CharField(max_length=500, blank=True, default='', verbose_name="Hujjat nomi (RU)")
+    title_en = models.CharField(max_length=500, blank=True, default='', verbose_name="Hujjat nomi (EN)")
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='internal', verbose_name="Hujjat toifasi")
+    document_number = models.CharField(max_length=100, blank=True, default='', verbose_name="Hujjat raqami")
+    date = models.DateField(default=timezone.now, verbose_name="Qabul qilingan sana")
+    file = models.FileField(upload_to=generate_unique_filename, blank=True, null=True, verbose_name="Fayl (PDF/Word)")
+    external_url = models.URLField(blank=True, default='', verbose_name="Tashqi havola (lex.uz va h.k.)")
+    description = models.TextField(blank=True, default='', verbose_name="Qisqacha tavsif")
+    description_ru = models.TextField(blank=True, default='', verbose_name="Qisqacha tavsif (RU)")
+    description_en = models.TextField(blank=True, default='', verbose_name="Qisqacha tavsif (EN)")
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib raqami")
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "Korrupsiyaga qarshi kurash hujjati"
+        verbose_name_plural = "Korrupsiyaga qarshi kurash: Hujjatlar va hisobotlar"
+        ordering = ['order', '-date', '-created_at']
+
+    def __str__(self):
+        return self.title
+
