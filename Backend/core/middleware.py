@@ -37,10 +37,30 @@ class SecurityHeadersMiddleware(MiddlewareMixin):
             response['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=(), payment=()'
 
         # 8. Content-Security-Policy (OWASP & UZCERT)
+        # Admin: allow self + inline/eval + assets so Jazzmin/AdminLTE renders properly
         # API endpoints: strict default-src 'none' (JSON API has no rendering need)
-        # Admin and other views: allow self + essential assets
+        # Frontend / Other views: allow self + essential CDNs
         if not response.has_header('Content-Security-Policy'):
-            if request.path.startswith('/api/'):
+            path = request.path or ''
+            path_info = getattr(request, 'path_info', '')
+            content_type = response.get('Content-Type', '')
+
+            # Check if this is a Django Admin request
+            is_admin = ('admin' in path) or ('admin' in path_info)
+
+            if is_admin:
+                response['Content-Security-Policy'] = (
+                    "default-src 'self'; "
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; "
+                    "style-src 'self' 'unsafe-inline' https:; "
+                    "font-src 'self' data: https:; "
+                    "img-src 'self' data: https: blob:; "
+                    "connect-src 'self' https:; "
+                    "frame-ancestors 'self'; "
+                    "base-uri 'self'; "
+                    "form-action 'self'"
+                )
+            elif content_type.startswith('application/json') or (path.startswith('/api/') and not content_type.startswith('text/html')):
                 response['Content-Security-Policy'] = (
                     "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
                 )
