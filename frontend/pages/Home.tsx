@@ -4,7 +4,7 @@ import {
   PieChart, Pie, Cell, 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { ArrowRight, BookOpen, Users, Trophy, ChevronRight, Play, Star, MapPin, Mail, Phone, Calendar, Search, ArrowUpRight, GraduationCap, Globe, Palette, ShieldCheck, Gavel, ClipboardList, Award, TrendingUp, Zap, CheckCircle2, XCircle, FileText, Briefcase, Clock, Send, UserCheck } from 'lucide-react';
+import { ArrowRight, BookOpen, Users, Trophy, ChevronRight, Play, Star, MapPin, Mail, Phone, Calendar, Search, ArrowUpRight, GraduationCap, Globe, Palette, ShieldCheck, Gavel, ClipboardList, Award, TrendingUp, Zap, CheckCircle2, XCircle, FileText, Briefcase, Clock, Send, UserCheck, ExternalLink, Download, Building2, Check, Filter, Sparkles } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PDPlanRecord } from '../types';
@@ -55,6 +55,427 @@ const formatDate = (dateStr: string | undefined, lang: string) => {
   }
 };
 
+interface CountryPartnerInfo {
+  id?: string | number;
+  name: string;
+  originalName?: string;
+  country: string;
+  city?: string;
+  description: string;
+  pdfUrl?: string;
+  thumbnailUrl?: string;
+  departmentPostId?: number;
+}
+
+interface CountryProjectInfo {
+  id?: string | number;
+  title: string;
+  partner: string;
+  status: 'completed' | 'ongoing' | 'planned';
+  statusDisplay: string;
+  description: string;
+}
+
+interface CountryDetailInfo {
+  key: string;
+  name: string;
+  officialName: string;
+  flagCode: string;
+  flagUrl: string;
+  partners: CountryPartnerInfo[];
+  projects: CountryProjectInfo[];
+}
+
+const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
+  italiya: {
+    key: 'italiya',
+    name: 'Italiya',
+    officialName: 'Italiya Respublikasi',
+    flagCode: 'it',
+    flagUrl: 'https://flagcdn.com/w80/it.png',
+    partners: [
+      {
+        id: 'it-1',
+        name: 'San’at va restavratsiya instituti – Palazzo Spinelli',
+        originalName: 'Institute for Art and Restoration - Palazzo Spinelli',
+        country: 'Italiya',
+        city: 'Florensiya',
+        description: 'Madaniy merosni saqlash, san’at asarlarini restavratsiya va konservatsiya qilish, professor-o‘qituvchilar hamda restavrator mutaxassislar malakasini oshirish bo‘yicha o‘zaro hamkorlik Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/MoU_Italia.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_Italia_page1.jpg',
+        departmentPostId: 4,
+      },
+    ],
+    projects: [],
+  },
+  xitoy: {
+    key: 'xitoy',
+    name: 'Xitoy',
+    officialName: 'Xitoy Xalq Respublikasi',
+    flagCode: 'cn',
+    flagUrl: 'https://flagcdn.com/w80/cn.png',
+    partners: [
+      {
+        id: 'cn-1',
+        name: 'Hebei tasviriy san\'at akademiyasi',
+        originalName: 'Hebei Academy of Fine Arts',
+        country: 'Xitoy',
+        city: 'Xebey',
+        description: 'Oʼzbekiston Badiiy akademiyasi huzuridagi Markaz hamda Xitoyning nufuzli Hebei tasviriy san\'at akademiyasi o\'rtasida xalqaro hamkorlik va akademik almashinuv Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/Memorandum_Hebei_FAA.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/Memorandum_Hebei_FAA_page1.jpg',
+        departmentPostId: 3,
+      },
+      {
+        id: 'cn-2',
+        name: 'Xubey tasviriy san\'at instituti',
+        originalName: 'Hubei Institute of Fine Arts',
+        country: 'Xitoy',
+        city: 'Uxan, Xubey',
+        description: 'Tasviriy san\'at yo\'nalishlarida ta\'lim, ilmiy-ijodiy ko\'rgazmalar va professor-o\'qituvchilar stajirovkasini tashkil etish bo\'yicha hamkorlik Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/Memorandum_HIFA.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/Memorandum_HIFA_page1.jpg',
+        departmentPostId: 1,
+      },
+      {
+        id: 'cn-3',
+        name: 'Markaziy Osiyo savdo-iqtisodiyot Qo‘mitasi (CAETC)',
+        originalName: 'Central Asia Economic and Trade Committee (CAETC)',
+        country: 'Xitoy',
+        city: 'Pekin',
+        description: 'Madaniy-gumanitar sohalarda hamkorlik, xalqaro san\'at ko\'rgazmalari va ta\'lim forumlarini o‘tkazish bo‘yicha Memorandum.',
+        pdfUrl: '/media/uploads/memorandums/China_CAETC.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/China_CAETC_page1.jpg',
+        departmentPostId: 16,
+      },
+      {
+        id: 'cn-4',
+        name: 'Lanzhou universiteti Uels kolleji San’at maktabi',
+        originalName: 'Lanzhou University Wales College Art School',
+        country: 'Xitoy',
+        city: 'Lanchjou',
+        description: 'San’at ta’limi, pedagog kadrlar malakasini oshirish va xalqaro san\'at amaliyotlarini yo‘lga qo‘yish bo‘yicha Memorandum.',
+        pdfUrl: '/media/uploads/memorandums/Memorandum_LANJOU_UNIVERSITETI_UELS_KOLLEJI_SANAT_MAKTABI_(XITOY).pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/Memorandum_LANJOU_UNIVERSITETI_UELS_KOLLEJI_SANAT_MAKTABI_(XITOY)_page1.jpg',
+        departmentPostId: 17,
+      },
+    ],
+    projects: [
+      {
+        id: 'cn-p1',
+        title: '“Sharq san’ati va estetik ta’lim markazi” qo‘shma platformasi',
+        partner: 'Xubey tasviriy san’at instituti (Xitoy)',
+        status: 'ongoing',
+        statusDisplay: 'Jarayonda',
+        description: 'O‘zbekiston va Xitoy o‘rtasida tasviriy san’at va estetik ta’limni rivojlantirishga qaratilgan doimiy qo‘shma platforma.',
+      },
+      {
+        id: 'cn-p2',
+        title: '“Rangtasvir” yo‘nalishida xalqaro qo‘shma malaka oshirish kursi',
+        partner: 'Xubey tasviriy san’at instituti (Xitoy)',
+        status: 'ongoing',
+        statusDisplay: 'Jarayonda',
+        description: 'Pedagog kadrlar uchun akademik rangtasvir texnikalari bo‘yicha xalqaro mahorat darslari va malaka oshirish kursi.',
+      },
+      {
+        id: 'cn-p3',
+        title: '“NEW SILK ROAD ART JOURNEY” xalqaro konferensiyasi va stajirovkasi',
+        partner: 'Xubey tasviriy san’at instituti (Xitoy)',
+        status: 'completed',
+        statusDisplay: 'Yakunlangan',
+        description: 'Ipak yo‘li bo‘ylab madaniy aloqalar, rassom-pedagoglar ishtirokidagi xalqaro konferensiya va ilmiy stajirovka dasturi.',
+      },
+      {
+        id: 'cn-p4',
+        title: '“O‘zbekiston milliy liboslar ko‘rgazmasi” (Xitoy)',
+        partner: 'Xubey tasviriy san’at instituti (Xitoy)',
+        status: 'completed',
+        statusDisplay: 'Yakunlangan',
+        description: 'Xitoyda O‘zbekiston milliy liboslari, an’anaviy kashtachilik va amaliy san’at durdonalarining xalqaro ekspozitsiyasi.',
+      },
+    ],
+  },
+  gruziya: {
+    key: 'gruziya',
+    name: 'Gruziya',
+    officialName: 'Gruziya Respublikasi',
+    flagCode: 'ge',
+    flagUrl: 'https://flagcdn.com/w80/ge.png',
+    partners: [
+      {
+        id: 'ge-1',
+        name: 'Batumi san’at ta’limi universiteti',
+        originalName: 'Batumi Art Teaching University',
+        country: 'Gruziya',
+        city: 'Batumi',
+        description: 'Tasviriy va amaliy san’at ta’limi sohasida hamkorlik, qo‘shma plenerlar va o‘qituvchilar malakasini oshirish bo‘yicha Memorandum.',
+        pdfUrl: '/media/uploads/memorandums/MoU_Gruziya.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_Gruziya_page1.jpg',
+        departmentPostId: 10,
+      },
+    ],
+    projects: [
+      {
+        id: 'ge-p1',
+        title: '“Rangtasvir simfoniyasi” xalqaro qo‘shma ko‘rgazmasi va ilmiy seminar',
+        partner: 'Batumi san’at ta’limi universiteti (Gruziya)',
+        status: 'completed',
+        statusDisplay: 'Yakunlangan',
+        description: 'O‘zbekiston va Gruziya rassom-pedagoglari ishtirokida ijodiy asarlar ko‘rgazmasi hamda ilmiy-amaliy seminar.',
+      },
+    ],
+  },
+  belarus: {
+    key: 'belarus',
+    name: 'Belarus',
+    officialName: 'Belarus Respublikasi',
+    flagCode: 'by',
+    flagUrl: 'https://flagcdn.com/w80/by.png',
+    partners: [
+      {
+        id: 'by-1',
+        name: 'Belarus davlat san’at akademiyasi',
+        originalName: 'Belarusian State Academy of Arts',
+        country: 'Belarus',
+        city: 'Minsk',
+        description: 'Madaniy-ma’rifiy loyihalar, o‘qituvchilar malakasini oshirish, tasviriy va dizayn san’ati bo‘yicha qo‘shma ko‘rgazmalar tashkil etish Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/Memorandum_Belorus.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/Memorandum_Belorus_page1.jpg',
+        departmentPostId: 15,
+      },
+    ],
+    projects: [],
+  },
+  turkiya: {
+    key: 'turkiya',
+    name: 'Turkiya',
+    officialName: 'Turkiya Respublikasi',
+    flagCode: 'tr',
+    flagUrl: 'https://flagcdn.com/w80/tr.png',
+    partners: [
+      {
+        id: 'tr-1',
+        name: 'Erzinjan Binali Yildirim universiteti',
+        originalName: 'Erzincan Binali Yıldırım University',
+        country: 'Turkiya',
+        city: 'Erzinjan',
+        description: 'Tasviriy san’at va pedagogika sohalarida o‘zaro tajriba almashish, ilmiy konferensiyalar o‘tkazish va malaka oshirish Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/MoU_Turkiya.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_Turkiya_page1.jpg',
+        departmentPostId: 13,
+      },
+      {
+        id: 'tr-2',
+        name: 'Recep Tayyip Erdoğan universiteti',
+        originalName: 'Recep Tayyip Erdoğan University',
+        country: 'Turkiya',
+        city: 'Rize',
+        description: 'Ilmiy-ijodiy aloqalarni mustahkamlash, malaka oshirish dasturlarini amalga oshirish va san\'at loyihalari bo\'yicha Memorandum.',
+        pdfUrl: '/media/uploads/memorandums/Memorandum_Recep_Tayyip_Erdoğan_universiteti_Turkiya.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/Memorandum_Recep_Tayyip_Erdoğan_universiteti_Turkiya_page1.jpg',
+        departmentPostId: 14,
+      },
+    ],
+    projects: [
+      {
+        id: 'tr-p1',
+        title: '“Yonma-yon” o‘zbek va turk ijodkorlarining yirik pleneri va qo‘shma ko‘rgazmasi',
+        partner: 'Turkiya oliy ta\'lim muassasalari',
+        status: 'completed',
+        statusDisplay: 'Yakunlangan',
+        description: 'O‘zbekiston va Turkiya rassomlari hamkorligidagi yirik xalqaro plener dasturi va ijodiy asarlar ko‘rgazmasi.',
+      },
+    ],
+  },
+  rossiya: {
+    key: 'rossiya',
+    name: 'Rossiya',
+    officialName: 'Rossiya Federatsiyasi',
+    flagCode: 'ru',
+    flagUrl: 'https://flagcdn.com/w80/ru.png',
+    partners: [
+      {
+        id: 'ru-1',
+        name: 'A.L.Shtiglits nomidagi Sankt-Peterburg davlat san’at va sanoat akademiyasi',
+        originalName: 'Saint Petersburg Stieglitz State Academy of Art and Design',
+        country: 'Rossiya',
+        city: 'Sankt-Peterburg',
+        description: 'Amaliy san’at, monumental dizayn va restavratsiya yo‘nalishlarida o‘zaro akademik hamkorlik va tajriba almashish Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/MoU_Shtiglits.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_Shtiglits_page1.jpg',
+        departmentPostId: 11,
+      },
+      {
+        id: 'ru-2',
+        name: 'Janubiy Federal universiteti (SFedU)',
+        originalName: 'Southern Federal University',
+        country: 'Rossiya',
+        city: 'Rostov-na-Donu',
+        description: 'Pedagogik kadrlarning ilmiy salohiyatini oshirish, san’atshunoslik sohasida qo‘shma ilmiy tadqiqotlar bo‘yicha Memorandum.',
+        pdfUrl: '/media/uploads/memorandums/MoU_YuFU.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_YuFU_page1.jpg',
+        departmentPostId: 12,
+      },
+    ],
+    projects: [],
+  },
+  hindiston: {
+    key: 'hindiston',
+    name: 'Hindiston',
+    officialName: 'Hindiston Respublikasi',
+    flagCode: 'in',
+    flagUrl: 'https://flagcdn.com/w80/in.png',
+    partners: [
+      {
+        id: 'in-1',
+        name: 'Jawaharlal Nehru Architecture and Fine Arts University (JNAFAU)',
+        originalName: 'JNAFAU, Hyderabad',
+        country: 'Hindiston',
+        city: 'Haydarobod',
+        description: 'Madaniyat va san’at ta’limini rivojlantirish, o‘qituvchilar almashinuvi, qo‘shma xalqaro konferensiyalar o‘tkazish bo‘yicha hamkorlik Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/MoU_Hindiston.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_Hindiston_page1.jpg',
+        departmentPostId: 5,
+      },
+    ],
+    projects: [
+      {
+        id: 'in-p1',
+        title: '“An’anaviy va zamonaviy uslublarning uyg‘unligi” xalqaro konferensiyasi',
+        partner: 'JNAFAU (Hindiston)',
+        status: 'completed',
+        statusDisplay: 'Yakunlangan',
+        description: 'Tasviriy san’at va me\'morchilikda sharq an’analari uyg‘unligiga bag‘ishlangan xalqaro ilmiy-ijodiy anjuman.',
+      },
+    ],
+  },
+  qozogiston: {
+    key: 'qozogiston',
+    name: "Qozog'iston",
+    officialName: 'Qozog‘iston Respublikasi',
+    flagCode: 'kz',
+    flagUrl: 'https://flagcdn.com/w80/kz.png',
+    partners: [
+      {
+        id: 'kz-1',
+        name: 'Temirbek Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi',
+        originalName: 'Kazakh National Academy of Arts named after T. Zhurgenov',
+        country: "Qozog'iston",
+        city: 'Almati',
+        description: 'Markaziy Osiyo xalqlari tasviriy san’ati, pedagogik mahorat darslari va malaka oshirish sohasida hamkorlik Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/MoU_Jurgenov.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_Jurgenov_page1.jpg',
+        departmentPostId: 8,
+      },
+      {
+        id: 'kz-2',
+        name: 'Toraygirov universiteti',
+        originalName: 'Toraighyrov University',
+        country: "Qozog'iston",
+        city: 'Pavlodar',
+        description: 'Pedagogik kadrlarni tayyorlash, akademik tajriba almashish va tasviriy san’at dasturlari bo‘yicha Memorandum.',
+        pdfUrl: '/media/uploads/memorandums/MoU_Toraygirov.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_Toraygirov_page1.jpg',
+        departmentPostId: 9,
+      },
+    ],
+    projects: [
+      {
+        id: 'kz-p1',
+        title: 'Qozog‘istonlik pedagoglar uchun “Rangtasvir” malaka oshirish kursi',
+        partner: 'T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi',
+        status: 'completed',
+        statusDisplay: 'Yakunlangan',
+        description: 'Qozog‘iston san’at kollejlari va maktablari o‘qituvchilari uchun Markazda tashkil etilgan maxsus malaka oshirish kursi.',
+      },
+      {
+        id: 'kz-p2',
+        title: '“An’anaviy va zamonaviy kashtachilik san’ati” xalqaro ilmiy-amaliy seminari',
+        partner: 'T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi',
+        status: 'completed',
+        statusDisplay: 'Yakunlangan',
+        description: 'Amaliy san’at ustalari va tadqiqotchilari ishtirokidagi mintaqaviy mahorat darsi va ilmiy seminar.',
+      },
+    ],
+  },
+  koreya: {
+    key: 'koreya',
+    name: 'Koreya',
+    officialName: 'Koreya Respublikasi',
+    flagCode: 'kr',
+    flagUrl: 'https://flagcdn.com/w80/kr.png',
+    partners: [
+      {
+        id: 'kr-1',
+        name: 'Keimyung University (Tasviriy san’at kolleji)',
+        originalName: 'College of Fine Arts, Keimyung University',
+        country: 'Janubiy Koreya',
+        city: 'Tegu',
+        description: 'Zamonaviy dizayn, tasviriy san’at ta’limi, pedagog kadrlar uchun xalqaro standartlar bo‘yicha malaka oshirish va akademik almashinuv Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/MoU_Korea.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_Korea_page1.jpg',
+        departmentPostId: 6,
+      },
+    ],
+    projects: [],
+  },
+  ozarbayjon: {
+    key: 'ozarbayjon',
+    name: 'Ozarbayjon',
+    officialName: 'Ozarbayjon Respublikasi',
+    flagCode: 'az',
+    flagUrl: 'https://flagcdn.com/w80/az.png',
+    partners: [
+      {
+        id: 'az-1',
+        name: 'Ozarbayjon davlat tasviriy san’at akademiyasi',
+        originalName: 'Azerbaijan State Academy of Fine Arts',
+        country: 'Ozarbayjon',
+        city: 'Boku',
+        description: 'Tasviriy san’at, haykaltaroshlik va gilamchilik san’ati yo‘nalishlarida professor-o‘qituvchilar malakasini oshirish va ko‘rgazmalar tashkil etish Memorandumi.',
+        pdfUrl: '/media/uploads/memorandums/MoU_Azerbayjan.pdf',
+        thumbnailUrl: '/media/uploads/departmentpost/MoU_Azerbayjan_page1.jpg',
+        departmentPostId: 7,
+      },
+    ],
+    projects: [
+      {
+        id: 'az-p1',
+        title: 'Badiiy ta’lim pedagoglari uchun xalqaro malaka oshirish stajirovkasi (Boku)',
+        partner: 'Ozarbayjon davlat tasviriy san’at akademiyasi',
+        status: 'completed',
+        statusDisplay: 'Yakunlangan',
+        description: 'O‘zbekistonlik pedagog kadrlarning Boku shahrida o‘tkazilgan nufuzli kasbiy malaka oshirish stajirovkasi.',
+      },
+    ],
+  },
+};
+
+const normalizeCountryKey = (countryName: string): string => {
+  const c = (countryName || '').toLowerCase().trim();
+  if (c.includes('ital')) return 'italiya';
+  if (c.includes('xitoy') || c.includes('chin') || c.includes('китай')) return 'xitoy';
+  if (c.includes('gruz') || c.includes('georg') || c.includes('груз')) return 'gruziya';
+  if (c.includes('bela') || c.includes('бела')) return 'belarus';
+  if (c.includes('turk') || c.includes('турц')) return 'turkiya';
+  if (c.includes('ross') || c.includes('russ') || c.includes('рос')) return 'rossiya';
+  if (c.includes('hind') || c.includes('ind') || c.includes('инд')) return 'hindiston';
+  if (c.includes('qozo') || c.includes('kaza') || c.includes('каза')) return 'qozogiston';
+  if (c.includes('kore') || c.includes('коре')) return 'koreya';
+  if (c.includes('azar') || c.includes('ozar') || c.includes('азер')) return 'ozarbayjon';
+  return c;
+};
+
+const getCountryDetail = (countryName: string): CountryDetailInfo | null => {
+  const key = normalizeCountryKey(countryName);
+  return COUNTRY_DETAILS_DATA[key] || null;
+};
+
+const getCountryPartnerCount = (countryName: string): number => {
+  const data = getCountryDetail(countryName);
+  return data ? data.partners.length : 1;
+};
+
 const Home: React.FC = () => {
   const { news, stats, pdPlans, aboutContent, artGallery, internationalPartners = [], internationalProjects = [] } = useApp();
   const { t, i18n } = useTranslation();
@@ -84,6 +505,19 @@ const Home: React.FC = () => {
   // Statistics Modals state (1-modal va 2-modal oyna)
   const [activeStatsModal, setActiveStatsModal] = useState<'training' | 'international' | null>(null);
   const [intlModalTab, setIntlModalTab] = useState<'countries' | 'organizations' | 'projects'>('countries');
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+
+  const handleCountrySelect = (countryName: string) => {
+    setSelectedCountry(countryName);
+    setIntlModalTab('countries');
+    setActiveStatsModal('international');
+  };
+
+  const handleOpenAllInternational = (tab: 'countries' | 'organizations' | 'projects' = 'countries') => {
+    setSelectedCountry(null);
+    setIntlModalTab(tab);
+    setActiveStatsModal('international');
+  };
   
   const handleNewsClick = (item: any) => {
     setSelectedNews({
@@ -177,6 +611,27 @@ const Home: React.FC = () => {
     const match = translations[c];
     if (match) return lang === 'ru' ? match.ru : match.en;
     return countryName;
+  };
+
+  const getCountryOfficialName = (countryName: string): string => {
+    const lang = (i18n.language || 'uz').substring(0, 2);
+    const key = normalizeCountryKey(countryName);
+    const map: Record<string, { uz: string; ru: string; en: string }> = {
+      'italiya': { uz: 'Italiya Respublikasi', ru: 'Итальянская Республика', en: 'Italian Republic' },
+      'xitoy': { uz: 'Xitoy Xalq Respublikasi', ru: 'Китайская Народная Республика', en: "People's Republic of China" },
+      'gruziya': { uz: 'Gruziya Respublikasi', ru: 'Грузия', en: 'Georgia' },
+      'belarus': { uz: 'Belarus Respublikasi', ru: 'Республика Беларусь', en: 'Republic of Belarus' },
+      'turkiya': { uz: 'Turkiya Respublikasi', ru: 'Турецкая Республика', en: 'Republic of Turkey' },
+      'rossiya': { uz: 'Rossiya Federatsiyasi', ru: 'Российская Федерация', en: 'Russian Federation' },
+      'hindiston': { uz: 'Hindiston Respublikasi', ru: 'Республика Индия', en: 'Republic of India' },
+      'qozogiston': { uz: "Qozog'iston Respublikasi", ru: 'Республика Казахстан', en: 'Republic of Kazakhstan' },
+      'koreya': { uz: 'Koreya Respublikasi', ru: 'Республика Корея', en: 'Republic of Korea' },
+      'ozarbayjon': { uz: 'Ozarbayjon Respublikasi', ru: 'Азербайджанская Республика', en: 'Republic of Azerbaijan' },
+    };
+    if (map[key]) {
+      return map[key][lang as 'uz' | 'ru' | 'en'] || map[key].uz;
+    }
+    return translateCountryName(countryName);
   };
 
   const rawMoHigherEdu = Number(stats?.reportDetails?.moHigherEdu ?? 284);
@@ -650,7 +1105,7 @@ const Home: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
+                onClick={() => handleOpenAllInternational('countries')}
                 className="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 border-l-4 border-l-indigo-600 shadow-sm text-left transition-colors"
               >
                 <p className="text-[11px] font-semibold text-slate-500">{reportDetails.intlCountriesLabel}</p>
@@ -660,7 +1115,7 @@ const Home: React.FC = () => {
               </button>
               <button
                 type="button"
-                onClick={() => { setIntlModalTab('organizations'); setActiveStatsModal('international'); }}
+                onClick={() => handleOpenAllInternational('organizations')}
                 className="px-4 py-3 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 border-l-4 border-l-slate-700 shadow-sm text-left transition-colors"
               >
                 <p className="text-[11px] font-semibold text-slate-500">{reportDetails.intlOrganizationsLabel}</p>
@@ -805,7 +1260,7 @@ const Home: React.FC = () => {
                     </div>
                     <button
                       type="button"
-                      onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
+                      onClick={() => handleOpenAllInternational('countries')}
                       className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-900 text-slate-700 hover:text-white text-xs font-semibold flex items-center gap-1.5 border border-slate-200 hover:border-slate-900 transition-colors shrink-0"
                     >
                       {t('home.stats_report.detail_modal_btn')} <ArrowUpRight size={14} />
@@ -822,7 +1277,7 @@ const Home: React.FC = () => {
                   <div className="divide-y divide-slate-200 border border-slate-200 rounded-xl overflow-hidden bg-slate-50/50">
                     <button
                       type="button"
-                      onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
+                      onClick={() => handleOpenAllInternational('countries')}
                       className="w-full text-left group/btn flex items-center justify-between px-4 py-3.5 hover:bg-white transition-colors"
                     >
                       <div className="flex items-center gap-3">
@@ -846,7 +1301,7 @@ const Home: React.FC = () => {
 
                     <button
                       type="button"
-                      onClick={() => { setIntlModalTab('organizations'); setActiveStatsModal('international'); }}
+                      onClick={() => handleOpenAllInternational('organizations')}
                       className="w-full text-left group/btn flex items-center justify-between px-4 py-3.5 hover:bg-white transition-colors"
                     >
                       <div className="flex items-center gap-3">
@@ -870,7 +1325,7 @@ const Home: React.FC = () => {
 
                     <button
                       type="button"
-                      onClick={() => { setIntlModalTab('projects'); setActiveStatsModal('international'); }}
+                      onClick={() => handleOpenAllInternational('projects')}
                       className="w-full text-left group/btn flex items-center justify-between px-4 py-3.5 hover:bg-white transition-colors"
                     >
                       <div className="flex items-center gap-3">
@@ -894,41 +1349,70 @@ const Home: React.FC = () => {
                   </div>
 
                   {/* Davlatlar bayroqlari ro'yxati */}
-                  <div className="mt-5 pt-4 border-t border-slate-100">
-                    <div className="flex items-center justify-between mb-3">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{t('home.stats_report.partner_countries')}</p>
-                      <span className="text-xs font-semibold text-slate-600">{displayedCountriesCount} {t('home.stats_report.unit_countries')}</span>
+                  <div className="mt-6 pt-5 border-t border-slate-200/80">
+                    <div className="flex items-center justify-between mb-3.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-md bg-blue-50 text-blue-700 flex items-center justify-center">
+                          <Globe size={14} />
+                        </div>
+                        <p className="text-xs font-bold uppercase tracking-wider text-slate-700">
+                          {t('home.stats_report.partner_countries')}
+                        </p>
+                      </div>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/70">
+                        {displayedCountriesCount} {t('home.stats_report.unit_countries')}
+                      </span>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                       {countriesArray.map((country, i) => {
                         const flagUrl = getCountryFlagUrl(country);
+                        const partnerCount = getCountryPartnerCount(country);
                         return (
                           <button
                             key={i}
                             type="button"
-                            onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                            className="px-3 py-2 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-medium transition-colors flex items-center gap-2 border border-slate-200/80"
+                            onClick={() => handleCountrySelect(country)}
+                            className="group relative px-3 py-2.5 rounded-xl bg-slate-50/90 hover:bg-white text-slate-800 hover:text-blue-700 text-xs font-semibold transition-all duration-200 flex items-center justify-between border border-slate-200 hover:border-blue-400 hover:shadow-sm"
+                            title={`${translateCountryName(country)}: hamkorlik va memorandumlarini ko'rish`}
                           >
-                            {flagUrl ? (
-                              <img src={flagUrl} alt={country} className="w-5 h-3.5 object-cover rounded-[2px] shrink-0 border border-slate-200" />
-                            ) : (
-                              <Globe size={13} className="text-slate-500 shrink-0" />
-                            )}
-                            <span className="truncate">{translateCountryName(country)}</span>
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              {flagUrl ? (
+                                <img
+                                  src={flagUrl}
+                                  alt={country}
+                                  className="w-5 h-3.5 object-cover rounded shadow-xs shrink-0 border border-slate-200 group-hover:scale-105 transition-transform"
+                                />
+                              ) : (
+                                <Globe size={14} className="text-slate-400 group-hover:text-blue-600 shrink-0" />
+                              )}
+                              <span className="truncate">{translateCountryName(country)}</span>
+                            </div>
+                            <div className="flex items-center gap-1 shrink-0 ml-1.5">
+                              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-white group-hover:bg-blue-50 text-slate-500 group-hover:text-blue-700 border border-slate-200/60 group-hover:border-blue-200 transition-colors">
+                                {partnerCount}
+                              </span>
+                              <ChevronRight size={12} className="text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
+                            </div>
                           </button>
                         );
                       })}
                     </div>
+
+                    <p className="mt-2.5 text-[11px] text-slate-500 flex items-center gap-1.5">
+                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                      Davlat ustiga bosing — tegishli memorandum va loyihalarni ko'ring
+                    </p>
                   </div>
                 </div>
 
                 <button
                   type="button"
-                  onClick={() => { setIntlModalTab('countries'); setActiveStatsModal('international'); }}
-                  className="mt-6 pt-4 border-t border-slate-100 w-full flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-slate-900"
+                  onClick={() => handleOpenAllInternational('countries')}
+                  className="mt-6 pt-4 border-t border-slate-100 w-full flex items-center justify-between text-xs font-semibold text-slate-600 hover:text-slate-900 group"
                 >
-                  <span>{t('home.stats_report.open_intl_modal')}</span>
-                  <ChevronRight size={16} />
+                  <span className="group-hover:text-blue-700 transition-colors">{t('home.stats_report.open_intl_modal')}</span>
+                  <ChevronRight size={16} className="group-hover:translate-x-1 group-hover:text-blue-700 transition-all" />
                 </button>
               </div>
             </div>
@@ -1083,149 +1567,504 @@ const Home: React.FC = () => {
       {/* MODAL: Xalqaro hamkorlik va xalqaro loyihalar */}
       {activeStatsModal === 'international' && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 md:p-6 bg-slate-900/60 backdrop-blur-sm animate-fade-in"
           onClick={() => setActiveStatsModal(null)}
         >
           <div
-            className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-100"
+            className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[92vh] flex flex-col overflow-hidden border border-slate-100"
             onClick={e => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between p-6 bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-5 sm:p-6 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shrink-0">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-white/15 backdrop-blur-xs flex items-center justify-center border border-white/20 text-white shadow-inner">
                   <Globe size={24} />
                 </div>
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-blue-200">{reportDetails.card2Badge}</span>
-                  <h3 className="text-xl md:text-2xl font-black">{reportDetails.card2Title}</h3>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-blue-200">
+                      {reportDetails.card2Badge}
+                    </span>
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span className="text-[11px] text-blue-200/90 hidden sm:inline">Rasmiy hamkorliklar</span>
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-black tracking-tight text-white">
+                    {reportDetails.card2Title}
+                  </h3>
                 </div>
               </div>
-              <button
-                onClick={() => setActiveStatsModal(null)}
-                className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center text-white transition-colors"
-              >
-                <XCircle size={22} />
-              </button>
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/departments/4"
+                  onClick={() => setActiveStatsModal(null)}
+                  className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/15 transition-colors"
+                >
+                  <span>Bo'lim sahifasi</span>
+                  <ArrowUpRight size={14} />
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setActiveStatsModal(null)}
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                  aria-label="Yopish"
+                >
+                  <XCircle size={22} />
+                </button>
+              </div>
             </div>
 
-            {/* Interactive Tabs */}
-            <div className="grid grid-cols-3 gap-2 p-4 bg-slate-50 border-b border-slate-200">
-              <button
-                type="button"
-                onClick={() => setIntlModalTab('countries')}
-                className={`p-3 rounded-2xl font-bold text-xs md:text-sm flex flex-col md:flex-row items-center justify-center gap-2 transition-all ${
-                  intlModalTab === 'countries'
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                    : 'bg-white text-slate-700 hover:bg-blue-50 border border-slate-200'
-                }`}
-              >
-                <span>{displayedCountriesCount} {t('home.stats_report.unit_count')} {reportDetails.intlCountriesLabel.toLowerCase()}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setIntlModalTab('organizations')}
-                className={`p-3 rounded-2xl font-bold text-xs md:text-sm flex flex-col md:flex-row items-center justify-center gap-2 transition-all ${
-                  intlModalTab === 'organizations'
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                    : 'bg-white text-slate-700 hover:bg-indigo-50 border border-slate-200'
-                }`}
-              >
-                <span>{displayedOrgsCount} {t('home.stats_report.unit_count')} {reportDetails.intlOrganizationsLabel.toLowerCase()}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setIntlModalTab('projects')}
-                className={`p-3 rounded-2xl font-bold text-xs md:text-sm flex flex-col md:flex-row items-center justify-center gap-2 transition-all ${
-                  intlModalTab === 'projects'
-                    ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20'
-                    : 'bg-white text-slate-700 hover:bg-purple-50 border border-slate-200'
-                }`}
-              >
-                <span>{displayedProjectsCount} {t('home.stats_report.unit_count')} {reportDetails.intlProjectsLabel.toLowerCase()}</span>
-              </button>
+            {/* Davlatlar filtri bar (gorizontal scroll bilan) */}
+            <div className="px-5 py-3.5 bg-slate-50 border-b border-slate-200 shrink-0">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                  Hamkor davlatni tanlang:
+                </span>
+                {selectedCountry && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCountry(null)}
+                    className="text-xs font-semibold text-blue-700 hover:text-blue-900 transition-colors flex items-center gap-1"
+                  >
+                    <span>Barcha davlatlar ({countriesArray.length})</span>
+                    <span className="text-slate-400">&times;</span>
+                  </button>
+                )}
+              </div>
+              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+                <button
+                  type="button"
+                  onClick={() => setSelectedCountry(null)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold shrink-0 transition-all flex items-center gap-1.5 ${
+                    selectedCountry === null
+                      ? 'bg-blue-600 text-white shadow-sm shadow-blue-500/30'
+                      : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+                  }`}
+                >
+                  <Globe size={13} />
+                  <span>Barchasi</span>
+                </button>
+                {countriesArray.map((c, i) => {
+                  const flagUrl = getCountryFlagUrl(c);
+                  const isSelected = selectedCountry && normalizeCountryKey(selectedCountry) === normalizeCountryKey(c);
+                  const partnerCount = getCountryPartnerCount(c);
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setSelectedCountry(c)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all flex items-center gap-2 border ${
+                        isSelected
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/30 font-bold'
+                          : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      {flagUrl && (
+                        <img src={flagUrl} alt={c} className="w-4 h-3 object-cover rounded-[2px] shrink-0 border border-black/10" />
+                      )}
+                      <span>{translateCountryName(c)}</span>
+                      <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                        isSelected ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {partnerCount}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
 
-            <div className="p-6 md:p-8 overflow-y-auto space-y-6">
-              {intlModalTab === 'countries' && (
-                <div>
-                  <h4 className="text-lg font-black text-slate-900 mb-4">
-                    {reportDetails.intlCountriesLabel} ({displayedCountriesCount} {t('home.stats_report.unit_count')}):
-                  </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {countriesArray.map((country, idx) => {
-                      const flagUrl = getCountryFlagUrl(country);
-                      return (
-                        <div
-                          key={idx}
-                          className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 font-bold text-slate-800 shadow-sm"
-                        >
-                          {flagUrl ? (
-                            <img src={flagUrl} alt={country} className="w-8 h-6 object-cover rounded shadow-sm shrink-0 border border-slate-200" />
-                          ) : (
-                            <span className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs font-black shrink-0">
-                              {idx + 1}
+            {/* Modal Body */}
+            <div className="p-5 sm:p-6 md:p-8 overflow-y-auto space-y-6 flex-1">
+              {selectedCountry ? (() => {
+                const cDetail = getCountryDetail(selectedCountry);
+                if (!cDetail) {
+                  return (
+                    <div className="text-center py-12 text-slate-500">
+                      <p>Ushbu davlat bo'yicha ma'lumot topilmadi.</p>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCountry(null)}
+                        className="mt-3 text-xs font-bold text-blue-600 underline"
+                      >
+                        Barcha davlatlarga qaytish
+                      </button>
+                    </div>
+                  );
+                }
+
+                const flagUrl = getCountryFlagUrl(cDetail.name);
+
+                return (
+                  <div className="space-y-6 animate-fade-in">
+                    {/* Davlat sarlavhasi kartochkasi */}
+                    <div className="bg-gradient-to-br from-slate-50 via-white to-blue-50/40 rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="flex items-center gap-4">
+                        {flagUrl && (
+                          <div className="w-14 h-10 rounded-xl overflow-hidden shadow-md border border-slate-200 shrink-0">
+                            <img src={flagUrl} alt={cDetail.name} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
+                              Hamkor Davlat
                             </span>
-                          )}
-                          <span className="text-sm md:text-base">{translateCountryName(country)}</span>
+                            <span className="text-xs text-slate-500">{getCountryOfficialName(cDetail.name)}</span>
+                          </div>
+                          <h4 className="text-2xl font-black text-slate-900 mt-1">
+                            {translateCountryName(cDetail.name)}
+                          </h4>
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                      </div>
 
-              {intlModalTab === 'organizations' && (
-                <div>
-                  <h4 className="text-lg font-black text-slate-900 mb-4">
-                    {reportDetails.intlOrganizationsLabel} ({displayedOrgsCount} {t('home.stats_report.unit_count')}):
-                  </h4>
-                  {reportDetails.intlOrganizationsSummary && (
-                    <p className="text-sm text-slate-600 mb-4 bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 whitespace-pre-line">
-                      {reportDetails.intlOrganizationsSummary}
-                    </p>
+                      <div className="flex items-center gap-2.5 sm:self-center">
+                        <div className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-center shadow-xs">
+                          <span className="text-[11px] font-bold text-slate-500 block uppercase">Muassasalar</span>
+                          <span className="text-lg font-black text-blue-700">{cDetail.partners.length} ta</span>
+                        </div>
+                        <div className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-center shadow-xs">
+                          <span className="text-[11px] font-bold text-slate-500 block uppercase">Loyihalar</span>
+                          <span className="text-lg font-black text-indigo-700">{cDetail.projects.length} ta</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Hamkor tashkilotlar va Memorandumlar */}
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                          <Briefcase size={18} className="text-blue-700" />
+                          <h5 className="text-base sm:text-lg font-bold text-slate-900">
+                            Hamkor oliygoh va tashkilotlar ({cDetail.partners.length} ta)
+                          </h5>
+                        </div>
+                        <span className="text-xs font-semibold text-slate-500 hidden sm:inline">Imzolangan Memorandumlar</span>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-4">
+                        {cDetail.partners.map((partner, idx) => (
+                          <div
+                            key={partner.id || idx}
+                            className="bg-white rounded-2xl border border-slate-200 hover:border-blue-400 p-5 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col md:flex-row gap-5"
+                          >
+                            {/* Memorandum birinchi sahifasi miniatyurasi */}
+                            {partner.thumbnailUrl && (
+                              <div className="md:w-36 shrink-0 flex flex-col items-center">
+                                <div className="relative w-full h-44 md:h-48 rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 group">
+                                  <img
+                                    src={partner.thumbnailUrl}
+                                    alt={partner.name}
+                                    className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                                    onError={(e) => {
+                                      (e.target as HTMLElement).style.display = 'none';
+                                    }}
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2.5">
+                                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">
+                                      Memorandum
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Muassasa ma'lumotlari */}
+                            <div className="flex-1 flex flex-col justify-between">
+                              <div>
+                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                    <ShieldCheck size={12} /> Rasmiy Hamkor
+                                  </span>
+                                  {partner.city && (
+                                    <span className="inline-flex items-center gap-1 text-xs text-slate-500 font-medium">
+                                      <MapPin size={12} className="text-slate-400" /> {partner.city}
+                                    </span>
+                                  )}
+                                </div>
+
+                                <h6 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                                  {partner.name}
+                                </h6>
+                                {partner.originalName && partner.originalName !== partner.name && (
+                                  <p className="text-xs font-medium text-slate-500 italic mt-0.5">
+                                    {partner.originalName}
+                                  </p>
+                                )}
+
+                                <p className="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed">
+                                  {partner.description}
+                                </p>
+                              </div>
+
+                              {/* Tugmalar: PDF ko'rish / yuklab olish & Bo'lim sahifasi */}
+                              <div className="mt-4 pt-3.5 border-t border-slate-100 flex flex-wrap items-center gap-2.5">
+                                {partner.pdfUrl && (
+                                  <a
+                                    href={partner.pdfUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all"
+                                  >
+                                    <FileText size={14} />
+                                    <span>Memorandumni ko'rish (PDF)</span>
+                                    <ArrowUpRight size={13} />
+                                  </a>
+                                )}
+
+                                <Link
+                                  to="/departments/4"
+                                  onClick={() => setActiveStatsModal(null)}
+                                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
+                                >
+                                  <span>Xalqaro bo'lim sahifasida ko'rish</span>
+                                  <ChevronRight size={13} />
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Xalqaro loyihalar */}
+                    <div>
+                      <div className="flex items-center justify-between mb-3.5">
+                        <div className="flex items-center gap-2">
+                          <Trophy size={18} className="text-indigo-600" />
+                          <h5 className="text-base sm:text-lg font-bold text-slate-900">
+                            Xalqaro loyihalar ({cDetail.projects.length} ta)
+                          </h5>
+                        </div>
+                      </div>
+
+                      {cDetail.projects.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-3">
+                          {cDetail.projects.map((proj, pIdx) => (
+                            <div
+                              key={proj.id || pIdx}
+                              className="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/90 hover:border-indigo-300 transition-colors"
+                            >
+                              <div className="flex items-start justify-between gap-3">
+                                <div>
+                                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-1.5 ${
+                                    proj.status === 'ongoing'
+                                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                                      : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                  }`}>
+                                    {proj.statusDisplay}
+                                  </span>
+                                  <h6 className="text-sm sm:text-base font-bold text-slate-900">
+                                    {proj.title}
+                                  </h6>
+                                </div>
+                              </div>
+                              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                                {proj.description}
+                              </p>
+                              <div className="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center gap-2 text-[11px] text-slate-500 font-medium">
+                                <span className="font-semibold text-slate-700">Hamkor:</span>
+                                <span>{proj.partner}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-500">
+                          Ushbu davlat bilan imzolangan rasmiy Memorandum doirasida doimiy akademik aloqalar va hamkorlik ishlari amalga oshirilmoqda.
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })() : (
+                /* BARCHASI TANLANGANDA */
+                <div className="space-y-6">
+                  {/* Interactive Sub-Tabs */}
+                  <div className="grid grid-cols-3 gap-2 p-1.5 bg-slate-100 rounded-2xl">
+                    <button
+                      type="button"
+                      onClick={() => setIntlModalTab('countries')}
+                      className={`py-2.5 px-3 rounded-xl font-bold text-xs md:text-sm flex items-center justify-center gap-2 transition-all ${
+                        intlModalTab === 'countries'
+                          ? 'bg-white text-blue-700 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <Globe size={15} />
+                      <span>{displayedCountriesCount} ta davlat</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIntlModalTab('organizations')}
+                      className={`py-2.5 px-3 rounded-xl font-bold text-xs md:text-sm flex items-center justify-center gap-2 transition-all ${
+                        intlModalTab === 'organizations'
+                          ? 'bg-white text-indigo-700 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <Briefcase size={15} />
+                      <span>{displayedOrgsCount} ta muassasa</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIntlModalTab('projects')}
+                      className={`py-2.5 px-3 rounded-xl font-bold text-xs md:text-sm flex items-center justify-center gap-2 transition-all ${
+                        intlModalTab === 'projects'
+                          ? 'bg-white text-purple-700 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
+                      }`}
+                    >
+                      <Trophy size={15} />
+                      <span>{displayedProjectsCount} ta loyiha</span>
+                    </button>
+                  </div>
+
+                  {intlModalTab === 'countries' && (
+                    <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-base sm:text-lg font-black text-slate-900">
+                          {reportDetails.intlCountriesLabel} ({displayedCountriesCount} ta davlat):
+                        </h4>
+                        <span className="text-xs text-slate-500">Tafsilotlarni ko'rish uchun tanlang</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        {countriesArray.map((country, idx) => {
+                          const flagUrl = getCountryFlagUrl(country);
+                          const cData = getCountryDetail(country);
+                          const partnerCount = cData ? cData.partners.length : 1;
+                          const projectCount = cData ? cData.projects.length : 0;
+                          return (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => setSelectedCountry(country)}
+                              className="group p-4 rounded-2xl bg-white hover:bg-blue-50/50 border border-slate-200 hover:border-blue-400 text-left transition-all duration-200 shadow-xs hover:shadow-md flex items-center justify-between gap-3"
+                            >
+                              <div className="flex items-center gap-3.5 min-w-0">
+                                {flagUrl ? (
+                                  <img src={flagUrl} alt={country} className="w-10 h-7 object-cover rounded-md shadow-xs shrink-0 border border-slate-200 group-hover:scale-105 transition-transform" />
+                                ) : (
+                                  <div className="w-10 h-7 rounded-md bg-blue-600 text-white flex items-center justify-center text-xs font-black shrink-0">
+                                    {idx + 1}
+                                  </div>
+                                )}
+                                <div className="min-w-0">
+                                  <span className="text-sm sm:text-base font-bold text-slate-900 group-hover:text-blue-700 transition-colors block truncate">
+                                    {translateCountryName(country)}
+                                  </span>
+                                  <span className="text-xs text-slate-500">
+                                    {partnerCount} ta muassasa {projectCount > 0 ? `· ${projectCount} ta loyiha` : ''}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 shrink-0">
+                                <span className="hidden sm:inline">Ko'rish</span>
+                                <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
                   )}
-                  <div className="space-y-3">
-                    {orgsToDisplay.length > 0 ? (
-                      orgsToDisplay.map((orgName: string, idx: number) => (
-                        <div key={`custom-org-${idx}`} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
-                          <span className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0">
-                            {idx + 1}
-                          </span>
-                          <span className="font-bold text-slate-900 text-sm md:text-base">{orgName}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
-                        {t('home.stats_report.no_data_zero')}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
 
-              {intlModalTab === 'projects' && (
-                <div>
-                  <h4 className="text-lg font-black text-slate-900 mb-4">
-                    {reportDetails.intlProjectsLabel} ({displayedProjectsCount} {t('home.stats_report.unit_count')}):
-                  </h4>
-                  <div className="space-y-3">
-                    {projectsToDisplay.length > 0 ? (
-                      projectsToDisplay.map((projName: string, idx: number) => (
-                        <div key={`custom-proj-${idx}`} className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
-                          <span className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-black shrink-0">
-                            {idx + 1}
-                          </span>
-                          <span className="font-bold text-slate-900 text-sm md:text-base">{projName}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
-                        {t('home.stats_report.no_data_zero')}
+                  {intlModalTab === 'organizations' && (
+                    <div>
+                      <h4 className="text-base sm:text-lg font-black text-slate-900 mb-4">
+                        {reportDetails.intlOrganizationsLabel} ({displayedOrgsCount} ta muassasa):
+                      </h4>
+                      {reportDetails.intlOrganizationsSummary && (
+                        <p className="text-sm text-slate-600 mb-4 bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 whitespace-pre-line">
+                          {reportDetails.intlOrganizationsSummary}
+                        </p>
+                      )}
+                      <div className="space-y-3">
+                        {orgsToDisplay.length > 0 ? (
+                          orgsToDisplay.map((orgName: string, idx: number) => {
+                            let matchedFlag: string | null = null;
+                            for (const c of countriesArray) {
+                              if (orgName.toLowerCase().includes(c.toLowerCase())) {
+                                matchedFlag = getCountryFlagUrl(c);
+                                break;
+                              }
+                            }
+                            return (
+                              <div key={`custom-org-${idx}`} className="p-4 rounded-2xl bg-white border border-slate-200 flex items-center justify-between gap-3 shadow-xs">
+                                <div className="flex items-center gap-3 min-w-0">
+                                  {matchedFlag ? (
+                                    <img src={matchedFlag} alt="flag" className="w-7 h-5 object-cover rounded shadow-xs shrink-0 border border-slate-200" />
+                                  ) : (
+                                    <span className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0">
+                                      {idx + 1}
+                                    </span>
+                                  )}
+                                  <span className="font-bold text-slate-900 text-sm md:text-base truncate">{orgName}</span>
+                                </div>
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 shrink-0">
+                                  Memorandum
+                                </span>
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
+                            {t('home.stats_report.no_data_zero')}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
+
+                  {intlModalTab === 'projects' && (
+                    <div>
+                      <h4 className="text-base sm:text-lg font-black text-slate-900 mb-4">
+                        {reportDetails.intlProjectsLabel} ({displayedProjectsCount} ta loyiha):
+                      </h4>
+                      <div className="space-y-3">
+                        {projectsToDisplay.length > 0 ? (
+                          projectsToDisplay.map((projName: string, idx: number) => (
+                            <div key={`custom-proj-${idx}`} className="p-4 rounded-2xl bg-white border border-slate-200 flex items-start gap-3 shadow-xs">
+                              <span className="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs font-black shrink-0 mt-0.5">
+                                {idx + 1}
+                              </span>
+                              <div className="flex-1">
+                                <span className="font-bold text-slate-900 text-sm md:text-base block">{projName}</span>
+                                <span className="inline-block mt-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
+                                  Xalqaro dastur
+                                </span>
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-slate-500 text-sm">
+                            {t('home.stats_report.no_data_zero')}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <Link
+                to="/departments/4"
+                onClick={() => setActiveStatsModal(null)}
+                className="text-xs font-bold text-blue-700 hover:text-blue-900 flex items-center gap-1.5 transition-colors"
+              >
+                <Globe size={14} />
+                <span>Xalqaro aloqalarni rivojlantirish bo'limi to'liq ma'lumotlari</span>
+                <ChevronRight size={14} />
+              </Link>
+              <button
+                type="button"
+                onClick={() => setActiveStatsModal(null)}
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors ml-auto shadow-xs"
+              >
+                Yopish
+              </button>
             </div>
           </div>
         </div>
