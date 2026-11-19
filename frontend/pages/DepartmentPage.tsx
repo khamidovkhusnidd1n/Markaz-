@@ -1,12 +1,67 @@
 import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { ArrowLeft, PlayCircle, Monitor, BookOpen, Cpu, Grid, ChevronDown, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { ArrowLeft, ArrowRight, PlayCircle, Monitor, BookOpen, Cpu, Grid, ChevronDown, ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NewsModal } from '../components/NewsModal';
 import { ImageModal } from '../components/ImageModal';
 import { useApp } from '../context/AppContext';
 import { getImageUrl, sanitizeHtml } from '../utils';
 import { BackendAPI } from '../services/backend';
+
+const DEFAULT_AKT_POSTS = [
+  {
+    id: 101,
+    title: "Markaz rasmiy veb-portali (uzbamalaka.uz) va raqamli ekotizimini ishlab chiqish hamda modernizatsiyalash",
+    title_ru: "Разработка и модернизация официального веб-портала (uzbamalaka.uz) и цифровой экосистемы Центра",
+    title_en: "Development and modernization of the Center official web portal (uzbamalaka.uz) and digital ecosystem",
+    content: "<p>Markaz faoliyatini to'liq raqamlashtirish maqsadida zamonaviy veb-portal ishlab chiqildi. Portal orqali tinglovchilar uchun onlayn ro'yxatdan o'tish, shaxsiy kabinet, berilgan sertifikatlar haqiqiyligini tekshirish (reyestr), xalqaro hamkorliklar va virtual qabulxona kabi interaktiv xizmatlar yo'lga qo'yildi.</p><p>Veb-portal zamonaviy xavfsizlik standartlari, qidiruv tizimlari (SEO) va mobil moslashuvchanlik talablariga to'liq javob beradi.</p>",
+    content_ru: "<p>В целях полной цифровизации деятельности Центра разработан современный веб-портал. Через портал внедрены такие интерактивные сервисы, как онлайн-регистрация слушателей, личный кабинет, проверка подлинности выданных сертификатов (реестр), международное сотрудничество и виртуальная приемная.</p>",
+    content_en: "<p>In order to fully digitalize the Center's activities, a modern web portal was developed. Through the portal, interactive services such as online listener registration, personal account, certificate authenticity verification (registry), international cooperation and virtual reception were launched.</p>",
+    image: "/media/uploads/departmentpost/3a0b18689e02494998a7d4ff08d3c0d0.png",
+    image_url: "/media/uploads/departmentpost/3a0b18689e02494998a7d4ff08d3c0d0.png",
+    date: "2026-09-10",
+    views_count: 142
+  },
+  {
+    id: 102,
+    title: "O‘zBA Test platformasi va tinglovchilar bilimini avtomatlashtirilgan baholash tizimi",
+    title_ru: "Тестовая платформа O'zBA и автоматизированная система оценки знаний слушателей",
+    title_en: "O'zBA Testing platform and automated knowledge evaluation system",
+    content: "<p>Pedagog va mutaxassis kadrlarning malaka oshirish kurslari yakunida ularning bilim va ko'nikmalarini xolis hamda shaffof baholash uchun maxsus avtomatlashtirilgan onlayn test sinovlari tizimi joriy etildi.</p><p>Tizim test savollari bankini boshqarish, vaqt nazorati, natijalarni avtomatik hisoblash va rasmiy hisobotlarni shakllantirish imkonini beradi.</p>",
+    content_ru: "<p>Для объективной и прозрачной оценки знаний и навыков педагогических кадров по итогам курсов повышения квалификации внедрена специальная автоматизированная система онлайн-тестирования.</p>",
+    content_en: "<p>For an objective and transparent assessment of knowledge and skills of pedagogical personnel, a specialized automated online testing platform was established.</p>",
+    image: "/media/uploads/departmentpost/c0a7f2285bcd4f6a8d486842f0f63caa.png",
+    image_url: "/media/uploads/departmentpost/c0a7f2285bcd4f6a8d486842f0f63caa.png",
+    date: "2026-09-08",
+    views_count: 98
+  },
+  {
+    id: 103,
+    title: "Axborot xavfsizligi, kiberxavfsizlik ekspertizasi va UZCERT talablariga muvofiqlashtirish",
+    title_ru: "Информационная безопасность, экспертиза кибербезопасности и соответствие требованиям UZCERT",
+    title_en: "Information security, cybersecurity audit and compliance with UZCERT standards",
+    content: "<p>Markaz axborot tizimlari va ma'lumotlar bazalarini kiberxavflardan himoya qilish, SSL/TLS xavfsizlik shifrlashini o'rnatish, OWASP Top-10 standartlari hamda Kiberxavfsizlik markazi DUK (UZCERT) ekspertizasi talablariga to'liq moslashtirish ishlari amalga oshirildi.</p><p>Tizimda SQL injection, XSS, CSRF xavflariga qarshi kompleks himoya choralari joriy qilingan.</p>",
+    content_ru: "<p>Проведены работы по защите информационных систем и баз данных Центра от киберугроз, установке сертификатов SSL/TLS, обеспечению стандартов OWASP Top-10 и полному соответствию требованиям ГУП Центр кибербезопасности (UZCERT).</p>",
+    content_en: "<p>Comprehensive security works were carried out to protect information systems and databases, configure SSL/TLS encryption, and adhere to OWASP Top-10 and UZCERT cybersecurity standards.</p>",
+    image: "/media/uploads/departmentpost/73b234bf5adc4f6fb193a39fc16eacd8.jpg",
+    image_url: "/media/uploads/departmentpost/73b234bf5adc4f6fb193a39fc16eacd8.jpg",
+    date: "2026-09-05",
+    views_count: 115
+  },
+  {
+    id: 104,
+    title: "Multimedia kontentlari, rasmiy veb-sayt va ijtimoiy tarmoqlardagi sahifalarni professional yuritish",
+    title_ru: "Мультимедийный контент, профессиональное ведение официального сайта и страниц в соцсетях",
+    title_en: "Multimedia content production, professional management of official website and social media",
+    content: "<p>Markazda o'tkazilayotgan barcha ta'lim dasturlari, ilmiy-amaliy anjumanlar, ijodiy ko'rgazmalar va xalqaro uchrashuvlar bo'yicha yuqori sifatli foto-video reportajlar tayyorlanib, rasmiy veb-sayt hamda Telegram, YouTube, Facebook va Instagram tarmoqlarida uzluksiz yoritib borilmoqda.</p>",
+    content_ru: "<p>Осуществляется профессиональная фото- и видеосъемка всех учебных программ, научно-практических конференций, выставок и международных встреч с оперативной публикацией на сайте и в социальных сетях.</p>",
+    content_en: "<p>High-quality photo and video materials are produced and published for all educational programs, scientific conferences, exhibitions and international events across the official site and social media channels.</p>",
+    image: "/media/uploads/departmentpost/3b2a4a66159443d191f4ec22e3c2f07d.jpg",
+    image_url: "/media/uploads/departmentpost/3b2a4a66159443d191f4ec22e3c2f07d.jpg",
+    date: "2026-09-02",
+    views_count: 164
+  }
+];
 
 const DepartmentPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -306,49 +361,85 @@ const DepartmentPage: React.FC = () => {
       />
 
       {/* Qilingan ishlar / Posts Section */}
-      {dept.department_posts && dept.department_posts.length > 0 && (
-        <section className="container mx-auto px-6 py-16">
-          <div className="mb-8 border-l-4 border-blue-600 pl-4">
-            <h2 className="text-2xl font-bold text-slate-800 uppercase tracking-wide">{t('department.works_and_partnerships')}</h2>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {dept.department_posts.map((post: any) => (
-              <button
-                key={post.id}
-                onClick={() => handlePostClick(post)}
-                className="group overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm transition-transform hover:-translate-y-1 hover:shadow-xl text-left flex flex-col"
-                >
-                  <div className="h-40 overflow-hidden bg-slate-200 w-full relative">
-                    {(post.video || post.video_url || post.images?.[0]?.video_url || post.images?.[0]?.video) ? (
-                      <div className="w-full h-full bg-slate-900 flex items-center justify-center">
-                        <Play className="text-white opacity-70 w-12 h-12" />
+      {(() => {
+        const isAktDept = dept.id === 1 || (dept.name && dept.name.toLowerCase().includes('axborot'));
+        const postsToDisplay = (dept.department_posts && dept.department_posts.length > 0)
+          ? dept.department_posts
+          : (isAktDept ? DEFAULT_AKT_POSTS : []);
+
+        if (!postsToDisplay || postsToDisplay.length === 0) return null;
+
+        return (
+          <section className="container mx-auto px-4 sm:px-6 py-14">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-slate-200 gap-4">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+                  {isAktDept ? "Amaliy natijalar va loyihalar" : "Hamkorliklar va tadbirlar"}
+                </span>
+                <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-2">
+                  {isAktDept ? "Bo‘lim tomonidan amalga oshirilgan ishlar" : t('department.works_and_partnerships')}
+                </h2>
+              </div>
+              <p className="text-sm text-slate-500 font-medium">
+                Jami: <span className="font-bold text-slate-800">{postsToDisplay.length} ta</span> amaliy ish
+              </p>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {postsToDisplay.map((post: any) => {
+                const postTitle = getLocalizedField(post, 'title');
+                const postContent = getLocalizedField(post, 'content');
+                const postImg = post.images?.[0]?.image_url || post.image || post.image_url;
+                const hasVideo = post.video || post.video_url || post.images?.[0]?.video_url || post.images?.[0]?.video;
+
+                return (
+                  <button
+                    key={post.id}
+                    onClick={() => handlePostClick(post)}
+                    className="group rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-xl hover:border-blue-400 hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden text-left"
+                  >
+                    <div className="h-44 overflow-hidden bg-slate-100 w-full relative">
+                      {hasVideo ? (
+                        <div className="w-full h-full bg-slate-900 flex items-center justify-center">
+                          <Play className="text-white opacity-80 w-12 h-12 group-hover:scale-110 transition-transform" />
+                        </div>
+                      ) : postImg ? (
+                        <img
+                          src={postImg}
+                          alt={postTitle}
+                          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center text-slate-400 text-sm font-medium">
+                          {t('common.no_image')}
+                        </div>
+                      )}
+                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-700 shadow-xs">
+                        {post.date || "2026"}
                       </div>
-                    ) : (post.images?.[0]?.image_url || post.image || post.image_url) ? (
-                          <img
-                            src={post.images?.[0]?.image_url || post.image || post.image_url}
-                            alt={getLocalizedField(post, 'title')}
-                            className="h-full w-full object-contain p-2 bg-white transition-transform duration-700 group-hover:scale-105"
-                          />
-                    ) : (
-                        <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-400">{t('common.no_image')}</div>
-                    )}
-                  </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <p className="text-sm text-slate-400 mb-2">{post.date}</p>
-                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-blue-700 line-clamp-2">
-                    {getLocalizedField(post, 'title')}
-                  </h3>
-                  <div className="mt-3 text-sm text-slate-600 line-clamp-3 flex-1 prose prose-sm" 
-                       dangerouslySetInnerHTML={{ __html: sanitizeHtml(getLocalizedField(post, 'content')) }} />
-                    <div className="mt-4 font-bold text-blue-600 text-sm">
-                      {t('news_list.read_more')} &rarr;
                     </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
+
+                    <div className="p-5 flex-1 flex flex-col">
+                      <h3 className="text-base font-bold text-slate-900 group-hover:text-blue-700 transition-colors line-clamp-2 leading-snug">
+                        {postTitle}
+                      </h3>
+                      <div
+                        className="mt-2.5 text-xs text-slate-600 line-clamp-3 leading-relaxed flex-1"
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(postContent) }}
+                      />
+                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-blue-600 group-hover:text-blue-800">
+                        <span>{t('news_list.read_more')}</span>
+                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })()}
 
       {selectedPost && (
         <NewsModal newsItem={selectedPost} onClose={() => setSelectedPost(null)} />

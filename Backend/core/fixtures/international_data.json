@@ -374,441 +374,91 @@
   }
 },
 {
-  "model": "core.internationalpartner",
-  "pk": 1,
+  "model": "core.departmentpost",
+  "pk": 101,
   "fields": {
-    "created_at": "2026-11-18T11:18:39.641Z",
-    "updated_at": "2026-11-18T11:18:39.641Z",
-    "name": "Jawaharlal Nehru Architecture and Fine Arts University",
-    "country": "Hindiston",
-    "description": "O‘zbekiston Badiiy akademiyasi huzuridagi Markaz hamda Hindistonning Javoharlal Neru arxitektura va tasviriy san’at universiteti (JNAFAU) o‘rtasida madaniyat va san’at ta’limini rivojlantirish, o‘qituvchilar va talabalar almashinuvi, qo‘shma xalqaro konferensiyalar o‘tkazish bo‘yicha o‘zaro hamkorlik Memorandumi imzolandi.",
-    "photo": "uploads/departmentpost/b0fee6c345c044c5acb4539b0bbb2bf5.png",
-    "order": 1,
-    "is_active": true
+    "created_at": "2026-11-19T06:50:14.529Z",
+    "updated_at": "2026-11-19T06:50:14.529Z",
+    "department": 1,
+    "title": "Markaz rasmiy veb-portali (uzbamalaka.uz) va raqamli ekotizimini ishlab chiqish hamda modernizatsiyalash",
+    "title_ru": "Разработка и модернизация официального веб-портала (uzbamalaka.uz) и цифровой экосистемы Центра",
+    "title_en": "Development and modernization of the Center official web portal (uzbamalaka.uz) and digital ecosystem",
+    "content": "<p>Markaz faoliyatini to'liq raqamlashtirish maqsadida zamonaviy veb-portal ishlab chiqildi. Portal orqali tinglovchilar uchun onlayn ro'yxatdan o'tish, shaxsiy kabinet, berilgan sertifikatlar haqiqiyligini tekshirish (reyestr), xalqaro hamkorliklar va virtual qabulxona kabi interaktiv xizmatlar yo'lga qo'yildi.</p><p>Veb-portal zamonaviy xavfsizlik standartlari, qidiruv tizimlari (SEO) va mobil moslashuvchanlik talablariga to'liq javob beradi.</p>",
+    "content_ru": "<p>В целях полной цифровизации деятельности Центра разработан современный веб-портал. Через портал внедрены такие интерактивные сервисы, как онлайн-регистрация слушателей, личный кабинет, проверка подлинности выданных сертификатов (реестр), международное сотрудничество и виртуальная приемная.</p>",
+    "content_en": "<p>In order to fully digitalize the Center's activities, a modern web portal was developed. Through the portal, interactive services such as online listener registration, personal account, certificate authenticity verification (registry), international cooperation and virtual reception were launched.</p>",
+    "image": "uploads/departmentpost/3a0b18689e02494998a7d4ff08d3c0d0.png",
+    "image_url": "",
+    "video": "",
+    "video_url": "",
+    "date": "2026-09-10",
+    "is_active": true,
+    "views_count": 142
   }
 },
 {
-  "model": "core.internationalpartner",
-  "pk": 2,
+  "model": "core.departmentpost",
+  "pk": 102,
   "fields": {
-    "created_at": "2026-11-18T11:18:39.647Z",
-    "updated_at": "2026-11-18T11:18:39.647Z",
-    "name": "Hebei Academy of Fine Arts",
-    "country": "Xitoy",
-    "description": "Oʼzbekiston Badiiy akademiyasi huzuridagi Badiiy ta’lim yo‘nalishlarida pedagog va mutaxassis kadrlarni qayta tayyorlash hamda ularning malakasini oshirish markazi hamda Xitoy Xalq Respublikasining nufuzli Hebei tasviriy san'at akademiyasi o'rtasida xalqaro hamkorlik Memorandumi imzolandi.",
-    "photo": "uploads/departmentpost/d8dd672edea246e6ba8f9a8c3998547b.jpg",
-    "order": 2,
-    "is_active": true
+    "created_at": "2026-11-19T06:50:14.538Z",
+    "updated_at": "2026-11-19T06:50:14.539Z",
+    "department": 1,
+    "title": "O‘zBA Test platformasi va tinglovchilar bilimini avtomatlashtirilgan baholash tizimi",
+    "title_ru": "Тестовая платформа O'zBA и автоматизированная система оценки знаний слушателей",
+    "title_en": "O'zBA Testing platform and automated knowledge evaluation system",
+    "content": "<p>Pedagog va mutaxassis kadrlarning malaka oshirish kurslari yakunida ularning bilim va ko'nikmalarini xolis hamda shaffof baholash uchun maxsus avtomatlashtirilgan onlayn test sinovlari tizimi joriy etildi.</p><p>Tizim test savollari bankini boshqarish, vaqt nazorati, natijalarni avtomatik hisoblash va rasmiy hisobotlarni shakllantirish imkonini beradi.</p>",
+    "content_ru": "<p>Для объективной и прозрачной оценки знаний и навыков педагогических кадров по итогам курсов повышения квалификации внедрена специальная автоматизированная система онлайн-тестирования.</p>",
+    "content_en": "<p>For an objective and transparent assessment of knowledge and skills of pedagogical personnel, a specialized automated online testing platform was established.</p>",
+    "image": "uploads/departmentpost/c0a7f2285bcd4f6a8d486842f0f63caa.png",
+    "image_url": "",
+    "video": "",
+    "video_url": "",
+    "date": "2026-09-08",
+    "is_active": true,
+    "views_count": 98
   }
 },
 {
-  "model": "core.internationalpartner",
-  "pk": 3,
+  "model": "core.departmentpost",
+  "pk": 103,
   "fields": {
-    "created_at": "2026-11-18T11:18:39.652Z",
-    "updated_at": "2026-11-18T11:18:39.652Z",
-    "name": "Hubei Institute of Fine Arts",
-    "country": "Xitoy",
-    "description": "Xalqaro hamkorlik rivojlanmoqda! O‘zbekiston Badiiy akademiyasi va uning tizim tashkilotlari vakillari, jumladan Markaz xodimlari hamda Xubey tasviriy san’at instituti o'rtasida 'Sharq san’ati va estetik ta’lim markazi'ni tashkil etish hamda qo'shma malaka oshirish kurslari bo'yicha Memorandum imzolandi.",
-    "photo": "uploads/departmentpost/dd9f43a1f23140a68a8c6d1bdbac23a6.jpg",
-    "order": 3,
-    "is_active": true
+    "created_at": "2026-11-19T06:50:14.545Z",
+    "updated_at": "2026-11-19T06:50:14.545Z",
+    "department": 1,
+    "title": "Axborot xavfsizligi, kiberxavfsizlik ekspertizasi va UZCERT talablariga muvofiqlashtirish",
+    "title_ru": "Информационная безопасность, экспертиза кибербезопасности и соответствие требованиям UZCERT",
+    "title_en": "Information security, cybersecurity audit and compliance with UZCERT standards",
+    "content": "<p>Markaz axborot tizimlari va ma'lumotlar bazalarini kiberxavflardan himoya qilish, SSL/TLS xavfsizlik shifrlashini o'rnatish, OWASP Top-10 standartlari hamda Kiberxavfsizlik markazi DUK (UZCERT) ekspertizasi talablariga to'liq moslashtirish ishlari amalga oshirildi.</p><p>Tizimda SQL injection, XSS, CSRF xavflariga qarshi kompleks himoya choralari joriy qilingan.</p>",
+    "content_ru": "<p>Проведены работы по защите информационных систем и баз данных Центра от киберугроз, установке сертификатов SSL/TLS, обеспечению стандартов OWASP Top-10 и полному соответствию требованиям ГУП Центр кибербезопасности (UZCERT).</p>",
+    "content_en": "<p>Comprehensive security works were carried out to protect information systems and databases, configure SSL/TLS encryption, and adhere to OWASP Top-10 and UZCERT cybersecurity standards.</p>",
+    "image": "uploads/departmentpost/73b234bf5adc4f6fb193a39fc16eacd8.jpg",
+    "image_url": "",
+    "video": "",
+    "video_url": "",
+    "date": "2026-09-05",
+    "is_active": true,
+    "views_count": 115
   }
 },
 {
-  "model": "core.internationalpartner",
-  "pk": 4,
+  "model": "core.departmentpost",
+  "pk": 104,
   "fields": {
-    "created_at": "2026-11-18T11:18:39.656Z",
-    "updated_at": "2026-11-18T11:18:39.656Z",
-    "name": "Institute for Art and Restoration - Palazzo Spinelli",
-    "country": "Italiya",
-    "description": "Italiyaning Florensiya shahrida joylashgan mashhur San’at va restavratsiya instituti – Palazzo Spinelli bilan o‘zaro hamkorlik Memorandumi imzolandi. Hamkorlik san'at asarlarini restavratsiya qilish va konservatsiya sohasida kadrlar malakasini oshirishga qaratilgan.",
-    "photo": "uploads/departmentpost/775c44be1283405b95257ffde838041d.png",
-    "order": 4,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 5,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.661Z",
-    "updated_at": "2026-11-18T11:18:39.661Z",
-    "name": "Keimyung University",
-    "country": "Janubiy Koreya",
-    "description": "Janubiy Koreyaning Keimyung universiteti Tasviriy san’at kolleji bilan hamkorlik Memorandumi imzolandi. Uning doirasida Keimyung universiteti yetakchi professorlari (Kim Yun Hee, Jang Tae Mook) tomonidan Markaz tinglovchilari uchun muntazam master-klasslar va amaliy mashg‘ulotlar o‘tkazib kelinmoqda.",
-    "photo": "uploads/departmentpost/9bbab70c43c64a80a3a44a249b5e8320.jpg",
-    "order": 5,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 6,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.666Z",
-    "updated_at": "2026-11-18T11:18:39.666Z",
-    "name": "Ozarbayjon davlat tasviriy san’at akademiyasi",
-    "country": "Ozarbayjon",
-    "description": "O‘zbekiston Badiiy akademiyasi huzuridagi Markaz hamda Ozarbayjon davlat tasviriy san’at akademiyasi o‘rtasida o‘zaro hamkorlik to‘g‘risida Memorandum imzolandi.\n\nKelishuvga muvofiq, pedagog va mutaxassis kadrlarni qayta tayyorlash, Badiiy akademiya tizimidagi maktablar o'qituvchilari uchun Bokuda 1 haftalik malaka oshirish stajirovkalari hamda qo‘shma ko‘rgazmalar tashkil etilmoqda.",
-    "photo": "uploads/departmentpost/MoU_Azerbayjan_page1.jpg",
-    "order": 6,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 7,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.671Z",
-    "updated_at": "2026-11-18T11:18:39.671Z",
-    "name": "Temirbek Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi",
-    "country": "Qozog'iston",
-    "description": "Markaz hamda T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi o‘rtasida xalqaro hamkorlik Memorandumi imzolandi.\n\nMemorandum doirasida akademiyaning 8 nafar o‘qituvchisi uchun Markazda 'Rangtasvir' bo‘yicha malaka oshirish kursi, shuningdek 'An’anaviy va zamonaviy kashtachilik san’ati' mavzusida xalqaro ilmiy-amaliy seminar muvaffaqiyatli o‘tkazildi.",
-    "photo": "uploads/departmentpost/MoU_Jurgenov_page1.jpg",
-    "order": 7,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 8,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.677Z",
-    "updated_at": "2026-11-18T11:18:39.677Z",
-    "name": "Toraygirov universiteti",
-    "country": "Qozog'iston",
-    "description": "Qozog‘iston Respublikasining yetakchi oliy ta’lim maskanlaridan biri bo‘lgan Toraygirov universiteti bilan o‘zaro hamkorlik to‘g‘risida Memorandum imzolandi.\n\nKelishuv tasviriy va amaliy san’at, dizayn yo‘nalishlarida o‘qituvchilar malakasini oshirish, ilmiy maqolalar almashish va talabalar uchun ijodiy tanlovlar tashkil etishni ko‘zda tutadi.",
-    "photo": "uploads/departmentpost/MoU_Toraygirov_page1.jpg",
-    "order": 8,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 9,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.681Z",
-    "updated_at": "2026-11-18T11:18:39.681Z",
-    "name": "Batumi san’at ta’limi universiteti",
-    "country": "Gruziya",
-    "description": "Gruziyaning nufuzli Batumi san’at ta’limi universiteti bilan do‘stona va akademik aloqalarni rivojlantirishga qaratilgan Memorandum imzolandi.\n\nAmaliy loyiha sifatida Gruziyada o‘zbek va gruzin rassomlarining 'Rangtasvir simfoniyasi' nomli yirik qo‘shma ko‘rgazmasi ochildi. Ko‘rgazmada 20 dan ortiq milliy liboslar va asarlar namoyish etilib, professor Keti Vacheishvili ishtirokida seminar bo‘lib o‘tdi.",
-    "photo": "uploads/departmentpost/MoU_Gruziya_page1.jpg",
-    "order": 9,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 10,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.687Z",
-    "updated_at": "2026-11-18T11:18:39.687Z",
-    "name": "A.L.Shtiglits nomidagi Sankt-Peterburg davlat san’at va sanoat akademiyasi",
-    "country": "Rossiya",
-    "description": "Sankt-Peterburgdagi mashhur A.L.Shtiglits nomidagi davlat san’at va sanoat akademiyasi bilan hamkorlik Memorandumi imzolandi.\n\nAkademiya dotsentlari Arseniy Kiselev ('Sanoat dizayni'), Danila Cherkasov ('Rus rangtasviri') va Anton Leuxin ('Sharq rangtasvirida rus rassomlarining o‘rni') tomonidan Markaz tinglovchilari uchun qator mahorat darslari tashkil etildi.",
-    "photo": "uploads/departmentpost/MoU_Shtiglits_page1.jpg",
-    "order": 10,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 11,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.692Z",
-    "updated_at": "2026-11-18T11:18:39.692Z",
-    "name": "Janubiy Federal universiteti (SFedU)",
-    "country": "Rossiya",
-    "description": "Rossiya Federatsiyasining yirik ilmiy markazlaridan biri bo‘lgan Janubiy Federal universiteti bilan ta’lim va ilmiy-tadqiqot sohasida hamkorlik Memorandumi imzolandi.\n\nKelishuv badiiy ta'lim metodikasi, san’atshunoslik sohasidagi innovatsiyalar va pedagoglar malakasini oshirish bo‘yicha qo‘shma dasturlarni qamrab oladi.",
-    "photo": "uploads/departmentpost/MoU_YuFU_page1.jpg",
-    "order": 11,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 12,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.697Z",
-    "updated_at": "2026-11-18T11:18:39.697Z",
-    "name": "Erzinjan Binali Yildirim universiteti",
-    "country": "Turkiya",
-    "description": "Turkiyaning Erzinjan Binali Yildirim universiteti bilan o‘zaro ilmiy va ijodiy hamkorlik to‘g‘risida rasmiy Memorandum imzolandi.\n\nTomonlar san’at ta’limi yo‘nalishida kadrlar malakasini oshirish, xalqaro ko‘rgazmalar va turkiy xalqlar an’anaviy san’atini o‘rganishga qaratilgan tadbirlarni amalga oshirmoqda.",
-    "photo": "uploads/departmentpost/MoU_Turkiya_page1.jpg",
-    "order": 12,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 13,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.702Z",
-    "updated_at": "2026-11-18T11:18:39.702Z",
-    "name": "Recep Tayyip Erdoğan universiteti",
-    "country": "Turkiya",
-    "description": "Turkiya Respublikasining Recep Tayyip Erdoğan universiteti bilan o‘zaro akademik aloqalar, o‘qituvchilar malakasini oshirish va tasviriy san’at sohasida tajriba almashish Memorandumi imzolandi.",
-    "photo": "uploads/departmentpost/Memorandum_Recep_Tayyip_Erdoğan_universiteti_Turkiya_page1.jpg",
-    "order": 13,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 14,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.707Z",
-    "updated_at": "2026-11-18T11:18:39.707Z",
-    "name": "Belarus davlat san’at akademiyasi",
-    "country": "Belarus",
-    "description": "Belarus davlat san’at akademiyasi bilan kadrlar malakasini oshirish, tasviriy va amaliy san’at, dizayn hamda restavratsiya sohasida hamkorlik qilish to‘g‘risida Memorandum imzolandi.",
-    "photo": "uploads/departmentpost/Memorandum_Belorus_page1.jpg",
-    "order": 14,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 15,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.712Z",
-    "updated_at": "2026-11-18T11:18:39.712Z",
-    "name": "Markaziy Osiyo savdo-iqtisodiyot Qo‘mitasi (CAETC)",
-    "country": "Xitoy",
-    "description": "Xitoyning Markaziy Osiyo savdo-iqtisodiyot Qo‘mitasi (CAETC) bilan o‘zaro hamkorlik Memorandumi imzolandi.\n\nKelishuv 'Bir makon, bir yo‘l' tashabbusi doirasida madaniy almashinuv, o‘zbek san’atini Xitoyda namoyish etish va pedagogik stajirovkalarni tashkil etishni maqsad qilgan.",
-    "photo": "uploads/departmentpost/China_CAETC_page1.jpg",
-    "order": 15,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 16,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.718Z",
-    "updated_at": "2026-11-18T11:18:39.718Z",
-    "name": "Lanzhou universiteti Uels kolleji San’at maktabi",
-    "country": "Xitoy",
-    "description": "Xitoyning nufuzli Lanzhou universiteti San’at maktabi bilan o‘zaro hamkorlik Memorandumi imzolandi.\n\nXitoy an’anaviy tasviriy san’ati (guohua), xattotlik va zamonaviy dizayn bo‘yicha qo‘shma master-klasslar hamda akademik tadbirlar rejalashtirilgan.",
-    "photo": "uploads/departmentpost/Memorandum_LANJOU_UNIVERSITETI_UELS_KOLLEJI_SANAT_MAKTABI_(XITOY)_page1.jpg",
-    "order": 16,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalpartner",
-  "pk": 17,
-  "fields": {
-    "created_at": "2026-11-18T11:18:39.723Z",
-    "updated_at": "2026-11-18T11:18:39.723Z",
-    "name": "Toshkent Kimyo xalqaro universiteti (KIUT)",
-    "country": "O'zbekiston",
-    "description": "Toshkent Kimyo xalqaro universiteti (KIUT) bilan tasviriy san’at, rangtasvir va liboslar dizayni sohasida o‘quv-uslubiy hamkorlik, zamonaviy texnologiyalarni amaliyotga tatbiq etish bo‘yicha Memorandum imzolandi.",
-    "photo": "uploads/departmentpost/Memorandum_TOSHKENT_KIMYO_XALQARO_UNIVERSITETI_page1.jpg",
-    "order": 17,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 7,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.602Z",
-    "updated_at": "2026-11-18T11:19:54.602Z",
-    "title": "“Rangtasvir simfoniyasi” xalqaro qo‘shma ko‘rgazmasi va ilmiy seminar",
-    "title_ru": "Международная совместная выставка «Симфония живописи» и научный семинар",
-    "title_en": "International Joint Exhibition \"Symphony of Painting\" and Scientific Seminar",
-    "description": "Gruziyaning Batumi san’at ta’limi universitetida o‘zbek va gruzin rassomlarining 'Rangtasvir simfoniyasi' nomli qo‘shma ko‘rgazmasi ochildi. 20 dan ortiq asarlar va milliy liboslar namoyish etildi.",
-    "description_ru": "Gruziyaning Batumi san’at ta’limi universitetida o‘zbek va gruzin rassomlarining 'Rangtasvir simfoniyasi' nomli qo‘shma ko‘rgazmasi ochildi. 20 dan ortiq asarlar va milliy liboslar namoyish etildi.",
-    "description_en": "Gruziyaning Batumi san’at ta’limi universitetida o‘zbek va gruzin rassomlarining 'Rangtasvir simfoniyasi' nomli qo‘shma ko‘rgazmasi ochildi. 20 dan ortiq asarlar va milliy liboslar namoyish etildi.",
-    "partners_text": "Batumi san’at ta’limi universiteti (Gruziya)",
-    "start_date": "2024-09-01",
-    "end_date": "2024-09-30",
-    "status": "completed",
-    "order": 1,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 8,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.611Z",
-    "updated_at": "2026-11-18T11:19:54.611Z",
-    "title": "“Yonma-yon” o‘zbek va turk ijodkorlarining yirik pleneri va qo‘shma ko‘rgazmasi",
-    "title_ru": "Большой пленэр и совместная выставка узбекских и турецких художников «Бок о бок»",
-    "title_en": "Major Plein Air and Joint Exhibition of Uzbek and Turkish Artists \"Side by Side\"",
-    "description": "Turkiyaning Anadolu universitetida O‘zbekiston ixtisoslashtirilgan san’at maktablari o‘qituvchi-rassomlari uchun plener va 'Yonma-yon' nomli yirik qo‘shma ko‘rgazma tashkil etildi.",
-    "description_ru": "Turkiyaning Anadolu universitetida O‘zbekiston ixtisoslashtirilgan san’at maktablari o‘qituvchi-rassomlari uchun plener va 'Yonma-yon' nomli yirik qo‘shma ko‘rgazma tashkil etildi.",
-    "description_en": "Turkiyaning Anadolu universitetida O‘zbekiston ixtisoslashtirilgan san’at maktablari o‘qituvchi-rassomlari uchun plener va 'Yonma-yon' nomli yirik qo‘shma ko‘rgazma tashkil etildi.",
-    "partners_text": "Anadolu universiteti (Turkiya)",
-    "start_date": "2026-04-01",
-    "end_date": "2026-05-30",
-    "status": "completed",
-    "order": 2,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 9,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.617Z",
-    "updated_at": "2026-11-18T11:19:54.617Z",
-    "title": "“Sharq san’ati va estetik ta’lim markazi” qo‘shma platformasi",
-    "title_ru": "Совместная платформа «Центр восточного искусства и эстетического образования»",
-    "title_en": "Joint Platform \"Center for Eastern Art and Aesthetic Education\"",
-    "description": "Xitoyning Xubey tasviriy san’at instituti bilan 'Sharq san’ati va estetik ta’lim markazi'ni tashkil etish bo‘yicha rasmiy kelishuv imzolandi.",
-    "description_ru": "Xitoyning Xubey tasviriy san’at instituti bilan 'Sharq san’ati va estetik ta’lim markazi'ni tashkil etish bo‘yicha rasmiy kelishuv imzolandi.",
-    "description_en": "Xitoyning Xubey tasviriy san’at instituti bilan 'Sharq san’ati va estetik ta’lim markazi'ni tashkil etish bo‘yicha rasmiy kelishuv imzolandi.",
-    "partners_text": "Xubey tasviriy san’at instituti (Xitoy)",
-    "start_date": "2026-04-15",
-    "end_date": null,
-    "status": "ongoing",
-    "order": 3,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 10,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.623Z",
-    "updated_at": "2026-11-18T11:19:54.623Z",
-    "title": "“Rangtasvir” yo‘nalishida xalqaro qo‘shma malaka oshirish kursi",
-    "title_ru": "Международный совместный курс повышения квалификации по направлению «Живопись»",
-    "title_en": "International Joint Professional Development Course in \"Painting\"",
-    "description": "Xubey tasviriy san’at instituti bilan 'Rangtasvir' yo‘nalishida qo‘shma xalqaro malaka oshirish kursi tashkil etish kelishuvi.",
-    "description_ru": "Xubey tasviriy san’at instituti bilan 'Rangtasvir' yo‘nalishida qo‘shma xalqaro malaka oshirish kursi tashkil etish kelishuvi.",
-    "description_en": "Xubey tasviriy san’at instituti bilan 'Rangtasvir' yo‘nalishida qo‘shma xalqaro malaka oshirish kursi tashkil etish kelishuvi.",
-    "partners_text": "Xubey tasviriy san’at instituti (Xitoy)",
-    "start_date": "2026-04-20",
-    "end_date": null,
-    "status": "ongoing",
-    "order": 4,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 11,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.628Z",
-    "updated_at": "2026-11-18T11:19:54.628Z",
-    "title": "“NEW SILK ROAD ART JOURNEY” xalqaro konferensiyasi va malaka oshirish stajirovkasi",
-    "title_ru": "Международная конференция и стажировка «NEW SILK ROAD ART JOURNEY»",
-    "title_en": "International Conference and Internship \"NEW SILK ROAD ART JOURNEY\"",
-    "description": "Xitoyda bo‘lib o‘tgan xalqaro konferensiyada Markaz va Badiiy akademiya xodimlarining 9 nafari ma’ruzalar bilan ishtirok etdi hamda malaka oshirish stajirovkasi o‘tdi.",
-    "description_ru": "Xitoyda bo‘lib o‘tgan xalqaro konferensiyada Markaz va Badiiy akademiya xodimlarining 9 nafari ma’ruzalar bilan ishtirok etdi hamda malaka oshirish stajirovkasi o‘tdi.",
-    "description_en": "Xitoyda bo‘lib o‘tgan xalqaro konferensiyada Markaz va Badiiy akademiya xodimlarining 9 nafari ma’ruzalar bilan ishtirok etdi hamda malaka oshirish stajirovkasi o‘tdi.",
-    "partners_text": "Xubey tasviriy san’at instituti (Xitoy)",
-    "start_date": "2025-11-01",
-    "end_date": "2025-11-20",
-    "status": "completed",
-    "order": 5,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 12,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.635Z",
-    "updated_at": "2026-11-18T11:19:54.635Z",
-    "title": "“O‘zbekiston milliy liboslar ko‘rgazmasi” (Xitoy)",
-    "title_ru": "Выставка «Узбекский национальный костюм» (Китай)",
-    "title_en": "Exhibition \"Uzbek National Costume\" (China)",
-    "description": "Xubey tasviriy san’at institutida O‘zbekiston milliy liboslari va amaliy san’at durdonalarining maxsus ko‘rgazmasi namoyish etildi.",
-    "description_ru": "Xubey tasviriy san’at institutida O‘zbekiston milliy liboslari va amaliy san’at durdonalarining maxsus ko‘rgazmasi namoyish etildi.",
-    "description_en": "Xubey tasviriy san’at institutida O‘zbekiston milliy liboslari va amaliy san’at durdonalarining maxsus ko‘rgazmasi namoyish etildi.",
-    "partners_text": "Xubey tasviriy san’at instituti (Xitoy)",
-    "start_date": "2025-11-05",
-    "end_date": "2025-11-25",
-    "status": "completed",
-    "order": 6,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 13,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.641Z",
-    "updated_at": "2026-11-18T11:19:54.641Z",
-    "title": "Badiiy ta’lim pedagoglari uchun xalqaro malaka oshirish stajirovkasi (Boku)",
-    "title_ru": "Международная стажировка для педагогов художественного образования (Баку)",
-    "title_en": "International Internship for Art Education Teachers (Baku)",
-    "description": "Badiiy akademiya huzuridagi ixtisoslashgan san’at maktablarining 6 nafar o‘qituvchisi Ozarbayjon davlat tasviriy san’at akademiyasida 1 haftalik stajirovka o‘tadi.",
-    "description_ru": "Badiiy akademiya huzuridagi ixtisoslashgan san’at maktablarining 6 nafar o‘qituvchisi Ozarbayjon davlat tasviriy san’at akademiyasida 1 haftalik stajirovka o‘tadi.",
-    "description_en": "Badiiy akademiya huzuridagi ixtisoslashgan san’at maktablarining 6 nafar o‘qituvchisi Ozarbayjon davlat tasviriy san’at akademiyasida 1 haftalik stajirovka o‘tadi.",
-    "partners_text": "Ozarbayjon davlat tasviriy san’at akademiyasi (Ozarbayjon)",
-    "start_date": "2025-02-10",
-    "end_date": "2025-02-17",
-    "status": "completed",
-    "order": 7,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 14,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.646Z",
-    "updated_at": "2026-11-18T11:19:54.646Z",
-    "title": "Qozog‘istonlik pedagoglar uchun “Rangtasvir” malaka oshirish kursi",
-    "title_ru": "Курс повышения квалификации по «Живописи» для казахстанских педагогов",
-    "title_en": "Professional Development Course in \"Painting\" for Kazakh Educators",
-    "description": "T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasining 8 nafar o‘qituvchisi uchun Markazda 'Rangtasvir' bo‘yicha onlayn va oflayn malaka oshirish kurslari o‘tkazildi.",
-    "description_ru": "T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasining 8 nafar o‘qituvchisi uchun Markazda 'Rangtasvir' bo‘yicha onlayn va oflayn malaka oshirish kurslari o‘tkazildi.",
-    "description_en": "T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasining 8 nafar o‘qituvchisi uchun Markazda 'Rangtasvir' bo‘yicha onlayn va oflayn malaka oshirish kurslari o‘tkazildi.",
-    "partners_text": "T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi (Qozog‘iston)",
-    "start_date": "2024-04-01",
-    "end_date": "2024-04-30",
-    "status": "completed",
-    "order": 8,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 15,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.651Z",
-    "updated_at": "2026-11-18T11:19:54.651Z",
-    "title": "“An’anaviy va zamonaviy kashtachilik san’ati” xalqaro ilmiy-amaliy seminari",
-    "title_ru": "Международный научно-практический семинар «Традиционное и современное искусство вышивки»",
-    "title_en": "International Scientific-Practical Seminar \"Traditional and Modern Art of Embroidery\"",
-    "description": "Ikki davlat milliy san’at uslublarini o‘rganish, badiiy kashtachilik va gobelen turlarini tadqiq etishga bag‘ishlangan xalqaro seminar.",
-    "description_ru": "Ikki davlat milliy san’at uslublarini o‘rganish, badiiy kashtachilik va gobelen turlarini tadqiq etishga bag‘ishlangan xalqaro seminar.",
-    "description_en": "Ikki davlat milliy san’at uslublarini o‘rganish, badiiy kashtachilik va gobelen turlarini tadqiq etishga bag‘ishlangan xalqaro seminar.",
-    "partners_text": "T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi (Qozog‘iston)",
-    "start_date": "2023-10-10",
-    "end_date": "2023-10-15",
-    "status": "completed",
-    "order": 9,
-    "is_active": true
-  }
-},
-{
-  "model": "core.internationalproject",
-  "pk": 16,
-  "fields": {
-    "created_at": "2026-11-18T11:19:54.657Z",
-    "updated_at": "2026-11-18T11:19:54.657Z",
-    "title": "“An’anaviy va zamonaviy uslublarning uyg‘unligi” xalqaro konferensiyasi",
-    "title_ru": "Международная конференция «Гармония традиционных и современных стилей»",
-    "title_en": "International Conference \"Harmony of Traditional and Modern Styles\"",
-    "description": "Hindistonlik professorlar Priti Samyukta va Anand Rao ishtirokida san’atshunoslikdagi yangicha yondashuvlar muhokama qilindi.",
-    "description_ru": "Hindistonlik professorlar Priti Samyukta va Anand Rao ishtirokida san’atshunoslikdagi yangicha yondashuvlar muhokama qilindi.",
-    "description_en": "Hindistonlik professorlar Priti Samyukta va Anand Rao ishtirokida san’atshunoslikdagi yangicha yondashuvlar muhokama qilindi.",
-    "partners_text": "Javoharlal Neru arxitektura va tasviriy san’at universiteti (Hindiston)",
-    "start_date": "2023-11-05",
-    "end_date": "2023-11-10",
-    "status": "completed",
-    "order": 10,
-    "is_active": true
+    "created_at": "2026-11-19T06:50:14.553Z",
+    "updated_at": "2026-11-19T06:50:14.553Z",
+    "department": 1,
+    "title": "Multimedia kontentlari, rasmiy veb-sayt va ijtimoiy tarmoqlardagi sahifalarni professional yuritish",
+    "title_ru": "Мультимедийный контент, профессиональное ведение официального сайта и страниц в соцсетях",
+    "title_en": "Multimedia content production, professional management of official website and social media",
+    "content": "<p>Markazda o'tkazilayotgan barcha ta'lim dasturlari, ilmiy-amaliy anjumanlar, ijodiy ko'rgazmalar va xalqaro uchrashuvlar bo'yicha yuqori sifatli foto-video reportajlar tayyorlanib, rasmiy veb-sayt hamda Telegram, YouTube, Facebook va Instagram tarmoqlarida uzluksiz yoritib borilmoqda.</p>",
+    "content_ru": "<p>Осуществляется профессиональная фото- и видеосъемка всех учебных программ, научно-практических конференций, выставок и международных встреч с оперативной публикацией на сайте и в социальных сетях.</p>",
+    "content_en": "<p>High-quality photo and video materials are produced and published for all educational programs, scientific conferences, exhibitions and international events across the official site and social media channels.</p>",
+    "image": "uploads/departmentpost/3b2a4a66159443d191f4ec22e3c2f07d.jpg",
+    "image_url": "",
+    "video": "",
+    "video_url": "",
+    "date": "2026-09-02",
+    "is_active": true,
+    "views_count": 164
   }
 }
 ]
