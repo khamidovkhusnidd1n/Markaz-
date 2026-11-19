@@ -1763,10 +1763,10 @@ class AntiCorruptionContent(BaseModel):
     policy_goals_ru = models.TextField(blank=True, default='', verbose_name="Asosiy maqsad va vazifalar (RU)")
     policy_goals_en = models.TextField(blank=True, default='', verbose_name="Asosiy maqsad va vazifalar (EN)")
 
-    hotline_phone = models.CharField(max_length=100, default="+998 (71) 273-00-59", verbose_name="Ishonch telefoni (Hotline)")
+    hotline_phone = models.CharField(max_length=100, default="+998 77 363 38 36", verbose_name="Ishonch telefoni (Hotline)")
     agency_hotline = models.CharField(max_length=100, default="1253", verbose_name="Korrupsiyaga qarshi kurashish agentligi Call-markazi")
-    telegram_bot = models.CharField(max_length=200, blank=True, default="https://t.me/uzbadavomatbot", verbose_name="Telegram bot / kanal")
-    email = models.EmailField(blank=True, default="uzbamalaka@edu.uz", verbose_name="Murojaat uchun elektron pochta")
+    telegram_bot = models.CharField(max_length=200, blank=True, default="https://t.me/uzbamalakamakebot", verbose_name="Telegram bot / kanal")
+    email = models.EmailField(blank=True, default="uzbahuzuridagimarkaz@gmail.com", verbose_name="Murojaat uchun elektron pochta")
 
     officer_name = models.CharField(max_length=200, blank=True, default="Komplayens nazorati mas'ul xodimi", verbose_name="Mas'ul shaxs F.I.Sh")
     officer_name_ru = models.CharField(max_length=200, blank=True, default="", verbose_name="Mas'ul shaxs (RU)")
@@ -1774,7 +1774,7 @@ class AntiCorruptionContent(BaseModel):
     officer_position = models.CharField(max_length=300, blank=True, default="Korrupsiyaga qarshi ichki nazorat (komplayens-nazorat) tuzilmasi mas'uli", verbose_name="Lavozimi")
     officer_position_ru = models.CharField(max_length=300, blank=True, default="", verbose_name="Lavozimi (RU)")
     officer_position_en = models.CharField(max_length=300, blank=True, default="", verbose_name="Lavozimi (EN)")
-    officer_phone = models.CharField(max_length=100, blank=True, default="+998 (71) 273-00-59", verbose_name="Mas'ul shaxs telefoni")
+    officer_phone = models.CharField(max_length=100, blank=True, default="+998 77 363 38 36", verbose_name="Mas'ul shaxs telefoni")
     officer_photo = models.ImageField(upload_to=generate_unique_filename, blank=True, null=True, verbose_name="Mas'ul shaxs rasmi")
     reception_hours = models.CharField(max_length=200, blank=True, default="Dushanba - Juma: 09:00 - 17:00", verbose_name="Qabul vaqti")
 

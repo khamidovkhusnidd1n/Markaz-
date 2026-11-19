@@ -160,7 +160,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const headerLogo = aboutContent.headerLogo || '/logo/uzba_markaz.png';
   const footerLogo = aboutContent.footerLogo || headerLogo;
   const addressText = aboutContent.address || t('layout.address_fallback', "Toshkent shahri, Uchtepa tumani, Chilonzor 26-daha, Shirin ko'cha, 1A");
-  const contactText = aboutContent.contactInfo || 'uzbamalakamarkaz@umail.uz';
+  const contactText = aboutContent.contactInfo || 'uzbahuzuridagimarkaz@gmail.com';
 
   useEffect(() => {
     const handleScroll = () => {

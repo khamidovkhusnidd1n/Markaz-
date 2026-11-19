@@ -73,10 +73,10 @@ export const AntiCorruption: React.FC = () => {
   ];
 
   const pageTitle = getLoc(content, 'title') || (lang === 'ru' ? 'Противодействие коррупции' : lang === 'en' ? 'Anti-Corruption Compliance' : 'Korrupsiyaga qarshi kurash');
-  const hotline = content?.hotline_phone || '+998 (71) 273-00-59';
+  const hotline = content?.hotline_phone || '+998 77 363 38 36';
   const agencyHotline = content?.agency_hotline || '1253';
-  const email = content?.email || 'uzbamalaka@edu.uz';
-  const telegramBot = content?.telegram_bot || 'https://t.me/uzbadavomatbot';
+  const email = content?.email || 'uzbahuzuridagimarkaz@gmail.com';
+  const telegramBot = content?.telegram_bot || 'https://t.me/uzbamalakamakebot';
 
   return (
     <div className="min-h-screen bg-slate-50">

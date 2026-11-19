@@ -2281,8 +2281,7 @@ const Home: React.FC = () => {
                   <div>
                     <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">{t('home.contact_emails')}</h4>
                     <p className="mt-1 text-sm text-slate-200 flex flex-col gap-0.5">
-                      <a href="mailto:uzbamalakamarkaz@umail.uz" className="hover:text-blue-450 transition-colors hover:text-blue-400">uzbamalakamarkaz@umail.uz</a>
-                      
+                      <a href="mailto:uzbahuzuridagimarkaz@gmail.com" className="hover:text-blue-450 transition-colors hover:text-blue-400 font-semibold">uzbahuzuridagimarkaz@gmail.com</a>
                     </p>
                   </div>
                 </div>
@@ -2294,6 +2293,7 @@ const Home: React.FC = () => {
                   <div>
                     <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-450 text-slate-400">{t('home.contact_telegrams')}</h4>
                     <p className="mt-1 text-sm text-slate-200 flex flex-wrap gap-x-4 gap-y-1">
+                      <a href="https://t.me/uzbamalakamakebot" target="_blank" rel="noopener noreferrer" className="hover:text-blue-450 transition-colors hover:text-blue-400 font-semibold">@uzbamalakamakebot</a>
                       <a href="https://t.me/Uzbamarkaz_jurnali" target="_blank" rel="noopener noreferrer" className="hover:text-blue-450 transition-colors hover:text-blue-400">@Uzbamarkaz_jurnali</a>
                       <a href="https://t.me/badiiytalimvapedagogika" target="_blank" rel="noopener noreferrer" className="hover:text-blue-450 transition-colors hover:text-blue-400">@badiiytalimvapedagogika</a>
                     </p>
