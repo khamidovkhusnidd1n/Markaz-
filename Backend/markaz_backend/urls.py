@@ -42,6 +42,27 @@ urlpatterns += [
     re_path(r'^media/(?P<path>.*)$', media_serve_fallback),
 ]
 
+def static_serve_fallback(request, path):
+    search_dirs = [
+        getattr(settings, 'STATIC_ROOT', None),
+        settings.BASE_DIR / 'staticfiles',
+        settings.BASE_DIR / 'core' / 'static',
+        '/home/uzbamala/public_html/static',
+        '/home/uzbamala/uzbamalaka_backend/staticfiles',
+    ]
+    for d in search_dirs:
+        if d:
+            full_path = os.path.join(str(d), path)
+            if os.path.exists(full_path) and os.path.isfile(full_path):
+                return serve(request, path, document_root=str(d))
+    from django.http import Http404
+    raise Http404("Static file not found")
+
+# Serve static files in production fallback
+urlpatterns += [
+    re_path(r'^static/(?P<path>.*)$', static_serve_fallback),
+]
+
 # Serve static files during development
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

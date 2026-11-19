@@ -310,20 +310,21 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+if os.path.exists('/home/uzbamala/public_html'):
+    STATIC_ROOT = '/home/uzbamala/public_html/static'
+    MEDIA_ROOT = '/home/uzbamala/public_html/media'
+else:
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    MEDIA_ROOT = BASE_DIR / 'media'
+
 STATICFILES_DIRS = [
     BASE_DIR / 'core' / 'static',
 ]
 if importlib.util.find_spec("whitenoise"):
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files (User uploads)
 MEDIA_URL = '/media/'
-# If running on cPanel, save directly to public_html so Apache can serve it without symlinks.
-if os.path.exists('/home/uzbamala/public_html'):
-    MEDIA_ROOT = '/home/uzbamala/public_html/media'
-else:
-    MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # Default primary key field type
