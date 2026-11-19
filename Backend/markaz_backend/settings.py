@@ -126,6 +126,7 @@ JAZZMIN_SETTINGS = {
     "order_with_respect_to": [
         "core.AppContent",
         "core.Department",
+        "core.DepartmentPost",
         "core.Personnel",
         "core.Teacher",
         "core.Pedagogue",
@@ -152,6 +153,7 @@ JAZZMIN_SETTINGS = {
         "auth.Group": "fas fa-users-cog",
         "core.AppContent": "fas fa-university",
         "core.Department": "fas fa-sitemap",
+        "core.DepartmentPost": "fas fa-laptop-code",
         "core.DepartmentTask": "fas fa-tasks",
         "core.Personnel": "fas fa-user-tie",
         "core.Teacher": "fas fa-chalkboard-teacher",

@@ -1516,8 +1516,8 @@ class DepartmentPost(BaseModel):
     views_count = models.PositiveIntegerField(default=0, verbose_name="Ko'rishlar soni")
 
     class Meta:
-        verbose_name = "Bo'lim posti (Qilingan ish)"
-        verbose_name_plural = "Bo'lim postlari"
+        verbose_name = "Bo'lim amaliy ishi (loyihasi)"
+        verbose_name_plural = "Bo'limlar: Amalga oshirilgan ishlar va loyihalar"
         ordering = ['-date', '-created_at']
 
     def __str__(self):

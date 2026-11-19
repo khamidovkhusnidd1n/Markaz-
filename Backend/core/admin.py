@@ -1632,12 +1632,20 @@ class DepartmentPostImageInline(admin.TabularInline):
     model = DepartmentPostImage
     extra = 1
 
+class DepartmentPostInline(admin.TabularInline):
+    model = DepartmentPost
+    extra = 0
+    fields = ['title', 'date', 'is_active']
+    show_change_link = True
+    verbose_name = "Amalga oshirilgan ish / loyiha"
+    verbose_name_plural = "Bo'lim tomonidan amalga oshirilgan ishlar"
+
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ['name', 'order', 'created_at']
     search_fields = ['name', 'name_ru', 'name_en']
     list_editable = ['order']
-    inlines = [DepartmentTaskInline, DepartmentImageInline, DepartmentVideoInline]
+    inlines = [DepartmentTaskInline, DepartmentPostInline, DepartmentImageInline, DepartmentVideoInline]
     
     fieldsets = (
         ('Asosiy ma\'lumotlar', {
