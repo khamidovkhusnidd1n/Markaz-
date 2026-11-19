@@ -433,6 +433,9 @@ export interface AntiCorruptionDocument {
   description?: string;
   description_ru?: string;
   description_en?: string;
+  content?: string;
+  content_ru?: string;
+  content_en?: string;
   order?: number;
   is_active?: boolean;
 }

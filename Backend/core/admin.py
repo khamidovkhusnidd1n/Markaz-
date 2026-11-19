@@ -1645,8 +1645,9 @@ class AntiCorruptionDocumentAdmin(admin.ModelAdmin):
             'fields': ('file', 'external_url'),
             'description': 'PDF fayl yuklang yoki tashqi qonunchilik havolasini (masalan lex.uz) kiriting.'
         }),
-        ('Tavsif', {
-            'fields': ('description', 'description_ru', 'description_en')
+        ('Tavsif va Matn', {
+            'fields': ('description', 'description_ru', 'description_en', 'content', 'content_ru', 'content_en'),
+            'description': 'Qisqacha tavsif va ichki nizomlar uchun to‘liq matn.'
         }),
     )
 

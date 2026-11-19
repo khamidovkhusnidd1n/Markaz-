@@ -19,12 +19,131 @@ import {
   Scale, 
   Eye, 
   ArrowRight,
-  ShieldCheck
+  ShieldCheck,
+  BookOpen,
+  Printer,
+  X
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { sanitizeHtml } from '../utils';
 import DocumentViewer from '../components/DocumentViewer';
+
+const INTERNAL_DOCS_FALLBACK: Record<string, { uz: string; ru: string; en: string }> = {
+  internal: {
+    uz: `O‘ZBEKISTON BADIIY AKADEMIYASI HUZURIDAGI MARKAZ XODIMLARINING KASBIY ODOB-AXLOQ QOIDALARI VA KORRUPSIYAGA QARSHI ICHKI SIYOSATI
+
+1-BOB. UMUMIY QOIDALAR
+1. Mazkur Qoidalar O‘zbekiston Respublikasining «Korrupsiyaga qarshi kurashish to‘g‘risida»gi Qonuni, «Manfaatlar to‘qnashuvi to‘g‘risida»gi Qonuni hamda Vazirlar Mahkamasining tegishli normativ hujjatlari asosida ishlab chiqilgan.
+2. Qoidalarning maqsadi — Markazda korrupsiyaviy holatlarga nisbatan murosasiz munosabat («Nol toqat») muhitini shakllantirish, pedagogik va ma'muriy faoliyatning ochiqligi, shaffofligi hamda xolisligini ta'minlashdan iborat.
+3. Mazkur qoidalar Markazning barcha xodimlari, professor-o‘qituvchilari, metodistlari va taklif etilgan mutaxassislari uchun majburiydir.
+
+2-BOB. XIZMAT FAOLIYATIDAGI ASOSIY TAMOYILLAR
+1. Qonuniylik: Barcha xizmat va o‘quv jarayonlari faqat O‘zbekiston Respublikasi qonunlari va normativ hujjatlari asosida amalga oshiriladi.
+2. Xolislik va adolat: Tinglovchilarni qabul qilish, ularning bilimini baholash hamda attestatsiyadan o‘tkazishda har qanday subyektivizm, tanish-bilishchilik va guruhbozlik qat'iyan taqiqlanadi.
+3. Shaffoflik: Tinglovchilarning o‘quv ko‘rsatkichlari, test natijalari va sertifikat berish jarayoni ochiq va raqamlashgan tizimda olib boriladi.
+4. Manfaatlar to‘qnashuviga yo‘l qo‘ymaslik: Xodim shaxsiy manfaatlari va xizmat burchi o‘rtasida to‘qnashuv yuzaga kelishiga yo‘l qo‘ymasligi shart.
+
+3-BOB. KORRUPSIYAVIY HOLATLARNING OLDINI OLISH
+1. Markaz xodimlariga quyidagilar qat'iyan man etiladi:
+— Tinglovchilardan, ularning vakillaridan yoki boshqa uchinchi shaxslardan xizmat vazifalarini bajarish yoki bajarmaslik evaziga har qanday moddiy qimmatliklar, pul mablag‘lari, sovg‘alar yoki bepul xizmatlarni talab qilish va qabul qilish;
+— Kurslarga ro‘yxatga olish, oraliq yoki yakuniy baholash, test sinovlarida nohaq yordam ko‘rsatish evaziga tamagirlik qilish;
+— O‘z xizmat mavqeidan shaxsiy yoki uchinchi shaxslar manfaati yo‘lida foydalanish;
+— Tinglovchilarni pullik xususiy darslarga yoki Markaz doirasidan tashqari to‘lovlarga majburlash.
+2. Har qanday sovg‘a taklif qilingan taqdirda, xodim uni rad etishi va 24 soat ichida komplayens-nazorat mas'uliga xabar berishi shart.
+
+4-BOB. TINGLOVCHILAR VA XODIMLAR O‘RTASIDAGI MUNOSABATLAR
+1. Xodimlar tinglovchilar bilan xushmuomala, xolis, ehtiromli va professional muloqot o‘rnatishi lozim.
+2. Tinglovchilarning sha'ni, qadr-qimmati va huquqlarini kamsituvchi harakatlarga yo‘l qo‘yilmaydi.
+3. Malaka oshirish yakunida sertifikatlar faqat o‘quv dasturini to‘liq o‘zlashtirgan va test mezonlariga javob bergan tinglovchilarga beriladi.
+
+5-BOB. JAVOBGARLIK CHORALARI
+1. Mazkur Kasbiy odob-axloq qoidalarini buzish xodimga nisbatan qat'iy intizomiy jazo (ogohlantirish, hayfsan, jarima yoki mehnat shartnomasini bekor qilish) qo‘llashga asos bo‘ladi.
+2. Korrupsiyaviy huquqbuzarlik alomatlari aniqlangan taqdirda to‘plangan hujjatlar qonunchilikda belgilangan tartibda huquqni muhofaza qiluvchi organlarga yuboriladi.`,
+    ru: `ПРАВИЛА ПРОФЕССИОНАЛЬНОЙ ЭТИКИ И ВНУТРЕННЯЯ АНТИКОРРУПЦИОННАЯ ПОЛИТИКА СОТРУДНИКОВ ЦЕНТРА
+
+РАЗДЕЛ 1. ОБЩИЕ ПОЛОЖЕНИЯ
+1. Настоящие Правила разработаны в соответствии с Законами Республики Узбекистан «О противодействии коррупции», «О конфликте интересов» и государственными стандартами этики служащих.
+2. Цель Правил — формирование атмосферы абсолютной нетерпимости к коррупционным проявлениям («Нулевая терпимость»), обеспечение прозрачности, честности и объективности во всех учебных и аттестационных процессах Центра.
+3. Соблюдение настоящих правил обязательно для каждого преподавателя, методиста и сотрудника Центра.
+
+РАЗДЕЛ 2. КЛЮЧЕВЫЕ ПРИНЦИПЫ И ЗАПРЕТЫ
+— Законность, открытость и профессиональная честность;
+— Категорический запрет на требование или получение любых денежных средств, ценностей, подарков и услуг от слушателей;
+— Недопущение фаворитизма, кумовства и субъективизма при тестировании и выдаче сертификатов;
+— Обязательное декларирование и урегулирование любого потенциального конфликта интересов.
+
+РАЗДЕЛ 3. ОТВЕТСТВЕННОСТЬ
+Нарушение настоящих норм влечет дисциплинарные взыскания вплоть до прекращения трудового договора и передачи материалов в правоохранительные органы.`,
+    en: `CODE OF PROFESSIONAL ETHICS AND INTERNAL ANTI-CORRUPTION POLICY OF THE CENTER
+
+SECTION 1. GENERAL PROVISIONS
+1. This Code establishes fundamental ethical standards and anti-corruption requirements for all faculty and administrative staff of the Center.
+2. The Center enforces a strict Zero Tolerance policy against bribery, extortion, conflicts of interest, and biased evaluation.
+3. All training and certification processes are conducted strictly according to objective, merit-based standards.
+
+SECTION 2. CODE OF CONDUCT
+— Rule of law and institutional integrity;
+— Complete prohibition against accepting gifts, payments, or favors from students;
+— Zero tolerance for favoritism, nepotism, and tampering with examination results;
+— Mandatory reporting of any corruption attempts to the compliance officer.
+
+SECTION 3. ENFORCEMENT
+Violations result in immediate disciplinary measures up to dismissal and referral to authorized law enforcement agencies.`
+  },
+  memo: {
+    uz: `KORRUPSIYA HOLATLARI HAQIDA XABAR BERISH TARTIBI VA HIMOYALASH KAFOLATLARI TO‘G‘RISIDA ESLATMA
+
+1. KIMLAR MUROJAAT QILISHI MUMKIN?
+Markazning har bir tinglovchisi, professor-o‘qituvchisi, xodimi hamda fuqarolar Markaz faoliyatida korrupsiyaviy holatlar, noqonuniy to‘lovlar talab qilinishi yoki vakolatni suiiste'mol qilish holatlariga duch kelganda murojaat qilish huquqiga ega.
+
+2. RASMIY ALOQA VA MUROJAAT KANALLARI:
+• Markazning to‘g‘ridan-to‘g‘ri ishonch telefoni: +998 77 363 38 36
+• Rasmiy Telegram boti: https://t.me/uzbamalakamakebot
+• Rasmiy elektron pochta: uzbahuzuridagimarkaz@gmail.com
+• Korrupsiyaga qarshi kurashish agentligining Call-markazi: 1253
+• Veb-sayt orqali onlayn murojaat: Saytning «Virtual qabulxona» bo‘limi
+
+3. MUROJAATDA QUYIDAGILARNI KO‘RSATISH TAVSIYA ETILADI:
+1. Qoidabuzarlik sodir etilgan sana, vaqt va joy;
+2. Huquqbuzarlikda gumon qilinayotgan xodimning F.I.Sh. va lavozimi;
+3. Noqonuniy xatti-harakatlarning aniq bayoni (pul talab qilish, imtihonda nohaqlik va h.k.);
+4. Mavjud dalillar: fotosuratlar, audio/video yozuvlar, kvitansiyalar, yozishmalar skrinshoti.
+
+4. MUROJAATCHINING HUQUQLARI VA DAVLAT HIMOYASI:
+1. «Korrupsiyaga qarshi kurashish to‘g‘risida»gi Qonunning 28-moddasiga asosan korrupsiya haqida xabar bergan shaxs to‘liq davlat himoyasiga olinadi.
+2. Xabar beruvchining shaxsiga doir barcha ma'lumotlar qat'iy maxfiy saqlanadi va oshkor etilmaydi.
+3. Xabar bergan tinglovchi yoki xodimga nisbatan ta'qib, tahdid yoki o‘quv jarayonida bosim o‘tkazish qonun bilan qat'iyan taqiqlanadi.
+4. Aniq faktlar ko‘rsatilgan anonim murojaatlar ham to‘liq o‘rganib chiqiladi.
+
+5. KO‘RIB CHIQISH TARTIBI VA MUDDATLARI:
+• Barcha murojaatlar 15 kun ichida komplayens-nazorat mas'ul xodimi tomonidan ko‘rib chiqiladi;
+• Qo‘shimcha o‘rganish talab etilganda muddat 30 kungacha uzaytirilishi va murojaat etuvchiga rasmiy javob berilishi ta'minlanadi.`,
+    ru: `ПАМЯТКА О ПОРЯДКЕ СООБЩЕНИЯ О ФАКТАХ КОРРУПЦИИ И ГАРАНТИЯХ ЗАЩИТЫ
+
+1. КТО ВПРАВЕ ОБРАТИТЬСЯ:
+Каждый слушатель курсов, педагог, сотрудник Центра и гражданин при обнаружении фактов вымогательства, взяточничества или злоупотребления служебным положением.
+
+2. КАНАЛЫ СВЯЗИ:
+• Горячая линия Центра: +998 77 363 38 36
+• Официальный Telegram-бот: https://t.me/uzbamalakamakebot
+• Официальный Email: uzbahuzuridagimarkaz@gmail.com
+• Единый Call-центр Агентства по противодействию коррупции: 1253
+
+3. ГОСУДАРСТВЕННЫЕ ГАРАНТИИ ЗАЩИТЫ:
+В соответствии со статьей 28 Закона Республики Узбекистан «О противодействии коррупции», лица, сообщившие о коррупционных правонарушениях, находятся под защитой государства. Разглашение их персональных данных строго запрещено законом.`,
+    en: `GUIDELINE ON REPORTING CORRUPTION INCIDENTS AND PROTECTION GUARANTEES
+
+1. REPORTING CHANNELS:
+• Hotline: +998 77 363 38 36
+• Telegram Bot: https://t.me/uzbamalakamakebot
+• Official Email: uzbahuzuridagimarkaz@gmail.com
+• Anti-Corruption Agency Call Center: 1253
+
+2. LEGAL PROTECTION GUARANTEES:
+Pursuant to Article 28 of the Law 'On Combating Corruption', persons reporting corruption offenses are under full state protection. Whistleblower identity is kept strictly confidential.`
+  }
+};
 
 export const AntiCorruption: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -35,6 +154,7 @@ export const AntiCorruption: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeDocUrl, setActiveDocUrl] = useState<string | null>(null);
+  const [activeInternalDoc, setActiveInternalDoc] = useState<any | null>(null);
 
   // Helper to get localized field
   const getLoc = (obj: any, field: string): string => {
@@ -42,6 +162,18 @@ export const AntiCorruption: React.FC = () => {
     if (lang === 'ru' && obj[`${field}_ru`]) return obj[`${field}_ru`];
     if (lang === 'en' && obj[`${field}_en`]) return obj[`${field}_en`];
     return obj[field] || '';
+  };
+
+  const getDocTextContent = (doc: any): string => {
+    if (!doc) return '';
+    const directContent = getLoc(doc, 'content') || doc.content;
+    if (directContent && directContent.trim()) return directContent;
+
+    const cat = doc.category || '';
+    if (INTERNAL_DOCS_FALLBACK[cat]) {
+      return (INTERNAL_DOCS_FALLBACK[cat] as any)[lang] || INTERNAL_DOCS_FALLBACK[cat].uz;
+    }
+    return getLoc(doc, 'description') || doc.description || '';
   };
 
   const content = antiCorruption?.content;
@@ -327,12 +459,26 @@ export const AntiCorruption: React.FC = () => {
                   const fileUrl = doc.file_url || doc.file;
                   const hasExternal = Boolean(doc.external_url);
 
+                  const textContent = getDocTextContent(doc);
+                  const isActualFile = Boolean(fileUrl && (fileUrl.split('?')[0].toLowerCase().endsWith('.pdf') || fileUrl.includes('/media/')));
+
                   return (
                     <div
                       key={doc.id}
                       className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-all flex flex-col justify-between group"
                     >
-                      <div>
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => {
+                          if (hasExternal) {
+                            window.open(doc.external_url, '_blank', 'noopener,noreferrer');
+                          } else if (textContent) {
+                            setActiveInternalDoc(doc);
+                          } else if (isActualFile) {
+                            setActiveDocUrl(fileUrl);
+                          }
+                        }}
+                      >
                         <div className="flex items-start justify-between gap-3 mb-3">
                           <span className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md ${
                             doc.category === 'law'
@@ -362,37 +508,58 @@ export const AntiCorruption: React.FC = () => {
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                        {fileUrl ? (
-                          <button
-                            type="button"
-                            onClick={() => setActiveDocUrl(fileUrl)}
-                            className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:text-blue-900 transition-colors"
-                          >
-                            <Eye size={15} />
-                            <span>{lang === 'ru' ? 'Просмотр (PDF)' : lang === 'en' ? 'Preview (PDF)' : 'Ko‘rish (PDF)'}</span>
-                          </button>
-                        ) : hasExternal ? (
-                          <a
-                            href={doc.external_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:text-blue-900 transition-colors"
-                          >
-                            <ExternalLink size={15} />
-                            <span>Lex.uz da ko‘rish</span>
-                          </a>
-                        ) : (
-                          <span className="text-xs text-slate-400 italic">Ichki hujjat</span>
-                        )}
+                      <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {hasExternal && (
+                            <a
+                              href={doc.external_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 text-blue-800 hover:bg-blue-100 font-bold text-xs transition-colors border border-blue-200/60"
+                              onClick={e => e.stopPropagation()}
+                            >
+                              <ExternalLink size={14} className="text-blue-600" />
+                              <span>{lang === 'ru' ? 'Открыть на Lex.uz' : lang === 'en' ? 'Read on Lex.uz' : 'Lex.uz da to‘liq o‘qish'}</span>
+                            </a>
+                          )}
 
-                        {fileUrl && (
+                          {textContent && (
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setActiveInternalDoc(doc);
+                              }}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 hover:bg-emerald-100 font-bold text-xs transition-colors border border-emerald-200/60 cursor-pointer"
+                            >
+                              <BookOpen size={14} className="text-emerald-600" />
+                              <span>{lang === 'ru' ? 'Читать текст' : lang === 'en' ? 'Read document' : 'Hujjat matnini o‘qish'}</span>
+                            </button>
+                          )}
+
+                          {isActualFile && (
+                            <button
+                              type="button"
+                              onClick={e => {
+                                e.stopPropagation();
+                                setActiveDocUrl(fileUrl);
+                              }}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors cursor-pointer"
+                            >
+                              <Eye size={14} className="text-blue-600" />
+                              <span>{lang === 'ru' ? 'Просмотр (PDF)' : lang === 'en' ? 'Preview (PDF)' : 'Ko‘rish (PDF)'}</span>
+                            </button>
+                          )}
+                        </div>
+
+                        {isActualFile && (
                           <a
                             href={fileUrl}
                             download
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors ml-auto"
+                            onClick={e => e.stopPropagation()}
                           >
                             <Download size={14} />
                             <span>Yuklab olish</span>
@@ -517,6 +684,98 @@ export const AntiCorruption: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Internal Document Full-Text Modal */}
+      {activeInternalDoc && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setActiveInternalDoc(null)}
+        >
+          <div
+            className="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200 bg-slate-50 shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
+                  <BookOpen size={20} />
+                </div>
+                <div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                    {activeInternalDoc.document_number || 'Ichki nizom'}
+                  </span>
+                  <h3 className="font-bold text-slate-900 text-base sm:text-lg line-clamp-1 mt-0.5">
+                    {getLoc(activeInternalDoc, 'title') || activeInternalDoc.title}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => window.print()}
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors cursor-pointer"
+                  title="Chop etish"
+                >
+                  <Printer size={15} />
+                  <span>Chop etish</span>
+                </button>
+                <button
+                  onClick={() => setActiveInternalDoc(null)}
+                  className="p-2 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors text-slate-500 cursor-pointer"
+                  title="Yopish"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Content - Scrollable Text */}
+            <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 bg-white text-slate-800">
+              {/* Center Official Header */}
+              <div className="text-center pb-6 border-b border-slate-100">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-900 text-xs font-bold mb-3 border border-blue-100">
+                  <ShieldCheck size={14} className="text-blue-700" />
+                  <span>O‘zbekiston Badiiy akademiyasi huzuridagi Markaz</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug max-w-2xl mx-auto">
+                  {getLoc(activeInternalDoc, 'title') || activeInternalDoc.title}
+                </h2>
+                <p className="text-xs text-slate-500 mt-2 flex items-center justify-center gap-1">
+                  <Clock size={13} />
+                  <span>Qabul qilingan sana: {activeInternalDoc.date || '2025'}</span>
+                </p>
+              </div>
+
+              {/* Text Body */}
+              <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed whitespace-pre-line text-slate-700 font-normal">
+                {getDocTextContent(activeInternalDoc)}
+              </div>
+
+              {/* Official Compliance Footer Box */}
+              <div className="mt-8 p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
+                <div className="flex items-center gap-2">
+                  <ShieldAlert size={18} className="text-amber-600 shrink-0" />
+                  <span>Ushbu hujjat ijrosi komplayens-nazorat xizmati tomonidan qat'iy nazorat qilinadi.</span>
+                </div>
+                <div className="font-semibold text-slate-800">
+                  Ishonch telefoni: {hotline}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-end shrink-0">
+              <button
+                onClick={() => setActiveInternalDoc(null)}
+                className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition-colors cursor-pointer"
+              >
+                Yopish
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* PDF Document Viewer Modal */}
       {activeDocUrl && (

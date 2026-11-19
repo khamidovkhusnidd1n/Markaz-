@@ -13,6 +13,8 @@ const DocumentViewer: React.FC<Props> = ({ url, onClose }) => {
 
   const cleanPath = url.split('?')[0].toLowerCase();
   const isPdf = cleanPath.endsWith('.pdf');
+  const isLexUz = url.includes('lex.uz');
+  const isWebPage = isLexUz || (!cleanPath.match(/\.(pdf|docx?|xlsx?|pptx?)$/) && (url.startsWith('http://') || url.startsWith('https://')));
 
   // PDF bo'lsa brauzerning o'zida to'g'ridan-to'g'ri ochiladi
   // Boshqa formatlar uchun Google Docs fallback
@@ -75,14 +77,41 @@ const DocumentViewer: React.FC<Props> = ({ url, onClose }) => {
           </div>
         </div>
 
-        {/* Browser native PDF / Document viewer */}
-        <div className="flex-1 bg-slate-100 w-full h-full relative">
-          <iframe
-            src={viewerUrl}
-            className="absolute inset-0 w-full h-full border-0"
-            title="Document Viewer"
-          />
-        </div>
+        {/* Browser native PDF / Document viewer / External portal safe view */}
+        {isWebPage ? (
+          <div className="flex-1 bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center mb-4 shadow-xs">
+              <ExternalLink size={32} />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">
+              {isLexUz
+                ? "O‘zbekiston Respublikasi Qonunchilik ma'lumotlari milliy bazasi (Lex.uz)"
+                : (lang === 'ru' ? 'Официальный внешний источник' : lang === 'en' ? 'Official External Source' : "Tashqi rasmiy sahifa")}
+            </h3>
+            <p className="text-sm text-slate-600 max-w-md mb-6 leading-relaxed">
+              {isLexUz
+                ? "Ushbu qonun hujjati O‘zbekiston Respublikasi Adliya vazirligi huzuridagi rasmiy Lex.uz portalida to‘liq matnda joylashtirilgan."
+                : (lang === 'ru' ? 'Документ размещен на официальном портале и открывается в новой вкладке.' : 'Ushbu hujjat rasmiy portalda joylashgan bo‘lib, to‘liq va qonuniy kuchga ega shaklda yangi oynada ochiladi.')}
+            </p>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-600/20 transition-all transform hover:-translate-y-0.5"
+            >
+              <span>{isLexUz ? "Lex.uz portalida to‘liq matnni o‘qish" : openInTab}</span>
+              <ExternalLink size={16} />
+            </a>
+          </div>
+        ) : (
+          <div className="flex-1 bg-slate-100 w-full h-full relative">
+            <iframe
+              src={viewerUrl}
+              className="absolute inset-0 w-full h-full border-0"
+              title="Document Viewer"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

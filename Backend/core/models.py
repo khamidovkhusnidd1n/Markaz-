@@ -1816,6 +1816,9 @@ class AntiCorruptionDocument(BaseModel):
     description = models.TextField(blank=True, default='', verbose_name="Qisqacha tavsif")
     description_ru = models.TextField(blank=True, default='', verbose_name="Qisqacha tavsif (RU)")
     description_en = models.TextField(blank=True, default='', verbose_name="Qisqacha tavsif (EN)")
+    content = models.TextField(blank=True, default='', verbose_name="Hujjat to'liq matni (ichki nizomlar uchun)")
+    content_ru = models.TextField(blank=True, default='', verbose_name="Hujjat to'liq matni (RU)")
+    content_en = models.TextField(blank=True, default='', verbose_name="Hujjat to'liq matni (EN)")
     order = models.PositiveIntegerField(default=0, verbose_name="Tartib raqami")
     is_active = models.BooleanField(default=True, verbose_name="Faol")
 
