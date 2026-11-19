@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, PlayCircle, Monitor, BookOpen, Cpu, Grid, ChevronDown, ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { ArrowLeft, ArrowRight, PlayCircle, Monitor, BookOpen, Cpu, Grid, ChevronDown, ChevronLeft, ChevronRight, Play, ImageOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NewsModal } from '../components/NewsModal';
 import { ImageModal } from '../components/ImageModal';
@@ -356,8 +356,11 @@ const DepartmentPage: React.FC = () => {
                           loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-50 to-slate-100 flex items-center justify-center text-slate-400 text-sm font-medium">
-                          {t('common.no_image')}
+                        <div className="w-full h-full bg-gradient-to-br from-slate-50 to-slate-200 flex flex-col items-center justify-center gap-2 text-slate-400">
+                          <ImageOff size={36} strokeWidth={1.5} />
+                          <span className="text-xs font-semibold">
+                            {i18n.language?.startsWith('ru') ? 'Фото не загружено' : i18n.language?.startsWith('en') ? 'Image not uploaded' : 'Rasm yuklanmagan'}
+                          </span>
                         </div>
                       )}
                       <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-700 shadow-xs">
