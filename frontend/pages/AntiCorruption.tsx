@@ -204,10 +204,25 @@ export const AntiCorruption: React.FC = () => {
   ];
 
   const pageTitle = getLoc(content, 'title') || (lang === 'ru' ? 'Противодействие коррупции' : lang === 'en' ? 'Anti-Corruption Compliance' : 'Korrupsiyaga qarshi kurash');
-  const hotline = content?.hotline_phone || '+998 77 363 38 36';
+  
+  // Official Center Contacts (guaranteed accurate, overrides any legacy placeholders)
+  const OFFICIAL_PHONE = '+998 77 363 38 36';
+  const OFFICIAL_EMAIL = 'uzbahuzuridagimarkaz@gmail.com';
+  const OFFICIAL_BOT = 'https://t.me/uzbamalakamakebot';
+
+  const rawPhone = content?.hotline_phone || '';
+  const hotline = (rawPhone && !rawPhone.includes('273-00-59') && !rawPhone.includes('(71)')) ? rawPhone : OFFICIAL_PHONE;
+
   const agencyHotline = content?.agency_hotline || '1253';
-  const email = content?.email || 'uzbahuzuridagimarkaz@gmail.com';
-  const telegramBot = content?.telegram_bot || 'https://t.me/uzbamalakamakebot';
+
+  const rawEmail = content?.email || '';
+  const email = (rawEmail && !rawEmail.includes('edu.uz') && !rawEmail.includes('umail.uz')) ? rawEmail : OFFICIAL_EMAIL;
+
+  const rawBot = content?.telegram_bot || '';
+  const telegramBot = (rawBot && rawBot.startsWith('https://t.me/')) ? rawBot : OFFICIAL_BOT;
+
+  const rawOfficerPhone = content?.officer_phone || '';
+  const officerPhone = (rawOfficerPhone && !rawOfficerPhone.includes('273-00-59') && !rawOfficerPhone.includes('(71)')) ? rawOfficerPhone : OFFICIAL_PHONE;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -371,7 +386,7 @@ export const AntiCorruption: React.FC = () => {
                     <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-600">
                       <div className="flex items-center gap-2 justify-center sm:justify-start">
                         <Phone size={16} className="text-blue-600 shrink-0" />
-                        <span>{content.officer_phone || hotline}</span>
+                        <span>{officerPhone}</span>
                       </div>
                       <div className="flex items-center gap-2 justify-center sm:justify-start">
                         <Clock size={16} className="text-blue-600 shrink-0" />
