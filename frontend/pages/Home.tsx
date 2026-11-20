@@ -4,7 +4,7 @@ import {
   PieChart, Pie, Cell, 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from 'recharts';
-import { ArrowRight, BookOpen, Users, Trophy, ChevronRight, Play, Star, MapPin, Mail, Phone, Calendar, Search, ArrowUpRight, GraduationCap, Globe, Palette, ShieldCheck, Gavel, ClipboardList, Award, TrendingUp, Zap, CheckCircle2, XCircle, FileText, Briefcase, Clock, Send, UserCheck, ExternalLink, Download, Building2, Check, Filter, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Users, Trophy, ChevronRight, Play, Star, MapPin, Mail, Phone, Calendar, Search, ArrowUpRight, GraduationCap, Globe, Palette, ShieldCheck, Gavel, ClipboardList, Award, TrendingUp, Zap, CheckCircle2, XCircle, FileText, Briefcase, Clock, Send, UserCheck, ExternalLink, Download, Building2, Check, Filter, Sparkles, ImageOff } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PDPlanRecord } from '../types';
@@ -808,12 +808,12 @@ const Home: React.FC = () => {
   };
 
   const usefulLinks = [
-    { name: t('home.links_distance_edu'), url: "https://mt.uzbamalaka.uz/", icon: <Globe size={32} />, color: "bg-gradient-to-br from-blue-500 to-blue-700" },
+    { name: t('home.links_distance_edu'), url: "https://mt.uzbamalaka.uz/", icon: <Globe size={28} />, color: "bg-blue-900" },
     { name: t('home.links_art_academy'), url: "https://art-academy.uz/", image: "/logos/badiiy_akademiya.png" },
     { name: "MY.BIMM.UZ", url: "https://my.bimm.uz/home", image: "/logos/mybimm.png", cover: true },
     { name: "LEX.UZ", url: "https://lex.uz/uz/", image: "/logos/lexuz.png" },
-    { name: t('home.links_forms'), url: "https://form.uzbamalaka.uz", icon: <ClipboardList size={32} />, color: "bg-gradient-to-br from-violet-500 to-purple-700" },
-    { name: t('menu.attendance'), url: "https://davomat.uzbamalaka.uz/", icon: <UserCheck size={32} />, color: "bg-gradient-to-br from-emerald-500 to-green-700" },
+    { name: t('home.links_forms'), url: "https://form.uzbamalaka.uz", icon: <ClipboardList size={28} />, color: "bg-indigo-900" },
+    { name: t('menu.attendance'), url: "https://davomat.uzbamalaka.uz/", icon: <UserCheck size={28} />, color: "bg-emerald-700" },
   ];
 
   // Scroll reveal sections
@@ -824,10 +824,10 @@ const Home: React.FC = () => {
   const linksReveal = useScrollReveal();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white overflow-x-hidden">
-      {/* Hero Section with Parallax Effect */}
-      <section className="relative h-[85vh] overflow-hidden flex items-center">
-        <div className="absolute inset-0 bg-black overflow-hidden">
+    <div className="min-h-screen bg-slate-50 overflow-x-hidden">
+      {/* Hero Section */}
+      <section className="relative h-[80vh] min-h-[540px] overflow-hidden flex items-center">
+        <div className="absolute inset-0 bg-slate-950 overflow-hidden">
           {heroImages.map((img, idx) => (
             <img 
               key={idx}
@@ -844,41 +844,34 @@ const Home: React.FC = () => {
               href={aboutContent?.heroVideoUrl}
               target="_blank"
               rel="noreferrer"
-              className="absolute right-6 top-6 rounded-full bg-black/40 hover:bg-black/60 transition-colors px-5 py-2.5 text-sm font-bold text-white backdrop-blur-md border border-white/20 flex items-center gap-2 z-20"
+              className="absolute right-6 top-6 rounded-xl bg-slate-900/75 hover:bg-slate-900 transition-colors px-4 py-2 text-xs sm:text-sm font-bold text-white backdrop-blur-sm border border-white/20 flex items-center gap-2 z-20"
             >
-              <Play size={16} className="fill-white" /> {t('home.banner_video')}
+              <Play size={15} className="fill-white" /> {t('home.banner_video')}
             </a>
           )}
           
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-50 via-transparent to-transparent z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/50 to-slate-900/20 z-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent z-10"></div>
         </div>
         
-        <div className="container mx-auto px-6 relative z-20 text-white mt-10">
-          <div className="max-w-4xl animate-fade-in-up">
-            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-[1.1] tracking-tight drop-shadow-xl">
+        <div className="container mx-auto px-6 relative z-20 text-white">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-[1.15] tracking-tight">
               {t('home.hero_title_1')} <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 drop-shadow-none">{t('home.hero_title_span')}</span> {t('home.hero_title_2')}
+              <span className="text-amber-400">{t('home.hero_title_span')}</span> {t('home.hero_title_2')}
             </h1>
-            <p className="text-xl md:text-2xl text-slate-300 mb-10 leading-relaxed max-w-2xl font-light">
+            <p className="text-lg md:text-xl text-slate-200 mb-8 leading-relaxed max-w-2xl font-normal">
               {t('home.hero_subtitle')}
             </p>
-            <div className="flex flex-wrap gap-4">
-              <Link to="/about" className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-500 hover:to-indigo-500 rounded-2xl font-bold transition-all duration-300 shadow-lg shadow-blue-500/30 flex items-center gap-3">
+            <div className="flex flex-wrap gap-3.5">
+              <Link to="/about/info" className="group px-7 py-3.5 bg-blue-700 text-white hover:bg-blue-800 rounded-xl font-bold transition-colors shadow-md flex items-center gap-2.5 text-sm sm:text-base">
                 {t('home.details')}
-                <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <Link to="/students" className="px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 rounded-2xl font-bold transition-all duration-300 flex items-center gap-2">
-                <Users size={20} /> {t('home.listeners')}
+              <Link to="/students" className="px-7 py-3.5 bg-white/15 backdrop-blur-sm border border-white/25 text-white hover:bg-white/25 rounded-xl font-bold transition-colors flex items-center gap-2 text-sm sm:text-base">
+                <Users size={18} /> {t('home.listeners')}
               </Link>
             </div>
-          </div>
-        </div>
-        
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-8 h-12 border-2 border-white/30 rounded-full flex justify-center pt-2">
-            <div className="w-1.5 h-3 bg-white/60 rounded-full animate-scroll-down"></div>
           </div>
         </div>
       </section>
@@ -886,28 +879,27 @@ const Home: React.FC = () => {
       {/* Stats Cards */}
       <section 
         ref={statsReveal.ref}
-        className={`container mx-auto px-6 -mt-20 relative z-20 transition-all duration-1000 ${
-          statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        className={`container mx-auto px-6 -mt-14 relative z-20 transition-all duration-700 ${
+          statsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           {[
-            { label: t('home.stats_total_pedagogs'), value: stats?.totalPedagogs || 0, icon: <Users size={24} />, gradient: 'from-slate-700 to-slate-900' },
-            { label: t('home.stats_professors'), value: stats?.professors || 0, icon: <GraduationCap size={24} />, gradient: 'from-blue-500 to-indigo-600' },
-            { label: t('home.stats_dotsents'), value: stats?.dotsents || 0, icon: <Users size={24} />, gradient: 'from-emerald-500 to-teal-600' },
-            { label: t('home.stats_academics'), value: stats?.academics || 0, icon: <Award size={24} />, gradient: 'from-amber-500 to-orange-600' },
-            { label: t('home.stats_potential'), value: `${stats?.potential || 0}%`, icon: <TrendingUp size={24} />, gradient: 'from-purple-500 to-pink-600' },
+            { label: t('home.stats_total_pedagogs'), value: stats?.totalPedagogs || 0, icon: <Users size={22} />, iconStyle: 'bg-slate-100 text-slate-800 border-slate-200' },
+            { label: t('home.stats_professors'), value: stats?.professors || 0, icon: <GraduationCap size={22} />, iconStyle: 'bg-blue-50 text-blue-800 border-blue-200' },
+            { label: t('home.stats_dotsents'), value: stats?.dotsents || 0, icon: <Users size={22} />, iconStyle: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
+            { label: t('home.stats_academics'), value: stats?.academics || 0, icon: <Award size={22} />, iconStyle: 'bg-amber-50 text-amber-800 border-amber-200' },
+            { label: t('home.stats_potential'), value: `${stats?.potential || 0}%`, icon: <TrendingUp size={22} />, iconStyle: 'bg-indigo-50 text-indigo-800 border-indigo-200' },
           ].map((stat, idx) => (
             <div 
               key={idx} 
-              className="group bg-white p-6 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
-              style={{ transitionDelay: `${idx * 100}ms` }}
+              className="bg-white p-5 sm:p-6 rounded-2xl shadow-md border border-slate-200/90 hover:border-blue-300 hover:shadow-lg transition-all duration-200"
             >
-              <div className={`w-14 h-14 bg-gradient-to-br ${stat.gradient} text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+              <div className={`w-11 h-11 ${stat.iconStyle} border rounded-xl flex items-center justify-center mb-3.5`}>
                 {stat.icon}
               </div>
-              <p className="text-3xl font-black text-slate-900 mb-1">{stat.value}</p>
-              <p className="text-sm font-medium text-slate-500">{stat.label}</p>
+              <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1 tabular-nums">{stat.value}</p>
+              <p className="text-xs sm:text-sm font-semibold text-slate-600">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -916,85 +908,85 @@ const Home: React.FC = () => {
       {/* REESTR MODULE - with MO/QT Selection */}
       <section 
         ref={reestrReveal.ref}
-        className={`container mx-auto px-6 py-24 transition-all duration-1000 ${
-          reestrReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        className={`container mx-auto px-6 py-20 transition-all duration-700 ${
+          reestrReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full mb-6">
-              <FileText size={18} className="text-blue-600" />
-              <span className="text-sm font-bold text-blue-600">{t('home.reestr_online_check')}</span>
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-blue-50 border border-blue-200/60 rounded-full mb-4">
+              <FileText size={16} className="text-blue-700" />
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-800">{t('home.reestr_online_check')}</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-4">{t('home.reestr_title')}</h2>
-            <p className="text-lg text-slate-500">{t('home.reestr_subtitle')}</p>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3 tracking-tight">{t('home.reestr_title')}</h2>
+            <p className="text-base text-slate-600">{t('home.reestr_subtitle')}</p>
           </div>
 
-          <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100">
+          <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-200">
             {/* Type Selection Tabs */}
-            <div className="grid grid-cols-2 border-b border-slate-100">
+            <div className="grid grid-cols-2 border-b border-slate-200">
               <button 
                 onClick={() => { setActiveReestrTab('mo'); setSearchResult({status: 'idle'}); setDocNumber(''); }}
-                className={`relative py-6 px-6 text-center transition-all ${
+                className={`relative py-5 px-4 sm:px-6 text-center transition-all ${
                   activeReestrTab === 'mo' 
-                    ? 'bg-emerald-50 text-emerald-700' 
-                    : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
+                    ? 'bg-emerald-50/70 text-emerald-900' 
+                    : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
                 }`}
               >
-                <div className={`w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center transition-all ${
+                <div className={`w-12 h-12 mx-auto mb-2.5 rounded-xl flex items-center justify-center transition-all ${
                   activeReestrTab === 'mo' 
-                    ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' 
-                    : 'bg-slate-200 text-slate-400'
+                    ? 'bg-emerald-700 text-white shadow-sm' 
+                    : 'bg-slate-200 text-slate-500'
                 }`}>
-                  <Award size={28} />
+                  <Award size={24} />
                 </div>
-                <p className="font-black text-lg">{t('students.tab_mo')}</p>
-                <p className="text-xs font-medium mt-1 opacity-70">{t('home.charts_mo')}</p>
+                <p className="font-bold text-base sm:text-lg">{t('students.tab_mo')}</p>
+                <p className="text-xs font-medium mt-0.5 opacity-75">{t('home.charts_mo')}</p>
                 {activeReestrTab === 'mo' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-emerald-500"></div>
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-emerald-700"></div>
                 )}
               </button>
               
               <button 
                 onClick={() => { setActiveReestrTab('qt'); setSearchResult({status: 'idle'}); setDocNumber(''); }}
-                className={`relative py-6 px-6 text-center transition-all ${
+                className={`relative py-5 px-4 sm:px-6 text-center transition-all ${
                   activeReestrTab === 'qt' 
-                    ? 'bg-blue-50 text-blue-700' 
-                    : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
+                    ? 'bg-blue-50/70 text-blue-900' 
+                    : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
                 }`}
               >
-                <div className={`w-16 h-16 mx-auto mb-3 rounded-2xl flex items-center justify-center transition-all ${
+                <div className={`w-12 h-12 mx-auto mb-2.5 rounded-xl flex items-center justify-center transition-all ${
                   activeReestrTab === 'qt' 
-                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' 
-                    : 'bg-slate-200 text-slate-400'
+                    ? 'bg-blue-800 text-white shadow-sm' 
+                    : 'bg-slate-200 text-slate-500'
                 }`}>
-                  <Briefcase size={28} />
+                  <Briefcase size={24} />
                 </div>
-                <p className="font-black text-lg">{t('students.tab_qt')}</p>
-                <p className="text-xs font-medium mt-1 opacity-70">{t('home.charts_qt')}</p>
+                <p className="font-bold text-base sm:text-lg">{t('students.tab_qt')}</p>
+                <p className="text-xs font-medium mt-0.5 opacity-75">{t('home.charts_qt')}</p>
                 {activeReestrTab === 'qt' && (
-                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500"></div>
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-800"></div>
                 )}
               </button>
             </div>
 
             {/* Search Form */}
-            <form onSubmit={handleReestrSearch} className="p-8">
-              <div className="flex flex-col md:flex-row gap-4">
+            <form onSubmit={handleReestrSearch} className="p-6 sm:p-8">
+              <div className="flex flex-col md:flex-row gap-4 md:items-end">
                 <div className="flex-1">
-                  <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">
                     {activeReestrTab === 'mo' ? t('home.reestr_cert_number_label') : t('home.reestr_diplom_number_label')}
                   </label>
                   <div className="relative">
-                    <span className={`absolute left-4 top-1/2 -translate-y-1/2 font-black text-lg ${
-                      activeReestrTab === 'mo' ? 'text-emerald-500' : 'text-blue-500'
+                    <span className={`absolute left-4 top-1/2 -translate-y-1/2 font-extrabold text-base ${
+                      activeReestrTab === 'mo' ? 'text-emerald-700' : 'text-blue-800'
                     }`}>
                       {activeReestrTab === 'mo' ? 'MO' : 'QT'}
                     </span>
                     <input 
                       type="text" 
                       placeholder="000831" 
-                      className="w-full pl-16 pr-4 py-4 bg-slate-50 border-2 border-slate-100 rounded-xl text-slate-700 font-bold text-xl outline-none focus:border-blue-500 transition-all"
+                      className="w-full pl-14 pr-4 py-3.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 font-bold text-lg outline-none focus:bg-white focus:border-blue-700 transition-all"
                       value={docNumber}
                       onChange={(e) => setDocNumber(e.target.value)}
                     />
@@ -1002,10 +994,10 @@ const Home: React.FC = () => {
                 </div>
                 <button 
                   type="submit" 
-                  className={`px-10 py-4 rounded-xl font-black text-white text-sm uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-xl ${
+                  className={`px-8 py-3.5 rounded-xl font-bold text-white text-sm uppercase tracking-wider transition-colors shadow-sm ${
                     activeReestrTab === 'mo' 
-                      ? 'bg-gradient-to-r from-emerald-500 to-teal-600 shadow-emerald-500/30' 
-                      : 'bg-gradient-to-r from-blue-500 to-indigo-600 shadow-blue-500/30'
+                      ? 'bg-emerald-700 hover:bg-emerald-800' 
+                      : 'bg-blue-800 hover:bg-blue-900'
                   }`}
                 >{t('students.search_btn')}</button>
               </div>
@@ -2073,13 +2065,13 @@ const Home: React.FC = () => {
       {/* News Section - Featured + 3 Small */}
       <section 
         ref={newsReveal.ref}
-        className={`container mx-auto px-6 py-16 transition-all duration-1000 ${
-          newsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        className={`container mx-auto px-6 py-16 transition-all duration-700 ${
+          newsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
-        <div className="mb-12">
-          <span className="text-sm font-bold text-blue-600 uppercase tracking-wider">{t('news_list.badge')}</span>
-          <h2 className="text-4xl font-black text-slate-900 mt-2">{t('home.news_title')}</h2>
+        <div className="mb-10">
+          <span className="text-xs font-bold text-blue-800 uppercase tracking-widest">{t('news_list.badge')}</span>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mt-1.5 tracking-tight">{t('home.news_title')}</h2>
         </div>
         
         {news.length > 0 ? (
@@ -2089,29 +2081,37 @@ const Home: React.FC = () => {
             <div className="lg:col-span-2 space-y-6">
               {(() => {
                 const mainItem = news[newsCarouselIndex];
+                const mainImg = mainItem.images?.[0]?.imageUrl || mainItem.image;
                 return (
-                  <button onClick={() => handleNewsClick(mainItem)} className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 w-full text-left flex flex-col">
-                    <div className="relative w-full overflow-hidden shrink-0 aspect-video md:aspect-[16/9]">
-                      <img 
-                        src={mainItem.images?.[0]?.imageUrl || mainItem.image || '/placeholder.jpg'} 
-                        alt={mainItem.title} 
-                        loading="lazy" 
-                        decoding="async" 
-                        className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] group-hover:scale-105 transition-transform duration-700" 
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+                  <button onClick={() => handleNewsClick(mainItem)} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-200 w-full text-left flex flex-col">
+                    <div className="relative w-full overflow-hidden shrink-0 aspect-video md:aspect-[16/9] bg-slate-100">
+                      {mainImg ? (
+                        <img 
+                          src={mainImg} 
+                          alt={mainItem.title} 
+                          loading="lazy" 
+                          decoding="async" 
+                          className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] group-hover:scale-105 transition-transform duration-500" 
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-400">
+                          <ImageOff size={36} strokeWidth={1.5} />
+                          <span className="text-xs font-semibold">Rasm yuklanmagan</span>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
                       {mainItem.isImportant && (
-                        <div className="absolute top-6 left-6 px-4 py-2 bg-red-500 text-white text-xs font-bold uppercase rounded-full flex items-center gap-2">
-                          <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>{t('news_detail.important')}</div>
+                        <div className="absolute top-4 left-4 px-3.5 py-1.5 bg-red-600 text-white text-xs font-bold uppercase rounded-lg flex items-center gap-2">
+                          <span className="w-2 h-2 bg-white rounded-full"></span>{t('news_detail.important')}</div>
                       )}
                     </div>
-                    <div className="p-8 flex-1">
-                      <span className="text-sm font-medium text-slate-400">{formatDate(mainItem.date, i18n.language)}</span>
-                      <h3 className="text-3xl font-black text-slate-900 mt-3 mb-4 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    <div className="p-6 sm:p-8 flex-1">
+                      <span className="text-xs font-semibold text-slate-400">{formatDate(mainItem.date, i18n.language)}</span>
+                      <h3 className="text-2xl sm:text-3xl font-bold text-slate-900 mt-2 mb-3 line-clamp-2 group-hover:text-blue-700 transition-colors leading-snug">
                         {mainItem.title}
                       </h3>
-                      <p className="text-slate-600 line-clamp-3 text-base mb-6">{stripHtml(mainItem.content)}</p>
-                      <div className="flex items-center gap-2 text-blue-600 font-bold group-hover:gap-3 transition-all mt-auto">{t('news_list.read_more')}<ChevronRight size={20} />
+                      <p className="text-slate-600 line-clamp-3 text-sm sm:text-base mb-5 leading-relaxed">{stripHtml(mainItem.content)}</p>
+                      <div className="flex items-center gap-1.5 text-blue-700 text-sm font-bold group-hover:gap-2.5 transition-all mt-auto">{t('news_list.read_more')}<ChevronRight size={18} />
                       </div>
                     </div>
                   </button>
@@ -2120,24 +2120,32 @@ const Home: React.FC = () => {
 
               {news.length > 1 && (() => {
                 const secondaryItem = news[(newsCarouselIndex + 1) % news.length];
+                const secImg = secondaryItem.images?.[0]?.imageUrl || secondaryItem.image;
                 return (
-                  <button onClick={() => handleNewsClick(secondaryItem)} className="group flex flex-col overflow-hidden rounded-[2rem] border border-slate-100 bg-white shadow-md transition-all duration-500 hover:shadow-xl text-left w-full">
-                    <div className="relative w-full aspect-video overflow-hidden shrink-0">
-                      <img
-                        src={secondaryItem.images?.[0]?.imageUrl || secondaryItem.image || '/placeholder.jpg'}
-                        alt={secondaryItem.title}
-                        loading="lazy"
-                        decoding="async"
-                        className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                      />
+                  <button onClick={() => handleNewsClick(secondaryItem)} className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg text-left w-full">
+                    <div className="relative w-full aspect-video overflow-hidden shrink-0 bg-slate-100">
+                      {secImg ? (
+                        <img
+                          src={secImg}
+                          alt={secondaryItem.title}
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-400">
+                          <ImageOff size={36} strokeWidth={1.5} />
+                          <span className="text-xs font-semibold">Rasm yuklanmagan</span>
+                        </div>
+                      )}
                     </div>
                     <div className="p-6 flex flex-col flex-1 justify-center">
-                      <span className="text-sm font-medium text-slate-400">{formatDate(secondaryItem.date, i18n.language)}</span>
-                      <h3 className="mt-3 text-2xl font-black text-slate-900 transition-colors group-hover:text-blue-600">
+                      <span className="text-xs font-semibold text-slate-400">{formatDate(secondaryItem.date, i18n.language)}</span>
+                      <h3 className="mt-2 text-xl sm:text-2xl font-bold text-slate-900 transition-colors group-hover:text-blue-700 leading-snug">
                         {secondaryItem.title}
                       </h3>
-                      <p className="mt-3 line-clamp-3 text-slate-600">{stripHtml(secondaryItem.content)}</p>
-                      <div className="mt-5 flex items-center gap-2 font-bold text-blue-600">{t('news_list.read_more')}<ChevronRight size={18} />
+                      <p className="mt-2.5 line-clamp-3 text-sm text-slate-600 leading-relaxed">{stripHtml(secondaryItem.content)}</p>
+                      <div className="mt-4 flex items-center gap-1.5 text-sm font-bold text-blue-700">{t('news_list.read_more')}<ChevronRight size={18} />
                       </div>
                     </div>
                   </button>
@@ -2154,39 +2162,48 @@ const Home: React.FC = () => {
                   news[(newsCarouselIndex + 4) % news.length],
                   news[(newsCarouselIndex + 5) % news.length]
                 ].filter((item, index, array) => Boolean(item) && array.findIndex((entry) => entry.id === item.id) === index);
-                return smallCards.map((item, idx) => (
-                  <button onClick={() => handleNewsClick(item)} key={item.id} className="group bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 border border-slate-100 text-left w-full flex flex-col">
-                    <div className="relative w-full aspect-video overflow-hidden">
-                      <img 
-                        src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'} 
-                        alt={item.title} 
-                        className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" 
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
-                    </div>
-                    <div className="p-4 flex-1 flex flex-col">
-                      <span className="text-xs font-medium text-slate-400">{formatDate(item.date, i18n.language)}</span>
-                      <h4 className="text-base font-black text-slate-900 mt-1 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                        {item.title}
-                      </h4>
-                      <p className="text-slate-500 line-clamp-1 text-xs">{stripHtml(item.content)}</p>
-                    </div>
-                  </button>
-                ));
+                return smallCards.map((item) => {
+                  const smImg = item.images?.[0]?.imageUrl || item.image;
+                  return (
+                    <button onClick={() => handleNewsClick(item)} key={item.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-slate-200 text-left w-full flex flex-col">
+                      <div className="relative w-full aspect-video overflow-hidden bg-slate-100">
+                        {smImg ? (
+                          <img 
+                            src={smImg} 
+                            alt={item.title} 
+                            className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500" 
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 text-slate-400">
+                            <ImageOff size={28} strokeWidth={1.5} />
+                            <span className="text-[11px] font-semibold">Rasm yuklanmagan</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-4 flex-1 flex flex-col">
+                        <span className="text-xs font-medium text-slate-400">{formatDate(item.date, i18n.language)}</span>
+                        <h4 className="text-base font-bold text-slate-900 mt-1 mb-1.5 line-clamp-2 group-hover:text-blue-700 transition-colors leading-snug">
+                          {item.title}
+                        </h4>
+                        <p className="text-slate-500 line-clamp-1 text-xs">{stripHtml(item.content)}</p>
+                      </div>
+                    </button>
+                  );
+                });
               })()}
             </div>
           </div>
             <div className="flex justify-center">
               <Link
                 to="/news"
-                className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white px-6 py-3 font-bold text-blue-700 shadow-sm transition-all hover:border-blue-300 hover:bg-blue-50"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-6 py-3 text-sm font-bold text-slate-800 shadow-xs transition-all hover:border-blue-400 hover:text-blue-800"
               >{t('home.news_more_btn')}<ChevronRight size={18} />
               </Link>
             </div>
           </div>
         ) : (
-          <div className="py-20 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
-            <p className="text-slate-400 font-medium">{t('home.news_no_news')}</p>
+          <div className="py-20 text-center bg-white rounded-2xl border border-slate-200">
+            <p className="text-slate-500 font-medium">{t('home.news_no_news')}</p>
           </div>
         )}
       </section>
@@ -2194,48 +2211,45 @@ const Home: React.FC = () => {
       {/* Useful Links Section */}
       <section
         ref={linksReveal.ref}
-        className={`container mx-auto px-6 py-16 transition-all duration-1000 ${
-          linksReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        className={`container mx-auto px-6 py-16 transition-all duration-700 ${
+          linksReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
         }`}
       >
-        <div className="container mx-auto px-4 sm:px-10">
-          <div className="text-center mb-12">
-            <span className="text-sm font-bold text-indigo-600 uppercase tracking-wider">{t('home.links_resources')}</span>
-            <h2 className="text-4xl font-black text-slate-900 mt-2">{t('home.links_useful')}</h2>
-          </div>
+        <div className="mb-10">
+          <span className="text-xs font-bold text-blue-800 uppercase tracking-widest">{t('home.links_resources')}</span>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mt-1.5 tracking-tight">{t('home.links_useful')}</h2>
+        </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
           {usefulLinks.map((link, idx) => (
             <a 
               key={idx} 
               href={link.url} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="group flex flex-col items-center p-8 bg-white rounded-3xl shadow-lg border border-slate-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
-              style={{ animationDelay: `${idx * 100}ms` }}
+              className="group flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all duration-200"
             >
               {link.image ? (
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-4 shadow-md group-hover:scale-110 transition-transform duration-300 bg-white overflow-hidden border border-slate-100`}>
-                  <img src={link.image} alt={link.name} className={`w-full h-full ${link.cover ? 'object-cover' : 'object-contain p-1'}`} />
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-3.5 bg-white overflow-hidden border border-slate-200">
+                  <img src={link.image} alt={link.name} className={`w-full h-full ${link.cover ? 'object-cover' : 'object-contain p-1.5'}`} />
                 </div>
               ) : (
-                <div className={`w-16 h-16 ${link.color} text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`w-14 h-14 ${link.color} text-white rounded-xl flex items-center justify-center mb-3.5 shadow-xs`}>
                   {link.icon}
                 </div>
               )}
-              <h3 className="text-sm font-black text-slate-900 text-center">{link.name}</h3>
+              <h3 className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-blue-800 text-center leading-snug transition-colors">{link.name}</h3>
             </a>
           ))}
-        </div>
         </div>
       </section>
 
       <section id="contact" className="container mx-auto px-6 pb-20">
-        <div className="mb-10">
-          <span className="text-sm font-bold text-slate-500 uppercase tracking-wider">{t('home.contact_badge')}</span>
-          <h2 className="mt-2 text-4xl font-black text-slate-900">{t('home.contact_our_address')}</h2>
+        <div className="mb-8">
+          <span className="text-xs font-bold text-blue-800 uppercase tracking-widest">{t('home.contact_badge')}</span>
+          <h2 className="mt-1.5 text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">{t('home.contact_our_address')}</h2>
         </div>
-        <div className="grid gap-6 rounded-[2rem] bg-white p-4 shadow-lg lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="grid gap-6 rounded-2xl bg-white p-4 shadow-sm border border-slate-200 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="overflow-hidden rounded-[1.5rem] border border-slate-200 min-h-[400px]">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000.2224424363363!2d69.18002367657989!3d41.279141071286395!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae895563fd58cd%3A0x2cf0b7618d787b0f!2sO&#39;zBA%20huzuridagi%20Markaz!5e0!3m2!1suz!2s!4v1711200000000!5m2!1suz!2s"

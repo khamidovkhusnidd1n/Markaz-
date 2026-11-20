@@ -10,19 +10,19 @@ const ArtGallery: React.FC = () => {
   const { artGallery } = useApp();
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="bg-rose-900 py-16 text-white">
+    <div className="min-h-screen bg-slate-50">
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-900 py-14 text-white">
         <div className="container mx-auto px-6">
-          <Link to="/" className="inline-flex items-center gap-2 text-rose-200 hover:text-white mb-6 transition-colors text-sm">
+          <Link to="/" className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-5 transition-colors text-sm font-medium">
             <ArrowLeft size={16} /> {t('art_gallery.back')}
           </Link>
-          <span className="text-sm font-bold text-rose-400 uppercase tracking-wider mb-2 block">{t('art_gallery.badge')}</span>
-          <h1 className="text-4xl md:text-5xl font-black">{t('art_gallery.title')}</h1>
-          <p className="mt-4 text-lg text-rose-200 max-w-2xl">{t('art_gallery.subtitle')}</p>
+          <span className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2 block">{t('art_gallery.badge')}</span>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{t('art_gallery.title')}</h1>
+          <p className="mt-3 text-base md:text-lg text-slate-300 max-w-2xl">{t('art_gallery.subtitle')}</p>
         </div>
       </div>
       
-      <section className="py-16">
+      <section className="py-10">
         <ArtGallerySection items={artGallery} />
       </section>
     </div>

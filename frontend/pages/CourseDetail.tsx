@@ -35,20 +35,20 @@ const CourseDetail: React.FC = () => {
       </div>
 
       <section className="container mx-auto grid gap-8 px-6 pb-20 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
-          <div className="h-80 bg-gradient-to-br from-slate-900 via-blue-900 to-cyan-700">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
+          <div className="h-72 sm:h-80 bg-gradient-to-br from-slate-900 via-blue-950 to-blue-900">
             {course.photoUrl ? (
               <img src={course.photoUrl} alt={course.title} className="h-full w-full object-cover" />
             ) : null}
           </div>
-          <div className="p-8">
-            <p className="text-xs font-bold uppercase tracking-[0.3em] text-blue-700">{course.typeDisplay || t('courses.course_fallback')}</p>
-            <h1 className="mt-3 text-4xl font-black text-slate-900">{course.title}</h1>
-            {course.duration && <p className="mt-3 text-sm font-medium text-slate-500">{t('course_detail.duration')}: {course.duration}</p>}
-            <div className="mt-8">
-              <h2 className="text-xl font-black text-slate-900">{t('course_detail.details_title')}</h2>
+          <div className="p-6 sm:p-8">
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-700">{course.typeDisplay || t('courses.course_fallback')}</p>
+            <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold text-slate-900">{course.title}</h1>
+            {course.duration && <p className="mt-2 text-sm font-medium text-slate-500">{t('course_detail.duration')}: {course.duration}</p>}
+            <div className="mt-6 pt-6 border-t border-slate-100">
+              <h2 className="text-lg font-bold text-slate-900">{t('course_detail.details_title')}</h2>
               <div 
-                className="mt-3 leading-7 text-slate-600 prose prose-slate max-w-none"
+                className="mt-3 leading-7 text-slate-700 prose prose-slate max-w-none"
                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(course.description || t('course_detail.no_details')) }}
               />
             </div>
@@ -56,7 +56,7 @@ const CourseDetail: React.FC = () => {
         </div>
 
         <aside className="h-fit space-y-6">
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm space-y-3">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs space-y-3">
             <Link
               to="/virtual-qabulxona/ariza"
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-800 hover:bg-blue-900 px-5 py-3.5 text-sm font-bold text-white transition-colors"
@@ -73,8 +73,8 @@ const CourseDetail: React.FC = () => {
             </Link>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-          <p className="mb-6 text-xs font-bold uppercase tracking-[0.3em] text-slate-400">
+          <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xs">
+          <p className="mb-5 text-xs font-bold uppercase tracking-widest text-slate-500">
             {t('course_detail.contact_info', "ALOQA MA'LUMOTLARI")}
           </p>
           <div className="flex flex-col gap-3">

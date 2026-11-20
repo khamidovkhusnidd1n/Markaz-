@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
-import { X, Calendar, User, Eye } from 'lucide-react';
+import { X, Calendar, User, Eye, ImageOff } from 'lucide-react';
 import { getImageUrl, sanitizeHtml } from '../utils';
 
 const NewsDetail: React.FC = () => {
@@ -73,11 +73,18 @@ const NewsDetail: React.FC = () => {
           <div className="flex flex-col md:flex-row gap-8 mb-10">
             {/* Left side: Image */}
             <div className="w-full md:w-[40%] flex-shrink-0">
-              <img 
-                src={allImages[0] ? getImageUrl(allImages[0]) : '/placeholder.jpg'} 
-                alt={newsItem.title_translated || newsItem.title} 
-                className="w-full aspect-square object-cover rounded-2xl shadow-sm" 
-              />
+              {allImages[0] ? (
+                <img 
+                  src={getImageUrl(allImages[0])} 
+                  alt={newsItem.title_translated || newsItem.title} 
+                  className="w-full aspect-square object-cover rounded-2xl shadow-sm border border-slate-200" 
+                />
+              ) : (
+                <div className="w-full aspect-square rounded-2xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center gap-2 text-slate-400">
+                  <ImageOff size={36} strokeWidth={1.5} />
+                  <span className="text-xs font-semibold">Rasm yuklanmagan</span>
+                </div>
+              )}
             </div>
             
             {/* Right side: Meta Data */}

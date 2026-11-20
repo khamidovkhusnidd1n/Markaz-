@@ -75,11 +75,11 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
   return (
     <>
       {/* Art Gallery Section */}
-      <section className="container mx-auto px-6 py-16">
-        <div className="text-center mb-12">
-          <span className="text-sm font-bold text-pink-600 uppercase tracking-wider">{t('art_gallery_section.badge')}</span>
-          <h2 className="text-4xl font-black text-slate-900 mt-2">{t('art_gallery_section.title')}</h2>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto mt-4">
+      <section className="container mx-auto px-6 py-10">
+        <div className="text-center mb-10">
+          <span className="text-xs font-bold text-blue-800 uppercase tracking-widest">{t('art_gallery_section.badge')}</span>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mt-1.5 tracking-tight">{t('art_gallery_section.title')}</h2>
+          <p className="text-base text-slate-500 max-w-2xl mx-auto mt-3">
             {t('art_gallery_section.subtitle')}
           </p>
         </div>
@@ -161,7 +161,7 @@ const ArtGallerySection: React.FC<ArtGallerySectionProps> = ({ items }) => {
                 </h3>
 
                 {/* Author */}
-                <p className="text-lg md:text-xl text-pink-400 font-semibold mb-4">
+                <p className="text-lg md:text-xl text-amber-400 font-semibold mb-4">
                   {selectedArt.author}
                 </p>
 
@@ -223,42 +223,44 @@ const ArtCard: React.FC<ArtCardProps> = ({ item, onClick, delay = 0, viewLabel }
   return (
     <div
       onClick={onClick}
-      className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-slate-100 cursor-pointer hover:-translate-y-2"
+      className="group bg-white rounded-2xl overflow-hidden shadow-xs hover:shadow-md transition-all duration-300 border border-slate-200 hover:border-blue-300 cursor-pointer flex flex-col"
       style={{ transitionDelay: `${delay}ms` }}
     >
       {/* Image Container */}
-      <div className="relative h-64 overflow-hidden bg-slate-200">
+      <div className="relative h-64 overflow-hidden bg-slate-100">
         <img
           src={item.imageUrl}
           alt={item.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent"></div>
       </div>
 
       {/* Card Content */}
-      <div className="p-5">
-        {/* Title */}
-        <h3 className="text-xl font-black text-slate-900 mb-1 line-clamp-2 group-hover:text-pink-600 transition-colors">
-          {item.title}
-        </h3>
+      <div className="p-5 flex-1 flex flex-col justify-between">
+        <div>
+          {/* Title */}
+          <h3 className="text-lg font-bold text-slate-900 mb-1 line-clamp-2 group-hover:text-blue-700 transition-colors leading-snug">
+            {item.title}
+          </h3>
 
-        {/* Author */}
-        <p className="text-sm font-semibold text-pink-600 mb-3">
-          {item.author}
-        </p>
-
-        {/* Description */}
-        {item.description && (
-          <p className="text-slate-600 text-sm line-clamp-2 mb-4">
-            {item.description}
+          {/* Author */}
+          <p className="text-xs sm:text-sm font-semibold text-blue-700 mb-2.5">
+            {item.author}
           </p>
-        )}
+
+          {/* Description */}
+          {item.description && (
+            <p className="text-slate-600 text-xs sm:text-sm line-clamp-2 mb-4 leading-relaxed">
+              {item.description}
+            </p>
+          )}
+        </div>
 
         {/* View Button */}
-        <button className="w-full px-4 py-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-lg hover:from-pink-600 hover:to-rose-600 transition-all duration-300 text-sm flex items-center justify-center gap-2 group/btn">
+        <button className="w-full px-4 py-2.5 bg-blue-900 text-white font-bold rounded-xl hover:bg-blue-800 transition-colors text-xs sm:text-sm flex items-center justify-center gap-1.5 group/btn">
           {viewLabel}
-          <ChevronRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+          <ChevronRight size={15} className="group-hover/btn:translate-x-1 transition-transform" />
         </button>
       </div>
     </div>

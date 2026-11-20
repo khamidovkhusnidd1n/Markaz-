@@ -246,10 +246,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               <button 
                 onClick={() => setIsUsefulLinksOpen(true)}
                 title={t('layout.useful_links', "Foydali havolalar")}
-                className="relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 p-2 min-[1850px]:p-2.5 font-bold text-white shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] flex items-center justify-center group mr-0.5 shrink-0"
+                className="rounded-lg bg-blue-900 hover:bg-blue-800 p-2 min-[1850px]:p-2.5 font-bold text-white shadow-sm transition-colors flex items-center justify-center mr-0.5 shrink-0"
               >
-                <LayoutGrid size={18} className="relative z-10 group-hover:rotate-90 transition-transform duration-500" />
-                <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                <LayoutGrid size={18} />
               </button>
               
               <div className="desktop-nav-lang-container flex items-center gap-0.5 min-[1850px]:gap-1 border-l pl-1.5 min-[1850px]:pl-2 border-gray-200 shrink-0">
@@ -272,11 +271,10 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                 setIsUsefulLinksOpen(true);
                 setIsMenuOpen(false);
               }}
-              className="relative overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-3 mb-2 font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 group"
+              className="rounded-xl bg-blue-900 hover:bg-blue-800 px-4 py-3 mb-2 font-bold text-white shadow-sm transition-colors flex items-center justify-center gap-2"
             >
               <LayoutGrid size={18} />
-              <span className="relative z-10">{t('layout.useful_links', "Foydali havolalar")}</span>
-              <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+              <span>{t('layout.useful_links', "Foydali havolalar")}</span>
             </button>
             {MENU_ITEMS.map((item, idx) => (
               <MobileMenuItem key={idx} item={item} closeMenu={() => setIsMenuOpen(false)} />
@@ -386,14 +384,14 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         <div 
           className={`relative w-full max-w-[380px] md:max-w-lg bg-white h-full shadow-[0_0_40px_rgba(0,0,0,0.1)] transition-transform duration-300 flex flex-col ${isUsefulLinksOpen ? 'translate-x-0' : 'translate-x-full'}`}
         >
-          <div className="flex items-center justify-between p-5 md:p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
-            <h2 className="text-lg md:text-xl font-black text-slate-800 flex items-center gap-3">
-              <Globe className="text-blue-600 animate-pulse" />
+          <div className="flex items-center justify-between p-5 md:p-6 border-b border-slate-200 bg-slate-50">
+            <h2 className="text-lg md:text-xl font-bold text-slate-900 flex items-center gap-2.5">
+              <Globe className="text-blue-700" size={20} />
               {t('layout.useful_links', "Foydali havolalar")}
             </h2>
             <button 
               onClick={() => setIsUsefulLinksOpen(false)} 
-              className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors bg-white shadow-sm"
+              className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-200/70 rounded-lg transition-colors"
             >
               <X size={20} />
             </button>
@@ -402,51 +400,51 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           <div className="flex-1 overflow-y-auto p-5 md:p-6">
             <div className="grid grid-cols-2 gap-4">
               {/* Masofaviy ta'lim */}
-              <a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-blue-300 hover:shadow-md transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-sm">
-                  <Globe size={24} />
+              <a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-xl bg-blue-900 text-white flex items-center justify-center shadow-xs">
+                  <Globe size={22} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">{t('home.links_distance_edu')}</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">{t('home.links_distance_edu')}</span>
               </a>
 
               {/* Badiiy akademiya */}
-              <a href="https://art-academy.uz/" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-blue-300 hover:shadow-md transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 text-blue-600 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
-                  <Landmark size={24} />
+              <a href="https://art-academy.uz/" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-blue-800 flex items-center justify-center">
+                  <Landmark size={22} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">{t('home.links_art_academy')}</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">{t('home.links_art_academy')}</span>
               </a>
 
               {/* MY.BIMM.UZ */}
-              <a href="https://my.bimm.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-emerald-300 hover:shadow-md transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                  <LayoutDashboard size={24} />
+              <a href="https://my.bimm.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-emerald-700 flex items-center justify-center">
+                  <LayoutDashboard size={22} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">MY.BIMM.UZ</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">MY.BIMM.UZ</span>
               </a>
 
               {/* LEX.UZ */}
-              <a href="https://lex.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-blue-300 hover:shadow-md transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-2xl bg-white border border-gray-100 text-blue-500 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-sm">
-                  <Scale size={24} />
+              <a href="https://lex.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-blue-700 flex items-center justify-center">
+                  <Scale size={22} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">LEX.UZ</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">LEX.UZ</span>
               </a>
 
               {/* Form uchun arizalar */}
-              <a href="https://form.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-purple-300 hover:shadow-md transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-transform shadow-sm">
-                  <ClipboardList size={24} />
+              <a href="https://form.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-xl bg-indigo-900 text-white flex items-center justify-center shadow-xs">
+                  <ClipboardList size={22} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">{t('home.links_forms')}</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">{t('home.links_forms')}</span>
               </a>
 
               {/* Davomat */}
-              <a href="https://t.me/uzbadavomatbot" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-gray-100 bg-white hover:border-green-300 hover:shadow-md transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-2xl bg-green-600 text-white flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
-                  <UserCheck size={24} />
+              <a href="https://davomat.uzbamalaka.uz/" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
+                <div className="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow-xs">
+                  <UserCheck size={22} />
                 </div>
-                <span className="text-xs font-bold text-slate-700">{t('menu.attendance')}</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">{t('menu.attendance')}</span>
               </a>
             </div>
           </div>

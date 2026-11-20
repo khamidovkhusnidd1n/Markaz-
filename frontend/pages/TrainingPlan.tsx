@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { ArrowLeft, Download, Info, Search, Eye } from 'lucide-react';
+import { ArrowLeft, Download, Info, Search, Eye, FileText } from 'lucide-react';
 import DocumentViewer from '../components/DocumentViewer';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -80,37 +80,37 @@ const TrainingPlan: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-emerald-50">
-      <div className="bg-gradient-to-r from-emerald-700 to-emerald-900 text-white py-16">
-        <div className="container mx-auto px-4">
-          <Link to="/" className="inline-flex items-center gap-2 text-emerald-200 hover:text-white mb-6 transition-colors text-sm">
+    <div className="min-h-screen bg-slate-50">
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-900 text-white py-14">
+        <div className="container mx-auto px-4 sm:px-6">
+          <Link to="/" className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-5 transition-colors text-sm font-medium">
             <ArrowLeft size={16} /> {t('training_plan.back')}
           </Link>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">{t('training_plan.title')}</h1>
-          <p className="text-emerald-200 text-lg">{t('training_plan.subtitle')}</p>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-2">{t('training_plan.title')}</h1>
+          <p className="text-slate-300 text-base md:text-lg">{t('training_plan.subtitle')}</p>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 sm:px-6 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             {/* PD Plans Search Section */}
-            <section className="rounded-2xl bg-white p-8 shadow-sm border border-emerald-100">
-              <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-emerald-900">
-                <Search className="text-emerald-600" /> {t('training_plan.search_title')}
+            <section className="rounded-2xl bg-white p-6 sm:p-8 shadow-xs border border-slate-200">
+              <h2 className="mb-6 flex items-center gap-2.5 text-xl sm:text-2xl font-bold text-slate-900">
+                <Search className="text-blue-700" size={22} /> {t('training_plan.search_title')}
               </h2>
               <form onSubmit={handlePdSearch} className="mb-8 flex flex-col gap-3 sm:flex-row">
                 <input
                   type="text"
                   placeholder={t('training_plan.search_placeholder')}
-                  className="flex-grow rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="flex-grow rounded-xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <select
                   value={searchRegion}
                   onChange={(e) => setSearchRegion(e.target.value)}
-                  className="rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="rounded-xl border border-slate-300 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                 >
                   {UZ_REGIONS.map(region => (
                     <option key={region.value} value={region.value}>
@@ -118,7 +118,7 @@ const TrainingPlan: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                <button type="submit" disabled={isLoading} className="rounded-xl bg-emerald-700 px-8 py-3 font-bold text-white transition-colors hover:bg-emerald-800 whitespace-nowrap disabled:opacity-50">
+                <button type="submit" disabled={isLoading} className="rounded-xl bg-blue-800 px-8 py-3 text-sm font-bold text-white transition-colors hover:bg-blue-900 whitespace-nowrap disabled:opacity-50">
                   {isLoading ? t('common.loading', 'Yuklanmoqda...') : t('training_plan.search_btn')}
                 </button>
               </form>
@@ -173,8 +173,8 @@ const TrainingPlan: React.FC = () => {
                       {doc.coverImageUrl ? (
                         <img src={doc.coverImageUrl} alt={doc.title} className="h-16 w-12 rounded object-cover" />
                       ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded bg-red-100 text-red-600">
-                          <Download size={20} />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60">
+                          <FileText size={20} />
                         </div>
                       )}
                       <div>

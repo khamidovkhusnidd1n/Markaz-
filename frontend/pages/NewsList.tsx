@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Calendar, ChevronRight } from 'lucide-react';
+import { Calendar, ChevronRight, ImageOff } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
@@ -69,47 +69,57 @@ const NewsList: React.FC = () => {
 
   return (
     <div className="bg-slate-50 min-h-screen">
-      <section className="bg-[linear-gradient(135deg,#0f172a,#172554_45%,#2563eb)] text-white">
-        <div className="container mx-auto px-6 py-20">
-          <p className="text-sm font-bold uppercase tracking-[0.35em] text-blue-200">{categoryParam === 'elonlar' ? t('news_list.announcements_badge') : t('news_list.badge')}</p>
-          <h1 className="mt-4 text-4xl font-black md:text-5xl">{categoryParam === 'elonlar' ? t('news_list.announcements_title') : t('news_list.title')}</h1>
-          <p className="mt-4 max-w-2xl text-slate-200">
+      <section className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-900 text-white py-14">
+        <div className="container mx-auto px-6">
+          <p className="text-xs font-bold uppercase tracking-widest text-amber-400">{categoryParam === 'elonlar' ? t('news_list.announcements_badge') : t('news_list.badge')}</p>
+          <h1 className="mt-2 text-3xl font-extrabold md:text-4xl tracking-tight">{categoryParam === 'elonlar' ? t('news_list.announcements_title') : t('news_list.title')}</h1>
+          <p className="mt-3 max-w-2xl text-slate-300 text-base">
             {t('news_list.subtitle')}
           </p>
         </div>
       </section>
 
-      <section className="container mx-auto px-6 py-16">
+      <section className="container mx-auto px-6 py-12">
         {filteredNews.length > 0 ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredNews.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => handleNewsClick(item)}
-                className="group overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm transition-transform hover:-translate-y-1 hover:shadow-xl text-left flex flex-col"
-              >
-                <div className="relative aspect-video sm:h-52 overflow-hidden bg-slate-200 w-full">
-                  <img
-                    src={item.images?.[0]?.imageUrl || item.image || '/placeholder.jpg'}
-                    alt={item.title_translated || item.title}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-full object-cover object-top sm:object-[center_15%] transition-transform duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <p className="flex items-center gap-2 text-sm text-slate-400"><Calendar size={16} /> {formatDate(item.date, i18n.language)}</p>
-                  <h2 className="mt-3 text-xl font-black text-slate-900 transition-colors group-hover:text-blue-700 line-clamp-2">{item.title_translated || item.title}</h2>
-                  <p className="mt-3 text-sm leading-6 text-slate-600 line-clamp-3 flex-1">{stripHtml(item.content_translated || item.content)}</p>
-                  <div className="mt-5 flex items-center gap-2 font-bold text-blue-700">
-                    {t('news_list.read_more')} <ChevronRight size={18} />
+            {filteredNews.map((item) => {
+              const imgUrl = item.images?.[0]?.imageUrl || item.image;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => handleNewsClick(item)}
+                  className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs transition-all hover:border-blue-300 hover:shadow-md text-left flex flex-col"
+                >
+                  <div className="relative aspect-video sm:h-48 overflow-hidden bg-slate-100 w-full">
+                    {imgUrl ? (
+                      <img
+                        src={imgUrl}
+                        alt={item.title_translated || item.title}
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover object-top sm:object-[center_15%] transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="h-full w-full flex flex-col items-center justify-center gap-1.5 text-slate-400">
+                        <ImageOff size={32} strokeWidth={1.5} />
+                        <span className="text-xs font-semibold">Rasm yuklanmagan</span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              </button>
-            ))}
+                  <div className="p-5 flex-1 flex flex-col">
+                    <p className="flex items-center gap-1.5 text-xs font-medium text-slate-400"><Calendar size={14} /> {formatDate(item.date, i18n.language)}</p>
+                    <h2 className="mt-2 text-base sm:text-lg font-bold text-slate-900 transition-colors group-hover:text-blue-700 line-clamp-2 leading-snug">{item.title_translated || item.title}</h2>
+                    <p className="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600 line-clamp-3 flex-1">{stripHtml(item.content_translated || item.content)}</p>
+                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-1 text-xs font-bold text-blue-700">
+                      {t('news_list.read_more')} <ChevronRight size={15} />
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         ) : (
-          <div className="rounded-[2rem] border-2 border-dashed border-slate-300 bg-white px-6 py-20 text-center text-slate-500">
+          <div className="rounded-2xl border border-slate-200 bg-white px-6 py-20 text-center text-slate-500">
             {t('news_list.no_news')}
           </div>
         )}

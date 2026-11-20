@@ -79,50 +79,78 @@ const AboutPage: React.FC = () => {
   const staff = personnel.filter(p => p.category === 'staff');
 
   const sectionMeta: Record<AboutSection, { label: string; icon: React.ReactNode; color: string }> = {
-    info: { label: t('about.tab_info'), icon: <Building2 size={20} />, color: 'from-blue-900 to-blue-700' },
-    structure: { label: t('about.tab_structure'), icon: <Building2 size={20} />, color: 'from-indigo-900 to-indigo-700' },
-    leadership: { label: t('about.tab_leadership'), icon: <UserCheck size={20} />, color: 'from-slate-800 to-slate-700' },
-    staff: { label: t('about.tab_staff'), icon: <Users size={20} />, color: 'from-blue-800 to-blue-600' },
+    info: { label: t('about.tab_info'), icon: <Building2 size={20} />, color: 'from-slate-900 via-blue-950 to-blue-900' },
+    structure: { label: t('about.tab_structure'), icon: <Building2 size={20} />, color: 'from-slate-900 via-blue-950 to-blue-900' },
+    leadership: { label: t('about.tab_leadership'), icon: <UserCheck size={20} />, color: 'from-slate-900 via-blue-950 to-blue-900' },
+    staff: { label: t('about.tab_staff'), icon: <Users size={20} />, color: 'from-slate-900 via-blue-950 to-blue-900' },
   };
+
+  const DEFAULT_AVATAR = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23e2e8f0"><rect width="100" height="100"/><circle cx="50" cy="36" r="18" fill="%2394a3b8"/><path d="M18 84c0-16 14-26 32-26s32 10 32 26" fill="%2394a3b8"/></svg>';
 
   const current = sectionMeta[activeSection];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero */}
-      <div className={`bg-gradient-to-r ${current.color} text-white py-16`}>
-        <div className="container mx-auto px-4">
-          <Link to="/" className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 transition-colors text-sm">
+      <div className={`bg-gradient-to-r ${current.color} text-white py-14`}>
+        <div className="container mx-auto px-4 sm:px-6">
+          <Link to="/" className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-5 transition-colors text-sm font-medium">
             <ArrowLeft size={16} /> {t('departments.back')}
           </Link>
-          <div className="flex items-center gap-4 mb-2">
-            <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white/15 rounded-xl flex items-center justify-center border border-white/20">
               {current.icon}
             </div>
             <div>
-              <p className="text-white/60 text-sm uppercase tracking-wider mb-1">{t('about.title')}</p>
-              <h1 className="text-3xl md:text-4xl font-bold">{current.label}</h1>
+              <p className="text-blue-200 text-xs font-bold uppercase tracking-widest mb-1">{t('about.title')}</p>
+              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{current.label}</h1>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Section Navigation Tabs */}
+      <div className="bg-white border-b border-slate-200 sticky top-0 z-20">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex items-center gap-2 overflow-x-auto py-3 no-scrollbar">
+            {VALID_SECTIONS.map((sec) => {
+              const meta = sectionMeta[sec];
+              const isActive = activeSection === sec;
+              return (
+                <Link
+                  key={sec}
+                  to={`/about/${sec}`}
+                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-2 ${
+                    isActive
+                      ? 'bg-blue-900 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  {meta.icon}
+                  <span>{meta.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       {/* Content */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden p-8 lg:p-12">
+      <div className="container mx-auto px-4 sm:px-6 py-10">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden p-6 sm:p-8 lg:p-10">
 
           {/* INFO */}
           {activeSection === 'info' && (
             <div className="prose prose-lg max-w-none">
-              <h2 className="text-3xl font-black mb-8 text-slate-900 border-l-4 border-blue-600 pl-4">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-slate-900 border-l-4 border-blue-800 pl-4">
                 {t('about.history_title')}
               </h2>
-              <div className="text-slate-700 leading-relaxed space-y-6 text-lg prose prose-lg max-w-none">
+              <div className="text-slate-700 leading-relaxed space-y-6 text-base sm:text-lg prose prose-slate max-w-none">
                 {aboutContent.history ? (
                   <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(aboutContent.history) }} />
                 ) : (
-                  <div className="py-10 text-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                    <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs italic">{t('about.no_data')}</p>
+                  <div className="py-12 text-center bg-slate-50 rounded-2xl border border-slate-200">
+                    <p className="text-slate-500 font-semibold text-sm">{t('about.no_data')}</p>
                   </div>
                 )}
               </div>
@@ -131,17 +159,17 @@ const AboutPage: React.FC = () => {
 
           {/* STRUCTURE */}
           {activeSection === 'structure' && (
-            <div className="space-y-8">
+            <div className="space-y-6">
               <div className="max-w-5xl mx-auto">
-                <h2 className="text-3xl font-black mb-6 text-slate-900 text-center">{t('about.structure_title')}</h2>
-                <p className="text-slate-600 leading-relaxed mb-12 text-center text-lg italic max-w-3xl mx-auto font-medium">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-slate-900 text-center">{t('about.structure_title')}</h2>
+                <p className="text-slate-600 leading-relaxed mb-8 text-center text-base max-w-3xl mx-auto">
                   {t('about.structure_desc')}
                 </p>
-                <div className="bg-white rounded-[3rem] overflow-hidden shadow-2xl border border-gray-100 p-4 lg:p-10 group">
+                <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 p-4 lg:p-8">
                     <img
                       src="/structure.png"
                       alt={t('about.structure_img_alt')}
-                      className="w-full h-auto object-contain cursor-zoom-in group-hover:scale-[1.02] transition-transform duration-700"
+                      className="w-full h-auto object-contain"
                     />
                 </div>
               </div>
@@ -155,47 +183,45 @@ const AboutPage: React.FC = () => {
               (activeSection === 'leadership' ? leadership : staff).length === 2 ? 'lg:grid-cols-2 max-w-3xl' : 
               (activeSection === 'leadership' ? leadership : staff).length === 1 ? 'lg:grid-cols-1 max-w-sm' : 
               'lg:grid-cols-4 max-w-7xl'
-            } gap-6 pt-10 mx-auto`}>
+            } gap-6 pt-4 mx-auto`}>
               {(activeSection === 'leadership' ? leadership : staff).length > 0
                 ? (activeSection === 'leadership' ? leadership : staff).map(rawPerson => {
                   const person = getLocalizedPersonnel(rawPerson, i18n.language)!;
                   return (
                   <div 
                     key={person.id} 
-                    className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-500 flex flex-col h-full animate-in fade-in slide-in-from-bottom-6 cursor-pointer"
+                    className="group relative bg-white rounded-2xl shadow-xs hover:shadow-md border border-slate-200 hover:border-blue-300 overflow-hidden transition-all duration-300 flex flex-col h-full cursor-pointer"
                     onClick={() => setSelectedPersonId(String(person.id))}
                   >
                     {/* Image Container with Overlay */}
-                    <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full overflow-hidden shrink-0">
+                    <div className="relative aspect-[3/4] sm:aspect-[4/5] w-full overflow-hidden shrink-0 bg-slate-100">
                       <img
-                        src={person.photoUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23cbd5e1"><circle cx="50" cy="50" r="50"/><circle cx="50" cy="35" r="20" fill="%2394a3b8"/><path d="M15 80c0-15 15-25 35-25s35 10 35 25" fill="%2394a3b8"/></svg>'}
+                        src={person.photoUrl || DEFAULT_AVATAR}
                         alt={person.fullName}
-                        className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                       />
                       {/* Hover Overlay */}
-                      <div className="absolute inset-0 bg-blue-900/80 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col items-center justify-center p-4 text-white text-center backdrop-blur-sm gap-3">
-
+                      <div className="absolute inset-0 bg-slate-900/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-4 text-white text-center backdrop-blur-xs gap-3">
                         {person.email && (
-                          <span className="text-xs font-medium flex items-center justify-center gap-2 w-full bg-white/10 p-2.5 rounded-xl backdrop-blur-md hover:bg-white/20 transition-colors break-all">
+                          <span className="text-xs font-medium flex items-center justify-center gap-2 w-full bg-white/10 p-2.5 rounded-xl hover:bg-white/20 transition-colors break-all">
                             <Mail size={14} className="shrink-0" /> {person.email}
                           </span>
                         )}
-                        <span className="text-xs font-bold flex items-center justify-center gap-2 w-full bg-blue-600/80 p-2.5 rounded-xl backdrop-blur-md hover:bg-blue-500 transition-colors uppercase tracking-wider">{t('news_list.read_more')}</span>
+                        <span className="text-xs font-bold flex items-center justify-center gap-2 w-full bg-blue-700 p-2.5 rounded-xl hover:bg-blue-600 transition-colors uppercase tracking-wider">{t('news_list.read_more')}</span>
                       </div>
                     </div>
                     {/* Content below image */}
                     <div className="p-4 sm:p-5 flex-1 flex flex-col items-center text-center bg-white z-10">
-                      <h3 className="text-lg font-bold text-slate-900 mb-1 leading-tight">{person.fullName}</h3>
-                      <p className="text-blue-600 font-medium text-xs sm:text-sm mb-3">{person.position}</p>
+                      <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-1 leading-snug">{person.fullName}</h3>
+                      <p className="text-blue-700 font-semibold text-xs sm:text-sm mb-2.5">{person.position}</p>
                       {person.duties && <div className="text-xs sm:text-sm leading-relaxed text-slate-500 line-clamp-3 [&>p]:inline [&>ul]:inline [&>li]:inline" dangerouslySetInnerHTML={{ __html: sanitizeHtml(person.duties) }} />}
-
                     </div>
                   </div>
                 )
                 })
                 : (
-                  <div className="col-span-full py-32 text-center bg-slate-50 rounded-[2.5rem] border-2 border-dashed border-slate-200">
-                    <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-xs italic">{t('about.no_data')}</p>
+                  <div className="col-span-full py-20 text-center bg-slate-50 rounded-2xl border border-slate-200">
+                    <p className="text-slate-500 font-semibold text-sm">{t('about.no_data')}</p>
                   </div>
                 )}
             </div>
@@ -207,15 +233,15 @@ const AboutPage: React.FC = () => {
       {selectedPerson && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSelectedPersonId(null)}>
           <div 
-            className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300"
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-6 border-b border-slate-100">
-              <h3 className="text-2xl font-black text-slate-900">{selectedPerson.fullName}</h3>
+            <div className="flex justify-between items-center p-5 sm:p-6 border-b border-slate-200 bg-slate-50">
+              <h3 className="text-xl sm:text-2xl font-bold text-slate-900">{selectedPerson.fullName}</h3>
               <button 
                 onClick={() => setSelectedPersonId(null)}
-                className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors"
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-200/70 text-slate-600 hover:bg-slate-300 hover:text-slate-900 transition-colors"
               >
                 <X size={20} />
               </button>
@@ -225,14 +251,14 @@ const AboutPage: React.FC = () => {
             <div className="p-6 overflow-y-auto">
               <div className="flex flex-col md:flex-row gap-6 mb-8">
                 <img 
-                  src={selectedPerson.photoUrl || 'https://via.placeholder.com/400x400?text=Xodim'} 
+                  src={selectedPerson.photoUrl || DEFAULT_AVATAR} 
                   alt={selectedPerson.fullName} 
-                  className="w-full md:w-1/3 aspect-[3/4] object-cover object-top rounded-2xl shadow-sm" 
+                  className="w-full md:w-1/3 aspect-[3/4] object-cover object-top rounded-xl border border-slate-200 shadow-xs bg-slate-100" 
                 />
                 <div className="flex-1 space-y-4">
                   <div>
-                    <p className="text-sm text-slate-500 font-medium uppercase tracking-wider">{t('about.position', 'Lavozimi')}</p>
-                    <p className="text-lg font-bold text-blue-600">{selectedPerson.position}</p>
+                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">{t('about.position', 'Lavozimi')}</p>
+                    <p className="text-base sm:text-lg font-bold text-blue-800 mt-0.5">{selectedPerson.position}</p>
                   </div>
                   
 

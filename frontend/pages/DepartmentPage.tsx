@@ -89,45 +89,42 @@ const DepartmentPage: React.FC = () => {
     }).catch(console.error);
   };
 
-  console.log('DEPARTMENT:', dept?.name, 'POSTS:', dept?.department_posts);
   if (!dept) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-700 mb-4">{t('departments.no_departments')}</h2>
-          <Link to="/" className="text-blue-600 hover:underline">{t('departments.back')}</Link>
+          <h2 className="text-2xl font-bold text-slate-700 mb-4">{t('departments.no_departments')}</h2>
+          <Link to="/" className="text-blue-700 font-semibold hover:underline">{t('departments.back')}</Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero */}
-      <div className={`bg-gradient-to-r ${dept.color_classes || 'from-blue-900 to-blue-700'} text-white py-16`}>
-        <div className="container mx-auto px-4">
-          <Link to="/" className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-6 transition-colors text-sm">
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-900 text-white py-14">
+        <div className="container mx-auto px-4 sm:px-6">
+          <Link to="/" className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-5 transition-colors text-sm font-medium">
             <ArrowLeft size={16} /> {t('departments.back')}
           </Link>
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+          <div className="flex items-center gap-4 mb-3">
+            <div className="w-14 h-14 bg-white/15 rounded-xl flex items-center justify-center border border-white/20">
               {getIcon(dept.icon_name || '')}
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold">{getLocalizedField(dept, 'name')}</h1>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{getLocalizedField(dept, 'name')}</h1>
           </div>
-          <p className="text-white/80 text-lg max-w-3xl leading-relaxed">
+          <p className="text-slate-300 text-base md:text-lg max-w-3xl leading-relaxed">
             {getLocalizedField(dept, 'description')}
           </p>
         </div>
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-12">
-        
-
-        <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-          <div className="p-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-6">{t('departments.main_tasks')}</h2>
+      <div className="container mx-auto px-4 sm:px-6 py-10">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="p-6 sm:p-8">
+            <h2 className="text-xl font-bold text-slate-900 mb-6">{t('departments.main_tasks')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {dept.department_tasks && dept.department_tasks.length > 0 ? (
                 [...dept.department_tasks].sort((a, b) => a.order - b.order).map((taskObj, idx) => {
@@ -136,12 +133,12 @@ const DepartmentPage: React.FC = () => {
                   return (
                     <div
                       key={taskObj.id}
-                      className="flex items-start gap-4 p-5 bg-gray-50 rounded-xl hover:bg-blue-50 hover:shadow-sm transition-all duration-300 group border border-gray-100"
+                      className="flex items-start gap-4 p-5 bg-slate-50 rounded-xl hover:bg-blue-50/50 transition-colors duration-200 group border border-slate-200/80"
                     >
-                      <div className={`w-8 h-8 bg-gradient-to-r ${dept.color_classes || 'from-blue-600 to-blue-800'} rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0 group-hover:scale-110 transition-transform`}>
+                      <div className="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0">
                         {idx + 1}
                       </div>
-                      <div className="text-gray-700 leading-relaxed font-medium prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(taskText) }} />
+                      <div className="text-slate-700 leading-relaxed font-medium prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(taskText) }} />
                     </div>
                   );
                 })
@@ -151,12 +148,12 @@ const DepartmentPage: React.FC = () => {
                   return (
                     <div
                       key={idx}
-                      className="flex items-start gap-4 p-5 bg-gray-50 rounded-xl hover:bg-blue-50 hover:shadow-sm transition-all duration-300 group border border-gray-100"
+                      className="flex items-start gap-4 p-5 bg-slate-50 rounded-xl hover:bg-blue-50/50 transition-colors duration-200 group border border-slate-200/80"
                     >
-                      <div className={`w-8 h-8 bg-gradient-to-r ${dept.color_classes || 'from-blue-600 to-blue-800'} rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0 group-hover:scale-110 transition-transform`}>
+                      <div className="w-8 h-8 bg-blue-900 rounded-lg flex items-center justify-center text-white font-bold text-sm shrink-0">
                         {idx + 1}
                       </div>
-                      <div className="text-gray-700 leading-relaxed font-medium prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(task) }} />
+                      <div className="text-slate-700 leading-relaxed font-medium prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: sanitizeHtml(task) }} />
                     </div>
                   );
                 })
@@ -277,13 +274,15 @@ const DepartmentPage: React.FC = () => {
                                 href={videoUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group block relative rounded-2xl overflow-hidden shadow-md bg-gray-900 aspect-video flex items-center justify-center border border-gray-100"
+                                className="group block relative rounded-2xl overflow-hidden shadow-sm bg-slate-900 aspect-video flex items-center justify-center border border-slate-200"
                               >
-                                <img
-                                  src={allImages[0] || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop'}
-                                  alt={`Video thumbnail - ${i + 1}`}
-                                  className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-40 transition-opacity"
-                                />
+                                {allImages[0] && (
+                                  <img
+                                    src={allImages[0]}
+                                    alt={`Video thumbnail - ${i + 1}`}
+                                    className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-40 transition-opacity"
+                                  />
+                                )}
                                 <PlayCircle size={56} className="text-white relative z-10 group-hover:scale-110 transition-transform shadow-sm" />
                               </a>
                             ))}

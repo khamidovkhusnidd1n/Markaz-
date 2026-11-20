@@ -247,13 +247,15 @@ const Departments: React.FC = () => {
                                       href={videoUrl}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="group block relative rounded-2xl overflow-hidden shadow-md bg-gray-900 aspect-video flex items-center justify-center border border-gray-100"
+                                      className="group block relative rounded-2xl overflow-hidden shadow-sm bg-slate-900 aspect-video flex items-center justify-center border border-slate-200"
                                     >
-                                      <img
-                                        src={allImages[0] || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop'}
-                                        alt={`Video thumbnail - ${i + 1}`}
-                                        className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-40 transition-opacity"
-                                      />
+                                      {allImages[0] && (
+                                        <img
+                                          src={allImages[0]}
+                                          alt={`Video thumbnail - ${i + 1}`}
+                                          className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-40 transition-opacity"
+                                        />
+                                      )}
                                       <PlayCircle size={56} className="text-white relative z-10 group-hover:scale-110 transition-transform shadow-sm" />
                                     </a>
                                   ))}

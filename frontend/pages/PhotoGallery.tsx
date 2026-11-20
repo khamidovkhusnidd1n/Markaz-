@@ -50,46 +50,46 @@ const PhotoGallery: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <div className="bg-purple-900 py-16 text-white">
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-900 py-14 text-white">
         <div className="container mx-auto px-6">
-          <Link to="/" className="inline-flex items-center gap-2 text-purple-200 hover:text-white mb-6 transition-colors text-sm">
+          <Link to="/" className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-5 transition-colors text-sm font-medium">
             <ArrowLeft size={16} /> {t('photo_gallery.back')}
           </Link>
-          <span className="text-sm font-bold text-pink-400 uppercase tracking-wider mb-2 block">{t('photo_gallery.badge')}</span>
-          <h1 className="text-4xl md:text-5xl font-black">{t('photo_gallery.title')}</h1>
-          <p className="mt-4 text-lg text-purple-200 max-w-2xl">{t('photo_gallery.subtitle')}</p>
+          <span className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2 block">{t('photo_gallery.badge')}</span>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{t('photo_gallery.title')}</h1>
+          <p className="mt-3 text-base md:text-lg text-slate-300 max-w-2xl">{t('photo_gallery.subtitle')}</p>
         </div>
       </div>
       
-      <section className="container mx-auto px-6 py-16">
+      <section className="container mx-auto px-6 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {gallery.length > 0 ? gallery.map((item) => (
             <div 
               key={item.id} 
               onClick={() => openGalleryModal(item)}
-              className="group relative aspect-square overflow-hidden rounded-3xl bg-slate-200 cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500"
+              className="group relative aspect-square overflow-hidden rounded-2xl bg-slate-200 cursor-pointer shadow-xs hover:shadow-lg border border-slate-200 transition-all duration-300"
             >
               <img 
                 src={item.coverImageUrl} 
                 alt={item.title || t('photo_gallery.gallery_alt')}
-                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-6 left-6 right-6">
-                  {item.title && <p className="text-white font-bold text-lg mb-2 truncate">{item.title}</p>}
-                  <p className="text-purple-300 text-sm">{item.images.length + 1} {t('photo_gallery.photo_count')}</p>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <div className="absolute bottom-5 left-5 right-5">
+                  {item.title && <p className="text-white font-bold text-base mb-1 truncate">{item.title}</p>}
+                  <p className="text-amber-300 text-xs font-semibold">{item.images.length + 1} {t('photo_gallery.photo_count')}</p>
                 </div>
               </div>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
-                  <ImageIcon className="text-white" size={28} />
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-xs flex items-center justify-center border border-white/30">
+                  <ImageIcon className="text-white" size={24} />
                 </div>
               </div>
             </div>
           )) : (
-            <div className="col-span-full py-24 text-center bg-white rounded-3xl border border-slate-100 shadow-sm">
-              <ImageIcon size={48} className="mx-auto text-slate-300 mb-4" />
-              <p className="text-slate-500 font-medium text-lg">{t('photo_gallery.no_photos')}</p>
+            <div className="col-span-full py-20 text-center bg-white rounded-2xl border border-slate-200 shadow-xs">
+              <ImageIcon size={44} className="mx-auto text-slate-300 mb-3" />
+              <p className="text-slate-500 font-medium text-base">{t('photo_gallery.no_photos')}</p>
             </div>
           )}
         </div>

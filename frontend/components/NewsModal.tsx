@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../services/dateUtils';
-import { X, Calendar, User, Eye, ZoomIn, Share2 } from 'lucide-react';
+import { X, Calendar, User, Eye, ZoomIn, Share2, ImageOff } from 'lucide-react';
 import { getImageUrl, sanitizeHtml } from '../utils';
 import { NewsItem } from '../types';
 import { MediaItem, ImageModal } from './ImageModal';
@@ -124,12 +124,19 @@ export const NewsModal: React.FC<NewsModalProps> = ({ newsItem, onClose }) => {
                           </div>
                         </div>
                       </div>
-                    ) : (
+                    ) : allImages[0] ? (
                       <img 
-                        src={allImages[0] ? getImageUrl(allImages[0].url) : '/placeholder.jpg'} 
+                        src={getImageUrl(allImages[0].url)} 
                         alt={newsItem.title_translated || newsItem.title} 
                         className="w-full h-full object-contain p-2 transition-transform group-hover:scale-[1.02]" 
                       />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-400">
+                        <ImageOff size={36} strokeWidth={1.5} />
+                        <span className="text-xs font-semibold">
+                          {i18n.language?.startsWith('ru') ? 'Фото не загружено' : i18n.language?.startsWith('en') ? 'Image not uploaded' : 'Rasm yuklanmagan'}
+                        </span>
+                      </div>
                     )}
                   </div>
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-2xl flex items-center justify-center">
