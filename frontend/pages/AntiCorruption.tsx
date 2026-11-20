@@ -272,11 +272,11 @@ export const AntiCorruption: React.FC = () => {
 
       {/* Navigation Tabs */}
       <div className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="flex justify-center sm:justify-start gap-2 overflow-x-auto py-3 no-scrollbar">
+        <div className="container mx-auto px-2 sm:px-6">
+          <div className="flex justify-start sm:justify-center lg:justify-start gap-1.5 sm:gap-2 overflow-x-auto py-2.5 sm:py-3 no-scrollbar px-1">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all shrink-0 flex items-center gap-2 ${
+              className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 ${
                 activeTab === 'overview'
                   ? 'bg-blue-900 text-white shadow-md shadow-blue-900/20'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -288,7 +288,7 @@ export const AntiCorruption: React.FC = () => {
 
             <button
               onClick={() => setActiveTab('documents')}
-              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all shrink-0 flex items-center gap-2 ${
+              className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 ${
                 activeTab === 'documents'
                   ? 'bg-blue-900 text-white shadow-md shadow-blue-900/20'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -303,7 +303,7 @@ export const AntiCorruption: React.FC = () => {
 
             <button
               onClick={() => setActiveTab('contact')}
-              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all shrink-0 flex items-center gap-2 ${
+              className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 ${
                 activeTab === 'contact'
                   ? 'bg-blue-900 text-white shadow-md shadow-blue-900/20'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -683,30 +683,30 @@ export const AntiCorruption: React.FC = () => {
       {/* Internal Document Full-Text Modal */}
       {activeInternalDoc && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setActiveInternalDoc(null)}
         >
           <div
-            className="bg-white w-full max-w-4xl max-h-[90vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+            className="bg-white w-full max-w-4xl max-h-[92vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex justify-between items-center px-6 py-4 border-b border-slate-200 bg-slate-50 shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
-                  <BookOpen size={20} />
+            <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 bg-slate-50 shrink-0">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 pr-2">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
+                  <BookOpen size={18} />
                 </div>
-                <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                <div className="min-w-0">
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                     {activeInternalDoc.document_number || 'Ichki nizom'}
                   </span>
-                  <h3 className="font-bold text-slate-900 text-base sm:text-lg line-clamp-1 mt-0.5">
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-lg truncate mt-0.5">
                     {getLoc(activeInternalDoc, 'title') || activeInternalDoc.title}
                   </h3>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 shrink-0">
                 <button
                   onClick={() => setActiveInternalDoc(null)}
                   className="p-2 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors text-slate-500 cursor-pointer"
@@ -718,7 +718,7 @@ export const AntiCorruption: React.FC = () => {
             </div>
 
             {/* Modal Content - Scrollable Text */}
-            <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 bg-white text-slate-800">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-4 sm:space-y-6 bg-white text-slate-800">
               {/* Center Official Header */}
               <div className="text-center pb-6 border-b border-slate-100">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-900 text-xs font-bold mb-3 border border-blue-100">
