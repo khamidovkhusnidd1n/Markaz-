@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ShieldAlert, 
@@ -307,25 +307,6 @@ export const AntiCorruption: React.FC = () => {
         {/* TAB 1: OVERVIEW & POLICY */}
         {activeTab === 'overview' && (
           <div className="space-y-8 animate-in fade-in duration-300">
-            {/* Zero Tolerance Banner */}
-            <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-red-50 via-amber-50 to-orange-50 border border-red-200/70 shadow-sm flex flex-col md:flex-row items-center gap-6">
-              <div className="w-16 h-16 rounded-2xl bg-red-600 text-white flex items-center justify-center shrink-0 shadow-lg shadow-red-600/30">
-                <AlertTriangle size={32} />
-              </div>
-              <div className="flex-1 text-center md:text-left">
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900">
-                  {lang === 'ru' ? 'Принцип нулевой терпимости (Zero Tolerance)' : lang === 'en' ? 'Zero Tolerance Principle' : '«Nol toqat» (Zero Tolerance) tamoyili'}
-                </h3>
-                <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed font-medium">
-                  {lang === 'ru'
-                    ? 'Центр категорически не приемлет любые формы коррупции, взяточничества, конфликта интересов и вымогательства при приёме, обучении, аттестации слушателей и выдаче сертификатов.'
-                    : lang === 'en'
-                    ? 'The Center strictly rejects all forms of corruption, bribery, conflicts of interest, and extortion during admission, training, testing, and certificate issuance.'
-                    : 'Markaz qayta tayyorlash va malaka oshirish kurslariga qabul, dars jarayonlari, test sinovlari hamda sertifikat berishda korrupsiya, tamagirlik, tanish-bilishchilik va manfaatlar to‘qnashuvining har qanday shaklini qat’iyan rad etadi.'}
-                </p>
-              </div>
-            </div>
-
             {/* Intro Content */}
             <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-sm">
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 pb-3 border-b border-slate-100 flex items-center gap-2.5">
