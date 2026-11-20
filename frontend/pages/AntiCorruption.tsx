@@ -27,11 +27,12 @@ import {
   Images,
   ChevronLeft,
   ChevronRight,
-  Megaphone
+  Megaphone,
+  ArrowLeft
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
-import { sanitizeHtml } from '../utils';
+import { sanitizeHtml, stripHtml } from '../utils';
 import { AntiCorruptionPost } from '../types';
 import { BackendAPI } from '../services/backend';
 import { ImageModal } from '../components/ImageModal';
@@ -275,58 +276,36 @@ export const AntiCorruption: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 text-white py-16 lg:py-24">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/20 text-blue-300 text-xs sm:text-sm font-semibold mb-6 border border-blue-400/30 backdrop-blur-sm">
-              <ShieldCheck size={16} className="text-amber-400" />
-              <span>{lang === 'ru' ? 'Честность и прозрачность' : lang === 'en' ? 'Integrity and Transparency' : 'Halollik va Shaffoflik'}</span>
-            </div>
-            
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
-              {pageTitle}
-            </h1>
-
-            <p className="text-slate-300 text-base sm:text-lg lg:text-xl font-normal leading-relaxed max-w-3xl mx-auto">
-              {lang === 'ru'
-                ? 'Система мер по предупреждению и противодействию коррупции в Центре переподготовки и повышения квалификации при Академии художеств Узбекистана.'
-                : lang === 'en'
-                ? 'System of comprehensive measures for the prevention and combat of corruption at the Center under the Academy of Arts of Uzbekistan.'
-                : 'O‘zbekiston Badiiy akademiyasi huzuridagi Markazda korrupsiyaviy holatlarning har qanday ko‘rinishiga nisbatan murosasiz muhitni ta’minlash tizimi.'}
-            </p>
-
-            {/* Quick Hotline Pill */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <a
-                href={`tel:${hotline.replace(/[^0-9+]/g, '')}`}
-                className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm sm:text-base shadow-lg shadow-amber-500/25 transition-all transform hover:-translate-y-0.5"
-              >
-                <PhoneCall size={18} />
-                <span>{lang === 'ru' ? 'Горячая линия' : lang === 'en' ? 'Hotline' : 'Ishonch telefoni'}: {hotline}</span>
-              </a>
-
-              <Link
-                to="/virtual-qabulxona/murojaat"
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm sm:text-base border border-white/20 backdrop-blur-sm transition-all"
-              >
-                <Send size={18} className="text-blue-400" />
-                <span>{lang === 'ru' ? 'Сообщить о факте коррупции' : lang === 'en' ? 'Report a violation' : 'Korrupsiya haqida xabar berish'}</span>
-              </Link>
-            </div>
-          </div>
+      <div className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-900 text-white py-14">
+        <div className="container mx-auto px-4 sm:px-6">
+          <Link to="/" className="inline-flex items-center gap-2 text-blue-200 hover:text-white mb-5 transition-colors text-sm font-medium">
+            <ArrowLeft size={16} /> {t('departments.back', 'Bosh sahifaga qaytish')}
+          </Link>
+          <span className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-2 block">
+            {lang === 'ru' ? 'Комплаенс-контроль и прозрачность' : lang === 'en' ? 'Compliance Control & Transparency' : 'Komplayens-nazorat va ochiqlik'}
+          </span>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
+            {pageTitle}
+          </h1>
+          <p className="text-slate-300 text-base md:text-lg leading-relaxed max-w-3xl">
+            {lang === 'ru'
+              ? 'Система мер по предупреждению и противодействию коррупции в Центре переподготовки и повышения квалификации при Академии художеств Узбекистана.'
+              : lang === 'en'
+              ? 'System of comprehensive measures for the prevention and combat of corruption at the Center under the Academy of Arts of Uzbekistan.'
+              : 'O‘zbekiston Badiiy akademiyasi huzuridagi Markazda korrupsiyaviy holatlarning oldini olish va qonun ustuvorligini ta’minlash bo‘yicha ma’lumotlar.'}
+          </p>
         </div>
-      </section>
+      </div>
 
       {/* Navigation Tabs */}
-      <div className="sticky top-0 z-30 bg-white border-b border-slate-200 shadow-xs">
-        <div className="container mx-auto px-2 sm:px-6">
-          <div className="flex justify-start sm:justify-center lg:justify-start gap-1.5 sm:gap-2 overflow-x-auto py-2.5 sm:py-3 no-scrollbar px-1">
+      <div className="sticky top-0 z-20 bg-white border-b border-slate-200">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex items-center gap-2 overflow-x-auto py-3 no-scrollbar">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-2 ${
                 activeTab === 'overview'
-                  ? 'bg-blue-900 text-white shadow-md shadow-blue-900/20'
+                  ? 'bg-blue-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
@@ -336,9 +315,9 @@ export const AntiCorruption: React.FC = () => {
 
             <button
               onClick={() => setActiveTab('posts')}
-              className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-2 ${
                 activeTab === 'posts'
-                  ? 'bg-blue-900 text-white shadow-md shadow-blue-900/20'
+                  ? 'bg-blue-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
@@ -351,9 +330,9 @@ export const AntiCorruption: React.FC = () => {
 
             <button
               onClick={() => setActiveTab('documents')}
-              className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-2 ${
                 activeTab === 'documents'
-                  ? 'bg-blue-900 text-white shadow-md shadow-blue-900/20'
+                  ? 'bg-blue-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
@@ -366,9 +345,9 @@ export const AntiCorruption: React.FC = () => {
 
             <button
               onClick={() => setActiveTab('contact')}
-              className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-2 ${
                 activeTab === 'contact'
-                  ? 'bg-blue-900 text-white shadow-md shadow-blue-900/20'
+                  ? 'bg-blue-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
@@ -380,19 +359,18 @@ export const AntiCorruption: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="container mx-auto px-4 sm:px-6 py-10 max-w-6xl">
+      <div className="container mx-auto px-4 sm:px-6 py-10">
         {/* TAB 1: OVERVIEW & POLICY */}
         {activeTab === 'overview' && (
-          <div className="space-y-8 animate-in fade-in duration-300">
-            {/* Intro Content */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-sm">
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 pb-3 border-b border-slate-100 flex items-center gap-2.5">
-                <ShieldAlert className="text-blue-700" size={24} />
-                <span>{lang === 'ru' ? 'Антикоррупционная политика Центра' : lang === 'en' ? 'Center Anti-Corruption Policy' : 'Markazning korrupsiyaga qarshi siyosati'}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left 2 Columns: Policy & Goals */}
+            <div className="lg:col-span-2 bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-6 border-l-4 border-blue-800 pl-4">
+                {lang === 'ru' ? 'Антикоррупционная политика Центра' : lang === 'en' ? 'Center Anti-Corruption Policy' : 'Markazning korrupsiyaga qarshi siyosati'}
               </h2>
 
               <div 
-                className="prose prose-slate max-w-none text-slate-700 leading-relaxed text-base"
+                className="prose prose-slate max-w-none text-slate-700 leading-relaxed text-base [&>p]:mb-4"
                 dangerouslySetInnerHTML={{ 
                   __html: sanitizeHtml(getLoc(content, 'intro_text') || (content?.intro_text || '')) 
                 }}
@@ -401,15 +379,16 @@ export const AntiCorruption: React.FC = () => {
               {/* Policy Goals */}
               {((content && getLoc(content, 'policy_goals')) || content?.policy_goals) && (
                 <div className="mt-8 pt-6 border-t border-slate-100">
-                  <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2 text-blue-900">
-                    <CheckCircle2 className="text-emerald-600" size={20} />
-                    <span>{lang === 'ru' ? 'Основные цели и задачи' : lang === 'en' ? 'Core Objectives and Tasks' : 'Asosiy maqsad va vazifalar'}</span>
+                  <h3 className="text-lg font-bold text-slate-900 mb-4">
+                    {lang === 'ru' ? 'Основные задачи' : lang === 'en' ? 'Core Tasks' : 'Asosiy maqsad va vazifalar'}
                   </h3>
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-1 gap-3">
                     {(getLoc(content, 'policy_goals') || content?.policy_goals || '').split(/\r?\n/).filter(line => line.trim()).map((goal, idx) => (
-                      <div key={idx} className="flex items-start gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-700 text-sm sm:text-base font-medium">
-                        <span className="w-2 h-2 rounded-full bg-blue-600 mt-2 shrink-0" />
-                        <span>{goal.replace(/^•\s*/, '')}</span>
+                      <div key={idx} className="flex items-start gap-3.5 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-slate-700 text-sm sm:text-base font-medium">
+                        <span className="w-7 h-7 rounded-lg bg-blue-900 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                          {idx + 1}
+                        </span>
+                        <span className="leading-relaxed">{goal.replace(/^•\s*/, '')}</span>
                       </div>
                     ))}
                   </div>
@@ -417,49 +396,79 @@ export const AntiCorruption: React.FC = () => {
               )}
             </div>
 
-            {/* Compliance Officer Card */}
-            {content?.officer_name && (
-              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-sm">
-                <h3 className="text-lg sm:text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                  <UserCheck className="text-indigo-600" size={22} />
-                  <span>{lang === 'ru' ? 'Ответственное лицо по комплаенс-контролю' : lang === 'en' ? 'Compliance Control Officer' : 'Komplayens-nazorat bo‘yicha mas’ul xodim'}</span>
-                </h3>
+            {/* Right Sidebar: Compliance Officer & Direct Contacts */}
+            <div className="space-y-6">
+              {content?.officer_name && (
+                <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs">
+                  <h3 className="text-base font-bold text-slate-900 mb-4 pb-3 border-b border-slate-100">
+                    {lang === 'ru' ? 'Ответственная служба' : lang === 'en' ? 'Compliance Control' : 'Mas’ul tuzilma'}
+                  </h3>
 
-                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-                  {content.officer_photo_url ? (
-                    <img
-                      src={content.officer_photo_url}
-                      alt={getLoc(content, 'officer_name')}
-                      className="w-32 h-36 object-cover rounded-2xl border border-slate-200 shadow-sm shrink-0"
-                    />
-                  ) : (
-                    <div className="w-28 h-28 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
-                      <UserCheck size={44} />
+                  <div className="space-y-4">
+                    {content.officer_photo_url && (
+                      <img
+                        src={content.officer_photo_url}
+                        alt={getLoc(content, 'officer_name')}
+                        className="w-24 h-28 object-cover rounded-xl border border-slate-200 shadow-xs"
+                      />
+                    )}
+                    <div>
+                      <p className="text-base font-bold text-slate-900">
+                        {getLoc(content, 'officer_name') || content.officer_name}
+                      </p>
+                      <p className="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+                        {getLoc(content, 'officer_position') || content.officer_position}
+                      </p>
                     </div>
-                  )}
 
-                  <div className="flex-1 text-center sm:text-left space-y-2">
-                    <h4 className="text-lg font-bold text-slate-900">
-                      {getLoc(content, 'officer_name') || content.officer_name}
-                    </h4>
-                    <p className="text-sm font-medium text-slate-600">
-                      {getLoc(content, 'officer_position') || content.officer_position}
-                    </p>
-
-                    <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-slate-600">
-                      <div className="flex items-center gap-2 justify-center sm:justify-start">
-                        <Phone size={16} className="text-blue-600 shrink-0" />
-                        <span>{officerPhone}</span>
+                    <div className="pt-3 border-t border-slate-100 space-y-2.5 text-sm text-slate-700">
+                      <div className="flex items-center gap-2.5">
+                        <Phone size={15} className="text-blue-800 shrink-0" />
+                        <a href={`tel:${officerPhone.replace(/[^0-9+]/g, '')}`} className="font-semibold hover:text-blue-800">
+                          {officerPhone}
+                        </a>
                       </div>
-                      <div className="flex items-center gap-2 justify-center sm:justify-start">
-                        <Clock size={16} className="text-blue-600 shrink-0" />
+                      <div className="flex items-center gap-2.5">
+                        <Clock size={15} className="text-blue-800 shrink-0" />
                         <span>{content.reception_hours || 'Dushanba - Juma: 09:00 - 17:00'}</span>
                       </div>
                     </div>
                   </div>
                 </div>
+              )}
+
+              {/* Quick Reporting Box */}
+              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs space-y-4">
+                <h3 className="text-base font-bold text-slate-900 pb-3 border-b border-slate-100">
+                  {lang === 'ru' ? 'Сообщить о правонарушении' : lang === 'en' ? 'Report a Violation' : 'Tezkor aloqa kanallari'}
+                </h3>
+                <div className="space-y-3 text-sm">
+                  <div className="flex items-center justify-between py-1.5 border-b border-slate-100">
+                    <span className="text-slate-500">{lang === 'ru' ? 'Телефон Центра:' : lang === 'en' ? 'Center Hotline:' : 'Ishonch telefoni:'}</span>
+                    <a href={`tel:${hotline.replace(/[^0-9+]/g, '')}`} className="font-bold text-slate-900 hover:text-blue-800">{hotline}</a>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 border-b border-slate-100">
+                    <span className="text-slate-500">{lang === 'ru' ? 'Агентство (Колл-центр):' : lang === 'en' ? 'Agency Call Center:' : 'Agentlik qisqa raqami:'}</span>
+                    <a href={`tel:${agencyHotline}`} className="font-bold text-slate-900 hover:text-blue-800">{agencyHotline}</a>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5 border-b border-slate-100">
+                    <span className="text-slate-500">Telegram bot:</span>
+                    <a href={telegramBot} target="_blank" rel="noopener noreferrer" className="font-bold text-blue-700 hover:underline">@uzbamalakamakebot</a>
+                  </div>
+                  <div className="flex items-center justify-between py-1.5">
+                    <span className="text-slate-500">Email:</span>
+                    <a href={`mailto:${email}`} className="font-semibold text-slate-800 hover:text-blue-800 truncate max-w-[180px]">{email}</a>
+                  </div>
+                </div>
+                <Link
+                  to="/virtual-qabulxona/murojaat"
+                  className="mt-2 w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs sm:text-sm transition-colors"
+                >
+                  <Send size={15} />
+                  <span>{lang === 'ru' ? 'Отправить обращение' : lang === 'en' ? 'Submit a Report' : 'Onlayn murojaat yuborish'}</span>
+                </Link>
               </div>
-            )}
+            </div>
           </div>
         )}
 
@@ -562,7 +571,7 @@ export const AntiCorruption: React.FC = () => {
 
                           {postContent && (
                             <p className="mt-2 text-xs text-slate-600 line-clamp-3 leading-relaxed">
-                              {postContent}
+                              {stripHtml(postContent)}
                             </p>
                           )}
                         </div>
@@ -754,69 +763,69 @@ export const AntiCorruption: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 3: CONTACT & REPORTING */}
+        {/* TAB 4: CONTACT & REPORTING */}
         {activeTab === 'contact' && (
-          <div className="space-y-8 animate-in fade-in duration-300">
+          <div className="space-y-6">
             {/* Reporting Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Hotline 1 */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs text-center flex flex-col justify-between">
+              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col justify-between">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center mx-auto mb-4">
-                    <PhoneCall size={28} />
+                  <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200/80 text-blue-800 flex items-center justify-center mb-4">
+                    <PhoneCall size={22} />
                   </div>
                   <h4 className="text-base font-bold text-slate-900 mb-1">
                     {lang === 'ru' ? 'Горячая линия Центра' : lang === 'en' ? 'Center Hotline' : 'Markaz Ishonch telefoni'}
                   </h4>
-                  <p className="text-xs text-slate-500 mb-4">
-                    {lang === 'ru' ? 'Прямой телефон доверия' : lang === 'en' ? 'Direct reporting line' : 'To‘g‘ridan-to‘g‘ri ishonch raqami'}
+                  <p className="text-xs text-slate-500 mb-5">
+                    {lang === 'ru' ? 'Прямой телефон доверия' : lang === 'en' ? 'Direct reporting line' : 'To‘g‘ridan-to‘g‘ri ishonch raqami (Dushanba - Juma, 09:00 - 17:00)'}
                   </p>
                 </div>
                 <a
                   href={`tel:${hotline.replace(/[^0-9+]/g, '')}`}
-                  className="text-lg font-black text-blue-900 hover:text-blue-700 transition-colors py-2 px-3 rounded-xl bg-slate-50 hover:bg-blue-50"
+                  className="text-lg font-extrabold text-slate-900 hover:text-blue-800 transition-colors py-2.5 px-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 text-center"
                 >
                   {hotline}
                 </a>
               </div>
 
               {/* Agency Hotline 1253 */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs text-center flex flex-col justify-between">
+              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col justify-between">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center mx-auto mb-4">
-                    <ShieldAlert size={28} />
+                  <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-800 flex items-center justify-center mb-4">
+                    <ShieldAlert size={22} />
                   </div>
                   <h4 className="text-base font-bold text-slate-900 mb-1">
-                    {lang === 'ru' ? 'Call-центр Агентства' : lang === 'en' ? 'Agency Call Center' : 'Korrupsiyaga qarshi agentlik'}
+                    {lang === 'ru' ? 'Call-центр Агентства' : lang === 'en' ? 'Agency Call Center' : 'Korrupsiyaga qarshi kurashish agentligi'}
                   </h4>
-                  <p className="text-xs text-slate-500 mb-4">
-                    {lang === 'ru' ? 'Республиканский колл-центр' : lang === 'en' ? 'Republican national call center' : 'Respublika qisqa raqami'}
+                  <p className="text-xs text-slate-500 mb-5">
+                    {lang === 'ru' ? 'Республиканский колл-центр' : lang === 'en' ? 'Republican national call center' : 'Respublika yagona qisqa raqami (24/7)'}
                   </p>
                 </div>
                 <a
                   href={`tel:${agencyHotline}`}
-                  className="text-2xl font-black text-amber-600 hover:text-amber-700 transition-colors py-2 px-3 rounded-xl bg-amber-50"
+                  className="text-lg font-extrabold text-slate-900 hover:text-blue-800 transition-colors py-2.5 px-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 text-center"
                 >
                   {agencyHotline}
                 </a>
               </div>
 
               {/* Online Form Button */}
-              <div className="bg-white rounded-2xl p-6 border border-slate-200/80 shadow-xs text-center flex flex-col justify-between">
+              <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col justify-between">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center mx-auto mb-4">
-                    <MessageSquare size={28} />
+                  <div className="w-11 h-11 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 flex items-center justify-center mb-4">
+                    <MessageSquare size={22} />
                   </div>
                   <h4 className="text-base font-bold text-slate-900 mb-1">
-                    {lang === 'ru' ? 'Онлайн обращение' : lang === 'en' ? 'Online Reporting' : 'Onlayn murojaat'}
+                    {lang === 'ru' ? 'Онлайн обращение' : lang === 'en' ? 'Online Reporting' : 'Onlayn murojaat yuborish'}
                   </h4>
-                  <p className="text-xs text-slate-500 mb-4">
-                    {lang === 'ru' ? 'Через виртуальную приёмную' : lang === 'en' ? 'Via Virtual Reception' : 'Virtual qabulxona orqali ariza'}
+                  <p className="text-xs text-slate-500 mb-5">
+                    {lang === 'ru' ? 'Через виртуальную приёмную' : lang === 'en' ? 'Via Virtual Reception' : 'Virtual qabulxona orqali elektron murojaat'}
                   </p>
                 </div>
                 <Link
                   to="/virtual-qabulxona/murojaat"
-                  className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-sm shadow-md shadow-blue-900/20 transition-all"
+                  className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-sm transition-colors"
                 >
                   <span>Murojaat yuborish</span>
                   <ArrowRight size={16} />
@@ -824,18 +833,18 @@ export const AntiCorruption: React.FC = () => {
               </div>
             </div>
 
-            {/* Additional Contact Channels Banner */}
-            <div className="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl p-6 sm:p-8 text-white flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-2 text-center md:text-left">
-                <h3 className="text-xl font-bold">
-                  {lang === 'ru' ? 'Конфиденциальность гарантируется' : lang === 'en' ? 'Confidentiality Guaranteed' : 'Murojaatchi shaxsi sir saqlanadi'}
+            {/* Additional Contact Channels & Legal Guarantee Notice */}
+            <div className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="space-y-2">
+                <h3 className="text-lg font-bold text-slate-900 border-l-4 border-blue-800 pl-3">
+                  {lang === 'ru' ? 'Конфиденциальность гарантируется законом' : lang === 'en' ? 'Confidentiality Guaranteed by Law' : 'Murojaatchi shaxsi sir saqlanishi qonun bilan kafolatlanadi'}
                 </h3>
-                <p className="text-slate-300 text-sm max-w-xl leading-relaxed">
+                <p className="text-slate-600 text-sm max-w-2xl leading-relaxed">
                   {lang === 'ru'
-                    ? 'В соответствии с законодательством Республики Узбекистан, лицам, сообщившим о фактах коррупции, гарантируется правовая защита и государственная поддержка.'
+                    ? 'В соответствии со статьей 28 Закона Республики Узбекистан «О противодействии коррупции», лицам, сообщившим о фактах коррупции, гарантируется правовая защита и конфиденциальность.'
                     : lang === 'en'
-                    ? 'In accordance with national legislation, individuals reporting corruption violations are guaranteed legal protection and confidentiality.'
-                    : 'O‘zbekiston Respublikasining «Korrupsiyaga qarshi kurashish to‘g‘risida»gi Qonuniga muvofiq, korrupsiyaviy huquqbuzarliklar haqida xabar bergan shaxslarning xavfsizligi va huquqiy himoyasi qonun bilan kafolatlanadi.'}
+                    ? 'In accordance with Article 28 of the Law on Combating Corruption, individuals reporting corruption violations are guaranteed legal protection and confidentiality.'
+                    : 'O‘zbekiston Respublikasining «Korrupsiyaga qarshi kurashish to‘g‘risida»gi Qonuni 28-moddasiga muvofiq, korrupsiyaga oid huquqbuzarliklar to‘g‘risida xabar bergan shaxslar davlat himoyasida bo‘ladi va ularning shaxsiga doir ma’lumotlar sir saqlanadi.'}
                 </p>
               </div>
 
@@ -845,18 +854,18 @@ export const AntiCorruption: React.FC = () => {
                     href={telegramBot}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold text-sm shadow-sm transition-all"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-xs sm:text-sm transition-colors"
                   >
-                    <Send size={16} />
+                    <Send size={15} />
                     <span>Telegram Bot</span>
                   </a>
                 )}
 
                 <a
                   href={`mailto:${email}`}
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/20 transition-all"
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm border border-slate-200 transition-colors"
                 >
-                  <Mail size={16} />
+                  <Mail size={15} />
                   <span>{email}</span>
                 </a>
               </div>
@@ -868,76 +877,47 @@ export const AntiCorruption: React.FC = () => {
       {/* Internal Document Full-Text Modal */}
       {activeInternalDoc && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 bg-slate-900/70 backdrop-blur-sm"
           onClick={() => setActiveInternalDoc(null)}
         >
           <div
-            className="bg-white w-full max-w-4xl max-h-[92vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+            className="bg-white w-full max-w-4xl max-h-[92vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 bg-slate-50 shrink-0">
-              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 pr-2">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
-                  <BookOpen size={18} />
-                </div>
-                <div className="min-w-0">
-                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                    {activeInternalDoc.document_number || 'Ichki nizom'}
+            <div className="flex justify-between items-center px-5 sm:px-6 py-4 border-b border-slate-200 bg-slate-50 shrink-0">
+              <div className="min-w-0 pr-3">
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <span className="font-bold uppercase tracking-wider text-blue-800">
+                    {activeInternalDoc.document_number || 'Ichki hujjat'}
                   </span>
-                  <h3 className="font-bold text-slate-900 text-sm sm:text-lg truncate mt-0.5">
-                    {getLoc(activeInternalDoc, 'title') || activeInternalDoc.title}
-                  </h3>
+                  <span>•</span>
+                  <span>{activeInternalDoc.date || '2025'}</span>
                 </div>
+                <h3 className="font-bold text-slate-900 text-base sm:text-lg truncate mt-0.5">
+                  {getLoc(activeInternalDoc, 'title') || activeInternalDoc.title}
+                </h3>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => setActiveInternalDoc(null)}
-                  className="p-2 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors text-slate-500 cursor-pointer"
-                  title="Yopish"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+              <button
+                onClick={() => setActiveInternalDoc(null)}
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-200/70 text-slate-600 hover:bg-slate-300 hover:text-slate-900 transition-colors shrink-0 cursor-pointer"
+                title="Yopish"
+              >
+                <X size={20} />
+              </button>
             </div>
 
             {/* Modal Content - Scrollable Text */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-4 sm:space-y-6 bg-white text-slate-800">
-              {/* Center Official Header */}
-              <div className="text-center pb-6 border-b border-slate-100">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-900 text-xs font-bold mb-3 border border-blue-100">
-                  <ShieldCheck size={14} className="text-blue-700" />
-                  <span>O‘zbekiston Badiiy akademiyasi huzuridagi Markaz</span>
-                </div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug max-w-2xl mx-auto">
-                  {getLoc(activeInternalDoc, 'title') || activeInternalDoc.title}
-                </h2>
-                <p className="text-xs text-slate-500 mt-2 flex items-center justify-center gap-1">
-                  <Clock size={13} />
-                  <span>Qabul qilingan sana: {activeInternalDoc.date || '2025'}</span>
-                </p>
-              </div>
-
-              {/* Text Body */}
+            <div className="flex-1 overflow-y-auto p-5 sm:p-8 bg-white text-slate-800">
               <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed whitespace-pre-line text-slate-700 font-normal">
                 {getDocTextContent(activeInternalDoc)}
-              </div>
-
-              {/* Official Compliance Footer Box */}
-              <div className="mt-8 p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-                <div className="flex items-center gap-2">
-                  <ShieldAlert size={18} className="text-amber-600 shrink-0" />
-                  <span>Ushbu hujjat ijrosi komplayens-nazorat xizmati tomonidan qat'iy nazorat qilinadi.</span>
-                </div>
-                <div className="font-semibold text-slate-800">
-                  Ishonch telefoni: {hotline}
-                </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-end shrink-0">
+            <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0 text-xs text-slate-600">
+              <span>Ishonch telefoni: <strong className="text-slate-900">{hotline}</strong></span>
               <button
                 onClick={() => setActiveInternalDoc(null)}
                 className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition-colors cursor-pointer"
@@ -952,50 +932,43 @@ export const AntiCorruption: React.FC = () => {
       {/* Post Detail Modal */}
       {selectedPost && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 bg-slate-900/70 backdrop-blur-sm"
           onClick={() => setSelectedPost(null)}
         >
           <div
-            className="bg-white w-full max-w-4xl max-h-[92vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+            className="bg-white w-full max-w-4xl max-h-[92vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 bg-slate-50 shrink-0">
-              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 pr-2">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
-                  <Megaphone size={18} />
+            <div className="flex justify-between items-center px-5 sm:px-6 py-4 border-b border-slate-200 bg-slate-50 shrink-0">
+              <div className="min-w-0 pr-3">
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <span className="flex items-center gap-1 font-semibold text-blue-800">
+                    <Calendar size={13} />
+                    {selectedPost.date || '2025'}
+                  </span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <Eye size={13} />
+                    {(selectedPost.views_count || 0) + 1} {lang === 'ru' ? 'просмотров' : lang === 'en' ? 'views' : 'ko‘rildi'}
+                  </span>
                 </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
-                    <span className="flex items-center gap-1 font-semibold text-blue-700">
-                      <Calendar size={13} />
-                      {selectedPost.date || '2025'}
-                    </span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1">
-                      <Eye size={13} />
-                      {(selectedPost.views_count || 0) + 1} {lang === 'ru' ? 'просмотров' : lang === 'en' ? 'views' : 'ko‘rildi'}
-                    </span>
-                  </div>
-                  <h3 className="font-bold text-slate-900 text-sm sm:text-base lg:text-lg truncate mt-0.5">
-                    {getLoc(selectedPost, 'title') || selectedPost.title}
-                  </h3>
-                </div>
+                <h3 className="font-bold text-slate-900 text-base sm:text-lg truncate mt-0.5">
+                  {getLoc(selectedPost, 'title') || selectedPost.title}
+                </h3>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => setSelectedPost(null)}
-                  className="p-2 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors text-slate-500 cursor-pointer"
-                  title="Yopish"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+              <button
+                onClick={() => setSelectedPost(null)}
+                className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-200/70 text-slate-600 hover:bg-slate-300 hover:text-slate-900 transition-colors shrink-0 cursor-pointer"
+                title="Yopish"
+              >
+                <X size={20} />
+              </button>
             </div>
 
             {/* Modal Body */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 bg-white text-slate-800">
+            <div className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-6 bg-white text-slate-800">
               {/* Media Carousel / Gallery */}
               {(() => {
                 const modalImages = getPostAllImages(selectedPost);
@@ -1004,7 +977,7 @@ export const AntiCorruption: React.FC = () => {
 
                 return (
                   <div className="space-y-3">
-                    <div className="relative rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center max-h-[460px] aspect-video sm:aspect-[16/10] w-full border border-slate-200 shadow-sm">
+                    <div className="relative rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center max-h-[460px] aspect-video sm:aspect-[16/10] w-full border border-slate-200 shadow-xs">
                       <img
                         src={activeImg}
                         alt={getLoc(selectedPost, 'title')}
@@ -1047,7 +1020,7 @@ export const AntiCorruption: React.FC = () => {
                             key={i}
                             onClick={() => setCurrentModalImgIdx(i)}
                             className={`w-16 h-14 sm:w-20 sm:h-16 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
-                              currentModalImgIdx === i ? 'border-blue-600 scale-105 shadow-sm' : 'border-slate-200 opacity-70 hover:opacity-100'
+                              currentModalImgIdx === i ? 'border-blue-700 shadow-xs' : 'border-slate-200 opacity-70 hover:opacity-100'
                             }`}
                           >
                             <img src={imgUrl} alt="" className="w-full h-full object-cover" />
@@ -1059,46 +1032,34 @@ export const AntiCorruption: React.FC = () => {
                 );
               })()}
 
-              {/* Title & Date */}
-              <div>
-                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
-                  {getLoc(selectedPost, 'title') || selectedPost.title}
-                </h2>
-                <div className="mt-2 flex items-center gap-3 text-xs text-slate-500 font-medium">
-                  <span className="flex items-center gap-1.5 text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md">
-                    <Calendar size={13} />
-                    {selectedPost.date || '2025'}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <Eye size={13} />
-                    {(selectedPost.views_count || 0) + 1} {lang === 'ru' ? 'просмотров' : lang === 'en' ? 'views' : 'ko‘rildi'}
-                  </span>
-                </div>
-              </div>
+              {/* Title */}
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+                {getLoc(selectedPost, 'title') || selectedPost.title}
+              </h2>
 
               {/* Body Content */}
-              <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed whitespace-pre-line text-slate-700 font-normal">
-                {getLoc(selectedPost, 'content') || selectedPost.content}
-              </div>
-
-              {/* Hotline Box */}
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-                <div className="flex items-center gap-2">
-                  <ShieldCheck size={18} className="text-emerald-600 shrink-0" />
-                  <span>Markazda korrupsiyaviy holatlarga nisbatan murosasiz munosabat amal qiladi.</span>
-                </div>
-                <div className="font-semibold text-slate-800">
-                  Ishonch telefoni: {hotline}
-                </div>
-              </div>
+              {(() => {
+                const rawBody = getLoc(selectedPost, 'content') || selectedPost.content || '';
+                const hasHtml = /<[a-z][\s\S]*>/i.test(rawBody);
+                return hasHtml ? (
+                  <div
+                    className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed text-slate-700 [&>p]:mb-4"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(rawBody) }}
+                  />
+                ) : (
+                  <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed whitespace-pre-line text-slate-700">
+                    {rawBody}
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+            <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
               <Link
                 to="/virtual-qabulxona/murojaat"
                 onClick={() => setSelectedPost(null)}
-                className="inline-flex items-center gap-2 text-xs font-bold text-blue-700 hover:text-blue-900"
+                className="inline-flex items-center gap-2 text-xs font-bold text-blue-800 hover:underline"
               >
                 <Send size={14} />
                 <span>Murojaat yuborish</span>
