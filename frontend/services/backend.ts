@@ -89,8 +89,16 @@ function resolveApiBaseUrls() {
 
   // Always prefer same-origin first on production to avoid www vs non-www CORS preflight failures
   candidates.add(`${origin}/api`);
-  if (configured) candidates.add(configured);
-  if (cached && cached !== configured) candidates.add(cached);
+
+  const isAcceptableProdUrl = (url?: string | null): url is string => {
+    if (!url) return false;
+    if (url.includes('localhost') || url.includes('127.0.0.1')) return false;
+    if (protocol === 'https:' && url.startsWith('http://')) return false;
+    return true;
+  };
+
+  if (isAcceptableProdUrl(configured)) candidates.add(configured);
+  if (isAcceptableProdUrl(cached) && cached !== configured) candidates.add(cached);
 
   const altHostnames = new Set([hostname]);
   if (hostname.startsWith('www.')) altHostnames.add(hostname.replace(/^www\./, ''));
@@ -98,7 +106,9 @@ function resolveApiBaseUrls() {
 
   for (const host of altHostnames) {
     candidates.add(`https://${host}/api`);
-    candidates.add(`http://${host}/api`);
+    if (protocol !== 'https:') {
+      candidates.add(`http://${host}/api`);
+    }
   }
   candidates.add('https://uzbamalaka.uz/api');
   candidates.add('https://www.uzbamalaka.uz/api');
@@ -712,16 +722,12 @@ export const BackendAPI = {
             const data = await res.json();
             return data.views_count;
           }
-        } catch (e) {
-          console.warn(`Failed on ${baseUrl}`, e);
-        }
+        } catch {}
       }
       return null;
     },
 
-  
     async incrementProjectView(projectId: number) {
-      let successfulBaseUrl: string | null = null;
       for (const baseUrl of getApiBaseUrls()) {
         try {
           const res = await fetch(`${baseUrl}/projects/${projectId}/view/`, { method: 'POST' });
@@ -729,11 +735,9 @@ export const BackendAPI = {
             const data = await res.json();
             return data.views_count;
           }
-        } catch (e) {
-          console.warn(`Failed on ${baseUrl}`, e);
-        }
+        } catch {}
       }
-      throw new Error('Failed to increment view');
+      return null;
     },
 
     async incrementNewsView(newsId: string | number) {
@@ -744,11 +748,9 @@ export const BackendAPI = {
             const data = await res.json();
             return data.views_count;
           }
-        } catch (e) {
-          console.warn(`Failed on ${baseUrl}`, e);
-        }
+        } catch {}
       }
-      throw new Error('Failed to increment news view');
+      return null;
     },
 
     async incrementDepartmentPostView(postId: string | number) {
@@ -759,11 +761,9 @@ export const BackendAPI = {
             const data = await res.json();
             return data.views_count;
           }
-        } catch (e) {
-          console.warn(`Failed on ${baseUrl}`, e);
-        }
+        } catch {}
       }
-      throw new Error('Failed to increment department post view');
+      return null;
     },
 
     async incrementProjectVote(projectId: number) {

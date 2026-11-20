@@ -58,10 +58,16 @@ const formatDate = (dateStr: string | undefined, lang: string) => {
 interface CountryPartnerInfo {
   id?: string | number;
   name: string;
+  nameRu?: string;
+  nameEn?: string;
   originalName?: string;
   country: string;
   city?: string;
+  cityRu?: string;
+  cityEn?: string;
   description: string;
+  descriptionRu?: string;
+  descriptionEn?: string;
   pdfUrl?: string;
   thumbnailUrl?: string;
   departmentPostId?: number;
@@ -70,10 +76,16 @@ interface CountryPartnerInfo {
 interface CountryProjectInfo {
   id?: string | number;
   title: string;
+  titleRu?: string;
+  titleEn?: string;
   partner: string;
+  partnerRu?: string;
+  partnerEn?: string;
   status: 'completed' | 'ongoing' | 'planned';
   statusDisplay: string;
   description: string;
+  descriptionRu?: string;
+  descriptionEn?: string;
 }
 
 interface CountryDetailInfo {
@@ -97,10 +109,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'it-1',
         name: 'San’at va restavratsiya instituti – Palazzo Spinelli',
+        nameRu: 'Институт искусства и реставрации – Palazzo Spinelli',
+        nameEn: 'Institute for Art and Restoration – Palazzo Spinelli',
         originalName: 'Institute for Art and Restoration - Palazzo Spinelli',
         country: 'Italiya',
         city: 'Florensiya',
+        cityRu: 'Флоренция',
+        cityEn: 'Florence',
         description: 'Madaniy merosni saqlash, san’at asarlarini restavratsiya va konservatsiya qilish, professor-o‘qituvchilar hamda restavrator mutaxassislar malakasini oshirish bo‘yicha o‘zaro hamkorlik Memorandumi.',
+        descriptionRu: 'Меморандум о взаимном сотрудничестве в области сохранения культурного наследия, реставрации и консервации произведений искусства, а также повышения квалификации преподавателей и специалистов-реставраторов.',
+        descriptionEn: 'Memorandum of mutual cooperation on cultural heritage preservation, art restoration and conservation, and professional development of faculty and restoration specialists.',
         pdfUrl: '/media/uploads/memorandums/MoU_Italia.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_Italia_page1.jpg',
         departmentPostId: 4,
@@ -118,10 +136,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'cn-1',
         name: 'Hebei tasviriy san\'at akademiyasi',
+        nameRu: 'Хэбэйская академия изящных искусств',
+        nameEn: 'Hebei Academy of Fine Arts',
         originalName: 'Hebei Academy of Fine Arts',
         country: 'Xitoy',
         city: 'Xebey',
+        cityRu: 'Хэбэй',
+        cityEn: 'Hebei',
         description: 'Oʼzbekiston Badiiy akademiyasi huzuridagi Markaz hamda Xitoyning nufuzli Hebei tasviriy san\'at akademiyasi o\'rtasida xalqaro hamkorlik va akademik almashinuv Memorandumi.',
+        descriptionRu: 'Меморандум о международном сотрудничестве и академическом обмене между Центром при Академии художеств Узбекистана и Хэбэйской академией изящных искусств.',
+        descriptionEn: 'Memorandum on international cooperation and academic exchange between the Center under the Academy of Arts of Uzbekistan and Hebei Academy of Fine Arts.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_Hebei_FAA.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/Memorandum_Hebei_FAA_page1.jpg',
         departmentPostId: 3,
@@ -129,10 +153,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'cn-2',
         name: 'Xubey tasviriy san\'at instituti',
+        nameRu: 'Хубэйский институт изящных искусств',
+        nameEn: 'Hubei Institute of Fine Arts',
         originalName: 'Hubei Institute of Fine Arts',
         country: 'Xitoy',
         city: 'Uxan, Xubey',
+        cityRu: 'Ухань, Хубэй',
+        cityEn: 'Wuhan, Hubei',
         description: 'Tasviriy san\'at yo\'nalishlarida ta\'lim, ilmiy-ijodiy ko\'rgazmalar va professor-o\'qituvchilar stajirovkasini tashkil etish bo\'yicha hamkorlik Memorandumi.',
+        descriptionRu: 'Меморандум о сотрудничестве в области художественного образования, организации научно-творческих выставок и стажировок профессорско-преподавательского состава.',
+        descriptionEn: 'Memorandum of cooperation on fine arts education, joint academic and creative exhibitions, and faculty internships.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_HIFA.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/Memorandum_HIFA_page1.jpg',
         departmentPostId: 1,
@@ -140,10 +170,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'cn-3',
         name: 'Markaziy Osiyo savdo-iqtisodiyot Qo‘mitasi (CAETC)',
+        nameRu: 'Комитет торгово-экономического сотрудничества Центральной Азии (CAETC)',
+        nameEn: 'Central Asia Economic and Trade Committee (CAETC)',
         originalName: 'Central Asia Economic and Trade Committee (CAETC)',
         country: 'Xitoy',
         city: 'Pekin',
+        cityRu: 'Пекин',
+        cityEn: 'Beijing',
         description: 'Madaniy-gumanitar sohalarda hamkorlik, xalqaro san\'at ko\'rgazmalari va ta\'lim forumlarini o‘tkazish bo‘yicha Memorandum.',
+        descriptionRu: 'Меморандум о сотрудничестве в культурно-гуманитарной сфере, проведении международных художественных выставок и образовательных форумов.',
+        descriptionEn: 'Memorandum on cultural and humanitarian cooperation, international art exhibitions, and educational forums.',
         pdfUrl: '/media/uploads/memorandums/China_CAETC.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/China_CAETC_page1.jpg',
         departmentPostId: 16,
@@ -151,10 +187,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'cn-4',
         name: 'Lanzhou universiteti Uels kolleji San’at maktabi',
+        nameRu: 'Школа искусств Уэльского колледжа Университета Ланьчжоу',
+        nameEn: 'Lanzhou University Wales College Art School',
         originalName: 'Lanzhou University Wales College Art School',
         country: 'Xitoy',
         city: 'Lanchjou',
+        cityRu: 'Ланьчжоу',
+        cityEn: 'Lanzhou',
         description: 'San’at ta’limi, pedagog kadrlar malakasini oshirish va xalqaro san\'at amaliyotlarini yo‘lga qo‘yish bo‘yicha Memorandum.',
+        descriptionRu: 'Меморандум о развитии художественного образования, повышении квалификации педагогических кадров и организации международных творческих практик.',
+        descriptionEn: 'Memorandum on art education, professional development of educators, and international artistic exchange programs.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_LANJOU_UNIVERSITETI_UELS_KOLLEJI_SANAT_MAKTABI_(XITOY).pdf',
         thumbnailUrl: '/media/uploads/departmentpost/Memorandum_LANJOU_UNIVERSITETI_UELS_KOLLEJI_SANAT_MAKTABI_(XITOY)_page1.jpg',
         departmentPostId: 17,
@@ -164,34 +206,58 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'cn-p1',
         title: '“Sharq san’ati va estetik ta’lim markazi” qo‘shma platformasi',
+        titleRu: 'Совместная платформа «Центр восточного искусства и эстетического образования»',
+        titleEn: 'Joint Platform "Oriental Art and Aesthetic Education Center"',
         partner: 'Xubey tasviriy san’at instituti (Xitoy)',
+        partnerRu: 'Хубэйский институт изящных искусств (Китай)',
+        partnerEn: 'Hubei Institute of Fine Arts (China)',
         status: 'ongoing',
         statusDisplay: 'Jarayonda',
         description: 'O‘zbekiston va Xitoy o‘rtasida tasviriy san’at va estetik ta’limni rivojlantirishga qaratilgan doimiy qo‘shma platforma.',
+        descriptionRu: 'Постоянно действующая совместная платформа, направленная на развитие изобразительного искусства и эстетического образования между Узбекистаном и Китаем.',
+        descriptionEn: 'Permanent joint platform aimed at developing fine arts and aesthetic education between Uzbekistan and China.',
       },
       {
         id: 'cn-p2',
         title: '“Rangtasvir” yo‘nalishida xalqaro qo‘shma malaka oshirish kursi',
+        titleRu: 'Международный совместный курс повышения квалификации по направлению «Живопись»',
+        titleEn: 'International Joint Professional Development Course in Painting',
         partner: 'Xubey tasviriy san’at instituti (Xitoy)',
+        partnerRu: 'Хубэйский институт изящных искусств (Китай)',
+        partnerEn: 'Hubei Institute of Fine Arts (China)',
         status: 'ongoing',
         statusDisplay: 'Jarayonda',
         description: 'Pedagog kadrlar uchun akademik rangtasvir texnikalari bo‘yicha xalqaro mahorat darslari va malaka oshirish kursi.',
+        descriptionRu: 'Международные мастер-классы и курс повышения квалификации по техникам академической живописи для педагогических кадров.',
+        descriptionEn: 'International masterclasses and professional development course in academic painting techniques for art educators.',
       },
       {
         id: 'cn-p3',
         title: '“NEW SILK ROAD ART JOURNEY” xalqaro konferensiyasi va stajirovkasi',
+        titleRu: 'Международная конференция и стажировка «NEW SILK ROAD ART JOURNEY»',
+        titleEn: 'International Conference and Internship "NEW SILK ROAD ART JOURNEY"',
         partner: 'Xubey tasviriy san’at instituti (Xitoy)',
+        partnerRu: 'Хубэйский институт изящных искусств (Китай)',
+        partnerEn: 'Hubei Institute of Fine Arts (China)',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
         description: 'Ipak yo‘li bo‘ylab madaniy aloqalar, rassom-pedagoglar ishtirokidagi xalqaro konferensiya va ilmiy stajirovka dasturi.',
+        descriptionRu: 'Программа культурного обмена вдоль Шёлкового пути, международная конференция и научная стажировка с участием художников-педагогов.',
+        descriptionEn: 'Cultural exchange along the Silk Road featuring an international conference and academic internship for artist-educators.',
       },
       {
         id: 'cn-p4',
         title: '“O‘zbekiston milliy liboslar ko‘rgazmasi” (Xitoy)',
+        titleRu: '«Выставка национальных костюмов Узбекистана» (Китай)',
+        titleEn: '"Exhibition of National Costumes of Uzbekistan" (China)',
         partner: 'Xubey tasviriy san’at instituti (Xitoy)',
+        partnerRu: 'Хубэйский институт изящных искусств (Китай)',
+        partnerEn: 'Hubei Institute of Fine Arts (China)',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
         description: 'Xitoyda O‘zbekiston milliy liboslari, an’anaviy kashtachilik va amaliy san’at durdonalarining xalqaro ekspozitsiyasi.',
+        descriptionRu: 'Международная экспозиция национальных костюмов, традиционной вышивки и шедевров прикладного искусства Узбекистана в Китае.',
+        descriptionEn: 'International exposition of Uzbek national costumes, traditional embroidery, and applied art masterpieces in China.',
       },
     ],
   },
@@ -205,10 +271,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'ge-1',
         name: 'Batumi san’at ta’limi universiteti',
+        nameRu: 'Батумский государственный университет искусств',
+        nameEn: 'Batumi Art Teaching University',
         originalName: 'Batumi Art Teaching University',
         country: 'Gruziya',
         city: 'Batumi',
+        cityRu: 'Батуми',
+        cityEn: 'Batumi',
         description: 'Tasviriy va amaliy san’at ta’limi sohasida hamkorlik, qo‘shma plenerlar va o‘qituvchilar malakasini oshirish bo‘yicha Memorandum.',
+        descriptionRu: 'Меморандум о сотрудничестве в сфере изобразительного и прикладного художественного образования, совместных пленэрах и повышении квалификации преподавателей.',
+        descriptionEn: 'Memorandum on cooperation in fine and applied arts education, joint plein-air workshops, and faculty professional development.',
         pdfUrl: '/media/uploads/memorandums/MoU_Gruziya.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_Gruziya_page1.jpg',
         departmentPostId: 10,
@@ -218,10 +290,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'ge-p1',
         title: '“Rangtasvir simfoniyasi” xalqaro qo‘shma ko‘rgazmasi va ilmiy seminar',
+        titleRu: 'Международная совместная выставка и научный семинар «Симфония живописи»',
+        titleEn: 'International Joint Exhibition and Academic Seminar "Symphony of Painting"',
         partner: 'Batumi san’at ta’limi universiteti (Gruziya)',
+        partnerRu: 'Батумский государственный университет искусств (Грузия)',
+        partnerEn: 'Batumi Art Teaching University (Georgia)',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
         description: 'O‘zbekiston va Gruziya rassom-pedagoglari ishtirokida ijodiy asarlar ko‘rgazmasi hamda ilmiy-amaliy seminar.',
+        descriptionRu: 'Выставка творческих работ и научно-практический семинар с участием художников-педагогов Узбекистана и Грузии.',
+        descriptionEn: 'Creative exhibition and academic seminar featuring artist-educators from Uzbekistan and Georgia.',
       },
     ],
   },
@@ -235,10 +313,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'by-1',
         name: 'Belarus davlat san’at akademiyasi',
+        nameRu: 'Белорусская государственная академия искусств',
+        nameEn: 'Belarusian State Academy of Arts',
         originalName: 'Belarusian State Academy of Arts',
         country: 'Belarus',
         city: 'Minsk',
+        cityRu: 'Минск',
+        cityEn: 'Minsk',
         description: 'Madaniy-ma’rifiy loyihalar, o‘qituvchilar malakasini oshirish, tasviriy va dizayn san’ati bo‘yicha qo‘shma ko‘rgazmalar tashkil etish Memorandumi.',
+        descriptionRu: 'Меморандум о реализации культурно-просветительских проектов, повышении квалификации преподавателей и организации совместных выставок по изобразительному искусству и дизайну.',
+        descriptionEn: 'Memorandum on cultural and educational projects, teacher professional development, and joint exhibitions in fine arts and design.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_Belorus.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/Memorandum_Belorus_page1.jpg',
         departmentPostId: 15,
@@ -256,10 +340,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'tr-1',
         name: 'Erzinjan Binali Yildirim universiteti',
+        nameRu: 'Университет Эрзинджан Бинали Йылдырым',
+        nameEn: 'Erzincan Binali Yıldırım University',
         originalName: 'Erzincan Binali Yıldırım University',
         country: 'Turkiya',
         city: 'Erzinjan',
+        cityRu: 'Эрзинджан',
+        cityEn: 'Erzincan',
         description: 'Tasviriy san’at va pedagogika sohalarida o‘zaro tajriba almashish, ilmiy konferensiyalar o‘tkazish va malaka oshirish Memorandumi.',
+        descriptionRu: 'Меморандум об обмене опытом в области изобразительного искусства и педагогики, проведении научных конференций и повышении квалификации.',
+        descriptionEn: 'Memorandum on experience exchange in fine arts and pedagogy, joint academic conferences, and professional training.',
         pdfUrl: '/media/uploads/memorandums/MoU_Turkiya.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_Turkiya_page1.jpg',
         departmentPostId: 13,
@@ -267,10 +357,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'tr-2',
         name: 'Recep Tayyip Erdoğan universiteti',
+        nameRu: 'Университет Реджепа Тайипа Эрдогана',
+        nameEn: 'Recep Tayyip Erdoğan University',
         originalName: 'Recep Tayyip Erdoğan University',
         country: 'Turkiya',
         city: 'Rize',
+        cityRu: 'Ризе',
+        cityEn: 'Rize',
         description: 'Ilmiy-ijodiy aloqalarni mustahkamlash, malaka oshirish dasturlarini amalga oshirish va san\'at loyihalari bo\'yicha Memorandum.',
+        descriptionRu: 'Меморандум об укреплении научно-творческих связей, реализации программ повышения квалификации и совместных художественных проектов.',
+        descriptionEn: 'Memorandum on strengthening academic and creative ties, professional development programs, and joint art projects.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_Recep_Tayyip_Erdoğan_universiteti_Turkiya.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/Memorandum_Recep_Tayyip_Erdoğan_universiteti_Turkiya_page1.jpg',
         departmentPostId: 14,
@@ -280,10 +376,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'tr-p1',
         title: '“Yonma-yon” o‘zbek va turk ijodkorlarining yirik pleneri va qo‘shma ko‘rgazmasi',
+        titleRu: 'Крупный пленэр и совместная выставка узбекских и турецких художников «Бок о бок»',
+        titleEn: 'Large Plein-Air and Joint Exhibition of Uzbek and Turkish Artists "Side by Side"',
         partner: 'Turkiya oliy ta\'lim muassasalari',
+        partnerRu: 'Высшие учебные заведения Турции',
+        partnerEn: 'Higher Education Institutions of Turkey',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
         description: 'O‘zbekiston va Turkiya rassomlari hamkorligidagi yirik xalqaro plener dasturi va ijodiy asarlar ko‘rgazmasi.',
+        descriptionRu: 'Масштабная международная пленэрная программа и выставка творческих работ в сотрудничестве художников Узбекистана и Турции.',
+        descriptionEn: 'Major international plein-air program and creative exhibition in collaboration between Uzbek and Turkish artists.',
       },
     ],
   },
@@ -297,10 +399,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'ru-1',
         name: 'A.L.Shtiglits nomidagi Sankt-Peterburg davlat san’at va sanoat akademiyasi',
+        nameRu: 'Санкт-Петербургская государственная художественно-промышленная академия им. А.Л. Штиглица',
+        nameEn: 'Saint Petersburg Stieglitz State Academy of Art and Design',
         originalName: 'Saint Petersburg Stieglitz State Academy of Art and Design',
         country: 'Rossiya',
         city: 'Sankt-Peterburg',
+        cityRu: 'Санкт-Петербург',
+        cityEn: 'Saint Petersburg',
         description: 'Amaliy san’at, monumental dizayn va restavratsiya yo‘nalishlarida o‘zaro akademik hamkorlik va tajriba almashish Memorandumi.',
+        descriptionRu: 'Меморандум о взаимном академическом сотрудничестве и обмене опытом в направлениях прикладного искусства, монументального дизайна и реставрации.',
+        descriptionEn: 'Memorandum on mutual academic cooperation and experience exchange in applied arts, monumental design, and restoration.',
         pdfUrl: '/media/uploads/memorandums/MoU_Shtiglits.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_Shtiglits_page1.jpg',
         departmentPostId: 11,
@@ -308,10 +416,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'ru-2',
         name: 'Janubiy Federal universiteti (SFedU)',
+        nameRu: 'Южный федеральный университет (ЮФУ)',
+        nameEn: 'Southern Federal University (SFedU)',
         originalName: 'Southern Federal University',
         country: 'Rossiya',
         city: 'Rostov-na-Donu',
+        cityRu: 'Ростов-на-Дону',
+        cityEn: 'Rostov-on-Don',
         description: 'Pedagogik kadrlarning ilmiy salohiyatini oshirish, san’atshunoslik sohasida qo‘shma ilmiy tadqiqotlar bo‘yicha Memorandum.',
+        descriptionRu: 'Меморандум о повышении научного потенциала педагогических кадров и проведении совместных научных исследований в области искусствоведения.',
+        descriptionEn: 'Memorandum on enhancing academic capacity of educators and conducting joint research in art studies.',
         pdfUrl: '/media/uploads/memorandums/MoU_YuFU.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_YuFU_page1.jpg',
         departmentPostId: 12,
@@ -329,10 +443,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'in-1',
         name: 'Jawaharlal Nehru Architecture and Fine Arts University (JNAFAU)',
+        nameRu: 'Университет архитектуры и изящных искусств имени Джавахарлала Неру (JNAFAU)',
+        nameEn: 'Jawaharlal Nehru Architecture and Fine Arts University (JNAFAU)',
         originalName: 'JNAFAU, Hyderabad',
         country: 'Hindiston',
         city: 'Haydarobod',
+        cityRu: 'Хайдарабад',
+        cityEn: 'Hyderabad',
         description: 'Madaniyat va san’at ta’limini rivojlantirish, o‘qituvchilar almashinuvi, qo‘shma xalqaro konferensiyalar o‘tkazish bo‘yicha hamkorlik Memorandumi.',
+        descriptionRu: 'Меморандум о сотрудничестве в области развития культурного и художественного образования, обмена преподавателями и проведения совместных международных конференций.',
+        descriptionEn: 'Memorandum of cooperation on advancing art and cultural education, faculty exchange, and holding joint international conferences.',
         pdfUrl: '/media/uploads/memorandums/MoU_Hindiston.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_Hindiston_page1.jpg',
         departmentPostId: 5,
@@ -342,10 +462,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'in-p1',
         title: '“An’anaviy va zamonaviy uslublarning uyg‘unligi” xalqaro konferensiyasi',
+        titleRu: 'Международная конференция «Гармония традиционных и современных стилей»',
+        titleEn: 'International Conference "Harmony of Traditional and Modern Styles"',
         partner: 'JNAFAU (Hindiston)',
+        partnerRu: 'JNAFAU (Индия)',
+        partnerEn: 'JNAFAU (India)',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
         description: 'Tasviriy san’at va me\'morchilikda sharq an’analari uyg‘unligiga bag‘ishlangan xalqaro ilmiy-ijodiy anjuman.',
+        descriptionRu: 'Международный научно-творческий форум, посвящённый гармонии восточных традиций в изобразительном искусстве и архитектуре.',
+        descriptionEn: 'International academic and creative symposium dedicated to the harmony of Eastern traditions in fine arts and architecture.',
       },
     ],
   },
@@ -359,10 +485,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'kz-1',
         name: 'Temirbek Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi',
+        nameRu: 'Казахская национальная академия искусств имени Темирбека Жургенова',
+        nameEn: 'Kazakh National Academy of Arts named after T. Zhurgenov',
         originalName: 'Kazakh National Academy of Arts named after T. Zhurgenov',
         country: "Qozog'iston",
         city: 'Almati',
+        cityRu: 'Алматы',
+        cityEn: 'Almaty',
         description: 'Markaziy Osiyo xalqlari tasviriy san’ati, pedagogik mahorat darslari va malaka oshirish sohasida hamkorlik Memorandumi.',
+        descriptionRu: 'Меморандум о сотрудничестве в области изобразительного искусства народов Центральной Азии, проведения педагогических мастер-классов и повышения квалификации.',
+        descriptionEn: 'Memorandum of cooperation on Central Asian fine arts, pedagogical masterclasses, and professional development.',
         pdfUrl: '/media/uploads/memorandums/MoU_Jurgenov.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_Jurgenov_page1.jpg',
         departmentPostId: 8,
@@ -370,10 +502,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'kz-2',
         name: 'Toraygirov universiteti',
+        nameRu: 'Торайгыров университет',
+        nameEn: 'Toraighyrov University',
         originalName: 'Toraighyrov University',
         country: "Qozog'iston",
         city: 'Pavlodar',
+        cityRu: 'Павлодар',
+        cityEn: 'Pavlodar',
         description: 'Pedagogik kadrlarni tayyorlash, akademik tajriba almashish va tasviriy san’at dasturlari bo‘yicha Memorandum.',
+        descriptionRu: 'Меморандум о подготовке педагогических кадров, обмене академическим опытом и реализации программ по изобразительному искусству.',
+        descriptionEn: 'Memorandum on teacher training, academic experience exchange, and fine arts educational programs.',
         pdfUrl: '/media/uploads/memorandums/MoU_Toraygirov.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_Toraygirov_page1.jpg',
         departmentPostId: 9,
@@ -383,18 +521,30 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'kz-p1',
         title: 'Qozog‘istonlik pedagoglar uchun “Rangtasvir” malaka oshirish kursi',
+        titleRu: 'Курс повышения квалификации «Живопись» для педагогов из Казахстана',
+        titleEn: 'Professional Development Course in Painting for Educators from Kazakhstan',
         partner: 'T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi',
+        partnerRu: 'Казахская национальная академия искусств им. Т. Жургенова',
+        partnerEn: 'Kazakh National Academy of Arts named after T. Zhurgenov',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
         description: 'Qozog‘iston san’at kollejlari va maktablari o‘qituvchilari uchun Markazda tashkil etilgan maxsus malaka oshirish kursi.',
+        descriptionRu: 'Специальный курс повышения квалификации, организованный в Центре для преподавателей художественных колледжей и школ Казахстана.',
+        descriptionEn: 'Specialized professional development course organized at the Center for teachers of art colleges and schools from Kazakhstan.',
       },
       {
         id: 'kz-p2',
         title: '“An’anaviy va zamonaviy kashtachilik san’ati” xalqaro ilmiy-amaliy seminari',
+        titleRu: 'Международный научно-практический семинар «Искусство традиционной и современной вышивки»',
+        titleEn: 'International Seminar "Traditional and Contemporary Embroidery Art"',
         partner: 'T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi',
+        partnerRu: 'Казахская национальная академия искусств им. Т. Жургенова',
+        partnerEn: 'Kazakh National Academy of Arts named after T. Zhurgenov',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
         description: 'Amaliy san’at ustalari va tadqiqotchilari ishtirokidagi mintaqaviy mahorat darsi va ilmiy seminar.',
+        descriptionRu: 'Региональный мастер-класс и научный семинар с участием мастеров прикладного искусства и исследователей.',
+        descriptionEn: 'Regional masterclass and academic seminar featuring applied art masters and researchers.',
       },
     ],
   },
@@ -408,10 +558,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'kr-1',
         name: 'Keimyung University (Tasviriy san’at kolleji)',
+        nameRu: 'Университет Кемён (Колледж изящных искусств)',
+        nameEn: 'Keimyung University (College of Fine Arts)',
         originalName: 'College of Fine Arts, Keimyung University',
         country: 'Janubiy Koreya',
         city: 'Tegu',
+        cityRu: 'Тэгу',
+        cityEn: 'Daegu',
         description: 'Zamonaviy dizayn, tasviriy san’at ta’limi, pedagog kadrlar uchun xalqaro standartlar bo‘yicha malaka oshirish va akademik almashinuv Memorandumi.',
+        descriptionRu: 'Меморандум о сотрудничестве в области современного дизайна, художественного образования, повышения квалификации педагогов по международным стандартам и академического обмена.',
+        descriptionEn: 'Memorandum on contemporary design, fine arts education, international-standard faculty training, and academic exchange.',
         pdfUrl: '/media/uploads/memorandums/MoU_Korea.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_Korea_page1.jpg',
         departmentPostId: 6,
@@ -429,10 +585,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'az-1',
         name: 'Ozarbayjon davlat tasviriy san’at akademiyasi',
+        nameRu: 'Азербайджанская государственная академия художеств',
+        nameEn: 'Azerbaijan State Academy of Fine Arts',
         originalName: 'Azerbaijan State Academy of Fine Arts',
         country: 'Ozarbayjon',
         city: 'Boku',
+        cityRu: 'Баку',
+        cityEn: 'Baku',
         description: 'Tasviriy san’at, haykaltaroshlik va gilamchilik san’ati yo‘nalishlarida professor-o‘qituvchilar malakasini oshirish va ko‘rgazmalar tashkil etish Memorandumi.',
+        descriptionRu: 'Меморандум о повышении квалификации профессорско-преподавательского состава и организации выставок по направлениям живописи, скульптуры и ковроткачества.',
+        descriptionEn: 'Memorandum on faculty professional development and organizing exhibitions in painting, sculpture, and carpet weaving.',
         pdfUrl: '/media/uploads/memorandums/MoU_Azerbayjan.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/MoU_Azerbayjan_page1.jpg',
         departmentPostId: 7,
@@ -442,10 +604,16 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       {
         id: 'az-p1',
         title: 'Badiiy ta’lim pedagoglari uchun xalqaro malaka oshirish stajirovkasi (Boku)',
+        titleRu: 'Международная стажировка повышения квалификации для педагогов художественного образования (Баку)',
+        titleEn: 'International Professional Development Internship for Art Educators (Baku)',
         partner: 'Ozarbayjon davlat tasviriy san’at akademiyasi',
+        partnerRu: 'Азербайджанская государственная академия художеств',
+        partnerEn: 'Azerbaijan State Academy of Fine Arts',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
         description: 'O‘zbekistonlik pedagog kadrlarning Boku shahrida o‘tkazilgan nufuzli kasbiy malaka oshirish stajirovkasi.',
+        descriptionRu: 'Профессиональная стажировка повышения квалификации педагогических кадров Узбекистана в городе Баку.',
+        descriptionEn: 'Professional development internship for Uzbek art educators conducted in Baku.',
       },
     ],
   },
@@ -735,19 +903,42 @@ const Home: React.FC = () => {
     .map(s => s.trim())
     .filter(Boolean);
 
+  const isRuLang = (i18n.language || 'uz').startsWith('ru');
+  const isEnLang = (i18n.language || 'uz').startsWith('en');
+
+  const allLocalizedPartnersFromData = Object.values(COUNTRY_DETAILS_DATA).flatMap(c =>
+    c.partners.map(p => {
+      const pName = isRuLang ? (p.nameRu || p.name) : isEnLang ? (p.nameEn || p.originalName || p.name) : p.name;
+      const cName = translateCountryName(c.name);
+      return `${pName} (${cName})`;
+    })
+  );
+
+  const allLocalizedProjectsFromData = Object.values(COUNTRY_DETAILS_DATA).flatMap(c =>
+    c.projects.map(p => {
+      const pTitle = isRuLang ? (p.titleRu || p.title) : isEnLang ? (p.titleEn || p.title) : p.title;
+      const pPartner = isRuLang ? (p.partnerRu || p.partner) : isEnLang ? (p.partnerEn || p.partner) : p.partner;
+      return `${pTitle} (${pPartner})`;
+    })
+  );
+
   const displayedCountriesCount = countriesArray.length;
-  const orgsToDisplay = customOrgsArray.length > 0 
-    ? customOrgsArray 
-    : (internationalPartners.length > 0 
-        ? internationalPartners.map((p: any) => p.country ? `${p.name} (${p.country})` : p.name) 
-        : []);
+  const orgsToDisplay = (isRuLang || isEnLang)
+    ? allLocalizedPartnersFromData
+    : (customOrgsArray.length > 0
+        ? customOrgsArray
+        : (internationalPartners.length > 0
+            ? internationalPartners.map((p: any) => p.country ? `${p.name} (${p.country})` : p.name)
+            : allLocalizedPartnersFromData));
   const displayedOrgsCount = orgsToDisplay.length > 0 ? orgsToDisplay.length : reportDetails.intlOrganizationsCount;
 
-  const projectsToDisplay = customProjectsArray.length > 0 
-    ? customProjectsArray 
-    : (internationalProjects.length > 0 
-        ? internationalProjects.map((p: any) => p.partners_text ? `${p.title} (${p.partners_text})` : p.title) 
-        : []);
+  const projectsToDisplay = (isRuLang || isEnLang)
+    ? allLocalizedProjectsFromData
+    : (customProjectsArray.length > 0
+        ? customProjectsArray
+        : (internationalProjects.length > 0
+            ? internationalProjects.map((p: any) => p.partners_text ? `${p.title} (${p.partners_text})` : p.title)
+            : allLocalizedProjectsFromData));
   const displayedProjectsCount = projectsToDisplay.length > 0 ? projectsToDisplay.length : reportDetails.intlProjectsCount;
 
   const safeStudentsCount = stats?.studentsCount || [];
@@ -1366,7 +1557,13 @@ const Home: React.FC = () => {
                             type="button"
                             onClick={() => handleCountrySelect(country)}
                             className="group relative px-3 py-2.5 rounded-xl bg-slate-50/90 hover:bg-white text-slate-800 hover:text-blue-700 text-xs font-semibold transition-all duration-200 flex items-center justify-between border border-slate-200 hover:border-blue-400 hover:shadow-sm"
-                            title={`${translateCountryName(country)}: hamkorlik va memorandumlarini ko'rish`}
+                            title={
+                              isRuLang
+                                ? `${translateCountryName(country)}: посмотреть сотрудничество и меморандумы`
+                                : isEnLang
+                                  ? `${translateCountryName(country)}: view cooperation and memorandums`
+                                  : `${translateCountryName(country)}: hamkorlik va memorandumlarini ko'rish`
+                            }
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
                               {flagUrl ? (
@@ -1393,7 +1590,11 @@ const Home: React.FC = () => {
 
                     <p className="mt-2.5 text-[11px] text-slate-500 flex items-center gap-1.5">
                       <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                      Davlat ustiga bosing — tegishli memorandum va loyihalarni ko'ring
+                      {i18n.language?.startsWith('ru')
+                        ? 'Нажмите на страну, чтобы посмотреть меморандумы и проекты'
+                        : i18n.language?.startsWith('en')
+                        ? 'Click on a country to view signed memorandums and projects'
+                        : "Davlat ustiga bosing — tegishli memorandum va loyihalarni ko'ring"}
                     </p>
                   </div>
                 </div>
@@ -1417,10 +1618,10 @@ const Home: React.FC = () => {
               chartsReveal.isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
             }`}
           >
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 min-w-0">
             <h3 className="text-xl font-bold text-slate-900 mb-6">{t('home.charts_distribution')}</h3>
-            <div className="relative h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="relative h-[300px] min-w-0">
+              <ResponsiveContainer width="100%" height={300} minWidth={0} minHeight={300} initialDimension={{ width: 400, height: 300 }}>
                 <PieChart>
                   <Pie data={distributionData} cx="50%" cy="50%" innerRadius={70} outerRadius={110} paddingAngle={5} dataKey="value">
                     {distributionData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
@@ -1443,10 +1644,10 @@ const Home: React.FC = () => {
             </div>
           </div>
           
-          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 min-w-0">
             <h3 className="text-xl font-bold text-slate-900 mb-6">{t('home.charts_by_years')}</h3>
-            <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-[300px] min-w-0">
+              <ResponsiveContainer width="100%" height={300} minWidth={0} minHeight={300} initialDimension={{ width: 400, height: 300 }}>
                 <BarChart data={yearlyData}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#e2e8f0" />
                   <XAxis dataKey="name" stroke="#94a3b8" />
@@ -1578,7 +1779,9 @@ const Home: React.FC = () => {
                       {reportDetails.card2Badge}
                     </span>
                     <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    <span className="text-[11px] text-blue-200/90 hidden sm:inline">Rasmiy hamkorliklar</span>
+                    <span className="text-[11px] text-blue-200/90 hidden sm:inline">
+                      {isRuLang ? 'Официальное сотрудничество' : isEnLang ? 'Official Partnerships' : 'Rasmiy hamkorliklar'}
+                    </span>
                   </div>
                   <h3 className="text-xl md:text-2xl font-black tracking-tight text-white">
                     {reportDetails.card2Title}
@@ -1591,14 +1794,14 @@ const Home: React.FC = () => {
                   onClick={() => setActiveStatsModal(null)}
                   className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-semibold border border-white/15 transition-colors"
                 >
-                  <span>Bo'lim sahifasi</span>
+                  <span>{isRuLang ? 'Страница отдела' : isEnLang ? 'Department Page' : "Bo'lim sahifasi"}</span>
                   <ArrowUpRight size={14} />
                 </Link>
                 <button
                   type="button"
                   onClick={() => setActiveStatsModal(null)}
                   className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
-                  aria-label="Yopish"
+                  aria-label={isRuLang ? 'Закрыть' : isEnLang ? 'Close' : 'Yopish'}
                 >
                   <XCircle size={22} />
                 </button>
@@ -1609,7 +1812,7 @@ const Home: React.FC = () => {
             <div className="px-5 py-3.5 bg-slate-50 border-b border-slate-200 shrink-0">
               <div className="flex items-center justify-between gap-2 mb-2">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                  Hamkor davlatni tanlang:
+                  {isRuLang ? 'Выберите страну-партнёра:' : isEnLang ? 'Select a partner country:' : 'Hamkor davlatni tanlang:'}
                 </span>
                 {selectedCountry && (
                   <button
@@ -1617,7 +1820,9 @@ const Home: React.FC = () => {
                     onClick={() => setSelectedCountry(null)}
                     className="text-xs font-semibold text-blue-700 hover:text-blue-900 transition-colors flex items-center gap-1"
                   >
-                    <span>Barcha davlatlar ({countriesArray.length})</span>
+                    <span>
+                      {isRuLang ? `Все страны (${countriesArray.length})` : isEnLang ? `All countries (${countriesArray.length})` : `Barcha davlatlar (${countriesArray.length})`}
+                    </span>
                     <span className="text-slate-400">&times;</span>
                   </button>
                 )}
@@ -1633,7 +1838,7 @@ const Home: React.FC = () => {
                   }`}
                 >
                   <Globe size={13} />
-                  <span>Barchasi</span>
+                  <span>{isRuLang ? 'Все' : isEnLang ? 'All' : 'Barchasi'}</span>
                 </button>
                 {countriesArray.map((c, i) => {
                   const flagUrl = getCountryFlagUrl(c);
@@ -1672,13 +1877,15 @@ const Home: React.FC = () => {
                 if (!cDetail) {
                   return (
                     <div className="text-center py-12 text-slate-500">
-                      <p>Ushbu davlat bo'yicha ma'lumot topilmadi.</p>
+                      <p>
+                        {isRuLang ? 'Информация по данной стране не найдена.' : isEnLang ? 'No information found for this country.' : "Ushbu davlat bo'yicha ma'lumot topilmadi."}
+                      </p>
                       <button
                         type="button"
                         onClick={() => setSelectedCountry(null)}
                         className="mt-3 text-xs font-bold text-blue-600 underline"
                       >
-                        Barcha davlatlarga qaytish
+                        {isRuLang ? 'Вернуться ко всем странам' : isEnLang ? 'Return to all countries' : 'Barcha davlatlarga qaytish'}
                       </button>
                     </div>
                   );
@@ -1699,7 +1906,7 @@ const Home: React.FC = () => {
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="text-[11px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-100">
-                              Hamkor Davlat
+                              {isRuLang ? 'Страна-партнёр' : isEnLang ? 'Partner Country' : 'Hamkor Davlat'}
                             </span>
                             <span className="text-xs text-slate-500">{getCountryOfficialName(cDetail.name)}</span>
                           </div>
@@ -1711,12 +1918,20 @@ const Home: React.FC = () => {
 
                       <div className="flex items-center gap-2.5 sm:self-center">
                         <div className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-center shadow-xs">
-                          <span className="text-[11px] font-bold text-slate-500 block uppercase">Muassasalar</span>
-                          <span className="text-lg font-black text-blue-700">{cDetail.partners.length} ta</span>
+                          <span className="text-[11px] font-bold text-slate-500 block uppercase">
+                            {isRuLang ? 'Учреждения' : isEnLang ? 'Institutions' : 'Muassasalar'}
+                          </span>
+                          <span className="text-lg font-black text-blue-700">
+                            {isRuLang || isEnLang ? cDetail.partners.length : `${cDetail.partners.length} ta`}
+                          </span>
                         </div>
                         <div className="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-center shadow-xs">
-                          <span className="text-[11px] font-bold text-slate-500 block uppercase">Loyihalar</span>
-                          <span className="text-lg font-black text-indigo-700">{cDetail.projects.length} ta</span>
+                          <span className="text-[11px] font-bold text-slate-500 block uppercase">
+                            {isRuLang ? 'Проекты' : isEnLang ? 'Projects' : 'Loyihalar'}
+                          </span>
+                          <span className="text-lg font-black text-indigo-700">
+                            {isRuLang || isEnLang ? cDetail.projects.length : `${cDetail.projects.length} ta`}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -1727,94 +1942,122 @@ const Home: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <Briefcase size={18} className="text-blue-700" />
                           <h5 className="text-base sm:text-lg font-bold text-slate-900">
-                            Hamkor oliygoh va tashkilotlar ({cDetail.partners.length} ta)
+                            {isRuLang
+                              ? `Партнёрские вузы и организации (${cDetail.partners.length})`
+                              : isEnLang
+                                ? `Partner Universities & Organizations (${cDetail.partners.length})`
+                                : `Hamkor oliygoh va tashkilotlar (${cDetail.partners.length} ta)`}
                           </h5>
                         </div>
-                        <span className="text-xs font-semibold text-slate-500 hidden sm:inline">Imzolangan Memorandumlar</span>
+                        <span className="text-xs font-semibold text-slate-500 hidden sm:inline">
+                          {isRuLang ? 'Подписанные меморандумы' : isEnLang ? 'Signed Memorandums' : 'Imzolangan Memorandumlar'}
+                        </span>
                       </div>
 
                       <div className="grid grid-cols-1 gap-4">
-                        {cDetail.partners.map((partner, idx) => (
-                          <div
-                            key={partner.id || idx}
-                            className="bg-white rounded-2xl border border-slate-200 hover:border-blue-400 p-5 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col md:flex-row gap-5"
-                          >
-                            {/* Memorandum birinchi sahifasi miniatyurasi */}
-                            {partner.thumbnailUrl && (
-                              <div className="md:w-36 shrink-0 flex flex-col items-center">
-                                <div className="relative w-full h-44 md:h-48 rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 group">
-                                  <img
-                                    src={partner.thumbnailUrl}
-                                    alt={partner.name}
-                                    className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
-                                    onError={(e) => {
-                                      (e.target as HTMLElement).style.display = 'none';
-                                    }}
-                                  />
-                                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2.5">
-                                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">
-                                      Memorandum
-                                    </span>
+                        {cDetail.partners.map((partner, idx) => {
+                          const partnerName = isRuLang
+                            ? (partner.nameRu || partner.name)
+                            : isEnLang
+                              ? (partner.nameEn || partner.originalName || partner.name)
+                              : partner.name;
+                          const partnerCity = isRuLang
+                            ? (partner.cityRu || partner.city)
+                            : isEnLang
+                              ? (partner.cityEn || partner.city)
+                              : partner.city;
+                          const partnerDesc = isRuLang
+                            ? (partner.descriptionRu || partner.description)
+                            : isEnLang
+                              ? (partner.descriptionEn || partner.description)
+                              : partner.description;
+
+                          return (
+                            <div
+                              key={partner.id || idx}
+                              className="bg-white rounded-2xl border border-slate-200 hover:border-blue-400 p-5 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col md:flex-row gap-5"
+                            >
+                              {/* Memorandum birinchi sahifasi miniatyurasi */}
+                              {partner.thumbnailUrl && (
+                                <div className="md:w-36 shrink-0 flex flex-col items-center">
+                                  <div className="relative w-full h-44 md:h-48 rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 group">
+                                    <img
+                                      src={partner.thumbnailUrl}
+                                      alt={partnerName}
+                                      className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                                      onError={(e) => {
+                                        (e.target as HTMLElement).style.display = 'none';
+                                      }}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2.5">
+                                      <span className="text-[10px] font-bold text-white uppercase tracking-wider">
+                                        {isRuLang ? 'Меморандум' : 'Memorandum'}
+                                      </span>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
 
-                            {/* Muassasa ma'lumotlari */}
-                            <div className="flex-1 flex flex-col justify-between">
-                              <div>
-                                <div className="flex flex-wrap items-center gap-2 mb-2">
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
-                                    <ShieldCheck size={12} /> Rasmiy Hamkor
-                                  </span>
-                                  {partner.city && (
-                                    <span className="inline-flex items-center gap-1 text-xs text-slate-500 font-medium">
-                                      <MapPin size={12} className="text-slate-400" /> {partner.city}
+                              {/* Muassasa ma'lumotlari */}
+                              <div className="flex-1 flex flex-col justify-between">
+                                <div>
+                                  <div className="flex flex-wrap items-center gap-2 mb-2">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                                      <ShieldCheck size={12} /> {isRuLang ? 'Официальный партнёр' : isEnLang ? 'Official Partner' : 'Rasmiy Hamkor'}
                                     </span>
+                                    {partnerCity && (
+                                      <span className="inline-flex items-center gap-1 text-xs text-slate-500 font-medium">
+                                        <MapPin size={12} className="text-slate-400" /> {partnerCity}
+                                      </span>
+                                    )}
+                                  </div>
+
+                                  <h6 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                                    {partnerName}
+                                  </h6>
+                                  {partner.originalName && partner.originalName !== partnerName && (
+                                    <p className="text-xs font-medium text-slate-500 italic mt-0.5">
+                                      {partner.originalName}
+                                    </p>
                                   )}
+
+                                  <p className="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed">
+                                    {partnerDesc}
+                                  </p>
                                 </div>
 
-                                <h6 className="text-base sm:text-lg font-bold text-slate-900 leading-snug">
-                                  {partner.name}
-                                </h6>
-                                {partner.originalName && partner.originalName !== partner.name && (
-                                  <p className="text-xs font-medium text-slate-500 italic mt-0.5">
-                                    {partner.originalName}
-                                  </p>
-                                )}
+                                {/* Tugmalar: PDF ko'rish / yuklab olish & Bo'lim sahifasi */}
+                                <div className="mt-4 pt-3.5 border-t border-slate-100 flex flex-wrap items-center gap-2.5">
+                                  {partner.pdfUrl && (
+                                    <a
+                                      href={partner.pdfUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all"
+                                    >
+                                      <FileText size={14} />
+                                      <span>
+                                        {isRuLang ? 'Открыть меморандум (PDF)' : isEnLang ? 'View Memorandum (PDF)' : "Memorandumni ko'rish (PDF)"}
+                                      </span>
+                                      <ArrowUpRight size={13} />
+                                    </a>
+                                  )}
 
-                                <p className="text-xs sm:text-sm text-slate-600 mt-2.5 leading-relaxed">
-                                  {partner.description}
-                                </p>
-                              </div>
-
-                              {/* Tugmalar: PDF ko'rish / yuklab olish & Bo'lim sahifasi */}
-                              <div className="mt-4 pt-3.5 border-t border-slate-100 flex flex-wrap items-center gap-2.5">
-                                {partner.pdfUrl && (
-                                  <a
-                                    href={partner.pdfUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs hover:shadow-md transition-all"
+                                  <Link
+                                    to="/departments/4"
+                                    onClick={() => setActiveStatsModal(null)}
+                                    className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
                                   >
-                                    <FileText size={14} />
-                                    <span>Memorandumni ko'rish (PDF)</span>
-                                    <ArrowUpRight size={13} />
-                                  </a>
-                                )}
-
-                                <Link
-                                  to="/departments/4"
-                                  onClick={() => setActiveStatsModal(null)}
-                                  className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors"
-                                >
-                                  <span>Xalqaro bo'lim sahifasida ko'rish</span>
-                                  <ChevronRight size={13} />
-                                </Link>
+                                    <span>
+                                      {isRuLang ? 'Смотреть на странице отдела' : isEnLang ? 'View on International Department page' : "Xalqaro bo'lim sahifasida ko'rish"}
+                                    </span>
+                                    <ChevronRight size={13} />
+                                  </Link>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -1824,45 +2067,76 @@ const Home: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <Trophy size={18} className="text-indigo-600" />
                           <h5 className="text-base sm:text-lg font-bold text-slate-900">
-                            Xalqaro loyihalar ({cDetail.projects.length} ta)
+                            {isRuLang
+                              ? `Международные проекты (${cDetail.projects.length})`
+                              : isEnLang
+                                ? `International Projects (${cDetail.projects.length})`
+                                : `Xalqaro loyihalar (${cDetail.projects.length} ta)`}
                           </h5>
                         </div>
                       </div>
 
                       {cDetail.projects.length > 0 ? (
                         <div className="grid grid-cols-1 gap-3">
-                          {cDetail.projects.map((proj, pIdx) => (
-                            <div
-                              key={proj.id || pIdx}
-                              className="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/90 hover:border-indigo-300 transition-colors"
-                            >
-                              <div className="flex items-start justify-between gap-3">
-                                <div>
-                                  <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-1.5 ${
-                                    proj.status === 'ongoing'
-                                      ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                                      : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                                  }`}>
-                                    {proj.statusDisplay}
+                          {cDetail.projects.map((proj, pIdx) => {
+                            const projTitle = isRuLang
+                              ? (proj.titleRu || proj.title)
+                              : isEnLang
+                                ? (proj.titleEn || proj.title)
+                                : proj.title;
+                            const projDesc = isRuLang
+                              ? (proj.descriptionRu || proj.description)
+                              : isEnLang
+                                ? (proj.descriptionEn || proj.description)
+                                : proj.description;
+                            const projPartner = isRuLang
+                              ? (proj.partnerRu || proj.partner)
+                              : isEnLang
+                                ? (proj.partnerEn || proj.partner)
+                                : proj.partner;
+                            const projStatusLabel = proj.status === 'ongoing'
+                              ? (isRuLang ? 'В процессе' : isEnLang ? 'Ongoing' : 'Jarayonda')
+                              : (isRuLang ? 'Завершён' : isEnLang ? 'Completed' : 'Yakunlangan');
+
+                            return (
+                              <div
+                                key={proj.id || pIdx}
+                                className="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/90 hover:border-indigo-300 transition-colors"
+                              >
+                                <div className="flex items-start justify-between gap-3">
+                                  <div>
+                                    <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-1.5 ${
+                                      proj.status === 'ongoing'
+                                        ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                                        : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                    }`}>
+                                      {projStatusLabel}
+                                    </span>
+                                    <h6 className="text-sm sm:text-base font-bold text-slate-900">
+                                      {projTitle}
+                                    </h6>
+                                  </div>
+                                </div>
+                                <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+                                  {projDesc}
+                                </p>
+                                <div className="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center gap-2 text-[11px] text-slate-500 font-medium">
+                                  <span className="font-semibold text-slate-700">
+                                    {isRuLang ? 'Партнёр:' : isEnLang ? 'Partner:' : 'Hamkor:'}
                                   </span>
-                                  <h6 className="text-sm sm:text-base font-bold text-slate-900">
-                                    {proj.title}
-                                  </h6>
+                                  <span>{projPartner}</span>
                                 </div>
                               </div>
-                              <p className="text-xs text-slate-600 mt-2 leading-relaxed">
-                                {proj.description}
-                              </p>
-                              <div className="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center gap-2 text-[11px] text-slate-500 font-medium">
-                                <span className="font-semibold text-slate-700">Hamkor:</span>
-                                <span>{proj.partner}</span>
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       ) : (
                         <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-center text-xs text-slate-500">
-                          Ushbu davlat bilan imzolangan rasmiy Memorandum doirasida doimiy akademik aloqalar va hamkorlik ishlari amalga oshirilmoqda.
+                          {isRuLang
+                            ? 'В рамках подписанного официального Меморандума с данной страной осуществляется постоянное академическое сотрудничество.'
+                            : isEnLang
+                              ? 'Ongoing academic cooperation and joint activities are carried out under the official Memorandum signed with this country.'
+                              : 'Ushbu davlat bilan imzolangan rasmiy Memorandum doirasida doimiy akademik aloqalar va hamkorlik ishlari amalga oshirilmoqda.'}
                         </div>
                       )}
                     </div>
@@ -1883,7 +2157,13 @@ const Home: React.FC = () => {
                       }`}
                     >
                       <Globe size={15} />
-                      <span>{displayedCountriesCount} ta davlat</span>
+                      <span>
+                        {isRuLang
+                          ? `${displayedCountriesCount} стран`
+                          : isEnLang
+                            ? `${displayedCountriesCount} countries`
+                            : `${displayedCountriesCount} ta davlat`}
+                      </span>
                     </button>
                     <button
                       type="button"
@@ -1895,7 +2175,13 @@ const Home: React.FC = () => {
                       }`}
                     >
                       <Briefcase size={15} />
-                      <span>{displayedOrgsCount} ta muassasa</span>
+                      <span>
+                        {isRuLang
+                          ? `${displayedOrgsCount} учреждений`
+                          : isEnLang
+                            ? `${displayedOrgsCount} institutions`
+                            : `${displayedOrgsCount} ta muassasa`}
+                      </span>
                     </button>
                     <button
                       type="button"
@@ -1907,7 +2193,13 @@ const Home: React.FC = () => {
                       }`}
                     >
                       <Trophy size={15} />
-                      <span>{displayedProjectsCount} ta loyiha</span>
+                      <span>
+                        {isRuLang
+                          ? `${displayedProjectsCount} проектов`
+                          : isEnLang
+                            ? `${displayedProjectsCount} projects`
+                            : `${displayedProjectsCount} ta loyiha`}
+                      </span>
                     </button>
                   </div>
 
@@ -1915,9 +2207,11 @@ const Home: React.FC = () => {
                     <div>
                       <div className="flex items-center justify-between mb-4">
                         <h4 className="text-base sm:text-lg font-black text-slate-900">
-                          {reportDetails.intlCountriesLabel} ({displayedCountriesCount} ta davlat):
+                          {reportDetails.intlCountriesLabel} ({isRuLang ? `${displayedCountriesCount} стран` : isEnLang ? `${displayedCountriesCount} countries` : `${displayedCountriesCount} ta davlat`}):
                         </h4>
-                        <span className="text-xs text-slate-500">Tafsilotlarni ko'rish uchun tanlang</span>
+                        <span className="text-xs text-slate-500">
+                          {isRuLang ? 'Выберите для просмотра подробностей' : isEnLang ? 'Select to view details' : "Tafsilotlarni ko'rish uchun tanlang"}
+                        </span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         {countriesArray.map((country, idx) => {
@@ -1945,12 +2239,18 @@ const Home: React.FC = () => {
                                     {translateCountryName(country)}
                                   </span>
                                   <span className="text-xs text-slate-500">
-                                    {partnerCount} ta muassasa {projectCount > 0 ? `· ${projectCount} ta loyiha` : ''}
+                                    {isRuLang
+                                      ? `${partnerCount} учрежд.${projectCount > 0 ? ` · ${projectCount} проект.` : ''}`
+                                      : isEnLang
+                                        ? `${partnerCount} ${partnerCount === 1 ? 'institution' : 'institutions'}${projectCount > 0 ? ` · ${projectCount} ${projectCount === 1 ? 'project' : 'projects'}` : ''}`
+                                        : `${partnerCount} ta muassasa ${projectCount > 0 ? `· ${projectCount} ta loyiha` : ''}`}
                                   </span>
                                 </div>
                               </div>
                               <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 shrink-0">
-                                <span className="hidden sm:inline">Ko'rish</span>
+                                <span className="hidden sm:inline">
+                                  {isRuLang ? 'Открыть' : isEnLang ? 'View' : "Ko'rish"}
+                                </span>
                                 <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
                               </div>
                             </button>
@@ -1963,9 +2263,9 @@ const Home: React.FC = () => {
                   {intlModalTab === 'organizations' && (
                     <div>
                       <h4 className="text-base sm:text-lg font-black text-slate-900 mb-4">
-                        {reportDetails.intlOrganizationsLabel} ({displayedOrgsCount} ta muassasa):
+                        {reportDetails.intlOrganizationsLabel} ({isRuLang ? `${displayedOrgsCount} учреждений` : isEnLang ? `${displayedOrgsCount} institutions` : `${displayedOrgsCount} ta muassasa`}):
                       </h4>
-                      {reportDetails.intlOrganizationsSummary && (
+                      {reportDetails.intlOrganizationsSummary && !isRuLang && !isEnLang && (
                         <p className="text-sm text-slate-600 mb-4 bg-indigo-50/70 p-4 rounded-2xl border border-indigo-100 whitespace-pre-line">
                           {reportDetails.intlOrganizationsSummary}
                         </p>
@@ -1975,7 +2275,8 @@ const Home: React.FC = () => {
                           orgsToDisplay.map((orgName: string, idx: number) => {
                             let matchedFlag: string | null = null;
                             for (const c of countriesArray) {
-                              if (orgName.toLowerCase().includes(c.toLowerCase())) {
+                              const trC = translateCountryName(c).toLowerCase();
+                              if (orgName.toLowerCase().includes(c.toLowerCase()) || orgName.toLowerCase().includes(trC)) {
                                 matchedFlag = getCountryFlagUrl(c);
                                 break;
                               }
@@ -1993,7 +2294,7 @@ const Home: React.FC = () => {
                                   <span className="font-bold text-slate-900 text-sm md:text-base truncate">{orgName}</span>
                                 </div>
                                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 shrink-0">
-                                  Memorandum
+                                  {isRuLang ? 'Меморандум' : 'Memorandum'}
                                 </span>
                               </div>
                             );
@@ -2010,7 +2311,7 @@ const Home: React.FC = () => {
                   {intlModalTab === 'projects' && (
                     <div>
                       <h4 className="text-base sm:text-lg font-black text-slate-900 mb-4">
-                        {reportDetails.intlProjectsLabel} ({displayedProjectsCount} ta loyiha):
+                        {reportDetails.intlProjectsLabel} ({isRuLang ? `${displayedProjectsCount} проектов` : isEnLang ? `${displayedProjectsCount} projects` : `${displayedProjectsCount} ta loyiha`}):
                       </h4>
                       <div className="space-y-3">
                         {projectsToDisplay.length > 0 ? (
@@ -2022,7 +2323,7 @@ const Home: React.FC = () => {
                               <div className="flex-1">
                                 <span className="font-bold text-slate-900 text-sm md:text-base block">{projName}</span>
                                 <span className="inline-block mt-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
-                                  Xalqaro dastur
+                                  {isRuLang ? 'Международная программа' : isEnLang ? 'International Program' : 'Xalqaro dastur'}
                                 </span>
                               </div>
                             </div>
@@ -2047,7 +2348,13 @@ const Home: React.FC = () => {
                 className="text-xs font-bold text-blue-700 hover:text-blue-900 flex items-center gap-1.5 transition-colors"
               >
                 <Globe size={14} />
-                <span>Xalqaro aloqalarni rivojlantirish bo'limi to'liq ma'lumotlari</span>
+                <span>
+                  {isRuLang
+                    ? 'Полная информация отдела развития международных связей'
+                    : isEnLang
+                      ? 'Full details of the International Relations Department'
+                      : "Xalqaro aloqalarni rivojlantirish bo'limi to'liq ma'lumotlari"}
+                </span>
                 <ChevronRight size={14} />
               </Link>
               <button
@@ -2055,7 +2362,7 @@ const Home: React.FC = () => {
                 onClick={() => setActiveStatsModal(null)}
                 className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-colors ml-auto shadow-xs"
               >
-                Yopish
+                {isRuLang ? 'Закрыть' : isEnLang ? 'Close' : 'Yopish'}
               </button>
             </div>
           </div>

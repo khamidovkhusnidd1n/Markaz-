@@ -216,5 +216,3 @@ export const useApp = () => {
   }
   return context;
 };
-
-console.log('AppProvider mounted!');

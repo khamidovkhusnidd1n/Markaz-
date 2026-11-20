@@ -11,7 +11,7 @@ import logging
 from django.db import transaction
 from django.http import JsonResponse
 from rest_framework import viewsets, status, permissions
-from rest_framework.decorators import action, api_view, permission_classes, throttle_classes
+from rest_framework.decorators import action, api_view, permission_classes, throttle_classes, authentication_classes
 from rest_framework.throttling import AnonRateThrottle
 from django.db.models import Q
 from rest_framework.response import Response
@@ -93,8 +93,9 @@ class PedagogueProjectViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PedagogueProject.objects.all().order_by('-votes_count', '-created_at')
     serializer_class = PedagogueProjectSerializer
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], authentication_classes=[], permission_classes=[permissions.AllowAny])
     def view(self, request, pk=None):
         from django.core.cache import cache
         project = self.get_object()
@@ -106,7 +107,7 @@ class PedagogueProjectViewSet(viewsets.ReadOnlyModelViewSet):
             cache.set(cache_key, True, timeout=300)
         return Response({'views_count': project.views_count})
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], authentication_classes=[], permission_classes=[permissions.AllowAny])
     def vote(self, request, pk=None):
         from django.core.cache import cache
         project = self.get_object()
@@ -859,7 +860,7 @@ class AntiCorruptionPostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(is_active=True)
 
-    @action(detail=True, methods=['post'], permission_classes=[permissions.AllowAny])
+    @action(detail=True, methods=['post'], authentication_classes=[], permission_classes=[permissions.AllowAny])
     def view(self, request, pk=None):
         try:
             post = self.get_object()
@@ -894,7 +895,7 @@ class AppealViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_authenticators(self):
-        if getattr(self, 'action', None) == 'create':
+        if getattr(self, 'action', None) == 'create' or (getattr(self, 'request', None) and self.request.method == 'POST'):
             return []
         return super().get_authenticators()
 
@@ -910,7 +911,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_authenticators(self):
-        if getattr(self, 'action', None) in ['create', 'track']:
+        if getattr(self, 'action', None) in ['create', 'track'] or (getattr(self, 'request', None) and self.request.method == 'POST'):
             return []
         return super().get_authenticators()
 
@@ -1182,6 +1183,7 @@ def custom_login(request):
 
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([permissions.AllowAny])
 def increment_project_view(request, pk):
     from django.core.cache import cache
@@ -1198,6 +1200,7 @@ def increment_project_view(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([permissions.AllowAny])
 def increment_news_view(request, pk):
     from django.core.cache import cache
@@ -1214,6 +1217,7 @@ def increment_news_view(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([permissions.AllowAny])
 def increment_department_post_view(request, pk):
     from django.core.cache import cache
@@ -1230,6 +1234,7 @@ def increment_department_post_view(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['POST'])
+@authentication_classes([])
 @permission_classes([permissions.AllowAny])
 def increment_project_vote(request, pk):
     from django.core.cache import cache
