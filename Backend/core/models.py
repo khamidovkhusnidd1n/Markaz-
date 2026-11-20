@@ -1830,3 +1830,42 @@ class AntiCorruptionDocument(BaseModel):
     def __str__(self):
         return self.title
 
+
+class AntiCorruptionPost(BaseModel):
+    """Korrupsiyaga qarshi kurash tadbirlari, amaliy ishlar va targ'ibot postlari"""
+    title = models.CharField(max_length=500, verbose_name="Mavzu / Sarlavha")
+    title_ru = models.CharField(max_length=500, blank=True, default='', verbose_name="Mavzu (RU)")
+    title_en = models.CharField(max_length=500, blank=True, default='', verbose_name="Mavzu (EN)")
+    content = models.TextField(verbose_name="Batafsil matn / Hisobot")
+    content_ru = models.TextField(blank=True, default='', verbose_name="Batafsil matn (RU)")
+    content_en = models.TextField(blank=True, default='', verbose_name="Batafsil matn (EN)")
+    date = models.DateField(default=timezone.now, verbose_name="O'tkazilgan sana")
+    image = models.ImageField(upload_to=generate_unique_filename, blank=True, null=True, verbose_name="Asosiy rasm")
+    views_count = models.PositiveIntegerField(default=0, verbose_name="Ko'rishlar soni")
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib raqami")
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "Korrupsiyaga qarshi kurash posti"
+        verbose_name_plural = "Korrupsiyaga qarshi kurash: Tadbirlar va postlar"
+        ordering = ['order', '-date', '-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class AntiCorruptionPostImage(BaseModel):
+    """Postning qo'shimcha fotogalereyasi"""
+    post = models.ForeignKey(AntiCorruptionPost, on_delete=models.CASCADE, related_name='images', verbose_name="Post")
+    image = models.ImageField(upload_to=generate_unique_filename, verbose_name="Rasm")
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib raqami")
+
+    class Meta:
+        verbose_name = "Post rasmi"
+        verbose_name_plural = "Post rasmlari"
+        ordering = ['order', 'created_at']
+
+    def __str__(self):
+        return f"{self.post.title} - Rasm #{self.id}"
+
+

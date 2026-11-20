@@ -95,8 +95,8 @@ const MobileMenuItem = ({ item, level = 0, closeMenu }: { item: MenuItemType, le
   const hasChildren = item.children && item.children.length > 0;
   const isExternal = item.path === 'external';
 
-  const linkClasses = 'flex items-center justify-between p-2 rounded transition-colors w-full text-left ' + (
-    level === 0 ? 'hover:bg-gray-100 font-medium text-slate-800' : 'hover:bg-gray-50 text-sm text-gray-600'
+  const linkClasses = 'flex items-center justify-between px-3 py-2.5 rounded-xl transition-colors w-full text-left touch-manipulation ' + (
+    level === 0 ? 'hover:bg-slate-100 font-semibold text-slate-800 text-base' : 'hover:bg-slate-50 text-sm font-medium text-slate-600'
   );
 
   const handleToggle = (e: React.MouseEvent) => {
@@ -266,7 +266,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </div>
 
         {isMenuOpen && (
-          <div className="2xl:hidden bg-white border-t px-4 py-6 flex flex-col gap-2 animate-slideDown max-h-[70vh] overflow-y-auto">
+          <div className="2xl:hidden bg-white border-t px-4 py-5 flex flex-col gap-2 animate-slideDown max-h-[82vh] overflow-y-auto overscroll-contain shadow-xl">
             <button 
               onClick={() => {
                 setIsUsefulLinksOpen(true);

@@ -696,12 +696,28 @@ export const BackendAPI = {
         departments: (data.departments || []).map(transformDepartment),
         pedagogues: (data.pedagogues || []).map(transformPedagogue),
         pedagogueProjects: (data.pedagogueProjects || data.pedagogue_projects || []).map(transformPedagogueProject),
-        antiCorruption: data.antiCorruption || {
-          content: null,
-          documents: []
+        antiCorruption: {
+          content: data.antiCorruption?.content || null,
+          documents: data.antiCorruption?.documents || [],
+          posts: data.antiCorruption?.posts || [],
         },
       };
   },
+
+    async incrementAntiCorruptionPostView(postId: number) {
+      for (const baseUrl of getApiBaseUrls()) {
+        try {
+          const res = await fetch(`${baseUrl}/anti-corruption-posts/${postId}/view/`, { method: 'POST' });
+          if (res.ok) {
+            const data = await res.json();
+            return data.views_count;
+          }
+        } catch (e) {
+          console.warn(`Failed on ${baseUrl}`, e);
+        }
+      }
+      return null;
+    },
 
   
     async incrementProjectView(projectId: number) {

@@ -467,7 +467,35 @@ export interface AntiCorruptionContent {
   reception_hours?: string;
 }
 
+export interface AntiCorruptionPostImage {
+  id: number;
+  image: string;
+  image_url: string;
+  caption?: string;
+  order?: number;
+}
+
+export interface AntiCorruptionPost {
+  id: number;
+  title: string;
+  title_ru?: string;
+  title_en?: string;
+  slug?: string;
+  content: string;
+  content_ru?: string;
+  content_en?: string;
+  image?: string;
+  image_url?: string;
+  images?: AntiCorruptionPostImage[];
+  event_date: string;
+  views_count: number;
+  is_published?: boolean;
+  order?: number;
+  created_at?: string;
+}
+
 export interface AntiCorruptionData {
   content: AntiCorruptionContent;
   documents: AntiCorruptionDocument[];
+  posts: AntiCorruptionPost[];
 }

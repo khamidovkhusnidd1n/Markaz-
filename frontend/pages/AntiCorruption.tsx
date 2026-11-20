@@ -21,11 +21,20 @@ import {
   ArrowRight,
   ShieldCheck,
   BookOpen,
-  X
+  X,
+  ImageOff,
+  Calendar,
+  Images,
+  ChevronLeft,
+  ChevronRight,
+  Megaphone
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { useTranslation } from 'react-i18next';
 import { sanitizeHtml } from '../utils';
+import { AntiCorruptionPost } from '../types';
+import { BackendAPI } from '../services/backend';
+import { ImageModal } from '../components/ImageModal';
 import DocumentViewer from '../components/DocumentViewer';
 
 const INTERNAL_DOCS_FALLBACK: Record<string, { uz: string; ru: string; en: string }> = {
@@ -149,11 +158,15 @@ export const AntiCorruption: React.FC = () => {
   const { antiCorruption } = useApp();
   const lang = (i18n.language || 'uz').substring(0, 2);
 
-  const [activeTab, setActiveTab] = useState<'overview' | 'documents' | 'contact'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'posts' | 'documents' | 'contact'>('overview');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [postSearchQuery, setPostSearchQuery] = useState<string>('');
   const [activeDocUrl, setActiveDocUrl] = useState<string | null>(null);
   const [activeInternalDoc, setActiveInternalDoc] = useState<any | null>(null);
+  const [selectedPost, setSelectedPost] = useState<AntiCorruptionPost | null>(null);
+  const [currentModalImgIdx, setCurrentModalImgIdx] = useState<number>(0);
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   // Helper to get localized field
   const getLoc = (obj: any, field: string): string => {
@@ -177,6 +190,41 @@ export const AntiCorruption: React.FC = () => {
 
   const content = antiCorruption?.content;
   const rawDocuments = antiCorruption?.documents || [];
+  const rawPosts = antiCorruption?.posts || [];
+
+  // Helper to collect all images for a post
+  const getPostAllImages = (post: AntiCorruptionPost | null): string[] => {
+    if (!post) return [];
+    const imgs: string[] = [];
+    const main = post.image_url || post.image;
+    if (main) imgs.push(main);
+    if (post.images && post.images.length > 0) {
+      post.images.forEach(img => {
+        const u = img.image_url || img.image;
+        if (u && !imgs.includes(u)) imgs.push(u);
+      });
+    }
+    return imgs;
+  };
+
+  const handleOpenPost = (post: AntiCorruptionPost) => {
+    setSelectedPost(post);
+    setCurrentModalImgIdx(0);
+    BackendAPI.incrementAntiCorruptionPostView(post.id).catch(() => {});
+  };
+
+  // Filtered posts
+  const filteredPosts = useMemo(() => {
+    return rawPosts.filter(post => {
+      if (postSearchQuery.trim()) {
+        const query = postSearchQuery.toLowerCase();
+        const title = (getLoc(post, 'title') || post.title || '').toLowerCase();
+        const body = (getLoc(post, 'content') || post.content || '').toLowerCase();
+        return title.includes(query) || body.includes(query);
+      }
+      return true;
+    });
+  }, [rawPosts, postSearchQuery, lang]);
 
   // Filtered documents
   const filteredDocuments = useMemo(() => {
@@ -284,6 +332,21 @@ export const AntiCorruption: React.FC = () => {
             >
               <Scale size={16} />
               <span>{lang === 'ru' ? 'Политика и принципы' : lang === 'en' ? 'Policy & Goals' : 'Siyosat va tamoyillar'}</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('posts')}
+              className={`px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shrink-0 flex items-center gap-1.5 sm:gap-2 ${
+                activeTab === 'posts'
+                  ? 'bg-blue-900 text-white shadow-md shadow-blue-900/20'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+              }`}
+            >
+              <Megaphone size={16} />
+              <span>{lang === 'ru' ? 'Мероприятия и дела' : lang === 'en' ? 'Events & Activities' : 'Tadbirlar va amaliy ishlar'}</span>
+              <span className={`text-xs px-2 py-0.5 rounded-full ${activeTab === 'posts' ? 'bg-blue-800 text-white' : 'bg-slate-200 text-slate-700'}`}>
+                {rawPosts.length}
+              </span>
             </button>
 
             <button
@@ -400,7 +463,129 @@ export const AntiCorruption: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 2: DOCUMENTS */}
+        {/* TAB 2: POSTS / ACTIVITIES */}
+        {activeTab === 'posts' && (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Header / Search bar */}
+            <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col sm:flex-row gap-4 justify-between items-center">
+              <div>
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <Megaphone className="text-blue-700" size={20} />
+                  <span>{lang === 'ru' ? 'Антикоррупционные мероприятия и публикации' : lang === 'en' ? 'Anti-Corruption Events and Articles' : 'Tadbirlar, seminarlar va amaliy ishlar'}</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {lang === 'ru' ? `Всего публикаций: ${rawPosts.length}` : lang === 'en' ? `Total posts: ${rawPosts.length}` : `Jami e'lon qilingan ishlar: ${rawPosts.length} ta`}
+                </p>
+              </div>
+
+              {/* Search Field */}
+              <div className="relative w-full sm:w-72">
+                <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={postSearchQuery}
+                  onChange={e => setPostSearchQuery(e.target.value)}
+                  placeholder={lang === 'ru' ? 'Поиск публикации...' : lang === 'en' ? 'Search posts...' : 'Postlarni qidirish...'}
+                  className="w-full pl-9 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                />
+              </div>
+            </div>
+
+            {/* Posts Cards Grid */}
+            {filteredPosts.length === 0 ? (
+              <div className="text-center py-16 bg-white rounded-2xl border border-slate-200">
+                <Megaphone size={48} className="mx-auto text-slate-300 mb-3" />
+                <h4 className="text-base font-bold text-slate-700">
+                  {lang === 'ru' ? 'Публикации пока не добавлены' : lang === 'en' ? 'No posts yet' : 'Hozircha e’lon qilingan postlar mavjud emas'}
+                </h4>
+                <p className="text-xs text-slate-500 mt-1">
+                  {lang === 'ru' ? 'Новые материалы появятся здесь по мере проведения мероприятий' : lang === 'en' ? 'New event reports will appear here soon' : 'Yangi tadbirlar va amaliy ishlar bu yerda e’lon qilib boriladi'}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredPosts.map(post => {
+                  const title = getLoc(post, 'title') || post.title;
+                  const postContent = getLoc(post, 'content') || post.content;
+                  const allImgs = getPostAllImages(post);
+                  const mainImg = allImgs[0];
+
+                  return (
+                    <div
+                      key={post.id}
+                      onClick={() => handleOpenPost(post)}
+                      className="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-lg transition-all duration-300 flex flex-col justify-between overflow-hidden group cursor-pointer"
+                    >
+                      <div>
+                        {/* Media Thumbnail */}
+                        {mainImg ? (
+                          <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                            <img
+                              src={mainImg}
+                              alt={title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              loading="lazy"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                            {allImgs.length > 1 && (
+                              <span className="absolute bottom-2.5 right-2.5 px-2 py-1 rounded-md bg-slate-900/75 backdrop-blur-xs text-white text-[11px] font-semibold flex items-center gap-1 shadow-xs">
+                                <Images size={13} />
+                                +{allImgs.length - 1}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="relative aspect-[16/10] bg-slate-100/90 border-b border-slate-200/60 flex flex-col items-center justify-center text-slate-400 gap-1.5 p-4 select-none">
+                            <ImageOff size={34} strokeWidth={1.5} className="text-slate-300" />
+                            <span className="text-xs font-semibold text-slate-400">
+                              {lang === 'ru' ? 'Фото не загружено' : lang === 'en' ? 'Image not uploaded' : 'Rasm yuklanmagan'}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Content Preview */}
+                        <div className="p-5">
+                          <div className="flex items-center justify-between text-xs text-slate-400 font-medium mb-2.5">
+                            <span className="flex items-center gap-1.5 text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md font-semibold border border-blue-100/60">
+                              <Calendar size={13} />
+                              {post.date || '2025'}
+                            </span>
+                            <span className="flex items-center gap-1 text-slate-400">
+                              <Eye size={13} />
+                              {post.views_count || 0}
+                            </span>
+                          </div>
+
+                          <h4 className="text-base font-bold text-slate-900 group-hover:text-blue-700 transition-colors line-clamp-2 leading-snug">
+                            {title}
+                          </h4>
+
+                          {postContent && (
+                            <p className="mt-2 text-xs text-slate-600 line-clamp-3 leading-relaxed">
+                              {postContent}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Footer CTA */}
+                      <div className="px-5 pb-5 pt-0">
+                        <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                          <span className="text-xs font-bold text-blue-700 group-hover:text-blue-900 flex items-center gap-1.5 transition-colors">
+                            <span>{lang === 'ru' ? 'Подробнее' : lang === 'en' ? 'Read more' : 'Batafsil o‘qish'}</span>
+                            <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 3: DOCUMENTS */}
         {activeTab === 'documents' && (
           <div className="space-y-6 animate-in fade-in duration-300">
             {/* Search and Filters Bar */}
@@ -763,6 +948,180 @@ export const AntiCorruption: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Post Detail Modal */}
+      {selectedPost && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-6 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-200"
+          onClick={() => setSelectedPost(null)}
+        >
+          <div
+            className="bg-white w-full max-w-4xl max-h-[92vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 bg-slate-50 shrink-0">
+              <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 pr-2">
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center shrink-0">
+                  <Megaphone size={18} />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                    <span className="flex items-center gap-1 font-semibold text-blue-700">
+                      <Calendar size={13} />
+                      {selectedPost.date || '2025'}
+                    </span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1">
+                      <Eye size={13} />
+                      {(selectedPost.views_count || 0) + 1} {lang === 'ru' ? 'просмотров' : lang === 'en' ? 'views' : 'ko‘rildi'}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-slate-900 text-sm sm:text-base lg:text-lg truncate mt-0.5">
+                    {getLoc(selectedPost, 'title') || selectedPost.title}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => setSelectedPost(null)}
+                  className="p-2 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors text-slate-500 cursor-pointer"
+                  title="Yopish"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-6 bg-white text-slate-800">
+              {/* Media Carousel / Gallery */}
+              {(() => {
+                const modalImages = getPostAllImages(selectedPost);
+                if (modalImages.length === 0) return null;
+                const activeImg = modalImages[currentModalImgIdx] || modalImages[0];
+
+                return (
+                  <div className="space-y-3">
+                    <div className="relative rounded-2xl overflow-hidden bg-slate-950 flex items-center justify-center max-h-[460px] aspect-video sm:aspect-[16/10] w-full border border-slate-200 shadow-sm">
+                      <img
+                        src={activeImg}
+                        alt={getLoc(selectedPost, 'title')}
+                        className="max-w-full max-h-[460px] object-contain cursor-zoom-in transition-all duration-300"
+                        onClick={() => setZoomedImage(activeImg)}
+                      />
+                      
+                      {modalImages.length > 1 && (
+                        <>
+                          <button
+                            onClick={e => {
+                              e.stopPropagation();
+                              setCurrentModalImgIdx(prev => (prev === 0 ? modalImages.length - 1 : prev - 1));
+                            }}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
+                          >
+                            <ChevronLeft size={20} />
+                          </button>
+                          <button
+                            onClick={e => {
+                              e.stopPropagation();
+                              setCurrentModalImgIdx(prev => (prev === modalImages.length - 1 ? 0 : prev + 1));
+                            }}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/90 text-white flex items-center justify-center shadow-md transition-all cursor-pointer"
+                          >
+                            <ChevronRight size={20} />
+                          </button>
+                          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/70 backdrop-blur-xs text-white text-xs font-semibold">
+                            {currentModalImgIdx + 1} / {modalImages.length}
+                          </div>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Thumbnails row */}
+                    {modalImages.length > 1 && (
+                      <div className="flex gap-2 overflow-x-auto py-1 no-scrollbar">
+                        {modalImages.map((imgUrl, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setCurrentModalImgIdx(i)}
+                            className={`w-16 h-14 sm:w-20 sm:h-16 rounded-xl overflow-hidden shrink-0 border-2 transition-all ${
+                              currentModalImgIdx === i ? 'border-blue-600 scale-105 shadow-sm' : 'border-slate-200 opacity-70 hover:opacity-100'
+                            }`}
+                          >
+                            <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
+              {/* Title & Date */}
+              <div>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 leading-snug">
+                  {getLoc(selectedPost, 'title') || selectedPost.title}
+                </h2>
+                <div className="mt-2 flex items-center gap-3 text-xs text-slate-500 font-medium">
+                  <span className="flex items-center gap-1.5 text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md">
+                    <Calendar size={13} />
+                    {selectedPost.date || '2025'}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Eye size={13} />
+                    {(selectedPost.views_count || 0) + 1} {lang === 'ru' ? 'просмотров' : lang === 'en' ? 'views' : 'ko‘rildi'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Body Content */}
+              <div className="prose prose-slate max-w-none text-sm sm:text-base leading-relaxed whitespace-pre-line text-slate-700 font-normal">
+                {getLoc(selectedPost, 'content') || selectedPost.content}
+              </div>
+
+              {/* Hotline Box */}
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-600">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck size={18} className="text-emerald-600 shrink-0" />
+                  <span>Markazda korrupsiyaviy holatlarga nisbatan murosasiz munosabat amal qiladi.</span>
+                </div>
+                <div className="font-semibold text-slate-800">
+                  Ishonch telefoni: {hotline}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-3 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0">
+              <Link
+                to="/virtual-qabulxona/murojaat"
+                onClick={() => setSelectedPost(null)}
+                className="inline-flex items-center gap-2 text-xs font-bold text-blue-700 hover:text-blue-900"
+              >
+                <Send size={14} />
+                <span>Murojaat yuborish</span>
+              </Link>
+
+              <button
+                onClick={() => setSelectedPost(null)}
+                className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition-colors cursor-pointer"
+              >
+                Yopish
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Image Zoom Modal */}
+      <ImageModal
+        images={zoomedImage ? [zoomedImage] : []}
+        initialIndex={0}
+        isOpen={Boolean(zoomedImage)}
+        onClose={() => setZoomedImage(null)}
+      />
 
       {/* PDF Document Viewer Modal */}
       {activeDocUrl && (

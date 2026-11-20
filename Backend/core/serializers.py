@@ -846,7 +846,7 @@ class InternationalMediaSerializer(serializers.ModelSerializer):
             return obj.image.url
         return None
 
-from .models import Department, DepartmentTask, DepartmentPost, DepartmentPostImage, DepartmentImage, DepartmentVideo, Pedagogue, PedagogueProject, PedagogueProjectImage, AntiCorruptionContent, AntiCorruptionDocument
+from .models import Department, DepartmentTask, DepartmentPost, DepartmentPostImage, DepartmentImage, DepartmentVideo, Pedagogue, PedagogueProject, PedagogueProjectImage, AntiCorruptionContent, AntiCorruptionDocument, AntiCorruptionPost, AntiCorruptionPostImage
 
 class DepartmentTaskSerializer(serializers.ModelSerializer):
     class Meta:
@@ -953,4 +953,39 @@ class AntiCorruptionContentSerializer(serializers.ModelSerializer):
             if request:
                 return request.build_absolute_uri(obj.officer_photo.url)
             return obj.officer_photo.url
+        return ''
+
+
+class AntiCorruptionPostImageSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = AntiCorruptionPostImage
+        fields = ['id', 'image', 'image_url', 'order']
+
+    def get_image_url(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return ''
+
+
+class AntiCorruptionPostSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+    images = AntiCorruptionPostImageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = AntiCorruptionPost
+        fields = '__all__'
+
+    def get_image_url(self, obj):
+        if obj.image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.image.url)
+            return obj.image.url
+        return ''
+
         return None

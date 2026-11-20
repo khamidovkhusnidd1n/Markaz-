@@ -25,7 +25,7 @@ from .models import (
     Course, JournalIssue, Document, Statistics, YearlyStatistics,
     AppContent, AppHeroImage, JournalSettings, InternationalSettings, InternationalPartner,
     InternationalProject, InternationalProjectImage, InternationalMedia,
-    AntiCorruptionContent, AntiCorruptionDocument
+    AntiCorruptionContent, AntiCorruptionDocument, AntiCorruptionPost, AntiCorruptionPostImage
 )
 from .serializers import (
     NewsSerializer, NewsCreateSerializer, NewsImageSerializer, NewsCategorySerializer,
@@ -36,7 +36,7 @@ from .serializers import (
     YearlyStatisticsSerializer, AppContentSerializer, JournalSettingsSerializer,
     InternationalSettingsSerializer, InternationalPartnerSerializer,
     InternationalProjectSerializer, InternationalProjectImageSerializer, InternationalMediaSerializer,
-    AntiCorruptionContentSerializer, AntiCorruptionDocumentSerializer
+    AntiCorruptionContentSerializer, AntiCorruptionDocumentSerializer, AntiCorruptionPostSerializer
 )
 
 logger = logging.getLogger('core')
@@ -840,17 +840,36 @@ class AntiCorruptionDocumentViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(category=cat)
         return queryset
 
+    def perform_create(self, serializer):
+        serializer.save(is_active=True)
+
+
+class AntiCorruptionPostViewSet(viewsets.ModelViewSet):
+    queryset = AntiCorruptionPost.objects.filter(is_active=True).prefetch_related('images').order_by('order', '-date')
+    serializer_class = AntiCorruptionPostSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+
     def get_queryset(self):
-        queryset = InternationalMedia.objects.all().order_by('order', '-created_at')
-        if has_admin_access(self.request):
-            return queryset
-        media_type = self.request.query_params.get('media_type')
-        if media_type in ['photo', 'video']:
-            queryset = queryset.filter(media_type=media_type)
-        return queryset.filter(is_active=True)
+        queryset = AntiCorruptionPost.objects.all().prefetch_related('images').order_by('order', '-date')
+        if not has_admin_access(self.request):
+            queryset = queryset.filter(is_active=True)
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(is_active=True)
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.AllowAny])
+    def view(self, request, pk=None):
+        try:
+            post = self.get_object()
+            post.views_count = models.F('views_count') + 1
+            post.save(update_fields=['views_count'])
+            post.refresh_from_db(fields=['views_count'])
+            return Response({'views_count': post.views_count})
+        except Exception:
+            return Response({'status': 'ok'})
+
 
 
 class ArtGalleryItemViewSet(viewsets.ModelViewSet):
@@ -1073,7 +1092,8 @@ def get_all_data(request):
             ).data,
             'antiCorruption': {
                 'content': AntiCorruptionContentSerializer(AntiCorruptionContent.get_instance(), context=ctx).data,
-                'documents': AntiCorruptionDocumentSerializer(AntiCorruptionDocument.objects.filter(is_active=True).order_by('order', '-date'), many=True, context=ctx).data
+                'documents': AntiCorruptionDocumentSerializer(AntiCorruptionDocument.objects.filter(is_active=True).order_by('order', '-date'), many=True, context=ctx).data,
+                'posts': AntiCorruptionPostSerializer(AntiCorruptionPost.objects.filter(is_active=True).prefetch_related('images').order_by('order', '-date'), many=True, context=ctx).data,
             },
         }
         return Response(data)

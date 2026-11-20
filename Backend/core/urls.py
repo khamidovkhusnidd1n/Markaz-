@@ -34,6 +34,7 @@ router.register(r'international-projects', views.InternationalProjectViewSet, ba
 router.register(r'international-media', views.InternationalMediaViewSet, basename='international-media')
 router.register(r'anti-corruption-content', views.AntiCorruptionContentViewSet, basename='anti-corruption-content')
 router.register(r'anti-corruption-documents', views.AntiCorruptionDocumentViewSet, basename='anti-corruption-documents')
+router.register(r'anti-corruption-posts', views.AntiCorruptionPostViewSet, basename='anti-corruption-posts')
 router.register(r'training-plan', views.TrainingPlanRecordViewSet, basename='training-plan')
 
 urlpatterns = [

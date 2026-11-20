@@ -29,7 +29,7 @@ from .models import (
     NewsCategory, ArtGalleryItem, Appeal, Application, AppHeroImage,
     InternationalSettings, InternationalPartner, InternationalProject,
     InternationalProjectImage, InternationalMedia,
-    AntiCorruptionContent, AntiCorruptionDocument
+    AntiCorruptionContent, AntiCorruptionDocument, AntiCorruptionPost, AntiCorruptionPostImage
 )
 
 
@@ -1650,6 +1650,37 @@ class AntiCorruptionDocumentAdmin(admin.ModelAdmin):
             'description': 'Qisqacha tavsif va ichki nizomlar uchun to‘liq matn.'
         }),
     )
+
+
+class AntiCorruptionPostImageInline(admin.TabularInline):
+    model = AntiCorruptionPostImage
+    extra = 1
+    fields = ('image', 'order')
+
+
+@admin.register(AntiCorruptionPost)
+class AntiCorruptionPostAdmin(admin.ModelAdmin):
+    list_display = ['title', 'date', 'views_count', 'order', 'is_active']
+    list_filter = ['is_active', 'date']
+    search_fields = ['title', 'title_ru', 'title_en', 'content']
+    list_editable = ['order', 'is_active']
+    ordering = ['order', '-date', '-created_at']
+    inlines = [AntiCorruptionPostImageInline]
+
+    fieldsets = (
+        ('Asosiy ma\'lumotlar', {
+            'fields': ('title', 'title_ru', 'title_en', 'date', 'image', 'order', 'is_active')
+        }),
+        ('Post matni / Hisobot', {
+            'fields': ('content', 'content_ru', 'content_en'),
+            'description': 'Tadbir, seminar yoki amaliy ish bo‘yicha to‘liq hisobot va ma\'lumot.'
+        }),
+        ('Statistika', {
+            'fields': ('views_count',),
+            'classes': ('collapse',)
+        })
+    )
+
 
 
 from django import forms
