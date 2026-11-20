@@ -21,7 +21,6 @@ import {
   ArrowRight,
   ShieldCheck,
   BookOpen,
-  Printer,
   X
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -693,14 +692,6 @@ export const AntiCorruption: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => window.print()}
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-bold transition-colors cursor-pointer"
-                  title="Chop etish"
-                >
-                  <Printer size={15} />
-                  <span>Chop etish</span>
-                </button>
                 <button
                   onClick={() => setActiveInternalDoc(null)}
                   className="p-2 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors text-slate-500 cursor-pointer"
