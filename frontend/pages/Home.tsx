@@ -70,6 +70,7 @@ interface CountryPartnerInfo {
   descriptionEn?: string;
   pdfUrl?: string;
   thumbnailUrl?: string;
+  galleryUrls?: string[];
   departmentPostId?: number;
 }
 
@@ -116,12 +117,40 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Florensiya',
         cityRu: 'Флоренция',
         cityEn: 'Florence',
-        description: 'Madaniy merosni saqlash, san’at asarlarini restavratsiya va konservatsiya qilish, professor-o‘qituvchilar hamda restavrator mutaxassislar malakasini oshirish bo‘yicha o‘zaro hamkorlik Memorandumi.',
-        descriptionRu: 'Меморандум о взаимном сотрудничестве в области сохранения культурного наследия, реставрации и консервации произведений искусства, а также повышения квалификации преподавателей и специалистов-реставраторов.',
-        descriptionEn: 'Memorandum of mutual cooperation on cultural heritage preservation, art restoration and conservation, and professional development of faculty and restoration specialists.',
+        description: 'Markaz direktori D.Shukurovning Florensiyaga tashrifi doirasida Palazzo Spinelli direktori Emanuele Amodei bilan imzolangan hamkorlik Memorandumi va Xalqaro loyihalar bo‘limi boshlig‘i Ketrin Burnett bilan uchrashuv. Madaniy merosni saqlash, san’at asarlarini restavratsiya qilish hamda professor-o‘qituvchilar almashinuvini ko‘zda tutadi.',
+        descriptionRu: 'Меморандум о взаимном сотрудничестве, подписанный директором Центра Д. Шукуровым и директором Palazzo Spinelli Эмануэле Амодеи в ходе визита во Флоренцию, а также переговоры с руководителем международных проектов Кэтрин Бёрнетт.',
+        descriptionEn: 'Memorandum of mutual cooperation signed by Center Director D. Shukurov and Palazzo Spinelli Director Emanuele Amodei in Florence, along with talks with Head of International Projects Catherine Burnett.',
         pdfUrl: '/media/uploads/memorandums/MoU_Italia.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_Italia_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image35.png',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image35.png',
+          '/media/uploads/departmentpost/xh_image37.png',
+          '/media/uploads/departmentpost/xh_image36.png',
+          '/media/uploads/departmentpost/xh_image30.png',
+        ],
         departmentPostId: 4,
+      },
+      {
+        id: 'it-2',
+        name: 'Santa Reparata xalqaro san’at maktabi (SRISA)',
+        nameRu: 'Международная школа искусств Санта-Репарата (SRISA)',
+        nameEn: 'Santa Reparata International School of Art (SRISA)',
+        originalName: 'Santa Reparata International School of Art',
+        country: 'Italiya',
+        city: 'Florensiya',
+        cityRu: 'Флоренция',
+        cityEn: 'Florence',
+        description: 'Markaz direktori D.Shukurovning Italiyaning Santa Reparata xalqaro san’at maktabiga tashrifi va maktab direktori Aleksandra Roxas Fuentes bilan badiiy ta’lim va xalqaro tajriba almashish bo‘yicha hamkorlik uchrashuvi.',
+        descriptionRu: 'Визит директора Центра Д. Шукурова в Международную школу искусств Санта-Репарата (Флоренция) и встреча с директором школы Александрой Рохас Фуэнтес по вопросам сотрудничества в сфере художественного образования.',
+        descriptionEn: 'Official visit of Center Director D. Shukurov to Santa Reparata International School of Art (Florence) and cooperation talks with School Director Alexandra Rojas Fuentes.',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image31.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image31.jpeg',
+          '/media/uploads/departmentpost/xh_image32.jpeg',
+          '/media/uploads/departmentpost/xh_image33.jpeg',
+          '/media/uploads/departmentpost/xh_image34.jpeg',
+        ],
+        departmentPostId: 19,
       },
     ],
     projects: [],
@@ -143,28 +172,53 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Xebey',
         cityRu: 'Хэбэй',
         cityEn: 'Hebei',
-        description: 'Oʼzbekiston Badiiy akademiyasi huzuridagi Markaz hamda Xitoyning nufuzli Hebei tasviriy san\'at akademiyasi o\'rtasida xalqaro hamkorlik va akademik almashinuv Memorandumi.',
-        descriptionRu: 'Меморандум о международном сотрудничестве и академическом обмене между Центром при Академии художеств Узбекистана и Хэбэйской академией изящных искусств.',
-        descriptionEn: 'Memorandum on international cooperation and academic exchange between the Center under the Academy of Arts of Uzbekistan and Hebei Academy of Fine Arts.',
+        description: 'Oʼzbekiston Badiiy akademiyasi huzuridagi Markaz hamda Xitoyning nufuzli Hebei tasviriy san\'at akademiyasi o\'rtasida ikki tomonlama ijodiy va ilmiy hamkorlik, qo‘shma dasturlar, ijodiy ustaxonalar va akademik almashinuv Memorandumi.',
+        descriptionRu: 'Меморандум о международном научно-творческом сотрудничестве, совместных образовательных программах и академическом обмене между Центром при Академии художеств Узбекистана и Хэбэйской академией изящных искусств.',
+        descriptionEn: 'Memorandum on international creative and academic cooperation, joint educational programs, workshops, and academic exchange between the Center under the Academy of Arts of Uzbekistan and Hebei Academy of Fine Arts.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_Hebei_FAA.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/Memorandum_Hebei_FAA_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image75.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image75.jpeg',
+          '/media/uploads/departmentpost/xh_image76.jpeg',
+          '/media/uploads/departmentpost/xh_image77.jpeg',
+          '/media/uploads/departmentpost/xh_image78.jpeg',
+        ],
         departmentPostId: 3,
       },
       {
         id: 'cn-2',
-        name: 'Xubey tasviriy san\'at instituti',
-        nameRu: 'Хубэйский институт изящных искусств',
-        nameEn: 'Hubei Institute of Fine Arts',
+        name: 'Xubey tasviriy san\'at instituti (HIFA)',
+        nameRu: 'Хубэйский институт изящных искусств (HIFA)',
+        nameEn: 'Hubei Institute of Fine Arts (HIFA)',
         originalName: 'Hubei Institute of Fine Arts',
         country: 'Xitoy',
         city: 'Uxan, Xubey',
         cityRu: 'Ухань, Хубэй',
         cityEn: 'Wuhan, Hubei',
-        description: 'Tasviriy san\'at yo\'nalishlarida ta\'lim, ilmiy-ijodiy ko\'rgazmalar va professor-o\'qituvchilar stajirovkasini tashkil etish bo\'yicha hamkorlik Memorandumi.',
-        descriptionRu: 'Меморандум о сотрудничестве в области художественного образования, организации научно-творческих выставок и стажировок профессорско-преподавательского состава.',
-        descriptionEn: 'Memorandum of cooperation on fine arts education, joint academic and creative exhibitions, and faculty internships.',
+        description: 'Tasviriy san\'at va dizayn yo\'nalishlarida hamkorlik Memorandumi, Markaz va Dizayn maktabi mutaxassislarining Uxan shahridagi stajirovkasi, “8+N” xalqaro oliy san’at maktablari forumi hamda “NEW SILK ROAD ART JOURNEY” xalqaro konferensiyasi.',
+        descriptionRu: 'Меморандум о сотрудничестве, научно-творческая стажировка специалистов Центра и Школы дизайна в г. Ухань, участие в международном образовательном форуме «8+N» и конференции «NEW SILK ROAD ART JOURNEY».',
+        descriptionEn: 'Memorandum of cooperation, faculty internship in Wuhan, participation in the "8+N" International Higher Art Education Forum, and the "NEW SILK ROAD ART JOURNEY" international conference.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_HIFA.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/Memorandum_HIFA_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image79.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image79.jpeg',
+          '/media/uploads/departmentpost/xh_image80.jpeg',
+          '/media/uploads/departmentpost/xh_image81.jpeg',
+          '/media/uploads/departmentpost/xh_image82.jpeg',
+          '/media/uploads/departmentpost/xh_image83.jpeg',
+          '/media/uploads/departmentpost/xh_image84.jpeg',
+          '/media/uploads/departmentpost/xh_image85.jpeg',
+          '/media/uploads/departmentpost/xh_image86.jpeg',
+          '/media/uploads/departmentpost/xh_image87.jpeg',
+          '/media/uploads/departmentpost/xh_image88.jpeg',
+          '/media/uploads/departmentpost/xh_image89.jpeg',
+          '/media/uploads/departmentpost/xh_image90.jpeg',
+          '/media/uploads/departmentpost/xh_image91.jpeg',
+          '/media/uploads/departmentpost/xh_image92.jpeg',
+          '/media/uploads/departmentpost/xh_image93.jpeg',
+          '/media/uploads/departmentpost/xh_image94.jpeg',
+          '/media/uploads/departmentpost/xh_image95.jpeg',
+        ],
         departmentPostId: 1,
       },
       {
@@ -177,11 +231,17 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Pekin',
         cityRu: 'Пекин',
         cityEn: 'Beijing',
-        description: 'Madaniy-gumanitar sohalarda hamkorlik, xalqaro san\'at ko\'rgazmalari va ta\'lim forumlarini o‘tkazish bo‘yicha Memorandum.',
-        descriptionRu: 'Меморандум о сотрудничестве в культурно-гуманитарной сфере, проведении международных художественных выставок и образовательных форумов.',
-        descriptionEn: 'Memorandum on cultural and humanitarian cooperation, international art exhibitions, and educational forums.',
+        description: 'Madaniy-gumanitar sohalarda hamkorlik, “Bir makon, bir yo‘l: Buyuk Ipak yo‘li chorrahasida kesishgan san’at” xalqaro san\'at ko\'rgazmalari va ilmiy-amaliy seminarlarini o‘tkazish bo‘yicha Memorandum.',
+        descriptionRu: 'Меморандум о сотрудничестве в культурно-гуманитарной сфере, проведении международных выставок «Один пояс, один путь: искусство на перекрёстке Великого Шёлкового пути» и образовательных форумов.',
+        descriptionEn: 'Memorandum on cultural and humanitarian cooperation, international art exhibitions "One Belt, One Road: Art Intersecting at the Crossroads of the Great Silk Road", and educational forums.',
         pdfUrl: '/media/uploads/memorandums/China_CAETC.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/China_CAETC_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image114.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image114.jpeg',
+          '/media/uploads/departmentpost/xh_image115.jpeg',
+          '/media/uploads/departmentpost/xh_image116.jpeg',
+          '/media/uploads/departmentpost/xh_image117.jpeg',
+        ],
         departmentPostId: 16,
       },
       {
@@ -194,11 +254,19 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Lanchjou',
         cityRu: 'Ланьчжоу',
         cityEn: 'Lanzhou',
-        description: 'San’at ta’limi, pedagog kadrlar malakasini oshirish va xalqaro san\'at amaliyotlarini yo‘lga qo‘yish bo‘yicha Memorandum.',
-        descriptionRu: 'Меморандум о развитии художественного образования, повышении квалификации педагогических кадров и организации международных творческих практик.',
-        descriptionEn: 'Memorandum on art education, professional development of educators, and international artistic exchange programs.',
+        description: 'Markaz direktori D.Shukurov va San’at maktabi vakili Li Xualong tomonidan imzolangan Memorandum: o‘qituvchilar uchun qisqa muddatli amaliyotlar, qo‘shma malaka oshirish kurslari, xalqaro konferensiyalar va plenerlar tashkil etish.',
+        descriptionRu: 'Меморандум, подписанный директором Центра Д. Шукуровым и представителем Школы искусств Ли Хуалуном: краткосрочные стажировки преподавателей, совместные курсы повышения квалификации, научные конференции и пленэры.',
+        descriptionEn: 'Memorandum signed by Center Director D. Shukurov and Art School representative Li Hualong: short-term faculty internships, joint professional development courses, academic conferences, and plein-airs.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_LANJOU_UNIVERSITETI_UELS_KOLLEJI_SANAT_MAKTABI_(XITOY).pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/Memorandum_LANJOU_UNIVERSITETI_UELS_KOLLEJI_SANAT_MAKTABI_(XITOY)_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image101.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image101.jpeg',
+          '/media/uploads/departmentpost/xh_image102.jpeg',
+          '/media/uploads/departmentpost/xh_image103.jpeg',
+          '/media/uploads/departmentpost/xh_image104.jpeg',
+          '/media/uploads/departmentpost/xh_image105.jpeg',
+          '/media/uploads/departmentpost/xh_image106.jpeg',
+        ],
         departmentPostId: 17,
       },
     ],
@@ -247,17 +315,17 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       },
       {
         id: 'cn-p4',
-        title: '“O‘zbekiston milliy liboslar ko‘rgazmasi” (Xitoy)',
-        titleRu: '«Выставка национальных костюмов Узбекистана» (Китай)',
-        titleEn: '"Exhibition of National Costumes of Uzbekistan" (China)',
-        partner: 'Xubey tasviriy san’at instituti (Xitoy)',
-        partnerRu: 'Хубэйский институт изящных искусств (Китай)',
-        partnerEn: 'Hubei Institute of Fine Arts (China)',
+        title: '“Bir makon, bir yo‘l: Buyuk Ipak yo‘li chorrahasida kesishgan san’at” ko‘rgazmasi va seminari',
+        titleRu: 'Выставка и семинар «Один пояс, один путь: искусство на перекрёстке Великого Шёлкового пути»',
+        titleEn: 'Exhibition and Seminar "One Belt, One Road: Art Intersecting at the Crossroads of the Great Silk Road"',
+        partner: 'Xitoy oliy san’at muassasalari va Respublika dizayn maktabi',
+        partnerRu: 'Художественные вузы Китая и Республиканская школа дизайна',
+        partnerEn: 'Chinese Art Institutions and Republican Specialized Design School',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
-        description: 'Xitoyda O‘zbekiston milliy liboslari, an’anaviy kashtachilik va amaliy san’at durdonalarining xalqaro ekspozitsiyasi.',
-        descriptionRu: 'Международная экспозиция национальных костюмов, традиционной вышивки и шедевров прикладного искусства Узбекистана в Китае.',
-        descriptionEn: 'International exposition of Uzbek national costumes, traditional embroidery, and applied art masterpieces in China.',
+        description: '“Badiiy ta’limning zamonaviy tendensiyalari: O‘zbekiston va Xitoy tajribasi” mavzusidagi xalqaro ilmiy-amaliy seminar va Xitoy ijodkorlari badiiy asarlari ko‘rgazmasi.',
+        descriptionRu: 'Международный научно-практический семинар «Современные тенденции художественного образования: опыт Узбекистана и Китая» и выставка произведений китайских художников.',
+        descriptionEn: 'International seminar on contemporary trends in art education and exhibition of artworks by Chinese artists.',
       },
     ],
   },
@@ -278,28 +346,34 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Batumi',
         cityRu: 'Батуми',
         cityEn: 'Batumi',
-        description: 'Tasviriy va amaliy san’at ta’limi sohasida hamkorlik, qo‘shma plenerlar va o‘qituvchilar malakasini oshirish bo‘yicha Memorandum.',
-        descriptionRu: 'Меморандум о сотрудничестве в сфере изобразительного и прикладного художественного образования, совместных пленэрах и повышении квалификации преподавателей.',
-        descriptionEn: 'Memorandum on cooperation in fine and applied arts education, joint plein-air workshops, and faculty professional development.',
+        description: 'Markaz, P.Benkov nomidagi rassomlik maktabi hamda Respublika dizayn maktabi xodimlarining Batumi shahriga xizmat safari, hamkorlik Memorandumi va D.Shukurovning “Zamonaviy Oʻzbekiston tasviriy san’ati” nomli ilmiy seminari.',
+        descriptionRu: 'Меморандум о сотрудничестве, визит делегации Центра и специализированных художественных школ в г. Батуми, а также научный семинар Д. Шукурова «Современное изобразительное искусство Узбекистана».',
+        descriptionEn: 'Memorandum of cooperation, official visit of the Center and specialized art schools delegation to Batumi, and D. Shukurov\'s seminar "Contemporary Fine Arts of Uzbekistan".',
         pdfUrl: '/media/uploads/memorandums/MoU_Gruziya.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_Gruziya_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image58.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image58.jpeg',
+          '/media/uploads/departmentpost/xh_image59.jpeg',
+          '/media/uploads/departmentpost/xh_image60.jpeg',
+          '/media/uploads/departmentpost/xh_image61.jpeg',
+        ],
         departmentPostId: 10,
       },
     ],
     projects: [
       {
         id: 'ge-p1',
-        title: '“Rangtasvir simfoniyasi” xalqaro qo‘shma ko‘rgazmasi va ilmiy seminar',
-        titleRu: 'Международная совместная выставка и научный семинар «Симфония живописи»',
-        titleEn: 'International Joint Exhibition and Academic Seminar "Symphony of Painting"',
+        title: '“Rangtasvir simfoniyasi” xalqaro qo‘shma ko‘rgazmasi va “Zamonaviy O‘zbekiston tasviriy san’ati” seminari',
+        titleRu: 'Международная выставка «Симфония живописи» и семинар «Современное изобразительное искусство Узбекистана»',
+        titleEn: 'International Exhibition "Symphony of Painting" and Seminar "Contemporary Fine Arts of Uzbekistan"',
         partner: 'Batumi san’at ta’limi universiteti (Gruziya)',
         partnerRu: 'Батумский государственный университет искусств (Грузия)',
         partnerEn: 'Batumi Art Teaching University (Georgia)',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
-        description: 'O‘zbekiston va Gruziya rassom-pedagoglari ishtirokida ijodiy asarlar ko‘rgazmasi hamda ilmiy-amaliy seminar.',
-        descriptionRu: 'Выставка творческих работ и научно-практический семинар с участием художников-педагогов Узбекистана и Грузии.',
-        descriptionEn: 'Creative exhibition and academic seminar featuring artist-educators from Uzbekistan and Georgia.',
+        description: 'O‘zbekiston va Gruziya rassom-pedagoglari ishtirokida Batumi shahrida o‘tkazilgan ijodiy asarlar ko‘rgazmasi hamda ilmiy-amaliy seminar.',
+        descriptionRu: 'Выставка творческих работ и научно-практический семинар в г. Батуми с участием художников-педагогов Узбекистана и Грузии.',
+        descriptionEn: 'Creative exhibition and academic seminar held in Batumi featuring artist-educators from Uzbekistan and Georgia.',
       },
     ],
   },
@@ -325,6 +399,9 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         descriptionEn: 'Memorandum on cultural and educational projects, teacher professional development, and joint exhibitions in fine arts and design.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_Belorus.pdf',
         thumbnailUrl: '/media/uploads/departmentpost/Memorandum_Belorus_page1.jpg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/Memorandum_Belorus_page1.jpg',
+        ],
         departmentPostId: 15,
       },
     ],
@@ -347,11 +424,24 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Erzinjan',
         cityRu: 'Эрзинджан',
         cityEn: 'Erzincan',
-        description: 'Tasviriy san’at va pedagogika sohalarida o‘zaro tajriba almashish, ilmiy konferensiyalar o‘tkazish va malaka oshirish Memorandumi.',
-        descriptionRu: 'Меморандум об обмене опытом в области изобразительного искусства и педагогики, проведении научных конференций и повышении квалификации.',
-        descriptionEn: 'Memorandum on experience exchange in fine arts and pedagogy, joint academic conferences, and professional training.',
+        description: '2024-yil 25-iyulda imzolangan o‘zaro hamkorlik Memorandumi: tasviriy san’at va pedagogika sohalarida tajriba almashish, ilmiy konferensiyalar, malaka oshirish hamda Turkiyadagi Zamonaviy san’at muzeyiga ijodiy tashrif.',
+        descriptionRu: 'Меморандум о взаимном сотрудничестве от 25 июля 2024 года: обмен опытом в области изобразительного искусства и педагогики, проведение научных конференций, повышение квалификации и творческий визит в Музей современного искусства Турции.',
+        descriptionEn: 'Memorandum of Cooperation signed on July 25, 2024: experience exchange in fine arts and pedagogy, joint academic conferences, professional training, and creative visit to the Museum of Modern Art in Turkey.',
         pdfUrl: '/media/uploads/memorandums/MoU_Turkiya.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_Turkiya_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image54.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image54.jpeg',
+          '/media/uploads/departmentpost/xh_image55.jpeg',
+          '/media/uploads/departmentpost/xh_image56.jpeg',
+          '/media/uploads/departmentpost/xh_image57.jpeg',
+          '/media/uploads/departmentpost/xh_image107.jpeg',
+          '/media/uploads/departmentpost/xh_image108.jpeg',
+          '/media/uploads/departmentpost/xh_image109.jpeg',
+          '/media/uploads/departmentpost/xh_image110.jpeg',
+          '/media/uploads/departmentpost/xh_image111.jpeg',
+          '/media/uploads/departmentpost/xh_image112.jpeg',
+          '/media/uploads/departmentpost/xh_image113.jpeg',
+        ],
         departmentPostId: 13,
       },
       {
@@ -364,28 +454,37 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Rize',
         cityRu: 'Ризе',
         cityEn: 'Rize',
-        description: 'Ilmiy-ijodiy aloqalarni mustahkamlash, malaka oshirish dasturlarini amalga oshirish va san\'at loyihalari bo\'yicha Memorandum.',
+        description: 'Ilmiy-ijodiy aloqalarni mustahkamlash, malaka oshirish dasturlarini amalga oshirish va qo‘shma san\'at loyihalari bo\'yicha Memorandum.',
         descriptionRu: 'Меморандум об укреплении научно-творческих связей, реализации программ повышения квалификации и совместных художественных проектов.',
         descriptionEn: 'Memorandum on strengthening academic and creative ties, professional development programs, and joint art projects.',
         pdfUrl: '/media/uploads/memorandums/Memorandum_Recep_Tayyip_Erdoğan_universiteti_Turkiya.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/Memorandum_Recep_Tayyip_Erdoğan_universiteti_Turkiya_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image107.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image107.jpeg',
+          '/media/uploads/departmentpost/xh_image108.jpeg',
+          '/media/uploads/departmentpost/xh_image109.jpeg',
+          '/media/uploads/departmentpost/xh_image110.jpeg',
+          '/media/uploads/departmentpost/xh_image111.jpeg',
+          '/media/uploads/departmentpost/xh_image112.jpeg',
+          '/media/uploads/departmentpost/xh_image113.jpeg',
+        ],
         departmentPostId: 14,
       },
     ],
     projects: [
       {
         id: 'tr-p1',
-        title: '“Yonma-yon” o‘zbek va turk ijodkorlarining yirik pleneri va qo‘shma ko‘rgazmasi',
-        titleRu: 'Крупный пленэр и совместная выставка узбекских и турецких художников «Бок о бок»',
-        titleEn: 'Large Plein-Air and Joint Exhibition of Uzbek and Turkish Artists "Side by Side"',
-        partner: 'Turkiya oliy ta\'lim muassasalari',
-        partnerRu: 'Высшие учебные заведения Турции',
-        partnerEn: 'Higher Education Institutions of Turkey',
+        title: '“Yonma-yon” o‘zbek va turk ijodkorlarining yirik pleneri hamda Zamonaviy san’at muzeyiga ijodiy tashrif',
+        titleRu: 'Крупный пленэр узбекских и турецких художников «Бок о бок» и творческий визит в Музей современного искусства',
+        titleEn: 'Large Plein-Air of Uzbek and Turkish Artists "Side by Side" and Creative Visit to the Museum of Modern Art',
+        partner: 'Turkiya oliy ta\'lim muassasalari va Zamonaviy san’at muzeyi',
+        partnerRu: 'Высшие учебные заведения и Музей современного искусства Турции',
+        partnerEn: 'Higher Education Institutions and Museum of Modern Art of Turkey',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
-        description: 'O‘zbekiston va Turkiya rassomlari hamkorligidagi yirik xalqaro plener dasturi va ijodiy asarlar ko‘rgazmasi.',
-        descriptionRu: 'Масштабная международная пленэрная программа и выставка творческих работ в сотрудничестве художников Узбекистана и Турции.',
-        descriptionEn: 'Major international plein-air program and creative exhibition in collaboration between Uzbek and Turkish artists.',
+        description: 'O‘zbekiston va Turkiya rassomlari hamkorligidagi xalqaro plener, ko‘rgazma hamda Markaz delegatsiyasining Turkiyadagi Zamonaviy san’at muzeyiga tashrifi.',
+        descriptionRu: 'Международная пленэрная программа, выставка и визит делегации Центра в Музей современного искусства Турции.',
+        descriptionEn: 'International plein-air program, exhibition, and delegation visit to the Museum of Modern Art in Turkey.',
       },
     ],
   },
@@ -406,11 +505,17 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Sankt-Peterburg',
         cityRu: 'Санкт-Петербург',
         cityEn: 'Saint Petersburg',
-        description: 'Amaliy san’at, monumental dizayn va restavratsiya yo‘nalishlarida o‘zaro akademik hamkorlik va tajriba almashish Memorandumi.',
-        descriptionRu: 'Меморандум о взаимном академическом сотрудничестве и обмене опытом в направлениях прикладного искусства, монументального дизайна и реставрации.',
-        descriptionEn: 'Memorandum on mutual academic cooperation and experience exchange in applied arts, monumental design, and restoration.',
+        description: '2024-yil 18-iyul kuni imzolangan o‘zaro hamkorlik Memorandumi: amaliy san’at, monumental dizayn va restavratsiya yo‘nalishlarida qo‘shma dasturlar, ko‘rgazmalar hamda stajirovka va malaka oshirish kurslarini tashkil etish.',
+        descriptionRu: 'Меморандум о взаимном сотрудничестве от 18 июля 2024 года: совместные программы, выставки, стажировки и курсы повышения квалификации в области прикладного искусства, монументального дизайна и реставрации.',
+        descriptionEn: 'Memorandum of Cooperation signed on July 18, 2024: joint programs, exhibitions, internships, and professional development courses in applied arts, monumental design, and restoration.',
         pdfUrl: '/media/uploads/memorandums/MoU_Shtiglits.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_Shtiglits_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image50.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image50.jpeg',
+          '/media/uploads/departmentpost/xh_image51.jpeg',
+          '/media/uploads/departmentpost/xh_image52.jpeg',
+          '/media/uploads/departmentpost/xh_image53.jpeg',
+        ],
         departmentPostId: 11,
       },
       {
@@ -427,7 +532,11 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         descriptionRu: 'Меморандум о повышении научного потенциала педагогических кадров и проведении совместных научных исследований в области искусствоведения.',
         descriptionEn: 'Memorandum on enhancing academic capacity of educators and conducting joint research in art studies.',
         pdfUrl: '/media/uploads/memorandums/MoU_YuFU.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_YuFU_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image51.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image51.jpeg',
+          '/media/uploads/departmentpost/xh_image52.jpeg',
+        ],
         departmentPostId: 12,
       },
     ],
@@ -450,28 +559,39 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Haydarobod',
         cityRu: 'Хайдарабад',
         cityEn: 'Hyderabad',
-        description: 'Madaniyat va san’at ta’limini rivojlantirish, o‘qituvchilar almashinuvi, qo‘shma xalqaro konferensiyalar o‘tkazish bo‘yicha hamkorlik Memorandumi.',
-        descriptionRu: 'Меморандум о сотрудничестве в области развития культурного и художественного образования, обмена преподавателями и проведения совместных международных конференций.',
-        descriptionEn: 'Memorandum of cooperation on advancing art and cultural education, faculty exchange, and holding joint international conferences.',
+        description: 'Ikki tomonlama hamkorlik Memorandumi hamda JNAFAU Tasviriy san’at kolleji dotsenti Anand Rao va doktor Priti Samuktaning Markazga tashrifi, tajriba almashish uchrashuvi va “Hindiston san’ati tarixi” mavzusidagi ilmiy seminari.',
+        descriptionRu: 'Двусторонний Меморандум о сотрудничестве, визит доцента Колледжа изящных искусств JNAFAU Ананда Рао и доктора Прити Самукты в Центр, встреча по обмену опытом и научный семинар «История искусства Индии».',
+        descriptionEn: 'Bilateral Memorandum of Cooperation, visit of JNAFAU College of Fine Arts Associate Professor Anand Rao and Dr. Priti Samyukta to the Center, academic exchange meeting, and seminar on "History of Indian Art".',
         pdfUrl: '/media/uploads/memorandums/MoU_Hindiston.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_Hindiston_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image7.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image7.jpeg',
+          '/media/uploads/departmentpost/xh_image8.jpeg',
+          '/media/uploads/departmentpost/xh_image9.jpeg',
+          '/media/uploads/departmentpost/xh_image10.jpeg',
+          '/media/uploads/departmentpost/xh_image18.jpeg',
+          '/media/uploads/departmentpost/xh_image19.jpeg',
+          '/media/uploads/departmentpost/xh_image20.jpeg',
+          '/media/uploads/departmentpost/xh_image21.jpeg',
+          '/media/uploads/departmentpost/xh_image22.jpeg',
+        ],
         departmentPostId: 5,
       },
     ],
     projects: [
       {
         id: 'in-p1',
-        title: '“An’anaviy va zamonaviy uslublarning uyg‘unligi” xalqaro konferensiyasi',
-        titleRu: 'Международная конференция «Гармония традиционных и современных стилей»',
-        titleEn: 'International Conference "Harmony of Traditional and Modern Styles"',
-        partner: 'JNAFAU (Hindiston)',
-        partnerRu: 'JNAFAU (Индия)',
-        partnerEn: 'JNAFAU (India)',
+        title: '“An’anaviy va zamonaviy uslublarning uyg‘unligi” konferensiyasi va “Hindiston san’ati tarixi” seminari',
+        titleRu: 'Конференция «Гармония традиционных и современных стилей» и семинар «История искусства Индии»',
+        titleEn: 'Conference "Harmony of Traditional and Modern Styles" and Seminar "History of Indian Art"',
+        partner: 'JNAFAU (Hindiston) – dotsent Anand Rao va Dr. Priti Samukta',
+        partnerRu: 'JNAFAU (Индия) – доцент Ананд Рао и д-р Прити Самукта',
+        partnerEn: 'JNAFAU (India) – Assoc. Prof. Anand Rao and Dr. Priti Samyukta',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
-        description: 'Tasviriy san’at va me\'morchilikda sharq an’analari uyg‘unligiga bag‘ishlangan xalqaro ilmiy-ijodiy anjuman.',
-        descriptionRu: 'Международный научно-творческий форум, посвящённый гармонии восточных традиций в изобразительном искусстве и архитектуре.',
-        descriptionEn: 'International academic and creative symposium dedicated to the harmony of Eastern traditions in fine arts and architecture.',
+        description: 'Tasviriy san’at va me\'morchilikda sharq an’analari uyg‘unligiga bag‘ishlangan xalqaro anjuman hamda hindistonlik olimlar ishtirokidagi ilmiy seminar.',
+        descriptionRu: 'Международный научно-творческий форум и семинар с участием учёных из Индии.',
+        descriptionEn: 'International symposium and academic seminar featuring visiting scholars from India.',
       },
     ],
   },
@@ -492,11 +612,25 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Almati',
         cityRu: 'Алматы',
         cityEn: 'Almaty',
-        description: 'Markaziy Osiyo xalqlari tasviriy san’ati, pedagogik mahorat darslari va malaka oshirish sohasida hamkorlik Memorandumi.',
-        descriptionRu: 'Меморандум о сотрудничестве в области изобразительного искусства народов Центральной Азии, проведения педагогических мастер-классов и повышения квалификации.',
-        descriptionEn: 'Memorandum of cooperation on Central Asian fine arts, pedagogical masterclasses, and professional development.',
+        description: 'Markaz direktori D.Shukurov va M.Sadikovaning Qozog‘istonga tashrifi davomida imzolangan hamkorlik Memorandumi, Akademiyaning 35 yillik ko‘rgazmasida ishtirok hamda Memorandum asosida tashkil etilgan “Rangtasvir” xalqaro malaka oshirish kursi.',
+        descriptionRu: 'Меморандум о сотрудничестве, подписанный в ходе визита делегации Центра в Алматы, участие в выставке к 35-летию Академии и организация международного курса повышения квалификации по направлению «Живопись».',
+        descriptionEn: 'Memorandum of Cooperation signed during the Center delegation\'s visit to Almaty, participation in the Academy\'s 35th anniversary exhibition, and the international professional development course in Painting.',
         pdfUrl: '/media/uploads/memorandums/MoU_Jurgenov.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_Jurgenov_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image39.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image39.jpeg',
+          '/media/uploads/departmentpost/xh_image40.jpeg',
+          '/media/uploads/departmentpost/xh_image41.jpeg',
+          '/media/uploads/departmentpost/xh_image42.jpeg',
+          '/media/uploads/departmentpost/xh_image43.jpeg',
+          '/media/uploads/departmentpost/xh_image44.jpeg',
+          '/media/uploads/departmentpost/xh_image45.jpeg',
+          '/media/uploads/departmentpost/xh_image46.jpeg',
+          '/media/uploads/departmentpost/xh_image47.jpeg',
+          '/media/uploads/departmentpost/xh_image48.jpeg',
+          '/media/uploads/departmentpost/xh_image49.jpeg',
+          '/media/uploads/departmentpost/xh_image38.png',
+        ],
         departmentPostId: 8,
       },
       {
@@ -513,24 +647,29 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         descriptionRu: 'Меморандум о подготовке педагогических кадров, обмене академическим опытом и реализации программ по изобразительному искусству.',
         descriptionEn: 'Memorandum on teacher training, academic experience exchange, and fine arts educational programs.',
         pdfUrl: '/media/uploads/memorandums/MoU_Toraygirov.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_Toraygirov_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image44.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image44.jpeg',
+          '/media/uploads/departmentpost/xh_image45.jpeg',
+          '/media/uploads/departmentpost/xh_image46.jpeg',
+        ],
         departmentPostId: 9,
       },
     ],
     projects: [
       {
         id: 'kz-p1',
-        title: 'Qozog‘istonlik pedagoglar uchun “Rangtasvir” malaka oshirish kursi',
-        titleRu: 'Курс повышения квалификации «Живопись» для педагогов из Казахстана',
-        titleEn: 'Professional Development Course in Painting for Educators from Kazakhstan',
+        title: 'Qozog‘iston bilan hamkorlik Memorandumi asosida “Rangtasvir” xalqaro malaka oshirish kursi',
+        titleRu: 'Международный курс повышения квалификации «Живопись» на основе Меморандума с Казахстаном',
+        titleEn: 'International Professional Development Course in Painting under the Memorandum with Kazakhstan',
         partner: 'T.Jurgenov nomidagi Qozog‘iston Milliy san’at akademiyasi',
         partnerRu: 'Казахская национальная академия искусств им. Т. Жургенова',
         partnerEn: 'Kazakh National Academy of Arts named after T. Zhurgenov',
         status: 'completed',
         statusDisplay: 'Yakunlangan',
-        description: 'Qozog‘iston san’at kollejlari va maktablari o‘qituvchilari uchun Markazda tashkil etilgan maxsus malaka oshirish kursi.',
-        descriptionRu: 'Специальный курс повышения квалификации, организованный в Центре для преподавателей художественных колледжей и школ Казахстана.',
-        descriptionEn: 'Specialized professional development course organized at the Center for teachers of art colleges and schools from Kazakhstan.',
+        description: '2023-yil dekabr oyida imzolangan hamkorlik Memorandumi asosida Markazda tashkil etilgan “Rangtasvir” xalqaro malaka oshirish kursi va sertifikatlar topshirish marosimi.',
+        descriptionRu: 'Международный курс повышения квалификации по направлению «Живопись», организованный в Центре на основе Меморандума о сотрудничестве.',
+        descriptionEn: 'International professional development course in Painting organized at the Center under the bilateral Memorandum of Cooperation.',
       },
       {
         id: 'kz-p2',
@@ -565,15 +704,51 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Tegu',
         cityRu: 'Тэгу',
         cityEn: 'Daegu',
-        description: 'Zamonaviy dizayn, tasviriy san’at ta’limi, pedagog kadrlar uchun xalqaro standartlar bo‘yicha malaka oshirish va akademik almashinuv Memorandumi.',
-        descriptionRu: 'Меморандум о сотрудничестве в области современного дизайна, художественного образования, повышения квалификации педагогов по международным стандартам и академического обмена.',
-        descriptionEn: 'Memorandum on contemporary design, fine arts education, international-standard faculty training, and academic exchange.',
+        description: 'Badiiy ta’limni xalqaro miqyosda kengaytirish va akademik harakatchanlikni rivojlantirish Memorandumi, 2025-yil 22-aprelda kollej dekani Kim Yun Hee va prof. Jang Tae Mook tomonidan o‘tkazilgan mahorat darsi hamda ularga Markazning “Faxriy professori” unvoni topshirilishi.',
+        descriptionRu: 'Меморандум о сотрудничестве и академическом обмене, мастер-класс декана Колледжа изящных искусств Ким Юн Хи и профессора Чан Тхэ Мука (22 апреля 2025 г.) и церемония присвоения им звания «Почётный профессор» Центра.',
+        descriptionEn: 'Memorandum on expanding art education and academic mobility, masterclass by College of Fine Arts Dean Kim Yun Hee and Prof. Jang Tae Mook (April 22, 2025), and awarding them the title of "Honorary Professor" of the Center.',
         pdfUrl: '/media/uploads/memorandums/MoU_Korea.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_Korea_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image12.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image12.jpeg',
+          '/media/uploads/departmentpost/xh_image13.jpeg',
+          '/media/uploads/departmentpost/xh_image14.jpeg',
+          '/media/uploads/departmentpost/xh_image15.jpeg',
+          '/media/uploads/departmentpost/xh_image16.jpeg',
+          '/media/uploads/departmentpost/xh_image17.jpeg',
+          '/media/uploads/departmentpost/xh_image62.jpeg',
+          '/media/uploads/departmentpost/xh_image63.jpeg',
+          '/media/uploads/departmentpost/xh_image64.jpeg',
+          '/media/uploads/departmentpost/xh_image65.jpeg',
+          '/media/uploads/departmentpost/xh_image66.jpeg',
+          '/media/uploads/departmentpost/xh_image67.jpeg',
+          '/media/uploads/departmentpost/xh_image68.jpeg',
+          '/media/uploads/departmentpost/xh_image69.jpeg',
+          '/media/uploads/departmentpost/xh_image70.jpeg',
+          '/media/uploads/departmentpost/xh_image71.jpeg',
+          '/media/uploads/departmentpost/xh_image72.jpeg',
+          '/media/uploads/departmentpost/xh_image73.jpeg',
+          '/media/uploads/departmentpost/xh_image74.jpeg',
+        ],
         departmentPostId: 6,
       },
     ],
-    projects: [],
+    projects: [
+      {
+        id: 'kr-p1',
+        title: 'Keimyung universiteti professorlari Kim Yun Hee va Jang Tae Mook mahorat darsi hamda “Faxriy professor” unvoni topshirilishi',
+        titleRu: 'Мастер-класс профессоров Университета Кемён Ким Юн Хи и Чан Тхэ Мука и вручение звания «Почётный профессор»',
+        titleEn: 'Masterclass by Keimyung University Professors Kim Yun Hee & Jang Tae Mook and Conferral of "Honorary Professor" Title',
+        partner: 'Keimyung University Tasviriy san’at kolleji (Janubiy Koreya)',
+        partnerRu: 'Колледж изящных искусств Университета Кемён (Южная Корея)',
+        partnerEn: 'College of Fine Arts, Keimyung University (South Korea)',
+        status: 'completed',
+        statusDisplay: 'Yakunlangan',
+        description: '2025-yil 22-aprel kuni Markaz tinglovchilari uchun o‘tkazilgan xalqaro seminar va mahorat darsi hamda koreyalik professorlarga Markazning faxriy professori unvonini topshirish marosimi.',
+        descriptionRu: 'Международный семинар и мастер-класс для слушателей Центра 22 апреля 2025 года и торжественная церемония вручения звания почётного профессора Центра.',
+        descriptionEn: 'International seminar and masterclass for Center trainees on April 22, 2025, and official ceremony conferring the Honorary Professor title.',
+      },
+    ],
   },
   ozarbayjon: {
     key: 'ozarbayjon',
@@ -592,11 +767,20 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         city: 'Boku',
         cityRu: 'Баку',
         cityEn: 'Baku',
-        description: 'Tasviriy san’at, haykaltaroshlik va gilamchilik san’ati yo‘nalishlarida professor-o‘qituvchilar malakasini oshirish va ko‘rgazmalar tashkil etish Memorandumi.',
-        descriptionRu: 'Меморандум о повышении квалификации профессорско-преподавательского состава и организации выставок по направлениям живописи, скульптуры и ковроткачества.',
-        descriptionEn: 'Memorandum on faculty professional development and organizing exhibitions in painting, sculpture, and carpet weaving.',
+        description: 'Markaz direktori D.Shukurov va Ozarbayjon Davlat rassomlik akademiyasi rektori Natiq Aliyev (Natiq Kamal oğlu Əliyev) tomonidan imzolangan hamkorlik Memorandumi: pedagog va xodimlarning xalqaro akademik almashinuvi, qo‘shma ta’lim dasturlari va ko‘rgazmalar.',
+        descriptionRu: 'Меморандум о сотрудничестве, подписанный директором Центра Д. Шукуровым и ректором Азербайджанской государственной академии художеств Натиком Алиевым: международный академический обмен, совместные программы и выставки.',
+        descriptionEn: 'Memorandum of Cooperation signed by Center Director D. Shukurov and Rector of Azerbaijan State Academy of Fine Arts Natiq Aliyev: international academic exchange, joint educational programs, and exhibitions.',
         pdfUrl: '/media/uploads/memorandums/MoU_Azerbayjan.pdf',
-        thumbnailUrl: '/media/uploads/departmentpost/MoU_Azerbayjan_page1.jpg',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image23.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image23.jpeg',
+          '/media/uploads/departmentpost/xh_image24.jpeg',
+          '/media/uploads/departmentpost/xh_image25.jpeg',
+          '/media/uploads/departmentpost/xh_image26.jpeg',
+          '/media/uploads/departmentpost/xh_image27.jpeg',
+          '/media/uploads/departmentpost/xh_image28.jpeg',
+          '/media/uploads/departmentpost/xh_image29.jpeg',
+        ],
         departmentPostId: 7,
       },
     ],
@@ -617,6 +801,39 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       },
     ],
   },
+  malayziya: {
+    key: 'malayziya',
+    name: 'Malayziya',
+    officialName: 'Malayziya',
+    flagCode: 'my',
+    flagUrl: 'https://flagcdn.com/w80/my.png',
+    partners: [
+      {
+        id: 'my-1',
+        name: 'Pendidikan Sultan Idris Universiti (UPSI)',
+        nameRu: 'Педагогический университет Султана Идриса (UPSI)',
+        nameEn: 'Sultan Idris Education University (UPSI)',
+        originalName: 'Universiti Pendidikan Sultan Idris (FSKIK)',
+        country: 'Malayziya',
+        city: 'Tanjung Malim',
+        cityRu: 'Танджунг-Малим',
+        cityEn: 'Tanjung Malim',
+        description: 'UPSI San’at, barqarorlik va ijodiy industriya fakulteti (FSKIK) dekan o‘rinbosari Dr. Nursafinas Albakry hamda Multimedia ijodiy yo‘nalishi bo‘limi mudiri Mohd Ekram Alhafis bin Hashimning Markazga tashrifi va qo‘shma malaka oshirish kurslari hamda stajirovkalarni yo‘lga qo‘yish kelishuvi.',
+        descriptionRu: 'Визит заместителя декана факультета искусств, устойчивого развития и креативных индустрий (FSKIK) UPSI д-ра Нурсафинас Албакри и руководителя отделения мультимедиа Мохда Экрама Алхафиса бин Хашима в Центр, соглашение о совместных стажировках и курсах повышения квалификации.',
+        descriptionEn: 'Official visit of UPSI Faculty of Art, Sustainability and Creative Industry (FSKIK) Deputy Dean Dr. Nursafinas Albakry and Head of Creative Multimedia Mohd Ekram Alhafis bin Hashim to the Center to establish faculty internships and joint professional development courses.',
+        thumbnailUrl: '/media/uploads/departmentpost/xh_image96.jpeg',
+        galleryUrls: [
+          '/media/uploads/departmentpost/xh_image96.jpeg',
+          '/media/uploads/departmentpost/xh_image97.jpeg',
+          '/media/uploads/departmentpost/xh_image98.jpeg',
+          '/media/uploads/departmentpost/xh_image99.jpeg',
+          '/media/uploads/departmentpost/xh_image100.jpeg',
+        ],
+        departmentPostId: 20,
+      },
+    ],
+    projects: [],
+  },
 };
 
 const normalizeCountryKey = (countryName: string): string => {
@@ -631,6 +848,7 @@ const normalizeCountryKey = (countryName: string): string => {
   if (c.includes('qozo') || c.includes('kaza') || c.includes('каза')) return 'qozogiston';
   if (c.includes('kore') || c.includes('коре')) return 'koreya';
   if (c.includes('azar') || c.includes('ozar') || c.includes('азер')) return 'ozarbayjon';
+  if (c.includes('malay') || c.includes('малай')) return 'malayziya';
   return c;
 };
 
@@ -674,6 +892,8 @@ const Home: React.FC = () => {
   const [activeStatsModal, setActiveStatsModal] = useState<'training' | 'international' | null>(null);
   const [intlModalTab, setIntlModalTab] = useState<'countries' | 'organizations' | 'projects'>('countries');
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+  const [partnerPhotoIdx, setPartnerPhotoIdx] = useState<Record<string, number>>({});
+  const [partnerLightbox, setPartnerLightbox] = useState<{ images: string[]; index: number; title: string } | null>(null);
 
   const handleCountrySelect = (countryName: string) => {
     setSelectedCountry(countryName);
@@ -795,6 +1015,7 @@ const Home: React.FC = () => {
       'qozogiston': { uz: "Qozog'iston Respublikasi", ru: 'Республика Казахстан', en: 'Republic of Kazakhstan' },
       'koreya': { uz: 'Koreya Respublikasi', ru: 'Республика Корея', en: 'Republic of Korea' },
       'ozarbayjon': { uz: 'Ozarbayjon Respublikasi', ru: 'Азербайджанская Республика', en: 'Republic of Azerbaijan' },
+      'malayziya': { uz: 'Malayziya', ru: 'Малайзия', en: 'Malaysia' },
     };
     if (map[key]) {
       return map[key][lang as 'uz' | 'ru' | 'en'] || map[key].uz;
@@ -888,10 +1109,13 @@ const Home: React.FC = () => {
     return null;
   };
 
-  const countriesArray = reportDetails.intlCountriesList
+  const rawCountriesArray = reportDetails.intlCountriesList
     .split(/[\n,;]+/)
     .map(s => s.trim())
     .filter(Boolean);
+  const countriesArray = rawCountriesArray.some(c => normalizeCountryKey(c) === 'malayziya')
+    ? rawCountriesArray
+    : [...rawCountriesArray, 'Malayziya'];
 
   const customOrgsArray = reportDetails.intlOrganizationsList
     .split(/\n+/)
@@ -1972,29 +2196,101 @@ const Home: React.FC = () => {
                               ? (partner.descriptionEn || partner.description)
                               : partner.description;
 
+                          const partnerKey = String(partner.id || `${cDetail.key}-${idx}`);
+                          const galleryList = (partner.galleryUrls && partner.galleryUrls.length > 0)
+                            ? partner.galleryUrls
+                            : (partner.thumbnailUrl ? [partner.thumbnailUrl] : []);
+                          const activePhotoIdx = galleryList.length > 0
+                            ? ((partnerPhotoIdx[partnerKey] || 0) % galleryList.length)
+                            : 0;
+                          const activePhotoUrl = galleryList[activePhotoIdx] || partner.thumbnailUrl;
+
                           return (
                             <div
                               key={partner.id || idx}
                               className="bg-white rounded-2xl border border-slate-200 hover:border-blue-400 p-5 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col md:flex-row gap-5"
                             >
-                              {/* Memorandum birinchi sahifasi miniatyurasi */}
-                              {partner.thumbnailUrl && (
-                                <div className="md:w-36 shrink-0 flex flex-col items-center">
-                                  <div className="relative w-full h-44 md:h-48 rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-50 group">
+                              {/* Hamkorlik uchrashuvi va tadbirlar fotogalereyasi */}
+                              {activePhotoUrl && (
+                                <div className="md:w-52 shrink-0 flex flex-col gap-2">
+                                  <div
+                                    onClick={() => setPartnerLightbox({ images: galleryList, index: activePhotoIdx, title: partnerName })}
+                                    className="relative w-full h-44 md:h-40 rounded-xl overflow-hidden border border-slate-200 shadow-sm bg-slate-900 group cursor-pointer"
+                                  >
                                     <img
-                                      src={partner.thumbnailUrl}
+                                      src={activePhotoUrl}
                                       alt={partnerName}
-                                      className="w-full h-full object-cover object-top transition-transform duration-300 group-hover:scale-105"
+                                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                       onError={(e) => {
                                         (e.target as HTMLElement).style.display = 'none';
                                       }}
                                     />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2.5">
-                                      <span className="text-[10px] font-bold text-white uppercase tracking-wider">
-                                        {isRuLang ? 'Меморандум' : 'Memorandum'}
-                                      </span>
+                                    {galleryList.length > 1 && (
+                                      <>
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setPartnerPhotoIdx(prev => ({
+                                              ...prev,
+                                              [partnerKey]: (activePhotoIdx - 1 + galleryList.length) % galleryList.length
+                                            }));
+                                          }}
+                                          className="absolute left-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity"
+                                          aria-label="Oldingi rasm"
+                                        >
+                                          <ChevronLeft size={15} />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setPartnerPhotoIdx(prev => ({
+                                              ...prev,
+                                              [partnerKey]: (activePhotoIdx + 1) % galleryList.length
+                                            }));
+                                          }}
+                                          className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity"
+                                          aria-label="Keyingi rasm"
+                                        >
+                                          <ChevronRight size={15} />
+                                        </button>
+                                      </>
+                                    )}
+                                    <div className="absolute bottom-2 right-2 px-2 py-0.5 rounded-md bg-slate-900/75 text-white text-[10px] font-bold backdrop-blur-xs">
+                                      {activePhotoIdx + 1} / {galleryList.length}
                                     </div>
                                   </div>
+
+                                  {galleryList.length > 1 && (
+                                    <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
+                                      {galleryList.slice(0, 5).map((thumbUrl, tIdx) => (
+                                        <button
+                                          key={tIdx}
+                                          type="button"
+                                          onClick={() => setPartnerPhotoIdx(prev => ({ ...prev, [partnerKey]: tIdx }))}
+                                          className={`relative w-9 h-9 rounded-lg overflow-hidden shrink-0 border-2 transition-all ${
+                                            activePhotoIdx === tIdx
+                                              ? 'border-blue-600 ring-1 ring-blue-400'
+                                              : 'border-slate-200 opacity-70 hover:opacity-100'
+                                          }`}
+                                        >
+                                          <img src={thumbUrl} alt="" className="w-full h-full object-cover" />
+                                          {tIdx === 4 && galleryList.length > 5 && (
+                                            <span
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setPartnerLightbox({ images: galleryList, index: 4, title: partnerName });
+                                              }}
+                                              className="absolute inset-0 bg-slate-900/75 text-white text-[10px] font-bold flex items-center justify-center"
+                                            >
+                                              +{galleryList.length - 5}
+                                            </span>
+                                          )}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
                               )}
 
@@ -2026,8 +2322,24 @@ const Home: React.FC = () => {
                                   </p>
                                 </div>
 
-                                {/* Tugmalar: PDF ko'rish / yuklab olish & Bo'lim sahifasi */}
+                                {/* Tugmalar: Fotogalereya, PDF ko'rish & Bo'lim sahifasi */}
                                 <div className="mt-4 pt-3.5 border-t border-slate-100 flex flex-wrap items-center gap-2.5">
+                                  {galleryList.length > 0 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setPartnerLightbox({ images: galleryList, index: activePhotoIdx, title: partnerName })}
+                                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold transition-colors"
+                                    >
+                                      <span>
+                                        {isRuLang
+                                          ? `Фотогалерея (${galleryList.length})`
+                                          : isEnLang
+                                            ? `Photo Gallery (${galleryList.length})`
+                                            : `Fotogalereya (${galleryList.length} ta rasm)`}
+                                      </span>
+                                    </button>
+                                  )}
+
                                   {partner.pdfUrl && (
                                     <a
                                       href={partner.pdfUrl}
@@ -2366,6 +2678,96 @@ const Home: React.FC = () => {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Fullscreen Lightbox for International Partner Photo Gallery */}
+      {partnerLightbox && (
+        <div
+          className="fixed inset-0 z-[70] bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-between p-4 sm:p-6 animate-fade-in"
+          onClick={() => setPartnerLightbox(null)}
+        >
+          <div
+            className="w-full max-w-5xl flex items-center justify-between text-white pb-3"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div>
+              <h4 className="text-sm sm:text-base font-bold">{partnerLightbox.title}</h4>
+              <span className="text-xs text-slate-400">
+                {partnerLightbox.index + 1} / {partnerLightbox.images.length}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setPartnerLightbox(null)}
+              className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+            >
+              <XCircle size={22} />
+            </button>
+          </div>
+
+          <div
+            className="relative flex-1 w-full max-w-5xl flex items-center justify-center min-h-0"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={partnerLightbox.images[partnerLightbox.index]}
+              alt={partnerLightbox.title}
+              className="max-w-full max-h-[72vh] object-contain rounded-2xl shadow-2xl border border-white/10"
+            />
+            {partnerLightbox.images.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPartnerLightbox(prev =>
+                      prev
+                        ? { ...prev, index: (prev.index - 1 + prev.images.length) % prev.images.length }
+                        : null
+                    )
+                  }
+                  className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-lg transition-colors"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setPartnerLightbox(prev =>
+                      prev
+                        ? { ...prev, index: (prev.index + 1) % prev.images.length }
+                        : null
+                    )
+                  }
+                  className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-slate-900/80 hover:bg-blue-600 text-white flex items-center justify-center shadow-lg transition-colors"
+                >
+                  <ChevronRight size={22} />
+                </button>
+              </>
+            )}
+          </div>
+
+          {partnerLightbox.images.length > 1 && (
+            <div
+              className="w-full max-w-4xl pt-3 flex items-center justify-center gap-2 overflow-x-auto pb-1"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {partnerLightbox.images.map((imgUrl, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setPartnerLightbox(prev => (prev ? { ...prev, index: idx } : null))}
+                  className={`w-14 h-10 rounded-lg overflow-hidden shrink-0 border-2 transition-all ${
+                    partnerLightbox.index === idx
+                      ? 'border-blue-500 scale-105'
+                      : 'border-white/20 opacity-60 hover:opacity-100'
+                  }`}
+                >
+                  <img src={imgUrl} alt="" className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
       
