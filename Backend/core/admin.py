@@ -1710,6 +1710,22 @@ class DepartmentVideoInline(admin.TabularInline):
 class DepartmentPostImageInline(admin.TabularInline):
     model = DepartmentPostImage
     extra = 1
+    fields = ('image_preview', 'image', 'image_url', 'order')
+    readonly_fields = ('image_preview',)
+
+    def image_preview(self, obj):
+        url = ''
+        if obj and obj.image:
+            try:
+                url = obj.image.url
+            except Exception:
+                url = ''
+        elif obj and obj.image_url:
+            url = obj.image_url
+        if url:
+            return format_html('<img src="{}" style="width: 90px; height: 64px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;" />', url)
+        return "—"
+    image_preview.short_description = "Ko'rinishi"
 
 class DepartmentPostInline(admin.TabularInline):
     model = DepartmentPost
@@ -1843,21 +1859,68 @@ class PedagogueProjectAdmin(RichTextFieldsMixin, admin.ModelAdmin):
 
 
 
+class DepartmentPostForm(forms.ModelForm):
+    images_upload = MultipleFileField(
+        required=False,
+        label="Ko'plab rasmlarni bir vaqtda yuklash (Fotogalereya uchun bir nechta rasm tanlashingiz mumkin)"
+    )
+
+    class Meta:
+        model = DepartmentPost
+        fields = '__all__'
+
+
 @admin.register(DepartmentPost)
 class DepartmentPostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'department', 'date', 'is_active')
+    form = DepartmentPostForm
+    list_display = ('image_preview', 'title', 'department', 'gallery_count', 'views_count', 'date', 'is_active')
+    list_display_links = ('image_preview', 'title')
     list_filter = ('department', 'date', 'is_active')
     search_fields = ('title', 'content', 'title_ru', 'title_en')
+    readonly_fields = ('image_preview',)
 
     formfield_overrides = {
         models.TextField: {'widget': RichTextWidget},
     }
     fieldsets = (
         ('Asosiy ma\'lumotlar', {
-            'fields': ('department', 'title', 'title_ru', 'title_en', 'image', 'image_url', 'video', 'video_url', 'date', 'is_active')
+            'fields': ('department', 'title', 'title_ru', 'title_en', 'image_preview', 'image', 'images_upload', 'image_url', 'video', 'video_url', 'date', 'views_count', 'is_active')
         }),
         ('Matn (Matnga ixtiyoriy rasmlarni qo\'shish mumkin)', {
             'fields': ('content', 'content_ru', 'content_en')
         }),
     )
     inlines = [DepartmentPostImageInline]
+
+    def image_preview(self, obj):
+        url = ''
+        if obj and obj.image:
+            try:
+                url = obj.image.url
+            except Exception:
+                url = ''
+        elif obj and obj.image_url:
+            url = obj.image_url
+        if url:
+            return format_html('<img src="{}" style="width: 72px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;" />', url)
+        return "—"
+    image_preview.short_description = "Asosiy rasm"
+
+    def gallery_count(self, obj):
+        cnt = obj.images.count() + (1 if (obj.image or obj.image_url) else 0)
+        return f"{cnt} ta rasm"
+    gallery_count.short_description = "Fotogalereya"
+
+    def save_model(self, request, obj, form, change):
+        super().save_model(request, obj, form, change)
+        files = request.FILES.getlist('images_upload')
+        next_order = obj.images.count() + 1
+        for f in files:
+            if isinstance(f, list):
+                for sub_f in f:
+                    if sub_f:
+                        DepartmentPostImage.objects.create(post=obj, image=sub_f, order=next_order)
+                        next_order += 1
+            elif f:
+                DepartmentPostImage.objects.create(post=obj, image=f, order=next_order)
+                next_order += 1

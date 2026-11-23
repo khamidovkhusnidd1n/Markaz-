@@ -863,7 +863,7 @@ const getCountryPartnerCount = (countryName: string): number => {
 };
 
 const Home: React.FC = () => {
-  const { news, stats, pdPlans, aboutContent, artGallery, internationalPartners = [], internationalProjects = [] } = useApp();
+  const { news, stats, pdPlans, aboutContent, artGallery, departments = [], internationalPartners = [], internationalProjects = [] } = useApp();
   const { t, i18n } = useTranslation();
   const location = useLocation();
 
@@ -2197,9 +2197,29 @@ const Home: React.FC = () => {
                               : partner.description;
 
                           const partnerKey = String(partner.id || `${cDetail.key}-${idx}`);
-                          const galleryList = (partner.galleryUrls && partner.galleryUrls.length > 0)
-                            ? partner.galleryUrls
-                            : (partner.thumbnailUrl ? [partner.thumbnailUrl] : []);
+                          const intlDept = departments?.find((d: any) => Number(d.id) === 4);
+                          const liveDeptPost = partner.departmentPostId && intlDept?.posts
+                            ? intlDept.posts.find((p: any) => Number(p.id) === Number(partner.departmentPostId))
+                            : null;
+                          const liveGallery: string[] = [];
+                          if (liveDeptPost) {
+                            const mainImg = liveDeptPost.image || liveDeptPost.image_url;
+                            if (mainImg) liveGallery.push(getImageUrl(mainImg));
+                            if (Array.isArray(liveDeptPost.images)) {
+                              liveDeptPost.images.forEach((im: any) => {
+                                const u = im?.image || im?.image_url;
+                                if (u) {
+                                  const fullU = getImageUrl(u);
+                                  if (!liveGallery.includes(fullU)) liveGallery.push(fullU);
+                                }
+                              });
+                            }
+                          }
+                          const galleryList = liveGallery.length > 0
+                            ? liveGallery
+                            : ((partner.galleryUrls && partner.galleryUrls.length > 0)
+                                ? partner.galleryUrls
+                                : (partner.thumbnailUrl ? [partner.thumbnailUrl] : []));
                           const activePhotoIdx = galleryList.length > 0
                             ? ((partnerPhotoIdx[partnerKey] || 0) % galleryList.length)
                             : 0;
