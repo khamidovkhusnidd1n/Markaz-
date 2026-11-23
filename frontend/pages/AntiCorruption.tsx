@@ -211,7 +211,17 @@ export const AntiCorruption: React.FC = () => {
   const handleOpenPost = (post: AntiCorruptionPost) => {
     setSelectedPost(post);
     setCurrentModalImgIdx(0);
-    BackendAPI.incrementAntiCorruptionPostView(post.id).catch(() => {});
+    const storageKey = `viewed_ac_post_${post.id}`;
+    if (!sessionStorage.getItem(storageKey)) {
+      sessionStorage.setItem(storageKey, '1');
+      BackendAPI.incrementAntiCorruptionPostView(post.id)
+        .then((res) => {
+          const newViews = typeof res?.views_count === 'number' ? res.views_count : (post.views_count || 0) + 1;
+          post.views_count = newViews;
+          setSelectedPost((prev) => (prev && prev.id === post.id ? { ...prev, views_count: newViews } : prev));
+        })
+        .catch(() => {});
+    }
   };
 
   // Filtered posts
