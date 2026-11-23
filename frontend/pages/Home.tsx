@@ -133,28 +133,6 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
         ],
         departmentPostId: 4,
       },
-      {
-        id: 'it-2',
-        name: 'Santa Reparata xalqaro san’at maktabi (SRISA)',
-        nameRu: 'Международная школа искусств Санта-Репарата (SRISA)',
-        nameEn: 'Santa Reparata International School of Art (SRISA)',
-        originalName: 'Santa Reparata International School of Art',
-        country: 'Italiya',
-        city: 'Florensiya',
-        cityRu: 'Флоренция',
-        cityEn: 'Florence',
-        description: 'Markaz direktori D.Shukurovning Italiyaning Santa Reparata xalqaro san’at maktabiga tashrifi va maktab direktori Aleksandra Roxas Fuentes bilan badiiy ta’lim va xalqaro tajriba almashish bo‘yicha hamkorlik uchrashuvi.',
-        descriptionRu: 'Визит директора Центра Д. Шукурова в Международную школу искусств Санта-Репарата (Флоренция) и встреча с директором школы Александрой Рохас Фуэнтес по вопросам сотрудничества в сфере художественного образования.',
-        descriptionEn: 'Official visit of Center Director D. Shukurov to Santa Reparata International School of Art (Florence) and cooperation talks with School Director Alexandra Rojas Fuentes.',
-        thumbnailUrl: '/media/uploads/departmentpost/xh_image31.jpeg',
-        galleryUrls: [
-          '/media/uploads/departmentpost/xh_image31.jpeg',
-          '/media/uploads/departmentpost/xh_image32.jpeg',
-          '/media/uploads/departmentpost/xh_image33.jpeg',
-          '/media/uploads/departmentpost/xh_image34.jpeg',
-        ],
-        departmentPostId: 19,
-      },
     ],
     projects: [],
   },
@@ -849,39 +827,6 @@ const COUNTRY_DETAILS_DATA: Record<string, CountryDetailInfo> = {
       },
     ],
   },
-  malayziya: {
-    key: 'malayziya',
-    name: 'Malayziya',
-    officialName: 'Malayziya',
-    flagCode: 'my',
-    flagUrl: 'https://flagcdn.com/w80/my.png',
-    partners: [
-      {
-        id: 'my-1',
-        name: 'Pendidikan Sultan Idris Universiti (UPSI)',
-        nameRu: 'Педагогический университет Султана Идриса (UPSI)',
-        nameEn: 'Sultan Idris Education University (UPSI)',
-        originalName: 'Universiti Pendidikan Sultan Idris (FSKIK)',
-        country: 'Malayziya',
-        city: 'Tanjung Malim',
-        cityRu: 'Танджунг-Малим',
-        cityEn: 'Tanjung Malim',
-        description: 'UPSI San’at, barqarorlik va ijodiy industriya fakulteti (FSKIK) dekan o‘rinbosari Dr. Nursafinas Albakry hamda Multimedia ijodiy yo‘nalishi bo‘limi mudiri Mohd Ekram Alhafis bin Hashimning Markazga tashrifi va qo‘shma malaka oshirish kurslari hamda stajirovkalarni yo‘lga qo‘yish kelishuvi.',
-        descriptionRu: 'Визит заместителя декана факультета искусств, устойчивого развития и креативных индустрий (FSKIK) UPSI д-ра Нурсафинас Албакри и руководителя отделения мультимедиа Мохда Экрама Алхафиса бин Хашима в Центр, соглашение о совместных стажировках и курсах повышения квалификации.',
-        descriptionEn: 'Official visit of UPSI Faculty of Art, Sustainability and Creative Industry (FSKIK) Deputy Dean Dr. Nursafinas Albakry and Head of Creative Multimedia Mohd Ekram Alhafis bin Hashim to the Center to establish faculty internships and joint professional development courses.',
-        thumbnailUrl: '/media/uploads/departmentpost/xh_image96.jpeg',
-        galleryUrls: [
-          '/media/uploads/departmentpost/xh_image96.jpeg',
-          '/media/uploads/departmentpost/xh_image97.jpeg',
-          '/media/uploads/departmentpost/xh_image98.jpeg',
-          '/media/uploads/departmentpost/xh_image99.jpeg',
-          '/media/uploads/departmentpost/xh_image100.jpeg',
-        ],
-        departmentPostId: 20,
-      },
-    ],
-    projects: [],
-  },
 };
 
 const normalizeCountryKey = (countryName: string): string => {
@@ -896,7 +841,6 @@ const normalizeCountryKey = (countryName: string): string => {
   if (c.includes('qozo') || c.includes('kaza') || c.includes('каза')) return 'qozogiston';
   if (c.includes('kore') || c.includes('коре')) return 'koreya';
   if (c.includes('azar') || c.includes('ozar') || c.includes('азер')) return 'ozarbayjon';
-  if (c.includes('malay') || c.includes('малай')) return 'malayziya';
   return c;
 };
 
@@ -1157,13 +1101,10 @@ const Home: React.FC = () => {
     return null;
   };
 
-  const rawCountriesArray = reportDetails.intlCountriesList
+  const countriesArray = reportDetails.intlCountriesList
     .split(/[\n,;]+/)
     .map(s => s.trim())
-    .filter(Boolean);
-  const countriesArray = rawCountriesArray.some(c => normalizeCountryKey(c) === 'malayziya')
-    ? rawCountriesArray
-    : [...rawCountriesArray, 'Malayziya'];
+    .filter(s => Boolean(s) && !s.toLowerCase().includes('malay'));
 
   const customOrgsArray = reportDetails.intlOrganizationsList
     .split(/\n+/)
