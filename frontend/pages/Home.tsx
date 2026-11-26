@@ -1200,12 +1200,12 @@ const Home: React.FC = () => {
   };
 
   const usefulLinks = [
-    { name: t('home.links_distance_edu'), url: "https://mt.uzbamalaka.uz/", icon: <Globe size={28} />, color: "bg-blue-900" },
+    { name: t('home.links_distance_edu'), url: "https://mt.uzbamalaka.uz/", icon: <Globe size={26} strokeWidth={1.85} />, color: "bg-gradient-to-br from-blue-600 to-blue-900" },
     { name: t('home.links_art_academy'), url: "https://art-academy.uz/", image: "/logos/badiiy_akademiya.png" },
     { name: "MY.BIMM.UZ", url: "https://my.bimm.uz/home", image: "/logos/mybimm.png", cover: true },
     { name: "LEX.UZ", url: "https://lex.uz/uz/", image: "/logos/lexuz.png" },
-    { name: t('home.links_forms'), url: "https://form.uzbamalaka.uz", icon: <ClipboardList size={28} />, color: "bg-indigo-900" },
-    { name: t('menu.attendance'), url: "https://davomat.uzbamalaka.uz/", icon: <UserCheck size={28} />, color: "bg-emerald-700" },
+    { name: t('home.links_forms'), url: "https://form.uzbamalaka.uz", icon: <ClipboardList size={26} strokeWidth={1.85} />, color: "bg-gradient-to-br from-indigo-600 to-indigo-900" },
+    { name: t('menu.attendance'), url: "https://davomat.uzbamalaka.uz/", icon: <UserCheck size={26} strokeWidth={1.85} />, color: "bg-gradient-to-br from-emerald-600 to-teal-800" },
   ];
 
   // Scroll reveal sections
@@ -3108,14 +3108,14 @@ const Home: React.FC = () => {
               href={link.url} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="group flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-sm border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all duration-200"
+              className="group flex flex-col items-center justify-center p-6 bg-white rounded-2xl shadow-sm border border-slate-200/90 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
             >
               {link.image ? (
-                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-3.5 bg-white overflow-hidden border border-slate-200">
+                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-3.5 bg-white overflow-hidden border border-slate-200 group-hover:scale-105 transition-transform">
                   <img src={link.image} alt={link.name} className={`w-full h-full ${link.cover ? 'object-cover' : 'object-contain p-1.5'}`} />
                 </div>
               ) : (
-                <div className={`w-14 h-14 ${link.color} text-white rounded-xl flex items-center justify-center mb-3.5 shadow-xs`}>
+                <div className={`w-14 h-14 ${link.color} text-white rounded-2xl flex items-center justify-center mb-3.5 shadow-sm group-hover:scale-105 transition-transform`}>
                   {link.icon}
                 </div>
               )}

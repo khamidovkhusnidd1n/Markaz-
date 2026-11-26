@@ -32,9 +32,9 @@ const DesktopMenuItem = ({ item, level = 0 }: { item: MenuItemType, level?: numb
   };
   const isActive = checkActive(item);
 
-  const linkClasses = `desktop-nav-link group/link flex items-center justify-between gap-1.5 transition-all duration-200 whitespace-nowrap ${
+  const linkClasses = `desktop-nav-link group/link flex items-center justify-between gap-1 transition-all duration-200 whitespace-nowrap ${
     level === 0 
-      ? `font-semibold px-2 min-[1750px]:px-2.5 min-[1950px]:px-3 py-2 rounded-xl text-[11px] min-[1750px]:text-xs min-[1950px]:text-[13px] ${
+      ? `font-semibold px-1.5 min-[1750px]:px-2 min-[1950px]:px-2.5 py-2 rounded-xl text-[11px] min-[1750px]:text-xs min-[1950px]:text-[13px] ${
           isActive
             ? 'bg-blue-50/90 text-blue-900 shadow-2xs ring-1 ring-blue-200/70'
             : 'text-slate-700 hover:text-blue-800 hover:bg-slate-100/80'
@@ -186,6 +186,29 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   };
 
   const siteName = aboutContent.siteName || t('layout.site_name_fallback', "O'zbekiston Badiiy akademiyasi huzuridagi Badiiy ta'lim yo'nalishlarida pedagog va mutaxassis kadrlarni qayta tayyorlash hamda ularning malakasini oshirish markazi");
+
+  // Format siteName strictly into 3 balanced lines
+  const formatThreeLines = (text: string): [string, string, string] => {
+    const clean = (text || '').trim().replace(/\s+/g, ' ');
+    if (clean.toLowerCase().includes("badiiy ta'lim") || clean.toLowerCase().includes("badiiy ta’lim")) {
+      return [
+        "O'zbekiston Badiiy akademiyasi huzuridagi Badiiy ta'lim",
+        "yo'nalishlarida pedagog va mutaxassis kadrlarni qayta",
+        "tayyorlash hamda ularning malakasini oshirish markazi",
+      ];
+    }
+    const words = clean.split(' ');
+    if (words.length >= 6) {
+      const third = Math.ceil(words.length / 3);
+      return [
+        words.slice(0, third).join(' '),
+        words.slice(third, third * 2).join(' '),
+        words.slice(third * 2).join(' '),
+      ];
+    }
+    return [clean, '', ''];
+  };
+  const siteNameLines = formatThreeLines(siteName);
   const headerLogo = aboutContent.headerLogo || '/logo/uzba_markaz.png';
   const footerLogo = aboutContent.footerLogo || headerLogo;
   const addressText = aboutContent.address || t('layout.address_fallback', "Toshkent shahri, Uchtepa tumani, Chilonzor 26-daha, Shirin ko'cha, 1A");
@@ -214,7 +237,11 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     return (
       <button 
         onClick={() => changeLanguage(lang)}
-        className={`px-2 py-1 text-[11px] font-bold rounded ${isActive ? 'bg-blue-600 text-white' : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'}`}
+        className={`px-2 py-1 text-[11px] font-bold rounded-lg transition-all ${
+          isActive
+            ? 'bg-blue-700 text-white shadow-xs'
+            : 'text-slate-600 hover:text-blue-700 hover:bg-white'
+        }`}
       >
         {label}
       </button>
@@ -246,21 +273,25 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           animation: seamless-marquee 25s linear infinite;
         }
       `}</style>
-      <header className="bg-white shadow-md sticky top-0 z-50 flex flex-col w-full">
-        <div className="bg-blue-600 text-white py-2 border-b border-blue-700 flex items-center w-full overflow-hidden">
+      <header className="bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200/80 sticky top-0 z-50 flex flex-col w-full">
+        <div className="bg-gradient-to-r from-blue-800 via-blue-600 to-blue-800 text-white py-1.5 border-b border-blue-700/80 flex items-center w-full overflow-hidden">
           <div className="animate-seamless text-[10px] md:text-xs font-bold tracking-wider uppercase">
             {[...Array(20)].map((_, i) => (
               <span key={i} className="mx-16 whitespace-nowrap">{t('layout.test_mode')}</span>
             ))}
           </div>
         </div>
-        <div className="w-full max-w-[1920px] mx-auto px-3 lg:px-5 min-[1950px]:px-8 py-3.5 flex justify-between items-center gap-2 min-[1850px]:gap-3">
-          <Link to="/" className="flex items-center gap-2.5 shrink-0 min-w-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 2xl:w-11 2xl:h-11 min-[1850px]:w-12 min-[1850px]:h-12 rounded-full flex items-center justify-center overflow-hidden shrink-0">
+        <div className="w-full max-w-[1920px] mx-auto px-3 lg:px-5 min-[1950px]:px-8 py-3 flex justify-between items-center gap-2 min-[1850px]:gap-3">
+          <Link to="/" className="group flex items-center gap-2.5 shrink-0 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 2xl:w-11 2xl:h-11 min-[1850px]:w-12 min-[1850px]:h-12 rounded-full flex items-center justify-center overflow-hidden shrink-0 ring-2 ring-blue-100 group-hover:ring-blue-300 transition-all">
               <img src={headerLogo} alt={t('layout.logo_alt', { name: siteName })} className="w-full h-full object-contain" />
             </div>
-            <div className="min-w-0 max-w-[210px] sm:max-w-[290px] md:max-w-[340px] 2xl:max-w-[190px] min-[1750px]:max-w-[230px] min-[1950px]:max-w-[270px]">
-              <h1 className="text-[9px] sm:text-[11px] md:text-[12px] 2xl:text-[9.5px] min-[1750px]:text-[10.5px] min-[1950px]:text-[11.5px] font-bold leading-snug text-blue-900 text-left">{siteName}</h1>
+            <div className="min-w-0">
+              <h1 className="text-[9px] sm:text-[11px] md:text-[12px] 2xl:text-[9.5px] min-[1750px]:text-[10.5px] min-[1950px]:text-[11.5px] font-bold leading-[1.32] text-blue-950 group-hover:text-blue-800 transition-colors text-left">
+                <span className="block whitespace-nowrap">{siteNameLines[0]}</span>
+                {siteNameLines[1] && <span className="block whitespace-nowrap">{siteNameLines[1]}</span>}
+                {siteNameLines[2] && <span className="block whitespace-nowrap">{siteNameLines[2]}</span>}
+              </h1>
             </div>
           </Link>
 
@@ -271,16 +302,16 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
               ))}
             </div>
             
-            <div className="flex items-center gap-1 ml-1.5 min-[1850px]:ml-2 shrink-0">
+            <div className="flex items-center gap-1.5 ml-1.5 min-[1850px]:ml-2 shrink-0">
               <button 
                 onClick={() => setIsUsefulLinksOpen(true)}
                 title={t('layout.useful_links', "Foydali havolalar")}
-                className="rounded-lg bg-blue-900 hover:bg-blue-800 p-2 min-[1850px]:p-2.5 font-bold text-white shadow-sm transition-colors flex items-center justify-center mr-0.5 shrink-0"
+                className="rounded-xl bg-gradient-to-br from-blue-800 to-slate-900 hover:from-blue-700 hover:to-blue-900 p-2 min-[1850px]:p-2.5 font-bold text-white shadow-xs hover:shadow-md transition-all flex items-center justify-center shrink-0"
               >
-                <LayoutGrid size={18} />
+                <LayoutGrid size={17} strokeWidth={1.85} />
               </button>
               
-              <div className="desktop-nav-lang-container flex items-center gap-0.5 min-[1850px]:gap-1 border-l pl-1.5 min-[1850px]:pl-2 border-gray-200 shrink-0">
+              <div className="desktop-nav-lang-container flex items-center gap-0.5 bg-slate-100 p-1 rounded-xl border border-slate-200/80 shrink-0">
                 <LangButton lang="uz" label="UZB" />
                 <LangButton lang="ru" label="RUS" />
                 <LangButton lang="en" label="ENG" />
@@ -322,36 +353,55 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         {children}
       </main>
 
-      <footer className="bg-gray-900 text-white pt-12 pb-6">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12">
+      <footer className="bg-gradient-to-b from-slate-900 to-slate-950 text-white pt-14 pb-8 border-t border-slate-800">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
-            <div className="mb-4 flex items-center gap-3">
-              <img src={footerLogo} alt={t('layout.logo_alt', { name: siteName })} className="h-12 w-12 rounded-full object-contain bg-white p-1 shrink-0" />
-              <h3 className="text-sm font-bold text-slate-100 leading-snug">{siteName}</h3>
+            <div className="mb-4 flex items-center gap-3.5">
+              <img src={footerLogo} alt={t('layout.logo_alt', { name: siteName })} className="h-12 w-12 rounded-full object-contain bg-white p-1 shrink-0 ring-2 ring-white/15" />
+              <h3 className="text-xs sm:text-[13px] font-bold text-slate-100 leading-[1.35]">
+                <span className="block">{siteNameLines[0]}</span>
+                {siteNameLines[1] && <span className="block">{siteNameLines[1]}</span>}
+                {siteNameLines[2] && <span className="block">{siteNameLines[2]}</span>}
+              </h3>
             </div>
-            <p className="text-gray-400 text-xs leading-relaxed">
+            <p className="text-slate-400 text-xs leading-relaxed">
               {t('layout.footer_description', "Badiiy ta'lim yo'nalishlarida pedagog va mutaxassis kadrlarni qayta tayyorlash hamda ularning malakasini oshirish markazi.")}
             </p>
           </div>
           <div>
-            <h3 className="text-base font-bold mb-4 text-slate-100">{t('menu.contact', "Bog'lanish")}</h3>
-            <ul className="text-gray-400 text-sm space-y-3">
-              <li className="flex items-center gap-2"><MapPin size={16} className="shrink-0 text-blue-400" /> {addressText}</li>
-              <li className="flex items-center gap-2"><Phone size={16} className="shrink-0 text-blue-400" /> (+99877) 363-38-36</li>
-              <li className="flex items-center gap-2"><Mail size={16} className="shrink-0 text-blue-400" /> {contactText}</li>
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-slate-200">{t('menu.contact', "Bog'lanish")}</h3>
+            <ul className="text-slate-300 text-sm space-y-3">
+              <li className="flex items-start gap-3">
+                <span className="w-8 h-8 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center shrink-0 text-blue-400">
+                  <MapPin size={15} strokeWidth={1.85} />
+                </span>
+                <span className="text-xs sm:text-sm leading-snug pt-1">{addressText}</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center shrink-0 text-blue-400">
+                  <Phone size={15} strokeWidth={1.85} />
+                </span>
+                <a href="tel:+998773633836" className="text-xs sm:text-sm hover:text-white transition-colors">(+998 77) 363-38-36</a>
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center shrink-0 text-blue-400">
+                  <Mail size={15} strokeWidth={1.85} />
+                </span>
+                <a href={`mailto:${contactText}`} className="text-xs sm:text-sm hover:text-white transition-colors">{contactText}</a>
+              </li>
             </ul>
           </div>
           <div>
-            <h3 className="text-base font-bold mb-4 text-slate-100">{t('layout.useful_links', "Foydali havolalar")}</h3>
-            <ul className="text-gray-400 text-sm space-y-2">
-              <li><Link to="/journal" className="hover:text-amber-400 transition-colors">{t('menu.journal', 'Ilmiy jurnal')}</Link></li>
-              <li><Link to="/anti-corruption" className="hover:text-amber-400 transition-colors">{t('menu.anti_corruption', 'Korrupsiyaga qarshi kurash')}</Link></li>
-              <li><a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="hover:text-amber-400 transition-colors">{t('menu.distance_edu', "Masofaviy ta'lim")}</a></li>
-              <li><a href="https://reestr.uzbamalaka.uz" target="_blank" rel="noreferrer" className="hover:text-amber-400 transition-colors">{t('menu.registry', "Diplom va sertifikatlar yagona reestri")}</a></li>
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-4 text-slate-200">{t('layout.useful_links', "Foydali havolalar")}</h3>
+            <ul className="text-slate-300 text-sm space-y-2.5">
+              <li><Link to="/journal" className="inline-flex items-center gap-1.5 hover:text-amber-400 transition-colors"><ChevronRight size={14} className="text-blue-400" />{t('menu.journal', 'Ilmiy jurnal')}</Link></li>
+              <li><Link to="/anti-corruption" className="inline-flex items-center gap-1.5 hover:text-amber-400 transition-colors"><ChevronRight size={14} className="text-blue-400" />{t('menu.anti_corruption', 'Korrupsiyaga qarshi kurash')}</Link></li>
+              <li><a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-amber-400 transition-colors"><ChevronRight size={14} className="text-blue-400" />{t('menu.distance_edu', "Masofaviy ta'lim")}</a></li>
+              <li><Link to="/students" className="inline-flex items-center gap-1.5 hover:text-amber-400 transition-colors"><ChevronRight size={14} className="text-blue-400" />{t('menu.registry', "Diplom va sertifikatlar yagona reestri")}</Link></li>
             </ul>
           </div>
         </div>
-        <div className="container mx-auto px-4 mt-12 pt-6 border-t border-gray-800 text-center text-gray-500 text-xs">
+        <div className="container mx-auto px-4 mt-10 pt-6 border-t border-slate-800/80 text-center text-slate-500 text-xs">
           &copy; {new Date().getFullYear()} {siteName}. {t('layout.all_rights')}
         </div>
       </footer>
