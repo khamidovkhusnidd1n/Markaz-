@@ -32,22 +32,44 @@ const DesktopMenuItem = ({ item, level = 0 }: { item: MenuItemType, level?: numb
   };
   const isActive = checkActive(item);
 
-  const linkClasses = `desktop-nav-link flex items-center justify-between gap-1 transition-colors whitespace-nowrap ${
+  const linkClasses = `desktop-nav-link group/link flex items-center justify-between gap-1.5 transition-all duration-200 whitespace-nowrap ${
     level === 0 
-      ? `font-medium px-1.5 min-[1750px]:px-2 min-[1950px]:px-2.5 py-2 text-[11px] min-[1750px]:text-xs min-[1950px]:text-[13px] ${isActive ? 'text-blue-900 border-b-2 border-amber-500' : 'text-gray-600 hover:text-blue-700'}`
-      : `w-full px-3 py-2 my-0.5 rounded-md text-sm ${isActive ? 'bg-blue-50 text-blue-700 font-bold' : 'text-gray-700 font-medium hover:bg-gray-100 hover:text-blue-700'}`
+      ? `font-semibold px-2 min-[1750px]:px-2.5 min-[1950px]:px-3 py-2 rounded-xl text-[11px] min-[1750px]:text-xs min-[1950px]:text-[13px] ${
+          isActive
+            ? 'bg-blue-50/90 text-blue-900 shadow-2xs ring-1 ring-blue-200/70'
+            : 'text-slate-700 hover:text-blue-800 hover:bg-slate-100/80'
+        }`
+      : `w-full px-2.5 py-2 my-0.5 rounded-xl text-[13px] ${
+          isActive
+            ? 'bg-blue-50 text-blue-800 font-bold'
+            : 'text-slate-700 font-medium hover:bg-slate-50 hover:text-blue-800'
+        }`
   }`;
 
   const label = item.i18nKey ? t(item.i18nKey) : item.label;
 
   const content = (
     <>
-      <span className="flex items-center gap-1">
-        {level === 0 && item.icon} {label}
+      <span className="flex items-center gap-2">
+        {level === 0 && item.icon && (
+          <span className={`inline-flex items-center justify-center transition-colors ${isActive ? 'text-blue-700' : 'text-blue-600/80 group-hover/link:text-blue-700'}`}>
+            {item.icon}
+          </span>
+        )}
+        {level > 0 && item.icon && (
+          <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 ${
+            isActive
+              ? 'bg-blue-600 text-white shadow-xs'
+              : 'bg-slate-100 text-slate-600 group-hover/link:bg-blue-600 group-hover/link:text-white'
+          }`}>
+            {item.icon}
+          </span>
+        )}
+        <span>{label}</span>
       </span>
-      {isExternal && <ExternalLink size={13} className="ml-0.5 shrink-0" />}
-      {hasChildren && level === 0 && <ChevronDown size={13} className="ml-0.5 shrink-0" />}
-      {hasChildren && level > 0 && <ChevronRight size={14} className="ml-auto shrink-0" />}
+      {isExternal && <ExternalLink size={13} className="ml-1 shrink-0 text-slate-400 group-hover/link:text-blue-600 transition-colors" />}
+      {hasChildren && level === 0 && <ChevronDown size={13} className="ml-0.5 shrink-0 text-slate-400 group-hover:rotate-180 group-hover:text-blue-700 transition-transform duration-200" />}
+      {hasChildren && level > 0 && <ChevronRight size={14} className="ml-auto shrink-0 text-slate-400" />}
     </>
   );
 
@@ -78,8 +100,8 @@ const DesktopMenuItem = ({ item, level = 0 }: { item: MenuItemType, level?: numb
   return (
     <div className={`group relative ${level > 0 ? 'w-full' : ''}`}>
       {AnchorOrLink}
-      <ul className={`absolute z-50 hidden group-hover:flex flex-col bg-white shadow-xl border border-gray-100 p-1 min-w-[220px] rounded-xl overflow-hidden ${
-        level === 0 ? 'top-full left-0 mt-0' : 'top-0 left-full -ml-1'
+      <ul className={`absolute z-50 hidden group-hover:flex flex-col bg-white/95 backdrop-blur-xl shadow-2xl shadow-slate-900/12 border border-slate-200/80 p-1.5 min-w-[260px] rounded-2xl overflow-hidden ${
+        level === 0 ? 'top-full left-0 pt-2' : 'top-0 left-full -ml-1'
       }`}>
         {item.children!.map((child, idx) => (
           <DesktopMenuItem key={idx} item={child} level={level + 1} />
@@ -111,8 +133,15 @@ const MobileMenuItem = ({ item, level = 0, closeMenu }: { item: MenuItemType, le
   const label = item.i18nKey ? t(item.i18nKey) : item.label;
 
   const content = (
-    <span className="flex items-center gap-2">
-      {level === 0 && item.icon} {label}
+    <span className="flex items-center gap-2.5">
+      {item.icon && (
+        <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+          level === 0 ? 'bg-blue-50 text-blue-700' : 'bg-slate-100 text-slate-600'
+        }`}>
+          {item.icon}
+        </span>
+      )}
+      <span>{label}</span>
     </span>
   );
 
@@ -400,51 +429,51 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           <div className="flex-1 overflow-y-auto p-5 md:p-6">
             <div className="grid grid-cols-2 gap-4">
               {/* Masofaviy ta'lim */}
-              <a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-xl bg-blue-900 text-white flex items-center justify-center shadow-xs">
-                  <Globe size={22} />
+              <a href="https://mt.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-slate-200/90 bg-white hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-900 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                  <MonitorPlay size={22} strokeWidth={1.85} />
                 </div>
                 <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">{t('home.links_distance_edu')}</span>
               </a>
 
               {/* Badiiy akademiya */}
-              <a href="https://art-academy.uz/" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-blue-800 flex items-center justify-center">
-                  <Landmark size={22} />
+              <a href="https://art-academy.uz/" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-slate-200/90 bg-white hover:border-blue-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 text-blue-800 flex items-center justify-center group-hover:bg-blue-700 group-hover:text-white group-hover:scale-105 transition-all">
+                  <Landmark size={22} strokeWidth={1.85} />
                 </div>
                 <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">{t('home.links_art_academy')}</span>
               </a>
 
               {/* MY.BIMM.UZ */}
-              <a href="https://my.bimm.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-emerald-700 flex items-center justify-center">
-                  <LayoutDashboard size={22} />
+              <a href="https://my.bimm.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-slate-200/90 bg-white hover:border-emerald-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white group-hover:scale-105 transition-all">
+                  <LayoutDashboard size={22} strokeWidth={1.85} />
                 </div>
-                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">MY.BIMM.UZ</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-emerald-800">MY.BIMM.UZ</span>
               </a>
 
               {/* LEX.UZ */}
-              <a href="https://lex.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 text-blue-700 flex items-center justify-center">
-                  <Scale size={22} />
+              <a href="https://lex.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-slate-200/90 bg-white hover:border-indigo-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-700 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white group-hover:scale-105 transition-all">
+                  <Scale size={22} strokeWidth={1.85} />
                 </div>
-                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">LEX.UZ</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-indigo-800">LEX.UZ</span>
               </a>
 
               {/* Form uchun arizalar */}
-              <a href="https://form.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-xl bg-indigo-900 text-white flex items-center justify-center shadow-xs">
-                  <ClipboardList size={22} />
+              <a href="https://form.uzbamalaka.uz" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-slate-200/90 bg-white hover:border-indigo-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-900 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                  <ClipboardList size={22} strokeWidth={1.85} />
                 </div>
-                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">{t('home.links_forms')}</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-indigo-800">{t('home.links_forms')}</span>
               </a>
 
               {/* Davomat */}
-              <a href="https://davomat.uzbamalaka.uz/" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-xl border border-slate-200 bg-white hover:border-blue-400 hover:shadow-sm transition-all text-center gap-3 group">
-                <div className="w-12 h-12 rounded-xl bg-emerald-700 text-white flex items-center justify-center shadow-xs">
-                  <UserCheck size={22} />
+              <a href="https://davomat.uzbamalaka.uz/" target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center p-4 rounded-2xl border border-slate-200/90 bg-white hover:border-emerald-500 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 text-center gap-3 group">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-800 text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+                  <UserCheck size={22} strokeWidth={1.85} />
                 </div>
-                <span className="text-xs font-bold text-slate-800 group-hover:text-blue-800">{t('menu.attendance')}</span>
+                <span className="text-xs font-bold text-slate-800 group-hover:text-emerald-800">{t('menu.attendance')}</span>
               </a>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, PlayCircle, Monitor, BookOpen, Cpu, Grid, ChevronDown, ChevronLeft, ChevronRight, Play, ImageOff } from 'lucide-react';
+import { ArrowLeft, ArrowRight, PlayCircle, Monitor, BookOpen, Cpu, Grid, ChevronDown, ChevronLeft, ChevronRight, Play, ImageOff, Globe2, BarChart3, Workflow } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { NewsModal } from '../components/NewsModal';
 import { ImageModal } from '../components/ImageModal';
@@ -21,12 +21,17 @@ const DepartmentPage: React.FC = () => {
     return obj[field] || '';
   };
 
-  const getIcon = (iconName: string) => {
+  const getIcon = (iconName: string, deptId?: number | string) => {
+    const idNum = Number(deptId);
+    if (idNum === 4 || iconName === 'Globe') return <Globe2 size={24} strokeWidth={1.85} />;
+    if (idNum === 2 || iconName === 'Monitor') return <BarChart3 size={24} strokeWidth={1.85} />;
+    if (idNum === 3 || iconName === 'BookOpen') return <Workflow size={24} strokeWidth={1.85} />;
+    if (idNum === 1 || iconName === 'Cpu') return <Cpu size={24} strokeWidth={1.85} />;
     switch (iconName) {
-      case 'Monitor': return <Monitor size={22} />;
-      case 'BookOpen': return <BookOpen size={22} />;
-      case 'Cpu': return <Cpu size={22} />;
-      default: return <Grid size={22} />;
+      case 'Monitor': return <Monitor size={24} strokeWidth={1.85} />;
+      case 'BookOpen': return <BookOpen size={24} strokeWidth={1.85} />;
+      case 'Cpu': return <Cpu size={24} strokeWidth={1.85} />;
+      default: return <Grid size={24} strokeWidth={1.85} />;
     }
   };
 
@@ -109,8 +114,8 @@ const DepartmentPage: React.FC = () => {
             <ArrowLeft size={16} /> {t('departments.back')}
           </Link>
           <div className="flex items-center gap-4 mb-3">
-            <div className="w-14 h-14 bg-white/15 rounded-xl flex items-center justify-center border border-white/20">
-              {getIcon(dept.icon_name || '')}
+            <div className="w-14 h-14 bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/25 shadow-lg">
+              {getIcon(dept.icon_name || '', dept.id)}
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{getLocalizedField(dept, 'name')}</h1>
           </div>

@@ -1277,17 +1277,17 @@ const Home: React.FC = () => {
       >
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           {[
-            { label: t('home.stats_total_pedagogs'), value: stats?.totalPedagogs || 0, icon: <Users size={22} />, iconStyle: 'bg-slate-100 text-slate-800 border-slate-200' },
-            { label: t('home.stats_professors'), value: stats?.professors || 0, icon: <GraduationCap size={22} />, iconStyle: 'bg-blue-50 text-blue-800 border-blue-200' },
-            { label: t('home.stats_dotsents'), value: stats?.dotsents || 0, icon: <Users size={22} />, iconStyle: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
-            { label: t('home.stats_academics'), value: stats?.academics || 0, icon: <Award size={22} />, iconStyle: 'bg-amber-50 text-amber-800 border-amber-200' },
-            { label: t('home.stats_potential'), value: `${stats?.potential || 0}%`, icon: <TrendingUp size={22} />, iconStyle: 'bg-indigo-50 text-indigo-800 border-indigo-200' },
+            { label: t('home.stats_total_pedagogs'), value: stats?.totalPedagogs || 0, icon: <Users size={22} strokeWidth={1.85} />, iconStyle: 'bg-slate-100 text-slate-800 border-slate-200/80 group-hover:bg-slate-900 group-hover:text-white' },
+            { label: t('home.stats_professors'), value: stats?.professors || 0, icon: <GraduationCap size={22} strokeWidth={1.85} />, iconStyle: 'bg-blue-50 text-blue-800 border-blue-200/80 group-hover:bg-blue-700 group-hover:text-white' },
+            { label: t('home.stats_dotsents'), value: stats?.dotsents || 0, icon: <UserCheck size={22} strokeWidth={1.85} />, iconStyle: 'bg-emerald-50 text-emerald-800 border-emerald-200/80 group-hover:bg-emerald-600 group-hover:text-white' },
+            { label: t('home.stats_academics'), value: stats?.academics || 0, icon: <Award size={22} strokeWidth={1.85} />, iconStyle: 'bg-amber-50 text-amber-800 border-amber-200/80 group-hover:bg-amber-500 group-hover:text-white' },
+            { label: t('home.stats_potential'), value: `${stats?.potential || 0}%`, icon: <TrendingUp size={22} strokeWidth={1.85} />, iconStyle: 'bg-indigo-50 text-indigo-800 border-indigo-200/80 group-hover:bg-indigo-600 group-hover:text-white' },
           ].map((stat, idx) => (
             <div 
               key={idx} 
-              className="bg-white p-5 sm:p-6 rounded-2xl shadow-md border border-slate-200/90 hover:border-blue-300 hover:shadow-lg transition-all duration-200"
+              className="group bg-white p-5 sm:p-6 rounded-2xl shadow-md border border-slate-200/90 hover:border-blue-300 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
             >
-              <div className={`w-11 h-11 ${stat.iconStyle} border rounded-xl flex items-center justify-center mb-3.5`}>
+              <div className={`w-11 h-11 ${stat.iconStyle} border rounded-xl flex items-center justify-center mb-3.5 transition-all duration-200 shadow-2xs`}>
                 {stat.icon}
               </div>
               <p className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1 tabular-nums">{stat.value}</p>

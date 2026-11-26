@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ArrowLeft, PlayCircle, Monitor, BookOpen, Cpu, Grid, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, PlayCircle, Monitor, BookOpen, Cpu, Grid, ChevronDown, ChevronLeft, ChevronRight, Globe2, BarChart3, Workflow } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ImageModal } from '../components/ImageModal';
@@ -48,12 +48,17 @@ const Departments: React.FC = () => {
     return obj[field] || '';
   };
 
-  const getIcon = (iconName: string) => {
+  const getIcon = (iconName: string, deptId?: number | string) => {
+    const idNum = Number(deptId);
+    if (idNum === 4 || iconName === 'Globe') return <Globe2 size={22} strokeWidth={1.85} />;
+    if (idNum === 2 || iconName === 'Monitor') return <BarChart3 size={22} strokeWidth={1.85} />;
+    if (idNum === 3 || iconName === 'BookOpen') return <Workflow size={22} strokeWidth={1.85} />;
+    if (idNum === 1 || iconName === 'Cpu') return <Cpu size={22} strokeWidth={1.85} />;
     switch (iconName) {
-      case 'Monitor': return <Monitor size={22} />;
-      case 'BookOpen': return <BookOpen size={22} />;
-      case 'Cpu': return <Cpu size={22} />;
-      default: return <Grid size={22} />;
+      case 'Monitor': return <Monitor size={22} strokeWidth={1.85} />;
+      case 'BookOpen': return <BookOpen size={22} strokeWidth={1.85} />;
+      case 'Cpu': return <Cpu size={22} strokeWidth={1.85} />;
+      default: return <Grid size={22} strokeWidth={1.85} />;
     }
   };
 
@@ -87,7 +92,7 @@ const Departments: React.FC = () => {
                       : 'text-gray-600 hover:bg-gray-100'
                   }`}
                 >
-                  {getIcon(tab.icon_name || '')}
+                  {getIcon(tab.icon_name || '', tab.id)}
                   <span className="hidden md:inline">{getLocalizedField(tab, 'name')}</span>
                   <span className="md:hidden">{getLocalizedField(tab, 'name').split(' ').slice(0, 2).join(' ')}...</span>
                 </button>
@@ -102,7 +107,7 @@ const Departments: React.FC = () => {
                 <div className={`bg-gradient-to-r ${currentTab.color_classes || 'from-blue-600 to-blue-800'} p-8 text-white`}>
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                      {getIcon(currentTab.icon_name || '')}
+                      {getIcon(currentTab.icon_name || '', currentTab.id)}
                     </div>
                     <h2 className="text-2xl font-bold">{getLocalizedField(currentTab, 'name')}</h2>
                   </div>
