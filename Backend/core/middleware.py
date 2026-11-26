@@ -1,4 +1,52 @@
+from django.core.cache import cache
+from django.http import HttpResponse
 from django.utils.deprecation import MiddlewareMixin
+
+
+class AdminLoginBruteForceMiddleware:
+    """
+    Django /admin/login/ sahifasini brute-force hujumlaridan himoya qiladi.
+    Bir IP dan 15 daqiqa ichida 5 ta xato urinishdan so'ng 15 daqiqaga bloklanadi.
+    """
+    MAX_ATTEMPTS = 5
+    WINDOW = 15 * 60
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    @staticmethod
+    def _is_admin_login(request):
+        return request.method == 'POST' and request.path.rstrip('/').endswith('/admin/login')
+
+    def __call__(self, request):
+        if not self._is_admin_login(request):
+            return self.get_response(request)
+
+        from core.views import get_client_ip
+        ip = get_client_ip(request)
+        lock_key = f"admin_login_lock_{ip}"
+        count_key = f"admin_login_fail_{ip}"
+
+        if cache.get(lock_key):
+            return HttpResponse(
+                "Ko'p marotaba xato urinish. Xavfsizlik yuzasidan 15 daqiqaga bloklandingiz.",
+                status=429, content_type='text/plain; charset=utf-8',
+            )
+
+        response = self.get_response(request)
+
+        # Muvaffaqiyatli kirishda Django 302 qaytaradi, xatoda forma qayta ko'rsatiladi (200)
+        if response.status_code == 200:
+            fails = (cache.get(count_key) or 0) + 1
+            if fails >= self.MAX_ATTEMPTS:
+                cache.set(lock_key, True, timeout=self.WINDOW)
+                cache.delete(count_key)
+            else:
+                cache.set(count_key, fails, timeout=self.WINDOW)
+        elif response.status_code in (301, 302):
+            cache.delete(count_key)
+        return response
+
 
 class SecurityHeadersMiddleware(MiddlewareMixin):
     """

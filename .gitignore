@@ -239,3 +239,7 @@ backend-run.err.log
 *.zip
 verify_report.txt
 django_cache/
+
+# Django auto-generated secret key
+Backend/.django_secret_key
+.django_secret_key

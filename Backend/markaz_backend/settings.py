@@ -39,8 +39,36 @@ def env(key, default=None, cast=None):
 
 load_env_file(BASE_DIR / '.env')
 
+def _load_or_create_secret_key():
+    """
+    Kalit .env dagi DJANGO_SECRET_KEY dan olinadi. Agar berilmagan bo'lsa, serverda bir marta
+    tasodifiy kalit yaratilib .django_secret_key fayliga saqlanadi (git ga kirmaydi).
+    Kodda qattiq yozilgan (hardcoded) kalit ishlatilmaydi.
+    """
+    key = env('DJANGO_SECRET_KEY', '')
+    if key and key != 'change-me':
+        return key
+    key_file = BASE_DIR / '.django_secret_key'
+    try:
+        if key_file.exists():
+            saved = key_file.read_text(encoding='utf-8').strip()
+            if len(saved) >= 50:
+                return saved
+        from django.core.management.utils import get_random_secret_key
+        new_key = get_random_secret_key()
+        key_file.write_text(new_key, encoding='utf-8')
+        try:
+            os.chmod(key_file, 0o600)
+        except OSError:
+            pass
+        return new_key
+    except OSError:
+        import secrets
+        return secrets.token_urlsafe(64)
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY', '') or 'sayt-production-secret-key-9f8a7b6c5d4e3f2a1b0c9d8e7f6a5b4c3d2e1-fallback'
+SECRET_KEY = _load_or_create_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # UZCERT & OWASP: cPanel production muhitida (/home/uzbamala) DEBUG majburiy False bo'ladi
@@ -50,6 +78,12 @@ DEBUG = False if IS_CPANEL_PRODUCTION else env('DEBUG', False, cast=bool)
 # Secure deployment settings
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', True, cast=bool)
 CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', True, cast=bool)
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_AGE = 8 * 60 * 60  # Admin sessiyasi 8 soat
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
 SECURE_SSL_REDIRECT = env('SECURE_SSL_REDIRECT', not DEBUG, cast=bool)
@@ -223,6 +257,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'core.middleware.SecurityHeadersMiddleware',
+    'core.middleware.AdminLoginBruteForceMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
