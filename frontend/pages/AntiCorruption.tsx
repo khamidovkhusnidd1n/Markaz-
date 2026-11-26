@@ -440,7 +440,16 @@ export const AntiCorruption: React.FC = () => {
                       </div>
                       <div className="flex items-center gap-2.5">
                         <Clock size={15} className="text-blue-800 shrink-0" />
-                        <span>{content.reception_hours || 'Dushanba - Juma: 09:00 - 17:00'}</span>
+                        <span>
+                          {(() => {
+                            const hrs = content.reception_hours || 'Dushanba - Juma: 09:00 - 17:00';
+                            if (hrs.toLowerCase().includes('dushanba')) {
+                              if (lang === 'ru') return hrs.replace(/dushanba\s*-\s*juma/i, 'Понедельник - Пятница');
+                              if (lang === 'en') return hrs.replace(/dushanba\s*-\s*juma/i, 'Monday - Friday');
+                            }
+                            return hrs;
+                          })()}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -686,7 +695,7 @@ export const AntiCorruption: React.FC = () => {
                               ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
                               : 'bg-amber-50 text-amber-700 border border-amber-200/50'
                           }`}>
-                            {doc.document_number || (doc.category === 'law' ? 'Qonun' : 'Nizom')}
+                            {doc.document_number || (doc.category === 'law' ? (lang === 'ru' ? 'Закон' : lang === 'en' ? 'Law' : 'Qonun') : (lang === 'ru' ? 'Положение' : lang === 'en' ? 'Regulation' : 'Nizom'))}
                           </span>
 
                           <span className="text-xs text-slate-400 font-medium flex items-center gap-1">
@@ -761,7 +770,7 @@ export const AntiCorruption: React.FC = () => {
                             onClick={e => e.stopPropagation()}
                           >
                             <Download size={14} />
-                            <span>Yuklab olish</span>
+                            <span>{t('common.download')}</span>
                           </a>
                         )}
                       </div>
@@ -837,7 +846,7 @@ export const AntiCorruption: React.FC = () => {
                   to="/virtual-qabulxona/murojaat"
                   className="inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-blue-900 hover:bg-blue-800 text-white font-bold text-sm transition-colors"
                 >
-                  <span>Murojaat yuborish</span>
+                  <span>{lang === 'ru' ? 'Отправить обращение' : lang === 'en' ? 'Submit a Report' : 'Murojaat yuborish'}</span>
                   <ArrowRight size={16} />
                 </Link>
               </div>
@@ -899,7 +908,7 @@ export const AntiCorruption: React.FC = () => {
               <div className="min-w-0 pr-3">
                 <div className="flex items-center gap-2 text-xs text-slate-500">
                   <span className="font-bold uppercase tracking-wider text-blue-800">
-                    {activeInternalDoc.document_number || 'Ichki hujjat'}
+                    {activeInternalDoc.document_number || (lang === 'ru' ? 'Внутренний документ' : lang === 'en' ? 'Internal Document' : 'Ichki hujjat')}
                   </span>
                   <span>•</span>
                   <span>{activeInternalDoc.date || '2025'}</span>
@@ -912,7 +921,7 @@ export const AntiCorruption: React.FC = () => {
               <button
                 onClick={() => setActiveInternalDoc(null)}
                 className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-200/70 text-slate-600 hover:bg-slate-300 hover:text-slate-900 transition-colors shrink-0 cursor-pointer"
-                title="Yopish"
+                title={t('common.close')}
               >
                 <X size={20} />
               </button>
@@ -927,12 +936,12 @@ export const AntiCorruption: React.FC = () => {
 
             {/* Footer */}
             <div className="px-6 py-3.5 border-t border-slate-200 bg-slate-50 flex items-center justify-between shrink-0 text-xs text-slate-600">
-              <span>Ishonch telefoni: <strong className="text-slate-900">{hotline}</strong></span>
+              <span>{lang === 'ru' ? 'Телефон доверия:' : lang === 'en' ? 'Hotline:' : 'Ishonch telefoni:'} <strong className="text-slate-900">{hotline}</strong></span>
               <button
                 onClick={() => setActiveInternalDoc(null)}
                 className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition-colors cursor-pointer"
               >
-                Yopish
+                {t('common.close')}
               </button>
             </div>
           </div>
@@ -971,7 +980,7 @@ export const AntiCorruption: React.FC = () => {
               <button
                 onClick={() => setSelectedPost(null)}
                 className="w-9 h-9 flex items-center justify-center rounded-lg bg-slate-200/70 text-slate-600 hover:bg-slate-300 hover:text-slate-900 transition-colors shrink-0 cursor-pointer"
-                title="Yopish"
+                title={t('common.close')}
               >
                 <X size={20} />
               </button>
@@ -1072,14 +1081,14 @@ export const AntiCorruption: React.FC = () => {
                 className="inline-flex items-center gap-2 text-xs font-bold text-blue-800 hover:underline"
               >
                 <Send size={14} />
-                <span>Murojaat yuborish</span>
+                <span>{lang === 'ru' ? 'Отправить обращение' : lang === 'en' ? 'Submit a Report' : 'Murojaat yuborish'}</span>
               </Link>
 
               <button
                 onClick={() => setSelectedPost(null)}
                 className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white font-bold text-sm transition-colors cursor-pointer"
               >
-                Yopish
+                {t('common.close')}
               </button>
             </div>
           </div>

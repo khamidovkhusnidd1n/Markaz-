@@ -185,16 +185,29 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     i18n.changeLanguage(lang);
   };
 
-  const siteName = aboutContent.siteName || t('layout.site_name_fallback', "O'zbekiston Badiiy akademiyasi huzuridagi Badiiy ta'lim yo'nalishlarida pedagog va mutaxassis kadrlarni qayta tayyorlash hamda ularning malakasini oshirish markazi");
+  const rawSiteName = aboutContent.siteName || '';
+  const isDefaultUzSiteName =
+    !rawSiteName.trim() ||
+    rawSiteName.toLowerCase().includes("badiiy ta'lim") ||
+    rawSiteName.toLowerCase().includes("badiiy ta’lim") ||
+    rawSiteName.toLowerCase().includes("badiiy taʼlim");
 
-  // Format siteName strictly into 3 balanced lines
+  const siteName =
+    currentLang !== 'uz' && isDefaultUzSiteName
+      ? t('layout.site_name_fallback')
+      : (rawSiteName || t('layout.site_name_fallback'));
+
+  // Format siteName strictly into 3 balanced lines across UZ, RU, and EN
   const formatThreeLines = (text: string): [string, string, string] => {
     const clean = (text || '').trim().replace(/\s+/g, ' ');
-    if (clean.toLowerCase().includes("badiiy ta'lim") || clean.toLowerCase().includes("badiiy ta’lim")) {
+    if (
+      isDefaultUzSiteName ||
+      clean === t('layout.site_name_fallback')
+    ) {
       return [
-        "O'zbekiston Badiiy akademiyasi huzuridagi Badiiy ta'lim",
-        "yo'nalishlarida pedagog va mutaxassis kadrlarni qayta",
-        "tayyorlash hamda ularning malakasini oshirish markazi",
+        t('layout.site_name_line_1'),
+        t('layout.site_name_line_2'),
+        t('layout.site_name_line_3'),
       ];
     }
     const words = clean.split(' ');
@@ -211,7 +224,15 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   const siteNameLines = formatThreeLines(siteName);
   const headerLogo = aboutContent.headerLogo || '/logo/uzba_markaz.png';
   const footerLogo = aboutContent.footerLogo || headerLogo;
-  const addressText = aboutContent.address || t('layout.address_fallback', "Toshkent shahri, Uchtepa tumani, Chilonzor 26-daha, Shirin ko'cha, 1A");
+  const rawAddress = aboutContent.address || '';
+  const isDefaultUzAddress =
+    !rawAddress.trim() ||
+    rawAddress.toLowerCase().includes('uchtepa') ||
+    rawAddress.toLowerCase().includes('shirin');
+  const addressText =
+    currentLang !== 'uz' && isDefaultUzAddress
+      ? t('layout.address_fallback')
+      : (rawAddress || t('layout.address_fallback'));
   const contactText = aboutContent.contactInfo || 'uzbahuzuridagimarkaz@gmail.com';
 
   useEffect(() => {

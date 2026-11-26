@@ -22,23 +22,23 @@ const Library: React.FC = () => {
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'regulatory':
-        return "O'quv-me'yoriy qo'llanma";
+        return t('library.type_regulatory');
       case 'library':
-        return "Elektron adabiyot";
+        return t('library.type_library');
       case 'plan':
-        return "O'quv rejasi";
+        return t('library.type_plan');
       case 'open_data':
-        return "Ochiq ta'limiy ma'lumot";
+        return t('library.type_open_data');
       default:
-        return "O'quv materiali";
+        return t('library.type_default');
     }
   };
 
   const categories = [
-    { key: 'all', label: "Barcha adabiyotlar", count: documents.length },
-    { key: 'regulatory', label: "O‘quv-me’yoriy qo‘llanmalar", count: documents.filter(d => d.category === 'regulatory').length },
-    { key: 'open_data', label: "Ochiq ta'limiy ma'lumotlar", count: documents.filter(d => d.category === 'open_data').length },
-    { key: 'library', label: "Elektron kutubxona", count: documents.filter(d => d.category === 'library').length },
+    { key: 'all', label: t('library.cat_all'), count: documents.length },
+    { key: 'regulatory', label: t('library.cat_regulatory'), count: documents.filter(d => d.category === 'regulatory').length },
+    { key: 'open_data', label: t('library.cat_open_data'), count: documents.filter(d => d.category === 'open_data').length },
+    { key: 'library', label: t('library.cat_library'), count: documents.filter(d => d.category === 'library').length },
   ];
 
   const filteredDocuments = useMemo(() => {
@@ -73,7 +73,7 @@ const Library: React.FC = () => {
               {t('library.badge')}
             </span>
             <span className="text-xs text-blue-300 font-medium">
-              Jami: {documents.length} ta o‘quv adabiyoti va qo‘llanma
+              {t('library.total_count', { count: documents.length })}
             </span>
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight">{t('library.title')}</h1>
@@ -88,7 +88,7 @@ const Library: React.FC = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Adabiyot yoki qo‘llanma nomini qidiring..."
+                placeholder={t('library.search_placeholder')}
                 className="w-full bg-white/10 backdrop-blur-md border border-white/20 text-white placeholder-blue-200/70 text-sm rounded-2xl pl-11 pr-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white/20 transition-all shadow-sm"
               />
               <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-300" />
@@ -98,7 +98,7 @@ const Library: React.FC = () => {
                   onClick={() => setSearchQuery('')}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs bg-white/20 hover:bg-white/30 text-white px-2 py-1 rounded-md transition-colors"
                 >
-                  Tozalash
+                  {t('common.clear')}
                 </button>
               )}
             </div>
@@ -174,7 +174,7 @@ const Library: React.FC = () => {
                           </p>
                         </div>
                         <div className="pt-2 border-t border-white/15 flex items-center justify-between text-[11px] text-blue-200 z-10">
-                          <span>O‘zBA Markazi</span>
+                          <span>{t('common.center_short')}</span>
                           <BookOpen size={14} />
                         </div>
                       </div>
@@ -203,7 +203,7 @@ const Library: React.FC = () => {
                         className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white text-xs font-bold transition-colors"
                       >
                         <Eye size={14} />
-                        <span>O‘qish</span>
+                        <span>{t('common.read')}</span>
                       </button>
                       <a
                         href={item.fileUrl}
@@ -211,7 +211,7 @@ const Library: React.FC = () => {
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center justify-center p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs transition-colors"
-                        title="Yuklab olish"
+                        title={t('common.download')}
                       >
                         <Download size={14} />
                       </a>
@@ -226,9 +226,9 @@ const Library: React.FC = () => {
             <div className="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto mb-4">
               <BookMarked size={28} />
             </div>
-            <h3 className="text-lg font-bold text-slate-800 mb-1">Materiallar topilmadi</h3>
+            <h3 className="text-lg font-bold text-slate-800 mb-1">{t('library.not_found_title')}</h3>
             <p className="text-xs text-slate-500 mb-4">
-              {searchQuery ? `"${searchQuery}" bo‘yicha hech qanday adabiyot topilmadi.` : t('library.no_materials')}
+              {searchQuery ? t('library.not_found_query', { query: searchQuery }) : t('library.no_materials')}
             </p>
             {searchQuery && (
               <button
@@ -236,7 +236,7 @@ const Library: React.FC = () => {
                 onClick={() => setSearchQuery('')}
                 className="text-xs font-bold text-blue-600 hover:underline"
               >
-                Qidiruvni tozalash
+                {t('library.clear_search')}
               </button>
             )}
           </div>

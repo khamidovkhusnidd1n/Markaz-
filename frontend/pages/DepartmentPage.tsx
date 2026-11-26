@@ -323,14 +323,14 @@ const DepartmentPage: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 pb-4 border-b border-slate-200 gap-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
-                  {isAktDept ? "Amaliy natijalar va loyihalar" : "Hamkorliklar va tadbirlar"}
+                  {isAktDept ? t('department.akt_badge') : t('department.partners_badge')}
                 </span>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mt-2">
-                  {isAktDept ? "Bo‘lim tomonidan amalga oshirilgan ishlar" : t('department.works_and_partnerships')}
+                  {isAktDept ? t('department.akt_works_title') : t('department.works_and_partnerships')}
                 </h2>
               </div>
               <p className="text-sm text-slate-500 font-medium">
-                Jami: <span className="font-bold text-slate-800">{postsToDisplay.length} ta</span> amaliy ish
+                {t('department.total_works', { count: postsToDisplay.length })}
               </p>
             </div>
 

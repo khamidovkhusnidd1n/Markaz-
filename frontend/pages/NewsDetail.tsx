@@ -82,7 +82,7 @@ const NewsDetail: React.FC = () => {
               ) : (
                 <div className="w-full aspect-square rounded-2xl bg-slate-100 border border-slate-200 flex flex-col items-center justify-center gap-2 text-slate-400">
                   <ImageOff size={36} strokeWidth={1.5} />
-                  <span className="text-xs font-semibold">Rasm yuklanmagan</span>
+                  <span className="text-xs font-semibold">{t('common.image_not_uploaded')}</span>
                 </div>
               )}
             </div>

@@ -396,7 +396,7 @@ const Journal: React.FC = () => {
             {sortedAndFilteredIssues.length > 0 ? sortedAndFilteredIssues.map((issue) => (
               <div key={issue.id} className="group flex gap-4 rounded-xl border bg-white p-4 shadow-sm transition-all hover:border-blue-400 hover:shadow-md">
                 <div className="h-32 w-24 shrink-0 overflow-hidden rounded-lg bg-gray-100 border border-slate-100">
-                  <img src={issue.thumbnailUrl || 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140"><rect width="100" height="140" fill="%231e3a8a"/><rect x="10" y="12" width="80" height="116" fill="none" stroke="%23fbbf24" stroke-width="1.5" opacity="0.6"/><text x="50" y="65" font-family="sans-serif" font-size="11" font-weight="bold" fill="%23ffffff" text-anchor="middle">JURNAL</text><text x="50" y="84" font-family="sans-serif" font-size="8" fill="%2393c5fd" text-anchor="middle">O%27zBA Markazi</text></svg>'} alt={`${formatIssueTitle(issue)} ${formatIssueNumber(issue)}`} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <img src={issue.thumbnailUrl || `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 140"><rect width="100" height="140" fill="%231e3a8a"/><rect x="10" y="12" width="80" height="116" fill="none" stroke="%23fbbf24" stroke-width="1.5" opacity="0.6"/><text x="50" y="65" font-family="sans-serif" font-size="11" font-weight="bold" fill="%23ffffff" text-anchor="middle">${encodeURIComponent(t('journal.issue_label').toUpperCase())}</text><text x="50" y="84" font-family="sans-serif" font-size="7.5" fill="%2393c5fd" text-anchor="middle">${encodeURIComponent(t('common.center_short'))}</text></svg>`} alt={`${formatIssueTitle(issue)} ${formatIssueNumber(issue)}`} className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300" />
                 </div>
                 <div className="flex flex-col justify-between flex-1 min-w-0">
                   <div>
@@ -408,7 +408,7 @@ const Journal: React.FC = () => {
                       setViewDoc(issue.pdfUrl);
                       window.location.hash = `#/journal?id=${issue.id}`;
                     }} className="flex items-center gap-1 text-sm font-bold text-blue-600 hover:underline"><Eye size={14} /> {t('common.view')}</button>
-                    <a href={issue.pdfUrl} target="_blank" rel="noopener noreferrer" download className="flex items-center gap-1 text-sm font-bold text-slate-600 hover:text-blue-600 hover:underline"><Download size={14} /> {t('open_data.download') || 'Yuklab olish'}</a>
+                    <a href={issue.pdfUrl} target="_blank" rel="noopener noreferrer" download className="flex items-center gap-1 text-sm font-bold text-slate-600 hover:text-blue-600 hover:underline"><Download size={14} /> {t('common.download')}</a>
                     <button onClick={(e) => { e.stopPropagation(); handleShare(issue.id); }} className="flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-blue-600 hover:underline"><Share2 size={14} /> {t('common.share')}</button>
                   </div>
                 </div>

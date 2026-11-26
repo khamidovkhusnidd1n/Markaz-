@@ -12,6 +12,23 @@ const CourseDetail: React.FC = () => {
   const course = courses.find((item) => String(item.id) === id);
   const lang = (i18n.language || 'uz').substring(0, 2);
 
+  const getCourseTypeLabel = (c: any) =>
+    t(`courses.types.${c.type}`, c.typeDisplay || t('courses.course_fallback'));
+
+  const localizeDuration = (dur?: string) => {
+    if (!dur || lang === 'uz') return dur || '';
+    if (lang === 'ru') {
+      return dur
+        .replace(/soat/gi, 'часов')
+        .replace(/hafta/gi, 'недель')
+        .replace(/\boy\b/gi, 'мес.');
+    }
+    return dur
+      .replace(/soat/gi, 'hours')
+      .replace(/hafta/gi, 'weeks')
+      .replace(/\boy\b/gi, 'months');
+  };
+
   if (!course) {
     return (
       <div className="container mx-auto px-6 py-20">
@@ -42,9 +59,9 @@ const CourseDetail: React.FC = () => {
             ) : null}
           </div>
           <div className="p-6 sm:p-8">
-            <p className="text-xs font-bold uppercase tracking-widest text-blue-700">{course.typeDisplay || t('courses.course_fallback')}</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-blue-700">{getCourseTypeLabel(course)}</p>
             <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold text-slate-900">{course.title}</h1>
-            {course.duration && <p className="mt-2 text-sm font-medium text-slate-500">{t('course_detail.duration')}: {course.duration}</p>}
+            {course.duration && <p className="mt-2 text-sm font-medium text-slate-500">{t('course_detail.duration')}: {localizeDuration(course.duration)}</p>}
             <div className="mt-6 pt-6 border-t border-slate-100">
               <h2 className="text-lg font-bold text-slate-900">{t('course_detail.details_title')}</h2>
               <div 
@@ -62,14 +79,14 @@ const CourseDetail: React.FC = () => {
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-800 hover:bg-blue-900 px-5 py-3.5 text-sm font-bold text-white transition-colors"
             >
               <FileText size={18} />
-              {lang === 'ru' ? 'Подать заявку на курс' : lang === 'en' ? 'Apply for Course' : 'Kursga ariza topshirish'}
+              {t('course_detail.apply_btn')}
             </Link>
             <Link
               to="/virtual-qabulxona/holat"
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 bg-slate-50 hover:bg-slate-100 px-5 py-3 text-sm font-bold text-slate-800 transition-colors"
             >
               <Search size={16} />
-              {lang === 'ru' ? 'Проверить статус заявки' : lang === 'en' ? 'Check Application Status' : 'Ariza holatini tekshirish'}
+              {t('course_detail.check_status_btn')}
             </Link>
           </div>
 

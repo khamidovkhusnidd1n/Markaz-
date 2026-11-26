@@ -311,7 +311,7 @@ const VirtualQabulxona: React.FC = () => {
                   triggerFileSelectAnimation(key, null);
                 }}
                 className="rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 p-1.5 text-rose-600 transition-colors"
-                title="O'chirish"
+                title={t('common.delete')}
               >
                 <Trash2 size={14} />
               </button>
@@ -331,7 +331,7 @@ const VirtualQabulxona: React.FC = () => {
                     return;
                   }
                   if (chosen && chosen.size > 35 * 1024 * 1024) {
-                    setSubmissionError(lang === 'en' ? 'File size exceeds 35 MB limit. Please upload a smaller file.' : lang === 'ru' ? 'Razmer fayla prevyshaet 35 MB. Pozhaluysta, zagruzite fayl menshego razmera.' : 'Fayl hajmi 35 MB dan oshmasligi kerak. Iltimos, fayl hajmini kichikroq qilib yuklang.');
+                    setSubmissionError(lang === 'en' ? 'File size exceeds 35 MB limit. Please upload a smaller file.' : lang === 'ru' ? 'Размер файла превышает 35 МБ. Пожалуйста, загрузите файл меньшего размера.' : 'Fayl hajmi 35 MB dan oshmasligi kerak. Iltimos, fayl hajmini kichikroq qilib yuklang.');
                     e.target.value = '';
                     return;
                   }
@@ -541,10 +541,16 @@ const VirtualQabulxona: React.FC = () => {
         }[lang],
       };
     }
+    const statusTextMap: Record<string, Record<string, string>> = {
+      pending: { uz: "Ko'rib chiqilmoqda", ru: "На рассмотрении", en: "Under Review" },
+      in_progress: { uz: "Dastlabki tekshiruvda", ru: "На первичной проверке", en: "Initial Verification" },
+      commission_review: { uz: "Ekspert komissiyasi baholashida", ru: "На оценке Экспертной комиссии", en: "Expert Commission Evaluation" },
+      appeal: { uz: "Apellyatsiya ko'rib chiqilmoqda", ru: "Рассмотрение апелляции", en: "Appeal Under Review" },
+    };
     return {
       color: 'bg-blue-50 text-blue-900 border-blue-200',
       icon: <Clock size={18} className="text-blue-700 shrink-0" />,
-      text: app.statusDisplay || ({ uz: "Ko'rib chiqilmoqda", ru: "На рассмотрении", en: "Under Review" }[lang]),
+      text: statusTextMap[status]?.[lang] || (lang === 'uz' && app.statusDisplay ? app.statusDisplay : ({ uz: "Ko'rib chiqilmoqda", ru: "На рассмотрении", en: "Under Review" }[lang])),
     };
   };
 
@@ -1063,7 +1069,7 @@ const VirtualQabulxona: React.FC = () => {
                         setTimeout(() => setCopiedAppNum(false), 2000);
                       }}
                       className="p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
-                      title="Nusxa olish"
+                      title={t('common.copy')}
                     >
                       {copiedAppNum ? <Check size={16} className="text-emerald-600" /> : <Copy size={16} />}
                     </button>

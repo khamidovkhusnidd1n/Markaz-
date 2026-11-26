@@ -22,11 +22,8 @@ const DocumentViewer: React.FC<Props> = ({ url, onClose }) => {
     ? url
     : `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
 
-  const lang = (i18n.language || 'uz').substring(0, 2);
-  const downloadText =
-    lang === 'ru' ? 'Скачать файл' : lang === 'en' ? 'Download File' : 'Faylni yuklab olish';
-  const openInTab =
-    lang === 'ru' ? 'Открыть в новой вкладке' : lang === 'en' ? 'Open in new tab' : 'Yangi oynada ochish';
+  const downloadText = t('common.download_file');
+  const openInTab = t('common.open_new_tab');
 
   return (
     <div
@@ -70,7 +67,7 @@ const DocumentViewer: React.FC<Props> = ({ url, onClose }) => {
             <button
               onClick={onClose}
               className="p-2 hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors text-slate-600"
-              title={lang === 'ru' ? 'Закрыть' : lang === 'en' ? 'Close' : 'Yopish'}
+              title={t('common.close')}
             >
               <X size={18} />
             </button>
@@ -84,14 +81,10 @@ const DocumentViewer: React.FC<Props> = ({ url, onClose }) => {
               <ExternalLink size={32} />
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-2">
-              {isLexUz
-                ? "O‘zbekiston Respublikasi Qonunchilik ma'lumotlari milliy bazasi (Lex.uz)"
-                : (lang === 'ru' ? 'Официальный внешний источник' : lang === 'en' ? 'Official External Source' : "Tashqi rasmiy sahifa")}
+              {isLexUz ? t('document_viewer.lex_title') : t('document_viewer.external_title')}
             </h3>
             <p className="text-sm text-slate-600 max-w-md mb-6 leading-relaxed">
-              {isLexUz
-                ? "Ushbu qonun hujjati O‘zbekiston Respublikasi Adliya vazirligi huzuridagi rasmiy Lex.uz portalida to‘liq matnda joylashtirilgan."
-                : (lang === 'ru' ? 'Документ размещен на официальном портале и открывается в новой вкладке.' : 'Ushbu hujjat rasmiy portalda joylashgan bo‘lib, to‘liq va qonuniy kuchga ega shaklda yangi oynada ochiladi.')}
+              {isLexUz ? t('document_viewer.lex_desc') : t('document_viewer.external_desc')}
             </p>
             <a
               href={url}
@@ -99,7 +92,7 @@ const DocumentViewer: React.FC<Props> = ({ url, onClose }) => {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-md shadow-blue-600/20 transition-all transform hover:-translate-y-0.5"
             >
-              <span>{isLexUz ? "Lex.uz portalida to‘liq matnni o‘qish" : openInTab}</span>
+              <span>{isLexUz ? t('document_viewer.lex_btn') : openInTab}</span>
               <ExternalLink size={16} />
             </a>
           </div>

@@ -2234,7 +2234,7 @@ const Home: React.FC = () => {
                                             }));
                                           }}
                                           className="absolute left-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity"
-                                          aria-label="Oldingi rasm"
+                                          aria-label={t('common.prev_image')}
                                         >
                                           <ChevronLeft size={15} />
                                         </button>
@@ -2248,7 +2248,7 @@ const Home: React.FC = () => {
                                             }));
                                           }}
                                           className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity"
-                                          aria-label="Keyingi rasm"
+                                          aria-label={t('common.next_image')}
                                         >
                                           <ChevronRight size={15} />
                                         </button>
@@ -2447,7 +2447,7 @@ const Home: React.FC = () => {
                                               }));
                                             }}
                                             className="absolute left-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity"
-                                            aria-label="Oldingi rasm"
+                                            aria-label={t('common.prev_image')}
                                           >
                                             <ChevronLeft size={15} />
                                           </button>
@@ -2461,7 +2461,7 @@ const Home: React.FC = () => {
                                               }));
                                             }}
                                             className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity"
-                                            aria-label="Keyingi rasm"
+                                            aria-label={t('common.next_image')}
                                           >
                                             <ChevronRight size={15} />
                                           </button>
@@ -2977,7 +2977,7 @@ const Home: React.FC = () => {
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-400">
                           <ImageOff size={36} strokeWidth={1.5} />
-                          <span className="text-xs font-semibold">Rasm yuklanmagan</span>
+                          <span className="text-xs font-semibold">{t('common.image_not_uploaded')}</span>
                         </div>
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
@@ -3016,7 +3016,7 @@ const Home: React.FC = () => {
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-400">
                           <ImageOff size={36} strokeWidth={1.5} />
-                          <span className="text-xs font-semibold">Rasm yuklanmagan</span>
+                          <span className="text-xs font-semibold">{t('common.image_not_uploaded')}</span>
                         </div>
                       )}
                     </div>
@@ -3057,7 +3057,7 @@ const Home: React.FC = () => {
                         ) : (
                           <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 text-slate-400">
                             <ImageOff size={28} strokeWidth={1.5} />
-                            <span className="text-[11px] font-semibold">Rasm yuklanmagan</span>
+                            <span className="text-[11px] font-semibold">{t('common.image_not_uploaded')}</span>
                           </div>
                         )}
                       </div>

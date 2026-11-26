@@ -17,6 +17,9 @@ const Courses: React.FC = () => {
   const { t } = useTranslation();
   const { courses } = useApp();
 
+  const getCourseTypeLabel = (course: any) =>
+    t(`courses.types.${course.type}`, course.typeDisplay || t('courses.course_fallback'));
+
   return (
     <div className="min-h-screen bg-slate-50">
       <section className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-900 text-white py-14">
@@ -46,14 +49,14 @@ const Courses: React.FC = () => {
                   ) : (
                     <div className="flex h-full items-end p-5 text-white">
                       <span className="rounded-lg bg-white/15 border border-white/20 px-3 py-1.5 text-xs font-bold uppercase tracking-wider">
-                        {course.typeDisplay || t('courses.course_fallback')}
+                        {getCourseTypeLabel(course)}
                       </span>
                     </div>
                   )}
                 </div>
                 <div className="space-y-3.5 p-5 flex-1 flex flex-col justify-between">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-blue-700">{course.typeDisplay || t('courses.course_fallback')}</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-blue-700">{getCourseTypeLabel(course)}</p>
                     <h2 className="mt-1.5 text-lg font-bold text-slate-900 group-hover:text-blue-700 transition-colors line-clamp-2 leading-snug">{course.title}</h2>
                     {course.description && (
                       <p className="mt-2 line-clamp-3 text-xs sm:text-sm leading-relaxed text-slate-600">{stripHtml(course.description)}</p>

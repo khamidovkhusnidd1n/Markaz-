@@ -127,6 +127,13 @@ function getApiBaseUrls() {
 
 function backendUnavailableMessage() {
   const candidates = getApiBaseUrls().join(', ');
+  const lang = (i18n.language || 'uz').substring(0, 2);
+  if (lang === 'ru') {
+    return `Ошибка подключения к серверу. Проверенные адреса: ${candidates}`;
+  }
+  if (lang === 'en') {
+    return `Failed to connect to the backend server. Checked URLs: ${candidates}`;
+  }
   return `Backend bilan ulanishda xatolik. Backend server ishlayotganini tekshiring. Tekshirilgan manzillar: ${candidates}`;
 }
 
@@ -310,7 +317,7 @@ function transformNewsItem(item: any): NewsItem {
 function transformGalleryItem(item: any): GalleryItem {
   return {
     id: item.id,
-    title: item.title || '',
+    title: item.title_translated || item.title || '',
     coverImageUrl: item.cover_image_url || '',
     images: (item.images || []).map((img: any): GalleryImage => ({
       id: String(img.id),

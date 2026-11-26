@@ -145,7 +145,12 @@ const TrainingPlan: React.FC = () => {
                         {pdSearchResults.map((item) => (
                           <tr key={item.id} className="transition-colors hover:bg-emerald-50">
                             <td className="px-4 py-4 font-medium text-gray-900">{item.fullName}</td>
-                            <td className="px-4 py-4 text-gray-600">{item.region || '-'}</td>
+                            <td className="px-4 py-4 text-gray-600">
+                              {(() => {
+                                const foundReg = UZ_REGIONS.find(r => r.value === item.region);
+                                return foundReg ? t(`training_plan.regions.${foundReg.key}`, item.region) : (item.region || '-');
+                              })()}
+                            </td>
                             <td className="px-4 py-4 text-gray-600">{item.workplace}</td>
                             <td className="px-4 py-4 text-gray-600">{item.courseName}</td>
                             <td className="px-4 py-4 text-gray-600">

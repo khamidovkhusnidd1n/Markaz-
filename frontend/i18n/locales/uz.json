@@ -52,7 +52,10 @@
     "scroll_top": "Tepaga o'tish",
     "scroll_bottom": "Pastga o'tish",
     "not_found_message": "Kechirasiz, bunday sahifa mavjud emas.",
-    "test_mode": "Test rejimida ishlamoqda"
+    "test_mode": "Test rejimida ishlamoqda",
+    "site_name_line_1": "O'zbekiston Badiiy akademiyasi huzuridagi Badiiy ta'lim",
+    "site_name_line_2": "yo'nalishlarida pedagog va mutaxassis kadrlarni qayta",
+    "site_name_line_3": "tayyorlash hamda ularning malakasini oshirish markazi"
   },
   "home": {
     "read_more": "Batafsil o'qish",
@@ -178,7 +181,8 @@
     "reception_hours": "Ish vaqti",
     "position": "Lavozimi",
     "email": "Elektron pochta",
-    "duties": "Lavozim vazifasi"
+    "duties": "Lavozim vazifasi",
+    "biography": "Biografiyasi"
   },
   "courses": {
     "badge": "Kurslar",
@@ -187,7 +191,13 @@
     "course_fallback": "Kurs",
     "telegram_available": "Telegram mavjud",
     "view_details": "Batafsil ko'rish",
-    "no_courses": "Hozircha kurslar kiritilmagan."
+    "no_courses": "Hozircha kurslar kiritilmagan.",
+    "types": {
+      "professional_development": "Malaka oshirish",
+      "retraining": "Qayta tayyorlash",
+      "short_professional_development": "Qisqa muddatli malaka oshirish",
+      "profession_learning": "Kasbga o'qitish"
+    }
   },
   "course_detail": {
     "not_found_title": "Kurs topilmadi",
@@ -198,7 +208,9 @@
     "details_title": "Kurs tavsiloti",
     "no_details": "Kurs tavsiloti hali kiritilmagan.",
     "contact_info": "Aloqa ma'lumotlari",
-    "no_contact": "Aloqa ma'lumotlari hali kiritilmagan."
+    "no_contact": "Aloqa ma'lumotlari hali kiritilmagan.",
+    "apply_btn": "Kursga ariza topshirish",
+    "check_status_btn": "Ariza holatini tekshirish"
   },
   "departments": {
     "back": "Bosh sahifa",
@@ -268,8 +280,8 @@
     "download_pdf": "PDF yuklab olish",
     "no_issues": "Hozircha raqamli arxiv mavjud emas.",
     "contact_title": "Bog'lanish",
-    "telegram_1": "Telegram 1",
-    "telegram_2": "Telegram 2",
+    "telegram_1": "Telegram kanal 1",
+    "telegram_2": "Telegram kanal 2",
     "for_authors_title": "Mualliflarga",
     "for_authors_fallback": "Maqola yuborish bo'yicha ko'rsatmalar kiritilmagan."
   },
@@ -279,7 +291,21 @@
     "title": "Adabiyotlar",
     "subtitle": "Markazimizning elektron kutubxonasiga xush kelibsiz. Bu yerda barcha o'quv adabiyotlari bilan tanishishingiz mumkin.",
     "no_cover": "Muqova yo'q",
-    "no_materials": "Hozircha kutubxona materiallari kiritilmagan"
+    "no_materials": "Hozircha kutubxona materiallari kiritilmagan",
+    "total_count": "Jami: {{count}} ta o‘quv adabiyoti va qo‘llanma",
+    "search_placeholder": "Adabiyot yoki qo‘llanma nomini qidiring...",
+    "clear_search": "Qidiruvni tozalash",
+    "not_found_title": "Materiallar topilmadi",
+    "not_found_query": "\"{{query}}\" bo‘yicha hech qanday adabiyot topilmadi.",
+    "cat_all": "Barcha adabiyotlar",
+    "cat_regulatory": "O‘quv-me’yoriy qo‘llanmalar",
+    "cat_open_data": "Ochiq ta'limiy ma'lumotlar",
+    "cat_library": "Elektron kutubxona",
+    "type_regulatory": "O'quv-me'yoriy qo'llanma",
+    "type_library": "Elektron adabiyot",
+    "type_plan": "O'quv rejasi",
+    "type_open_data": "Ochiq ta'limiy ma'lumot",
+    "type_default": "O'quv materiali"
   },
   "news_list": {
     "badge": "Yangiliklar",
@@ -427,7 +453,8 @@
       "namangan": "Namangan viloyati",
       "fergana": "Farg'ona viloyati",
       "karakalpakstan": "Qoraqalpog'iston Respublikasi"
-    }
+    },
+    "min_chars": "Qidiruv uchun kamida 3 ta belgi kiriting"
   },
   "virtual_reception": {
     "badge": "Qabul",
@@ -515,9 +542,34 @@
     "share": "Ulashish",
     "view_document": "Hujjatni ko'rish",
     "redirecting_admin": "Boshqaruv paneliga o'tilmoqda...",
-    "project_image_alt": "Loyiha rasmi"
+    "project_image_alt": "Loyiha rasmi",
+    "error": "Xatolik yuz berdi",
+    "loading": "Yuklanmoqda...",
+    "image_not_uploaded": "Rasm yuklanmagan",
+    "download": "Yuklab olish",
+    "download_file": "Faylni yuklab olish",
+    "open_new_tab": "Yangi oynada ochish",
+    "close": "Yopish",
+    "delete": "O'chirish",
+    "copy": "Nusxa olish",
+    "clear": "Tozalash",
+    "read": "O‘qish",
+    "prev_image": "Oldingi rasm",
+    "next_image": "Keyingi rasm",
+    "center_short": "O‘zBA Markazi"
   },
   "department": {
-    "works_and_partnerships": "Qilingan ishlar / Hamkorliklar"
+    "works_and_partnerships": "Qilingan ishlar / Hamkorliklar",
+    "akt_badge": "Amaliy natijalar va loyihalar",
+    "partners_badge": "Hamkorliklar va tadbirlar",
+    "akt_works_title": "Bo‘lim tomonidan amalga oshirilgan ishlar",
+    "total_works": "Jami: {{count}} ta amaliy ish"
+  },
+  "document_viewer": {
+    "lex_title": "O‘zbekiston Respublikasi Qonunchilik ma'lumotlari milliy bazasi (Lex.uz)",
+    "lex_desc": "Ushbu qonun hujjati O‘zbekiston Respublikasi Adliya vazirligi huzuridagi rasmiy Lex.uz portalida to‘liq matnda joylashtirilgan.",
+    "lex_btn": "Lex.uz portalida to‘liq matnni o‘qish",
+    "external_title": "Tashqi rasmiy sahifa",
+    "external_desc": "Ushbu hujjat rasmiy portalda joylashgan bo‘lib, to‘liq va qonuniy kuchga ega shaklda yangi oynada ochiladi."
   }
 }

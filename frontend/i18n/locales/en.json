@@ -52,7 +52,10 @@
     "scroll_top": "Scroll to top",
     "scroll_bottom": "Scroll to bottom",
     "not_found_message": "Sorry, this page does not exist.",
-    "test_mode": "Operating in test mode"
+    "test_mode": "Operating in test mode",
+    "site_name_line_1": "Center for Retraining and Advanced Training of",
+    "site_name_line_2": "Pedagogical and Specialist Personnel in Art Education",
+    "site_name_line_3": "under the Academy of Arts of Uzbekistan"
   },
   "home": {
     "read_more": "Read more",
@@ -178,7 +181,8 @@
     "reception_hours": "Reception hours",
     "position": "Position",
     "email": "Email",
-    "duties": "Job Duties"
+    "duties": "Job Duties",
+    "biography": "Biography"
   },
   "courses": {
     "badge": "Courses",
@@ -187,7 +191,13 @@
     "course_fallback": "Course",
     "telegram_available": "Telegram available",
     "view_details": "View details",
-    "no_courses": "No courses have been entered yet."
+    "no_courses": "No courses have been entered yet.",
+    "types": {
+      "professional_development": "Professional Development",
+      "retraining": "Retraining",
+      "short_professional_development": "Short-Term Professional Development",
+      "profession_learning": "Vocational Training"
+    }
   },
   "course_detail": {
     "not_found_title": "Course not found",
@@ -198,7 +208,9 @@
     "details_title": "Course details",
     "no_details": "Course details have not been entered yet.",
     "contact_info": "Contact information",
-    "no_contact": "Contact information has not been entered yet."
+    "no_contact": "Contact information has not been entered yet.",
+    "apply_btn": "Apply for Course",
+    "check_status_btn": "Check Application Status"
   },
   "departments": {
     "back": "Home",
@@ -268,8 +280,8 @@
     "download_pdf": "Download PDF",
     "no_issues": "No digital archive available yet.",
     "contact_title": "Contact",
-    "telegram_1": "Telegram 1",
-    "telegram_2": "Telegram 2",
+    "telegram_1": "Telegram Channel 1",
+    "telegram_2": "Telegram Channel 2",
     "for_authors_title": "For authors",
     "for_authors_fallback": "Instructions for submitting articles have not been entered."
   },
@@ -279,7 +291,21 @@
     "title": "Literature",
     "subtitle": "Welcome to our center's electronic library. Here you can explore all educational literature.",
     "no_cover": "No cover",
-    "no_materials": "No library materials have been entered yet"
+    "no_materials": "No library materials have been entered yet",
+    "total_count": "Total: {{count}} educational books and manuals",
+    "search_placeholder": "Search literature or manual title...",
+    "clear_search": "Clear search",
+    "not_found_title": "No materials found",
+    "not_found_query": "No literature found matching \"{{query}}\".",
+    "cat_all": "All literature",
+    "cat_regulatory": "Regulatory & methodological manuals",
+    "cat_open_data": "Open educational materials",
+    "cat_library": "Digital library",
+    "type_regulatory": "Methodological manual",
+    "type_library": "Digital publication",
+    "type_plan": "Curriculum plan",
+    "type_open_data": "Open educational material",
+    "type_default": "Educational material"
   },
   "news_list": {
     "badge": "News",
@@ -427,7 +453,8 @@
       "namangan": "Namangan region",
       "fergana": "Fergana region",
       "karakalpakstan": "Republic of Karakalpakstan"
-    }
+    },
+    "min_chars": "Please enter at least 3 characters to search"
   },
   "virtual_reception": {
     "badge": "Reception",
@@ -515,9 +542,34 @@
     "share": "Share",
     "view_document": "View Document",
     "redirecting_admin": "Redirecting to admin panel...",
-    "project_image_alt": "Project image"
+    "project_image_alt": "Project image",
+    "error": "An error occurred",
+    "loading": "Loading...",
+    "image_not_uploaded": "Image not uploaded",
+    "download": "Download",
+    "download_file": "Download File",
+    "open_new_tab": "Open in new tab",
+    "close": "Close",
+    "delete": "Remove",
+    "copy": "Copy",
+    "clear": "Clear",
+    "read": "Read",
+    "prev_image": "Previous image",
+    "next_image": "Next image",
+    "center_short": "AAUz Center"
   },
   "department": {
-    "works_and_partnerships": "Completed Works / Partnerships"
+    "works_and_partnerships": "Completed Works / Partnerships",
+    "akt_badge": "Practical Results & Projects",
+    "partners_badge": "Partnerships & Events",
+    "akt_works_title": "Completed Works by the Department",
+    "total_works": "Total practical works: {{count}}"
+  },
+  "document_viewer": {
+    "lex_title": "National Legislation Database of the Republic of Uzbekistan (Lex.uz)",
+    "lex_desc": "This legal document is published in full text on the official Lex.uz portal under the Ministry of Justice of the Republic of Uzbekistan.",
+    "lex_btn": "Read full text on Lex.uz portal",
+    "external_title": "Official External Source",
+    "external_desc": "This document is hosted on an official portal and opens in a new tab."
   }
 }
