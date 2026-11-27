@@ -25,6 +25,7 @@ const Library = React.lazy(() => import('./pages/Library'));
 const TrainingPlan = React.lazy(() => import('./pages/TrainingPlan'));
 const Portfolio = React.lazy(() => import('./pages/Portfolio'));
 const AntiCorruption = React.lazy(() => import('./pages/AntiCorruption'));
+const Survey = React.lazy(() => import('./pages/Survey'));
 
 const Teachers = React.lazy(() => import('./pages/Teachers'));
 const PhotoGallery = React.lazy(() => import('./pages/PhotoGallery'));
@@ -75,6 +76,8 @@ const App: React.FC = () => {
               <Route path="/departments/:slug" element={<DepartmentPage />} />
               <Route path="/library" element={<Library />} />
               <Route path="/training-plan" element={<TrainingPlan />} />
+              <Route path="/survey" element={<Survey />} />
+              <Route path="/sorovnoma" element={<Survey />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/teachers" element={<Teachers />} />
               <Route path="/photo-gallery" element={<PhotoGallery />} />

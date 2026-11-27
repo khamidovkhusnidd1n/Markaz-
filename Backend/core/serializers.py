@@ -988,4 +988,82 @@ class AntiCorruptionPostSerializer(serializers.ModelSerializer):
             return obj.image.url
         return ''
 
-        return None
+
+from .models import Survey, SurveyQuestion, SurveyResponse, SurveyAnswer
+
+
+class SurveyQuestionSerializer(serializers.ModelSerializer):
+    question_text_translated = serializers.SerializerMethodField()
+    options_translated = serializers.SerializerMethodField()
+    detail_label_translated = serializers.SerializerMethodField()
+    detail_trigger_translated = serializers.SerializerMethodField()
+
+    class Meta:
+        model = SurveyQuestion
+        fields = [
+            'id', 'order', 'question_type', 'is_required',
+            'question_text', 'question_text_ru', 'question_text_en', 'question_text_translated',
+            'options_json', 'options_ru_json', 'options_en_json', 'options_translated',
+            'has_detail_input', 'detail_trigger', 'detail_trigger_translated',
+            'detail_label', 'detail_label_ru', 'detail_label_en', 'detail_label_translated',
+        ]
+
+    def get_question_text_translated(self, obj):
+        return get_translated(obj, 'question_text', self.context.get('lang', 'uz'))
+
+    def get_options_translated(self, obj):
+        lang = self.context.get('lang', 'uz')
+        base_opts = list(obj.options_json or [])
+        if lang == 'ru' and obj.options_ru_json and len(obj.options_ru_json) == len(base_opts):
+            return obj.options_ru_json
+        if lang == 'en' and obj.options_en_json and len(obj.options_en_json) == len(base_opts):
+            return obj.options_en_json
+        if lang in ('ru', 'en') and base_opts:
+            return [auto_translate(str(o), lang) for o in base_opts]
+        return base_opts
+
+    def get_detail_label_translated(self, obj):
+        return get_translated(obj, 'detail_label', self.context.get('lang', 'uz'))
+
+    def get_detail_trigger_translated(self, obj):
+        if not obj.detail_trigger:
+            return ''
+        base_opts = list(obj.options_json or [])
+        tr_opts = self.get_options_translated(obj)
+        if obj.detail_trigger in base_opts:
+            idx = base_opts.index(obj.detail_trigger)
+            if idx < len(tr_opts):
+                return tr_opts[idx]
+        return obj.detail_trigger
+
+
+class SurveySerializer(serializers.ModelSerializer):
+    title_translated = serializers.SerializerMethodField()
+    description_translated = serializers.SerializerMethodField()
+    thanks_message_translated = serializers.SerializerMethodField()
+    questions = SurveyQuestionSerializer(many=True, read_only=True)
+    questions_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Survey
+        fields = [
+            'id', 'title', 'title_ru', 'title_en', 'title_translated',
+            'description', 'description_ru', 'description_en', 'description_translated',
+            'thanks_message', 'thanks_message_ru', 'thanks_message_en', 'thanks_message_translated',
+            'is_anonymous', 'allow_multiple', 'status',
+            'start_date', 'end_date', 'order', 'is_active',
+            'questions_count', 'questions', 'created_at',
+        ]
+
+    def get_title_translated(self, obj):
+        return get_translated(obj, 'title', self.context.get('lang', 'uz'))
+
+    def get_description_translated(self, obj):
+        return get_translated(obj, 'description', self.context.get('lang', 'uz'))
+
+    def get_thanks_message_translated(self, obj):
+        return get_translated(obj, 'thanks_message', self.context.get('lang', 'uz'))
+
+    def get_questions_count(self, obj):
+        return obj.questions.count()
+

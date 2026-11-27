@@ -32,7 +32,8 @@
     "contact": "Bog'lanish uchun",
     "potential": "Salohiyat",
     "teachers": "Bizning ustozlar",
-    "sci_potential": "Ilmiy salohiyat"
+    "sci_potential": "Ilmiy salohiyat",
+    "survey": "So‘rovnoma"
   },
   "layout": {
     "search": "Qidirish...",
@@ -571,5 +572,32 @@
     "lex_btn": "Lex.uz portalida to‘liq matnni o‘qish",
     "external_title": "Tashqi rasmiy sahifa",
     "external_desc": "Ushbu hujjat rasmiy portalda joylashgan bo‘lib, to‘liq va qonuniy kuchga ega shaklda yangi oynada ochiladi."
+  },
+  "survey": {
+    "back": "Bosh sahifa",
+    "badge": "Tinglovchilar uchun",
+    "anonymous_badge": "100% Anonim so‘rovnoma",
+    "open_badge": "Ochiq so‘rovnoma",
+    "anonymous_notice": "Ushbu so‘rovnoma to‘liq anonim tarzda o‘tkaziladi. Sizning shaxsingizga doir ma’lumotlar (F.I.Sh., telefon raqam) so‘ralmaydi va javoblar bilan bog‘lanmaydi.",
+    "questions_count": "{{count}} ta savol",
+    "answered_progress": "Javob berildi: {{answered}} / {{total}}",
+    "required_tag": "Majburiy",
+    "optional_tag": "Ixtiyoriy",
+    "course_label": "O‘quv kursi / Yo‘nalishingiz (ixtiyoriy)",
+    "course_placeholder": "Kursni tanlang yoki yozing (ixtiyoriy)...",
+    "respondent_name_label": "F.I.Sh.",
+    "respondent_name_placeholder": "Familiya, ism va sharifingizni kiriting",
+    "text_placeholder": "Fikr va mulohazangizni shu yerga yozing...",
+    "detail_placeholder": "Qisqacha izoh yozing...",
+    "yes": "Ha",
+    "no": "Yo‘q",
+    "submit_btn": "Javoblarni yuborish",
+    "submitting": "Yuborilmoqda...",
+    "required_error": "Iltimos, barcha majburiy savollarga javob belgilang ({{order}}-savol).",
+    "already_submitted_title": "Siz ushbu so‘rovnomada qatnashgansiz",
+    "already_submitted_desc": "Bildirgan fikr va takliflaringiz qabul qilingan. Markaz ta’lim sifatini oshirishga qo‘shgan hissangiz uchun tashakkur!",
+    "fill_again_btn": "So‘rovnomani qayta ko‘rish",
+    "thanks_title": "Javobingiz qabul qilindi!",
+    "no_surveys": "Hozircha faol so‘rovnomalar mavjud emas."
   }
 }

@@ -1096,6 +1096,11 @@ def get_all_data(request):
                 'documents': AntiCorruptionDocumentSerializer(AntiCorruptionDocument.objects.filter(is_active=True).order_by('order', '-date'), many=True, context=ctx).data,
                 'posts': AntiCorruptionPostSerializer(AntiCorruptionPost.objects.filter(is_active=True).prefetch_related('images').order_by('order', '-date'), many=True, context=ctx).data,
             },
+            'surveys': SurveySerializer(
+                get_active_surveys_queryset(),
+                many=True,
+                context=ctx
+            ).data,
         }
         return Response(data)
     except Exception:
@@ -1380,3 +1385,147 @@ class TrainingPlanRecordViewSet(viewsets.ModelViewSet):
     queryset = TrainingPlanRecord.objects.all().order_by('-created_at')
     serializer_class = TrainingPlanRecordSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+from django.db import transaction
+from django.utils import timezone
+import hashlib
+from .models import Survey, SurveyQuestion, SurveyResponse, SurveyAnswer, SurveyParticipation
+from .serializers import SurveySerializer
+
+
+def get_active_surveys_queryset():
+    now = timezone.now()
+    qs = Survey.objects.filter(is_active=True, status='active').prefetch_related('questions')
+    qs = qs.filter(Q(start_date__isnull=True) | Q(start_date__lte=now))
+    qs = qs.filter(Q(end_date__isnull=True) | Q(end_date__gte=now))
+    return qs.order_by('order', '-created_at')
+
+
+class SurveyViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Tinglovchilar uchun faol so'rovnomalarni olish va anonim/ochiq javob yuborish API.
+    """
+    serializer_class = SurveySerializer
+    permission_classes = [permissions.AllowAny]
+    authentication_classes = []
+    pagination_class = None
+
+    def get_queryset(self):
+        return get_active_surveys_queryset()
+
+    def get_serializer_context(self):
+        ctx = super().get_serializer_context()
+        ctx['lang'] = self.request.query_params.get('lang', 'uz')
+        return ctx
+
+    @action(detail=True, methods=['post'], permission_classes=[permissions.AllowAny], authentication_classes=[])
+    def submit(self, request, pk=None):
+        survey = get_object_or_404(get_active_surveys_queryset(), pk=pk)
+        payload = request.data or {}
+        answers_data = payload.get('answers') or []
+        client_token = (payload.get('participation_token') or '').strip()
+
+        if not isinstance(answers_data, list) or len(answers_data) == 0:
+            return Response(
+                {'detail': "Iltimos, so'rovnoma savollariga javob bering."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        token_hash = ''
+        if client_token:
+            token_hash = hashlib.sha256(f"survey:{survey.id}:{client_token}".encode('utf-8')).hexdigest()
+            if not survey.allow_multiple and SurveyParticipation.objects.filter(survey=survey, token_hash=token_hash).exists():
+                return Response(
+                    {'detail': "Siz ushbu so‘rovnomada avval qatnashgansiz. Ishtirokingiz uchun rahmat!"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        questions = {q.id: q for q in survey.questions.all()}
+        ans_by_qid = {}
+        for item in answers_data:
+            if not isinstance(item, dict):
+                continue
+            try:
+                qid = int(item.get('question_id'))
+            except (TypeError, ValueError):
+                continue
+            if qid in questions:
+                ans_by_qid[qid] = item
+
+        # Validate required questions
+        for qid, q in questions.items():
+            if not q.is_required:
+                continue
+            submitted = ans_by_qid.get(qid) or {}
+            sel = submitted.get('selected_options') or []
+            txt = (submitted.get('text_answer') or '').strip()
+            rating = submitted.get('rating_value')
+            has_val = bool(sel) or bool(txt) or (rating is not None)
+            if not has_val:
+                return Response(
+                    {
+                        'detail': f"{q.order}-savol majburiy. Iltimos, javob belgilang.",
+                        'missing_question_id': q.id,
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        # Normalize translated option labels back to canonical UZ option labels for accurate statistics
+        with transaction.atomic():
+            respondent_name = '' if survey.is_anonymous else (payload.get('respondent_name') or '').strip()[:255]
+            course_name = (payload.get('course_name') or '').strip()[:255]
+
+            resp_obj = SurveyResponse.objects.create(
+                survey=survey,
+                respondent_name=respondent_name,
+                course_name=course_name,
+            )
+
+            for qid, q in questions.items():
+                sub = ans_by_qid.get(qid)
+                if not sub:
+                    continue
+                raw_selected = sub.get('selected_options') or []
+                if isinstance(raw_selected, str):
+                    raw_selected = [raw_selected]
+
+                canonical_opts = list(q.options_json or [])
+                ru_opts = list(q.options_ru_json or [])
+                en_opts = list(q.options_en_json or [])
+
+                normalized_selected = []
+                for s_val in raw_selected:
+                    s_str = str(s_val).strip()
+                    if not s_str:
+                        continue
+                    if s_str in canonical_opts:
+                        normalized_selected.append(s_str)
+                    elif s_str in ru_opts and ru_opts.index(s_str) < len(canonical_opts):
+                        normalized_selected.append(canonical_opts[ru_opts.index(s_str)])
+                    elif s_str in en_opts and en_opts.index(s_str) < len(canonical_opts):
+                        normalized_selected.append(canonical_opts[en_opts.index(s_str)])
+                    else:
+                        normalized_selected.append(s_str)
+
+                txt = (sub.get('text_answer') or '').strip()[:4000]
+                rating = sub.get('rating_value')
+                try:
+                    rating = int(rating) if rating is not None and str(rating).strip() != '' else None
+                except (TypeError, ValueError):
+                    rating = None
+
+                if normalized_selected or txt or rating is not None:
+                    SurveyAnswer.objects.create(
+                        response=resp_obj,
+                        question=q,
+                        selected_options=normalized_selected,
+                        text_answer=txt,
+                        rating_value=rating,
+                    )
+
+            if token_hash and not survey.allow_multiple:
+                SurveyParticipation.objects.get_or_create(survey=survey, token_hash=token_hash)
+
+        return Response({'success': True}, status=status.HTTP_201_CREATED)
+

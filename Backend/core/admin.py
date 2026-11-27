@@ -1924,3 +1924,546 @@ class DepartmentPostAdmin(admin.ModelAdmin):
             elif f:
                 DepartmentPostImage.objects.create(post=obj, image=f, order=next_order)
                 next_order += 1
+
+
+from django.contrib import messages
+from django.urls import path as admin_path, reverse
+from django.shortcuts import get_object_or_404
+from django.utils.html import escape
+from .models import Survey, SurveyQuestion, SurveyResponse, SurveyAnswer, SurveyParticipation
+from .survey_parser import parse_survey_from_word
+
+
+class SurveyQuestionInlineForm(forms.ModelForm):
+    options_text = forms.CharField(
+        required=False,
+        label="Javob variantlari (har qatorda bittadan yozing)",
+        widget=forms.Textarea(attrs={
+            'rows': 3,
+            'style': 'width:100%; min-width:240px; font-size:12.5px; line-height:1.4; padding:6px;',
+            'placeholder': "Masalan:\nHa\nYo'q\nHa, lekin takomillashtirish kerak"
+        }),
+        help_text="Ochiq matnli savollar uchun bo'sh qoldiring."
+    )
+
+    class Meta:
+        model = SurveyQuestion
+        fields = [
+            'order', 'question_text', 'question_type', 'is_required',
+            'options_text', 'has_detail_input', 'detail_trigger', 'detail_label',
+            'question_text_ru', 'question_text_en'
+        ]
+        widgets = {
+            'question_text': forms.Textarea(attrs={'rows': 2, 'style': 'width:100%; min-width:260px; font-weight:600;'}),
+            'question_text_ru': forms.Textarea(attrs={'rows': 2, 'style': 'width:100%; min-width:200px;'}),
+            'question_text_en': forms.Textarea(attrs={'rows': 2, 'style': 'width:100%; min-width:200px;'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk and isinstance(self.instance.options_json, list):
+            self.fields['options_text'].initial = '\n'.join(str(x) for x in self.instance.options_json)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        raw_opts = self.cleaned_data.get('options_text', '') or ''
+        opts = [line.strip() for line in re.split(r'[\r\n|]+', raw_opts) if line.strip()]
+        instance.options_json = opts
+        if commit:
+            instance.save()
+        return instance
+
+
+class SurveyQuestionInline(admin.TabularInline):
+    model = SurveyQuestion
+    form = SurveyQuestionInlineForm
+    extra = 0
+    ordering = ['order', 'id']
+    fields = (
+        'order', 'question_text', 'question_type', 'is_required',
+        'options_text', 'has_detail_input', 'detail_trigger', 'detail_label',
+    )
+
+
+@admin.register(Survey)
+class SurveyAdmin(admin.ModelAdmin):
+    list_display = (
+        'title', 'mode_badge', 'status_badge', 'questions_count_col',
+        'responses_count_col', 'word_file_col', 'analytics_actions', 'is_active'
+    )
+    list_filter = ('status', 'is_anonymous', 'is_active')
+    search_fields = ('title', 'description')
+    list_editable = ('is_active',)
+    inlines = [SurveyQuestionInline]
+    actions = ['duplicate_survey_as_draft']
+
+    fieldsets = (
+        ("1. Word fayldan savollarni avtomatik yuklash (.docx / .doc)", {
+            'description': (
+                "<div style='background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;padding:12px 16px;"
+                "border-radius:10px;margin-bottom:10px;font-size:13px;line-height:1.5;'>"
+                "<strong>💡 Word fayl orqali savollarni yuklash:</strong> Tayyor so‘rovnoma Word faylini "
+                "(<code>.docx</code> yoki <code>.doc</code>) quyidagi maydonga yuklab <b>Saqlash (Save)</b> "
+                "tugmasini bossangiz, tizim fayl ichidagi barcha savollar va javob variantlarini avtomatik "
+                "ajratib oladi. Shuningdek, savollarni pastdagi jadval orqali qo‘lda tahrirlashingiz ham mumkin."
+                "</div>"
+            ),
+            'fields': ('word_file', 'replace_questions_on_upload'),
+        }),
+        ("2. So‘rovnoma asosiy sozlamalari", {
+            'fields': (
+                'title', 'title_ru', 'title_en',
+                'is_anonymous', 'status', 'allow_multiple',
+                'start_date', 'end_date', 'order', 'is_active'
+            ),
+        }),
+        ("3. Kirish va minnatdorchilik matnlari", {
+            'fields': (
+                'description', 'description_ru', 'description_en',
+                'thanks_message', 'thanks_message_ru', 'thanks_message_en'
+            ),
+        }),
+    )
+
+    def mode_badge(self, obj):
+        if obj.is_anonymous:
+            return format_html(
+                '<span style="background:#dcfce7;color:#166534;padding:3px 9px;border-radius:999px;font-weight:700;font-size:11px;">🔒 Anonim</span>'
+            )
+        return format_html(
+            '<span style="background:#fef3c7;color:#92400e;padding:3px 9px;border-radius:999px;font-weight:700;font-size:11px;">👤 Ochiq</span>'
+        )
+    mode_badge.short_description = "Shakl"
+
+    def status_badge(self, obj):
+        colors = {
+            'draft': ('#f1f5f9', '#475569', 'Qoralama'),
+            'active': ('#dbeafe', '#1d4ed8', 'Faol'),
+            'closed': ('#fee2e2', '#b91c1c', 'Yopilgan'),
+            'archived': ('#f3e8ff', '#6b21a8', 'Arxiv'),
+        }
+        bg, fg, label = colors.get(obj.status, ('#f1f5f9', '#475569', obj.status))
+        return format_html(
+            '<span style="background:{};color:{};padding:3px 9px;border-radius:999px;font-weight:700;font-size:11px;">{}</span>',
+            bg, fg, label
+        )
+    status_badge.short_description = "Holati"
+
+    def questions_count_col(self, obj):
+        return f"{obj.questions.count()} ta savol"
+    questions_count_col.short_description = "Savollar"
+
+    def responses_count_col(self, obj):
+        cnt = obj.responses.count()
+        return format_html('<strong style="color:#0f172a;">{} ta</strong> javob', cnt)
+    responses_count_col.short_description = "Javoblar"
+
+    def word_file_col(self, obj):
+        if obj.word_file:
+            return format_html(
+                '<a href="{}" target="_blank" style="color:#2563eb;font-weight:600;">📄 Word fayl</a>',
+                obj.word_file.url
+            )
+        return "—"
+    word_file_col.short_description = "Yuklangan Word"
+
+    def analytics_actions(self, obj):
+        res_url = reverse('admin:survey-results', args=[obj.pk])
+        xlsx_url = reverse('admin:survey-export-xlsx', args=[obj.pk])
+        csv_url = reverse('admin:survey-export-csv', args=[obj.pk])
+        return format_html(
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;">'
+            '<a href="{}" style="background:#1e3a8a;color:#fff;padding:4px 9px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none;">📊 Statistika</a>'
+            '<a href="{}" style="background:#059669;color:#fff;padding:4px 9px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none;">📥 Excel</a>'
+            '<a href="{}" style="background:#475569;color:#fff;padding:4px 9px;border-radius:6px;font-size:11px;font-weight:700;text-decoration:none;">📄 CSV</a>'
+            '</div>',
+            res_url, xlsx_url, csv_url
+        )
+    analytics_actions.short_description = "Tahlil va Eksport"
+
+    @admin.action(description="Tanlangan so‘rovnomadan yangi qoralama nusxa olish")
+    def duplicate_survey_as_draft(self, request, queryset):
+        for s in queryset:
+            old_questions = list(s.questions.all())
+            s.pk = None
+            s.title = f"{s.title} (Nusxa)"
+            s.status = 'draft'
+            s.save()
+            for q in old_questions:
+                q.pk = None
+                q.survey = s
+                q.save()
+        self.message_user(request, "So‘rovnoma nusxasi qoralama sifatida yaratildi.", messages.SUCCESS)
+
+    def save_model(self, request, obj, form, change):
+        word_uploaded = 'word_file' in form.changed_data and bool(obj.word_file)
+        super().save_model(request, obj, form, change)
+        if word_uploaded:
+            self._import_questions_from_word(request, obj)
+
+    def save_related(self, request, form, formsets, change):
+        word_uploaded = 'word_file' in form.changed_data and bool(form.instance.word_file)
+        if word_uploaded and form.instance.replace_questions_on_upload:
+            # Skip saving stale inline formset so it doesn't overwrite freshly parsed Word questions
+            return
+        super().save_related(request, form, formsets, change)
+
+    def _import_questions_from_word(self, request, obj):
+        try:
+            file_path = obj.word_file.path
+            parsed = parse_survey_from_word(file_path)
+            questions = parsed.get('questions') or []
+            if not questions:
+                self.message_user(
+                    request,
+                    "Word fayl ichidan raqamlangan savollar (1., 2., ...) topilmadi. Fayl formatini tekshiring.",
+                    messages.WARNING
+                )
+                return
+
+            if obj.replace_questions_on_upload:
+                obj.questions.all().delete()
+
+            if parsed.get('description') and (not obj.description or obj.replace_questions_on_upload):
+                obj.description = parsed['description']
+            if parsed.get('thanks_message') and (not obj.thanks_message or obj.replace_questions_on_upload):
+                obj.thanks_message = parsed['thanks_message']
+            obj.save(update_fields=['description', 'thanks_message'])
+
+            start_order = obj.questions.count()
+            for idx, q in enumerate(questions, 1):
+                SurveyQuestion.objects.create(
+                    survey=obj,
+                    order=start_order + idx,
+                    question_text=q['question_text'],
+                    question_type=q['question_type'],
+                    is_required=q['is_required'],
+                    options_json=q['options'],
+                    has_detail_input=q.get('has_detail_input', False),
+                    detail_trigger=q.get('detail_trigger', ''),
+                    detail_label=q.get('detail_label', ''),
+                )
+            self.message_user(
+                request,
+                f"Word fayldan {len(questions)} ta savol va javob variantlari muvaffaqiyatli yuklandi!",
+                messages.SUCCESS
+            )
+        except Exception as e:
+            self.message_user(
+                request,
+                f"Word faylni o‘qishda xatolik yuz berdi: {e}",
+                messages.ERROR
+            )
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            admin_path(
+                '<int:survey_id>/results/',
+                self.admin_site.admin_view(self.survey_results_view),
+                name='survey-results',
+            ),
+            admin_path(
+                '<int:survey_id>/export-xlsx/',
+                self.admin_site.admin_view(self.export_survey_xlsx_view),
+                name='survey-export-xlsx',
+            ),
+            admin_path(
+                '<int:survey_id>/export-csv/',
+                self.admin_site.admin_view(self.export_survey_csv_view),
+                name='survey-export-csv',
+            ),
+        ]
+        return custom_urls + urls
+
+    def _compute_survey_stats(self, survey):
+        questions = list(survey.questions.all().order_by('order', 'id'))
+        total_responses = survey.responses.count()
+        answers = SurveyAnswer.objects.filter(response__survey=survey).select_related('question', 'response')
+
+        by_q = {q.id: [] for q in questions}
+        for a in answers:
+            if a.question_id in by_q:
+                by_q[a.question_id].append(a)
+
+        stats_list = []
+        for q in questions:
+            q_answers = by_q.get(q.id, [])
+            q_stat = {
+                'question': q,
+                'total_answered': len(q_answers),
+                'options_breakdown': [],
+                'text_answers': [],
+                'avg_rating': None,
+            }
+            if q.question_type in ('single', 'multiple', 'yes_no'):
+                opts = list(q.options_json or [])
+                if q.question_type == 'yes_no' and not opts:
+                    opts = ['Ha', 'Yo‘q']
+                counts = {opt: 0 for opt in opts}
+                for a in q_answers:
+                    for sel in (a.selected_options or []):
+                        counts[sel] = counts.get(sel, 0) + 1
+                    if a.text_answer and a.text_answer.strip():
+                        q_stat['text_answers'].append(a.text_answer.strip())
+                denom = total_responses if total_responses > 0 else 1
+                for opt, cnt in counts.items():
+                    pct = round((cnt * 100.0) / denom, 1) if total_responses > 0 else 0.0
+                    q_stat['options_breakdown'].append({'option': opt, 'count': cnt, 'percent': pct})
+            elif q.question_type in ('rating', 'likert'):
+                vals = [a.rating_value for a in q_answers if a.rating_value is not None]
+                if vals:
+                    q_stat['avg_rating'] = round(sum(vals) / len(vals), 2)
+                for score in range(1, 6):
+                    cnt = sum(1 for v in vals if v == score)
+                    pct = round((cnt * 100.0) / (len(vals) or 1), 1) if vals else 0.0
+                    q_stat['options_breakdown'].append({'option': f"{score} ball", 'count': cnt, 'percent': pct})
+            else:
+                for a in q_answers:
+                    if a.text_answer and a.text_answer.strip():
+                        q_stat['text_answers'].append(a.text_answer.strip())
+            stats_list.append(q_stat)
+
+        return total_responses, stats_list
+
+    def survey_results_view(self, request, survey_id):
+        survey = get_object_or_404(Survey, pk=survey_id)
+        total_responses, stats_list = self._compute_survey_stats(survey)
+        xlsx_url = reverse('admin:survey-export-xlsx', args=[survey.pk])
+        csv_url = reverse('admin:survey-export-csv', args=[survey.pk])
+        back_url = reverse('admin:core_survey_changelist')
+
+        cards_html = []
+        for item in stats_list:
+            q = item['question']
+            rows_html = []
+            for ob in item['options_breakdown']:
+                rows_html.append(
+                    f"<div style='margin-bottom:10px;'>"
+                    f"<div style='display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:#1e293b;margin-bottom:4px;'>"
+                    f"<span>{escape(str(ob['option']))}</span>"
+                    f"<span>{ob['count']} ta ({ob['percent']}%)</span>"
+                    f"</div>"
+                    f"<div style='height:10px;background:#e2e8f0;border-radius:999px;overflow:hidden;'>"
+                    f"<div style='height:100%;width:{min(100, ob['percent'])}%;background:#2563eb;border-radius:999px;'></div>"
+                    f"</div></div>"
+                )
+            if item['avg_rating'] is not None:
+                rows_html.insert(
+                    0,
+                    f"<p style='font-size:14px;font-weight:700;color:#059669;'>O‘rtacha baho: {item['avg_rating']} / 5</p>"
+                )
+            if item['text_answers']:
+                li_items = ''.join(
+                    f"<li style='padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:13px;color:#334155;'>{escape(t)}</li>"
+                    for t in item['text_answers']
+                )
+                rows_html.append(
+                    f"<div style='margin-top:10px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;max-height:220px;overflow-y:auto;'>"
+                    f"<div style='font-size:12px;font-weight:700;color:#475569;margin-bottom:6px;'>Yozma javoblar / Izohlar ({len(item['text_answers'])} ta):</div>"
+                    f"<ul style='margin:0;padding-left:18px;'>{li_items}</ul></div>"
+                )
+            if not rows_html:
+                rows_html.append("<p style='color:#94a3b8;font-size:13px;margin:0;'>Hozircha javoblar yo‘q.</p>")
+
+            cards_html.append(
+                f"<div style='background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:18px 20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,0.03);'>"
+                f"<div style='font-size:15px;font-weight:700;color:#0f172a;margin-bottom:12px;'>"
+                f"{q.order}. {escape(q.question_text)}"
+                f"</div>"
+                f"{''.join(rows_html)}"
+                f"</div>"
+            )
+
+        mode_str = "Anonim so‘rovnoma (F.I.Sh. saqlanmaydi)" if survey.is_anonymous else "Ochiq so‘rovnoma"
+        html = f"""
+        <!DOCTYPE html>
+        <html lang="uz">
+        <head>
+            <meta charset="utf-8">
+            <title>Statistika — {escape(survey.title)}</title>
+            <style>
+                body {{ font-family: system-ui, -apple-system, sans-serif; background: #f8fafc; margin: 0; padding: 28px 16px; color: #0f172a; }}
+                .container {{ max-width: 900px; margin: 0 auto; }}
+                .btn {{ display: inline-block; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+                    <div>
+                        <a href="{back_url}" style="color:#2563eb;text-decoration:none;font-size:13px;font-weight:600;">← So‘rovnomalar ro‘yxatiga qaytish</a>
+                        <h1 style="margin:6px 0 4px;font-size:24px;">{escape(survey.title)}</h1>
+                        <p style="margin:0;color:#64748b;font-size:13px;">{mode_str} • Jami javoblar: <strong>{total_responses} ta</strong></p>
+                    </div>
+                    <div style="display:flex;gap:8px;">
+                        <a href="{xlsx_url}" class="btn" style="background:#059669;color:#fff;">📥 Excel (.xlsx) yuklab olish</a>
+                        <a href="{csv_url}" class="btn" style="background:#334155;color:#fff;">📄 CSV yuklab olish</a>
+                    </div>
+                </div>
+                {''.join(cards_html)}
+            </div>
+        </body>
+        </html>
+        """
+        from django.http import HttpResponse
+        return HttpResponse(html)
+
+    def export_survey_xlsx_view(self, request, survey_id):
+        import openpyxl
+        from openpyxl.styles import Font, PatternFill, Alignment
+        from django.http import HttpResponse
+        from django.utils import timezone
+
+        survey = get_object_or_404(Survey, pk=survey_id)
+        total_responses, stats_list = self._compute_survey_stats(survey)
+        questions = [s['question'] for s in stats_list]
+        responses = list(survey.responses.prefetch_related('answers').order_by('created_at'))
+
+        wb = openpyxl.Workbook()
+        # Sheet 1: Umumiy statistika
+        ws1 = wb.active
+        ws1.title = "Umumiy statistika"
+        header_fill = PatternFill(start_color="1E3A8A", end_color="1E3A8A", fill_type="solid")
+        header_font = Font(bold=True, color="FFFFFF")
+
+        ws1.append(["So‘rovnoma nomi:", survey.title])
+        ws1.append(["So‘rovnoma shakli:", "Anonim" if survey.is_anonymous else "Ochiq"])
+        ws1.append(["Jami javoblar soni:", total_responses])
+        ws1.append(["Eksport qilingan vaqt:", timezone.localtime().strftime("%Y-%m-%d %H:%M")])
+        ws1.append([])
+
+        ws1.append(["Savol №", "Savol matni", "Javob varianti / Yozma javob", "Javoblar soni", "Ulushi (%)"])
+        for cell in ws1[ws1.max_row]:
+            cell.fill = header_fill
+            cell.font = header_font
+
+        for item in stats_list:
+            q = item['question']
+            if item['options_breakdown']:
+                for ob in item['options_breakdown']:
+                    ws1.append([q.order, q.question_text, ob['option'], ob['count'], f"{ob['percent']}%"])
+            for txt in item['text_answers']:
+                ws1.append([q.order, q.question_text, f"[Izoh]: {txt}", 1, "—"])
+
+        ws1.column_dimensions['A'].width = 10
+        ws1.column_dimensions['B'].width = 55
+        ws1.column_dimensions['C'].width = 45
+        ws1.column_dimensions['D'].width = 15
+        ws1.column_dimensions['E'].width = 14
+
+        # Sheet 2: Batafsil javoblar (TZ 9-band: anonim rejimda F.I.Sh. ustuni chiqmaydi)
+        ws2 = wb.create_sheet(title="Batafsil javoblar")
+        headers = ["№", "Yuborilgan vaqt", "Kurs / Yo‘nalish"]
+        if not survey.is_anonymous:
+            headers.append("Tinglovchi F.I.Sh.")
+        for q in questions:
+            headers.append(f"{q.order}. {q.question_text}")
+        ws2.append(headers)
+        for cell in ws2[1]:
+            cell.fill = header_fill
+            cell.font = header_font
+            cell.alignment = Alignment(wrap_text=True)
+
+        for idx, resp in enumerate(responses, 1):
+            ans_map = {a.question_id: a for a in resp.answers.all()}
+            row = [
+                idx,
+                timezone.localtime(resp.created_at).strftime("%Y-%m-%d %H:%M"),
+                resp.course_name or "—",
+            ]
+            if not survey.is_anonymous:
+                row.append(resp.respondent_name or "—")
+            for q in questions:
+                a = ans_map.get(q.id)
+                if not a:
+                    row.append("")
+                else:
+                    parts = []
+                    if a.selected_options:
+                        parts.append(", ".join(str(x) for x in a.selected_options))
+                    if a.rating_value is not None:
+                        parts.append(str(a.rating_value))
+                    if a.text_answer:
+                        parts.append(a.text_answer)
+                    row.append(" | ".join(parts))
+            ws2.append(row)
+
+        buf = io.BytesIO()
+        wb.save(buf)
+        buf.seek(0)
+        response = HttpResponse(
+            buf.getvalue(),
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="sorovnoma_{survey.id}_hisobot.xlsx"'
+        return response
+
+    def export_survey_csv_view(self, request, survey_id):
+        import csv
+        from django.http import HttpResponse
+        from django.utils import timezone
+
+        survey = get_object_or_404(Survey, pk=survey_id)
+        questions = list(survey.questions.all().order_by('order', 'id'))
+        responses = list(survey.responses.prefetch_related('answers').order_by('created_at'))
+
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = f'attachment; filename="sorovnoma_{survey.id}_javoblar.csv"'
+        response.write('\ufeff')  # UTF-8 BOM for Excel
+
+        writer = csv.writer(response)
+        headers = ["№", "Yuborilgan vaqt", "Kurs / Yo‘nalish"]
+        if not survey.is_anonymous:
+            headers.append("Tinglovchi F.I.Sh.")
+        for q in questions:
+            headers.append(f"{q.order}. {q.question_text}")
+        writer.writerow(headers)
+
+        for idx, resp in enumerate(responses, 1):
+            ans_map = {a.question_id: a for a in resp.answers.all()}
+            row = [
+                idx,
+                timezone.localtime(resp.created_at).strftime("%Y-%m-%d %H:%M"),
+                resp.course_name or "",
+            ]
+            if not survey.is_anonymous:
+                row.append(resp.respondent_name or "")
+            for q in questions:
+                a = ans_map.get(q.id)
+                if not a:
+                    row.append("")
+                else:
+                    parts = []
+                    if a.selected_options:
+                        parts.append(", ".join(str(x) for x in a.selected_options))
+                    if a.rating_value is not None:
+                        parts.append(str(a.rating_value))
+                    if a.text_answer:
+                        parts.append(a.text_answer)
+                    row.append(" | ".join(parts))
+            writer.writerow(row)
+
+        return response
+
+
+class SurveyAnswerInline(admin.TabularInline):
+    model = SurveyAnswer
+    extra = 0
+    readonly_fields = ('question', 'selected_options', 'text_answer', 'rating_value')
+    can_delete = False
+
+
+@admin.register(SurveyResponse)
+class SurveyResponseAdmin(admin.ModelAdmin):
+    list_display = ('id', 'survey', 'who_col', 'course_name', 'created_at')
+    list_filter = ('survey', 'created_at')
+    readonly_fields = ('survey', 'respondent_name', 'course_name', 'created_at')
+    inlines = [SurveyAnswerInline]
+
+    def who_col(self, obj):
+        if obj.survey.is_anonymous:
+            return "🔒 Anonim tinglovchi"
+        return obj.respondent_name or "—"
+    who_col.short_description = "Respondent"
+

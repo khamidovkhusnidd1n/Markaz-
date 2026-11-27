@@ -32,7 +32,8 @@
     "contact": "Contact us",
     "potential": "Capacity",
     "teachers": "Our teachers",
-    "sci_potential": "Scientific capacity"
+    "sci_potential": "Scientific capacity",
+    "survey": "Survey (Questionnaire)"
   },
   "layout": {
     "search": "Search...",
@@ -571,5 +572,32 @@
     "lex_btn": "Read full text on Lex.uz portal",
     "external_title": "Official External Source",
     "external_desc": "This document is hosted on an official portal and opens in a new tab."
+  },
+  "survey": {
+    "back": "Home",
+    "badge": "For Listeners",
+    "anonymous_badge": "100% Anonymous Survey",
+    "open_badge": "Open Survey",
+    "anonymous_notice": "This survey is completely anonymous. Your personal details (full name, phone number) are neither requested nor linked to your answers.",
+    "questions_count": "{{count}} questions",
+    "answered_progress": "Answered: {{answered}} / {{total}}",
+    "required_tag": "Required",
+    "optional_tag": "Optional",
+    "course_label": "Training Course / Direction (optional)",
+    "course_placeholder": "Select or type your course (optional)...",
+    "respondent_name_label": "Full Name",
+    "respondent_name_placeholder": "Enter your full name",
+    "text_placeholder": "Write your feedback or suggestion here...",
+    "detail_placeholder": "Write a brief comment...",
+    "yes": "Yes",
+    "no": "No",
+    "submit_btn": "Submit Answers",
+    "submitting": "Submitting...",
+    "required_error": "Please answer all required questions (Question #{{order}}).",
+    "already_submitted_title": "You have already completed this survey",
+    "already_submitted_desc": "Your feedback and suggestions have been recorded. Thank you for contributing to improving educational quality at the Center!",
+    "fill_again_btn": "View Survey",
+    "thanks_title": "Your response has been received!",
+    "no_surveys": "There are no active surveys at the moment."
   }
 }

@@ -36,6 +36,7 @@ router.register(r'anti-corruption-content', views.AntiCorruptionContentViewSet, 
 router.register(r'anti-corruption-documents', views.AntiCorruptionDocumentViewSet, basename='anti-corruption-documents')
 router.register(r'anti-corruption-posts', views.AntiCorruptionPostViewSet, basename='anti-corruption-posts')
 router.register(r'training-plan', views.TrainingPlanRecordViewSet, basename='training-plan')
+router.register(r'surveys', views.SurveyViewSet, basename='surveys')
 
 urlpatterns = [
     path('projects/<int:pk>/view/', views.increment_project_view, name='views.increment_project_view'),

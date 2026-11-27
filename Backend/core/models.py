@@ -1869,3 +1869,235 @@ class AntiCorruptionPostImage(BaseModel):
         return f"{self.post.title} - Rasm #{self.id}"
 
 
+class Survey(BaseModel):
+    """Tinglovchilar uchun so'rovnoma (Anonim yoki Ochiq) modeli"""
+    STATUS_CHOICES = [
+        ('draft', 'Qoralama'),
+        ('active', 'Faol (Saytda ko‘rinadi)'),
+        ('closed', 'Yakunlangan / Yopilgan'),
+        ('archived', 'Arxiv'),
+    ]
+
+    title = models.CharField(
+        max_length=500,
+        default="Tinglovchilar uchun so‘rovnoma",
+        verbose_name="So‘rovnoma nomi"
+    )
+    title_ru = models.CharField(max_length=500, blank=True, default='', verbose_name="So‘rovnoma nomi (RU)")
+    title_en = models.CharField(max_length=500, blank=True, default='', verbose_name="So‘rovnoma nomi (EN)")
+
+    description = models.TextField(
+        blank=True,
+        default=(
+            "Hurmatli tinglovchi!\n\n"
+            "O‘zbekiston Badiiy akademiyasi huzuridagi Badiiy ta’lim yo‘nalishlarida pedagog va mutaxassis "
+            "kadrlarni qayta tayyorlash hamda ularning malakasini oshirish markazida ta’lim jarayonini "
+            "takomillashtirish, har tomonlama qulay shart-sharoitlar yaratish uchun Sizning fikringiz juda "
+            "ham muhimdir. Shu bois so‘rovnoma anketasi savollariga javob berishingizni so‘raymiz!"
+        ),
+        verbose_name="Kirish va tushuntirish matni"
+    )
+    description_ru = models.TextField(blank=True, default='', verbose_name="Kirish matni (RU)")
+    description_en = models.TextField(blank=True, default='', verbose_name="Kirish matni (EN)")
+
+    thanks_message = models.TextField(
+        blank=True,
+        default=(
+            "Fikr va mulohazalaringiz uchun tashakkur!\n"
+            "Sizning takliflaringiz soha rivojiga hissa qo‘shishiga ishonamiz!"
+        ),
+        verbose_name="Minnatdorchilik xabari"
+    )
+    thanks_message_ru = models.TextField(blank=True, default='', verbose_name="Minnatdorchilik xabari (RU)")
+    thanks_message_en = models.TextField(blank=True, default='', verbose_name="Minnatdorchilik xabari (EN)")
+
+    is_anonymous = models.BooleanField(
+        default=True,
+        verbose_name="Anonim so‘rovnoma",
+        help_text="Belgilansa, tinglovchining shaxsiy ma'lumotlari (F.I.Sh., telefon, IP) so'ralmaydi va saqlanmaydi."
+    )
+    allow_multiple = models.BooleanField(
+        default=False,
+        verbose_name="Qayta topshirishga ruxsat berish",
+        help_text="Belgilansa, bitta foydalanuvchi bir necha marta javob yuborishi mumkin."
+    )
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='active',
+        verbose_name="Holati"
+    )
+    start_date = models.DateTimeField(blank=True, null=True, verbose_name="Boshlanish vaqti (ixtiyoriy)")
+    end_date = models.DateTimeField(blank=True, null=True, verbose_name="Tugash vaqti (ixtiyoriy)")
+
+    word_file = models.FileField(
+        upload_to=generate_unique_filename,
+        blank=True,
+        null=True,
+        verbose_name="Savollar Word fayli (.docx yoki .doc)",
+        help_text="Word fayl yuklab saqlasangiz, ichidagi savollar va javob variantlari avtomatik ravishda bazaga qo'shiladi."
+    )
+    replace_questions_on_upload = models.BooleanField(
+        default=True,
+        verbose_name="Word fayl yuklanganda savollarni yangilash",
+        help_text="Belgilansa, yangi Word fayl yuklanganda eski savollar o'rniga yangi fayldagi savollar yoziladi."
+    )
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib raqami")
+    is_active = models.BooleanField(default=True, verbose_name="Faol")
+
+    class Meta:
+        verbose_name = "So‘rovnoma"
+        verbose_name_plural = "So‘rovnomalar (Tinglovchilar uchun)"
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        mode = "Anonim" if self.is_anonymous else "Ochiq"
+        return f"{self.title} ({mode})"
+
+
+class SurveyQuestion(BaseModel):
+    """So'rovnoma savoli modeli"""
+    QUESTION_TYPES = [
+        ('single', 'Bitta javobli (Variant tanlash)'),
+        ('multiple', 'Bir nechta javobli (Checkbox)'),
+        ('yes_no', 'Ha / Yo‘q'),
+        ('rating', 'Baholash shkalasi (1–5 ball)'),
+        ('likert', 'Likert shkalasi (1–5 daraja)'),
+        ('text', 'Ochiq matn (Erkin javob yozish)'),
+    ]
+
+    survey = models.ForeignKey(
+        Survey,
+        on_delete=models.CASCADE,
+        related_name='questions',
+        verbose_name="So‘rovnoma"
+    )
+    order = models.PositiveIntegerField(default=1, verbose_name="Savol №")
+    question_text = models.TextField(verbose_name="Savol matni (UZ)")
+    question_text_ru = models.TextField(blank=True, default='', verbose_name="Savol matni (RU)")
+    question_text_en = models.TextField(blank=True, default='', verbose_name="Savol matni (EN)")
+
+    question_type = models.CharField(
+        max_length=20,
+        choices=QUESTION_TYPES,
+        default='single',
+        verbose_name="Savol turi"
+    )
+    is_required = models.BooleanField(default=True, verbose_name="Majburiy")
+
+    options_json = models.JSONField(
+        default=list,
+        blank=True,
+        verbose_name="Javob variantlari (UZ)",
+        help_text="Har bir variant ro'yxat elementi sifatida saqlanadi."
+    )
+    options_ru_json = models.JSONField(default=list, blank=True, verbose_name="Javob variantlari (RU)")
+    options_en_json = models.JSONField(default=list, blank=True, verbose_name="Javob variantlari (EN)")
+
+    has_detail_input = models.BooleanField(
+        default=False,
+        verbose_name="Qo‘shimcha izoh maydoni bormi?"
+    )
+    detail_trigger = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+        verbose_name="Izoh chiqadigan variant (masalan: Boshqa)",
+        help_text="Shu variant tanlanganda qo'shimcha matn kiritish maydoni ochiladi."
+    )
+    detail_label = models.CharField(
+        max_length=300,
+        blank=True,
+        default='',
+        verbose_name="Yordamchi izoh matni (Placeholder / Hint)"
+    )
+    detail_label_ru = models.CharField(max_length=300, blank=True, default='', verbose_name="Yordamchi izoh (RU)")
+    detail_label_en = models.CharField(max_length=300, blank=True, default='', verbose_name="Yordamchi izoh (EN)")
+
+    class Meta:
+        verbose_name = "So‘rovnoma savoli"
+        verbose_name_plural = "So‘rovnoma savollari"
+        ordering = ['order', 'id']
+
+    def __str__(self):
+        return f"{self.order}. {self.question_text[:70]}"
+
+
+class SurveyResponse(BaseModel):
+    """Topshirilgan so'rovnoma javoblari to'plami (Anonim rejimda shaxsiy ma'lumot saqlanmaydi)"""
+    survey = models.ForeignKey(
+        Survey,
+        on_delete=models.CASCADE,
+        related_name='responses',
+        verbose_name="So‘rovnoma"
+    )
+    respondent_name = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+        verbose_name="Respondent F.I.Sh. (faqat ochiq so'rovnomada)"
+    )
+    course_name = models.CharField(
+        max_length=255,
+        blank=True,
+        default='',
+        verbose_name="O‘quv kursi / Yo‘nalish (ixtiyoriy)"
+    )
+
+    class Meta:
+        verbose_name = "So‘rovnoma javobi"
+        verbose_name_plural = "So‘rovnoma natijalari (Javoblar)"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        who = "Anonim" if (self.survey.is_anonymous or not self.respondent_name) else self.respondent_name
+        return f"Javob #{self.id} — {self.survey.title} ({who})"
+
+
+class SurveyAnswer(BaseModel):
+    """Har bir savolga berilgan javob"""
+    response = models.ForeignKey(
+        SurveyResponse,
+        on_delete=models.CASCADE,
+        related_name='answers',
+        verbose_name="Javob varaqasi"
+    )
+    question = models.ForeignKey(
+        SurveyQuestion,
+        on_delete=models.CASCADE,
+        related_name='answers',
+        verbose_name="Savol"
+    )
+    selected_options = models.JSONField(default=list, blank=True, verbose_name="Tanlangan variant(lar)")
+    text_answer = models.TextField(blank=True, default='', verbose_name="Ochiq javob / Izoh")
+    rating_value = models.IntegerField(blank=True, null=True, verbose_name="Baho")
+
+    class Meta:
+        verbose_name = "Savol javobi"
+        verbose_name_plural = "Savollar javoblari"
+        ordering = ['question__order', 'id']
+
+    def __str__(self):
+        return f"Q{self.question.order}: {', '.join(self.selected_options) or self.text_answer[:50]}"
+
+
+class SurveyParticipation(BaseModel):
+    """
+    Bir martalik qatnashish nazorati uchun alohida jadval.
+    Anonim javoblar (SurveyResponse) bilan bevosita bog'lanmaydi (TZ 8-band talabi).
+    """
+    survey = models.ForeignKey(
+        Survey,
+        on_delete=models.CASCADE,
+        related_name='participations',
+        verbose_name="So‘rovnoma"
+    )
+    token_hash = models.CharField(max_length=64, db_index=True, verbose_name="Token xeshi (SHA-256)")
+
+    class Meta:
+        verbose_name = "Qatnashish belgisi"
+        verbose_name_plural = "Qatnashish nazorati"
+        unique_together = [('survey', 'token_hash')]
+
+
+

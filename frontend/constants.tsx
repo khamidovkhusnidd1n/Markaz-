@@ -32,6 +32,7 @@ import {
   Headset,
   Award,
   Building2,
+  ClipboardCheck,
 } from 'lucide-react';
 
 export const COLORS = {
@@ -97,6 +98,7 @@ export const MENU_ITEMS: MenuItemType[] = [
     icon: <UserRoundCheck size={17} strokeWidth={1.85} />,
     children: [
       { label: 'Malaka oshirish rejasi', path: '/training-plan', i18nKey: 'menu.training_plan', icon: <CalendarRange size={16} strokeWidth={1.85} /> },
+      { label: 'So‘rovnoma', path: '/survey', i18nKey: 'menu.survey', icon: <ClipboardCheck size={16} strokeWidth={1.85} /> },
       { label: 'Portfolio', path: '/portfolio', i18nKey: 'menu.portfolio', icon: <Palette size={16} strokeWidth={1.85} /> },
       { label: 'Reyestr (Sertifikatni tekshirish)', path: '/students', i18nKey: 'menu.registry', icon: <BadgeCheck size={16} strokeWidth={1.85} /> },
       { label: "Masofaviy ta'lim", path: 'external', url: 'https://mt.uzbamalaka.uz', i18nKey: 'menu.distance_edu', icon: <MonitorPlay size={16} strokeWidth={1.85} /> },

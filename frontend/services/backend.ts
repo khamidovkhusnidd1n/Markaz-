@@ -1138,6 +1138,27 @@ export const BackendAPI = {
 
   async deleteInternationalMedia(id: string) { return apiRequest(`/international-media/${id}/`, { method: 'DELETE' }); },
 
+  async getSurveys() {
+    return apiRequest<any[]>('/surveys/');
+  },
+
+  async submitSurvey(surveyId: number | string, payload: {
+    participation_token?: string;
+    respondent_name?: string;
+    course_name?: string;
+    answers: Array<{
+      question_id: number;
+      selected_options?: string[];
+      text_answer?: string;
+      rating_value?: number | null;
+    }>;
+  }) {
+    return apiRequest<{ success: boolean }>(`/surveys/${surveyId}/submit/`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
   async request<T>(endpoint: string, method: Method = 'GET', body?: BodyInit | object) {
     const normalizedBody = body && !(body instanceof FormData) && typeof body !== 'string' ? JSON.stringify(body) : body;
     return apiRequest<T>(endpoint, { method, body: normalizedBody as BodyInit | undefined });
