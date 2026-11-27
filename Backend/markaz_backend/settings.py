@@ -178,6 +178,8 @@ JAZZMIN_SETTINGS = {
         "core.AntiCorruptionContent",
         "core.AntiCorruptionPost",
         "core.AntiCorruptionDocument",
+        "core.Survey",
+        "core.SurveyResponse",
         "core.Appeal",
         "core.Application",
         "core.InternationalSettings",
@@ -210,6 +212,8 @@ JAZZMIN_SETTINGS = {
         "core.AntiCorruptionContent": "fas fa-shield-alt",
         "core.AntiCorruptionPost": "fas fa-bullhorn",
         "core.AntiCorruptionDocument": "fas fa-file-contract",
+        "core.Survey": "fas fa-poll-h",
+        "core.SurveyResponse": "fas fa-clipboard-check",
         "core.Appeal": "fas fa-comment-dots",
         "core.Application": "fas fa-paper-plane",
         "core.InternationalSettings": "fas fa-globe-americas",
@@ -293,7 +297,9 @@ WSGI_APPLICATION = 'markaz_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-_db_engine = env('DB_ENGINE', 'django.db.backends.postgresql')
+_db_engine = env('DB_ENGINE', 'django.db.backends.sqlite3')
+if not _db_engine:
+    _db_engine = 'django.db.backends.sqlite3'
 _db_options = {}
 if 'postgresql' in _db_engine:
     _db_options = {
